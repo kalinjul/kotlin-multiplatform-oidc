@@ -1,0 +1,98 @@
+[versions]
+compileSdk = "34"
+targetSdk = "34"
+minSdk = "26"
+
+jvmTarget = "17"
+# https://developer.android.com/build/releases/gradle-plugin#compatibility
+agp = "8.1.2"
+
+#https://github.com/JetBrains/compose-multiplatform
+compose-multiplatform = "1.5.10"
+kotlin = "1.9.20"
+ksp = "1.9.20-1.0.13"
+kotlin-inject = "0.6.3"
+
+#https://mvnrepository.com/artifact/org.jetbrains.compose.compiler/compiler
+composeCompiler = "1.5.3"
+
+# https://developer.android.com/jetpack/androidx/releases/activity
+androidxActivity = "1.7.0"
+# https://developer.android.com/jetpack/androidx/releases/appcompat
+androidxAppCompat = "1.6.1"
+#  https://developer.android.com/jetpack/androidx/releases/lifecycle
+auth0 = "4.2.2"
+auth0-android = "2.0.2"
+
+coreKtx = "1.12.0"
+#https://developer.android.com/jetpack/androidx/releases/arch-core
+coreTesting = "2.2.0"
+
+# coroutinesVersion = '1.6.4'
+kotlinxCoroutines = "1.7.3"
+kotlinxSerialization = "1.6.0"
+
+# https://github.com/slackhq/circuit/releases
+circuit = "0.16.0"
+sqldelight = "2.0.0"
+
+ktor = "2.3.4"
+
+[libraries]
+androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidxActivity" }
+androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "androidxAppCompat" }
+androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
+#auth0
+auth0 = { module = "com.auth0:java-jwt", version.ref = "auth0" }
+auth0-jwt = { module = "com.auth0:java-jwt", version.ref = "auth0" }
+auth0-jwtdecode = { module = "com.auth0.android:jwtdecode", version.ref = "auth0-android" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
+
+kotlin-inject-compiler = { module = "me.tatarka.inject:kotlin-inject-compiler-ksp", version.ref = "kotlin-inject" }
+kotlin-inject-runtime = { module = "me.tatarka.inject:kotlin-inject-runtime", version.ref = "kotlin-inject" }
+
+# Build logic dependencies
+android-gradlePlugin = { module = "com.android.tools.build:gradle", version.ref = "agp" }
+kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+compose-gradlePlugin = { module = "org.jetbrains.compose:compose-gradle-plugin", version.ref = "compose-multiplatform" }
+#licensee-gradlePlugin = { module = "app.cash.licensee:licensee-gradle-plugin", version.ref = "licensee" }
+
+kotlinx-datetime = "org.jetbrains.kotlinx:kotlinx-datetime:0.4.1"
+kotlinx-atomicfu = "org.jetbrains.kotlinx:atomicfu:0.22.0"
+
+sqldelight-android = { module = "app.cash.sqldelight:android-driver", version.ref = "sqldelight" }
+sqldelight-native = { module = "app.cash.sqldelight:native-driver", version.ref = "sqldelight" }
+sqldelight-sqlite = { module = "app.cash.sqldelight:sqlite-driver", version.ref = "sqldelight" }
+sqldelight-coroutines = { module = "app.cash.sqldelight:coroutines-extensions", version.ref = "sqldelight" }
+sqldelight-paging = { module = "app.cash.sqldelight:androidx-paging3-extensions", version.ref = "sqldelight" }
+sqldelight-primitive = { module = "app.cash.sqldelight:primitive-adapters", version.ref = "sqldelight" }
+
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
+ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
+ktor-client-auth = { module = "io.ktor:ktor-client-auth", version.ref = "ktor" }
+ktor-client-contentnegotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor"}
+ktor-client-serialization = { module = "io.ktor:ktor-client-serialization", version.ref = "ktor" }
+ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
+ktor-client-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
+#ktor-json = { module = "io.ktor:ktor-client-json", version.ref = "ktor" }
+
+circuit-foundation = { module = "com.slack.circuit:circuit-foundation", version.ref = "circuit" }
+circuit-gestureNavigation = { module = "com.slack.circuit:circuitx-gesture-navigation", version.ref = "circuit" }
+circuit-overlay = { module = "com.slack.circuit:circuit-overlay", version.ref = "circuit" }
+circuit-retained = { module = "com.slack.circuit:circuit-retained", version.ref = "circuit" }
+circuit-runtime = { module = "com.slack.circuit:circuit-runtime", version.ref = "circuit" }
+
+assertk = "com.willowtreeapps.assertk:assertk:0.27.0"
+
+russhwolf-multiplatformsettings = "com.russhwolf:multiplatform-settings:1.0.0"
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+android-library = { id = "com.android.library", version.ref = "agp" }
+composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "compose-multiplatform" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+kmp = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin"}
+sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }

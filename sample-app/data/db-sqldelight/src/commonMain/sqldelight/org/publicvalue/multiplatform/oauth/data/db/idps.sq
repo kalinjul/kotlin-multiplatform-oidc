@@ -1,0 +1,77 @@
+CREATE TABLE IF NOT EXISTS `identityprovider` (
+    `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    `name` TEXT NOT NULL,
+    `useDiscovery` INTEGER AS kotlin.Boolean NOT NULL,
+    `discoveryUrl` TEXT,
+    `endpointToken` TEXT,
+    `endpointAuthorization` TEXT,
+    `endpointDeviceAuthorization` TEXT,
+    `endpointEndSession` TEXT,
+    `endpointUserInfo` Text,
+    `endpointIntrospection` Text
+);
+
+
+-- queries
+
+
+insert:
+INSERT INTO identityprovider(
+    `id`,
+    `name`,
+    `useDiscovery`,
+    `discoveryUrl`,
+    `endpointToken`,
+    `endpointAuthorization`,
+    `endpointDeviceAuthorization`,
+    `endpointEndSession`,
+    `endpointUserInfo`,
+    `endpointIntrospection`
+) VALUES (
+    nullif(:id, 0),
+    :name,
+    :usescovery,
+    :discoveryUrl,
+    :endpointToken,
+    :endpointAuthorization,
+    :endpointDeviceAuthorization,
+    :endpointEndSession,
+    :endpointUserInfo,
+    :endpointIntrospection
+);
+
+get:
+SELECT
+    `id`,
+    `name`,
+    `useDiscovery`,
+    `discoveryUrl`,
+    `endpointToken`,
+    `endpointAuthorization`,
+    `endpointDeviceAuthorization`,
+    `endpointEndSession`,
+    `endpointUserInfo`,
+    `endpointIntrospection`
+FROM identityprovider;
+
+update:
+UPDATE identityprovider SET
+    `name` = :name,
+    `useDiscovery` = :useDiscovery,
+    `discoveryUrl` = :discoveryUrl,
+    `endpointToken` = :endpointToken,
+    `endpointAuthorization` = :endpointAuthorization,
+    `endpointDeviceAuthorization` = :endpointDeviceAuthorization,
+    `endpointEndSession` = :endpointEndSession,
+    `endpointUserInfo` = :endpointUserInfo,
+    `endpointIntrospection` = :endpointIntrospection
+WHERE id = :id;
+
+delete:
+DELETE FROM identityprovider WHERE id = :id;
+
+deleteAll:
+DELETE FROM identityprovider;
+
+lastInsertRowId:
+SELECT last_insert_rowid();
