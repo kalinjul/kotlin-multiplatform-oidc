@@ -10,11 +10,9 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-//                implementation(projects.core.base)
                 implementation(projects.sampleApp.common.ui.compose)
                 implementation(compose.foundation)
-                api(projects.sampleApp.data.dbSqldelight)
-//                implementation(projects.domain)
+                api(projects.sampleApp.domain)
 //
 //                api(projects.common.ui.resources.strings)
                 api(projects.sampleApp.common.screens)

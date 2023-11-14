@@ -27,6 +27,7 @@ kotlin {
                 api(projects.sampleApp.data.settings)
                 api(projects.sampleApp.data.dbSqldelight)
                 api(projects.sampleApp.common.ui.compose)
+                api(projects.sampleApp.domain)
                 api(projects.sampleApp.ui.root)
                 api(projects.sampleApp.ui.idplist)
                 api(projects.sampleApp.ui.clientlist)

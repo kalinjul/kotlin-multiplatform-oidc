@@ -9,7 +9,6 @@ kotlin {
             dependencies {
                 api(libs.kotlin.inject.runtime)
                 api(libs.kotlinx.coroutines.core)
-                api(libs.benasher44.uuid)
             }
         }
     }

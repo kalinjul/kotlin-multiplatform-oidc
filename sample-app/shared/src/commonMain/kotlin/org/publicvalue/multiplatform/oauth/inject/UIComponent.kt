@@ -6,8 +6,8 @@ import com.slack.circuit.runtime.ui.Ui
 import org.publicvalue.multiplatform.oauth.idplist.IdpListComponent
 import org.publicvalue.multiplatform.oauth.logging.Logger
 import me.tatarka.inject.annotations.Provides
-import org.publicvalue.multiplatform.oauth.ClientDetail.ClientDetailComponent
-import org.publicvalue.multiplatform.oauth.ClientList.ClientListComponent
+import org.publicvalue.multiplatform.oauth.clientdetail.ClientDetailComponent
+import org.publicvalue.multiplatform.oauth.clientlist2.ClientListComponent
 
 interface UIComponent:
     IdpListComponent,

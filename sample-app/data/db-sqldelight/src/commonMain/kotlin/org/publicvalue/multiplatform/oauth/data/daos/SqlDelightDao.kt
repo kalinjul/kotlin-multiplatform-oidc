@@ -14,7 +14,6 @@ interface SqlDelightDao<in E> : BaseDao<E> {
     }
 }
 
-
 interface BaseDao<in E> {
     fun insert(entity: E): Long
     fun insert(entities: List<E>)
@@ -34,6 +33,4 @@ interface BaseDao<in E> {
 //    }
 
     fun deleteEntity(entity: E)
-
-    fun getExistingIds(ids: List<Long>): List<Long>
 }

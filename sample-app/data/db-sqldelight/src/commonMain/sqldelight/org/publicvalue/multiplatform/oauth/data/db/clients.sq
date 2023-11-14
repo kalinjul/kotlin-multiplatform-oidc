@@ -1,0 +1,107 @@
+import org.publicvalue.multiplatform.oauth.data.types.CodeChallengeMethod;
+
+CREATE TABLE IF NOT EXISTS `client` (
+    `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    `idpId` Integer NOT NULL,
+    `name` TEXT NOT NULL,
+    `client_id` TEXT,
+    `client_secret` Text,
+    `redirect_uri` TEXT,
+    `scope` TEXT,
+    `state` TEXT,
+    `prompt` TEXT,
+    `login_hint` TEXT,
+    `domain_hint` TEXT,
+    `code_challenge_method` TEXT AS CodeChallengeMethod
+);
+
+
+-- queries
+
+
+insert:
+INSERT INTO client(
+    `id`,
+    `idpId`,
+    `name`,
+    `client_id`,
+    `client_secret`,
+    `redirect_uri`,
+    `scope`,
+    `state`,
+    `prompt`,
+    `login_hint`,
+    `domain_hint`,
+    `code_challenge_method`
+) VALUES (
+    nullif(:id, 0),
+    :idpId,
+    :name,
+    :client_id,
+    :client_secret,
+    :redirect_uri,
+    :scope,
+    :state,
+    :prompt,
+    :login_hint,
+    :domain_hint,
+    :code_challenge_method
+);
+
+getAll:
+SELECT
+    `id`,
+    `idpId`,
+    `name`,
+    `client_id`,
+    `client_secret`,
+    `redirect_uri`,
+    `scope`,
+    `state`,
+    `prompt`,
+    `login_hint`,
+    `domain_hint`,
+    `code_challenge_method`
+FROM client;
+
+get:
+SELECT
+    `id`,
+    `idpId`,
+    `name`,
+    `client_id`,
+    `client_secret`,
+    `redirect_uri`,
+    `scope`,
+    `state`,
+    `prompt`,
+    `login_hint`,
+    `domain_hint`,
+    `code_challenge_method`
+FROM client
+WHERE id = :id;
+
+update:
+UPDATE client SET
+    `id` = :id,
+    `idpId` = :idpId,
+    `name` = :name,
+    `client_id` = :client_id,
+    `client_secret` = :client_secret,
+    `redirect_uri` = :redirect_uri,
+    `scope` = :scope,
+    `state` = :state,
+    `prompt` = :prompt,
+    `login_hint` = :login_hint,
+    `domain_hint` = :domain_hint,
+    `code_challenge_method` = :code_challenge_method
+WHERE id = :id;
+
+delete:
+DELETE FROM client WHERE id = :id;
+
+deleteAll:
+DELETE FROM client;
+
+lastInsertRowId:
+SELECT last_insert_rowid();

@@ -1,24 +1,25 @@
 package org.publicvalue.multiplatform.oauth.idplist
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
-import org.publicvalue.multiplatform.oauth.compose.circuit.ErrorPresenter
-import org.publicvalue.multiplatform.oauth.logging.Logger
-import org.publicvalue.multiplatform.oauth.screens.IdpListScreen
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
-import org.publicvalue.multiplatform.oauth.data.db.Identityprovider
+import org.publicvalue.multiplatform.oauth.compose.circuit.ErrorPresenter
+import org.publicvalue.multiplatform.oauth.data.daos.IdpDao
+import org.publicvalue.multiplatform.oauth.domain.AddIdp
+import org.publicvalue.multiplatform.oauth.logging.Logger
 import org.publicvalue.multiplatform.oauth.screens.ClientListScreen
+import org.publicvalue.multiplatform.oauth.screens.IdpListScreen
 import org.publicvalue.multiplatform.oidc.discovery.Discover
 
 @Inject
@@ -41,6 +42,8 @@ class IdpListUiPresenterFactory(
 class IdpListPresenter(
     @Assisted private val navigator: Navigator,
     private val logger: Logger,
+    private val idpDao: IdpDao,
+    private val addIdp: AddIdp,
 ) : ErrorPresenter<IdpListUiState> {
 
     override var errorMessage = MutableStateFlow<String?>(null)
@@ -49,9 +52,7 @@ class IdpListPresenter(
     override fun present(): IdpListUiState {
         val scope = rememberCoroutineScope()
 
-        var idps by remember { mutableStateOf(listOf<Identityprovider>(
-            Identityprovider(id = 0, name = "Test", useDiscovery = false, null, null, null, null, null, null, null)
-        )) }
+        val idps by idpDao.getIdps().collectAsRetainedState(listOf())
 
         fun eventSink(event: IdpListUiEvent) {
             when (event) {
@@ -63,6 +64,24 @@ class IdpListPresenter(
                         println(config)
                     }
                 }
+
+                IdpListUiEvent.AddIdp -> {
+                    scope.launch {
+                        addIdp()
+                    }
+                }
+
+                is IdpListUiEvent.RemoveIdp -> {
+                    scope.launch {
+                        idpDao.deleteEntity(event.idp)
+                    }
+                }
+            }
+        }
+
+        LaunchedEffect(Unit) {
+            if (idps.isEmpty()) {
+                addIdp() // TODO remove
             }
         }
 

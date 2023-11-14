@@ -1,4 +1,4 @@
-package org.publicvalue.multiplatform.oauth.ClientList
+package org.publicvalue.multiplatform.oauth.clientlist2
 
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.ui.Ui

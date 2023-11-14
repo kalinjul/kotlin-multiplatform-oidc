@@ -30,7 +30,7 @@ INSERT INTO identityprovider(
 ) VALUES (
     nullif(:id, 0),
     :name,
-    :usescovery,
+    :useDiscovery,
     :discoveryUrl,
     :endpointToken,
     :endpointAuthorization,
@@ -39,6 +39,20 @@ INSERT INTO identityprovider(
     :endpointUserInfo,
     :endpointIntrospection
 );
+
+getAll:
+SELECT
+    `id`,
+    `name`,
+    `useDiscovery`,
+    `discoveryUrl`,
+    `endpointToken`,
+    `endpointAuthorization`,
+    `endpointDeviceAuthorization`,
+    `endpointEndSession`,
+    `endpointUserInfo`,
+    `endpointIntrospection`
+FROM identityprovider;
 
 get:
 SELECT
@@ -52,7 +66,8 @@ SELECT
     `endpointEndSession`,
     `endpointUserInfo`,
     `endpointIntrospection`
-FROM identityprovider;
+FROM identityprovider
+WHERE id = :id;
 
 update:
 UPDATE identityprovider SET

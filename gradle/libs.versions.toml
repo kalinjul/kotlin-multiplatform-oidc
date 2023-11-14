@@ -37,6 +37,7 @@ circuit = "0.16.0"
 sqldelight = "2.0.0"
 
 ktor = "2.3.4"
+foundationDesktop = "1.6.0-alpha08"
 
 [libraries]
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidxActivity" }
@@ -87,6 +88,7 @@ circuit-runtime = { module = "com.slack.circuit:circuit-runtime", version.ref = 
 assertk = "com.willowtreeapps.assertk:assertk:0.27.0"
 
 russhwolf-multiplatformsettings = "com.russhwolf:multiplatform-settings:1.0.0"
+androidx-foundation-desktop = { group = "androidx.compose.foundation", name = "foundation-desktop", version.ref = "foundationDesktop" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
