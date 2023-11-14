@@ -6,6 +6,7 @@ import me.tatarka.inject.annotations.Inject
 import org.publicvalue.multiplatform.oauth.data.daos.ClientDao
 import org.publicvalue.multiplatform.oauth.data.db.Client
 import org.publicvalue.multiplatform.oauth.data.db.Identityprovider
+import org.publicvalue.multiplatform.oauth.data.types.CodeChallengeMethod
 import org.publicvalue.multiplatform.oauth.util.DispatcherProvider
 
 @Inject
@@ -24,12 +25,12 @@ class AddClient(
                     client_id = null,
                     client_secret = null,
                     redirect_uri = null,
-                    scope = null,
+                    scope = "openid profile",
                     state = null,
                     prompt = null,
                     login_hint = null,
                     domain_hint = null,
-                    code_challenge_method = null
+                    code_challenge_method = CodeChallengeMethod.S256
                 )
             )
         }

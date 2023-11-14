@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS `client` (
     `prompt` TEXT,
     `login_hint` TEXT,
     `domain_hint` TEXT,
-    `code_challenge_method` TEXT AS CodeChallengeMethod
+    `code_challenge_method` TEXT AS CodeChallengeMethod NOT NULL
 );
 
 

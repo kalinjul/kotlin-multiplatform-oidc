@@ -32,6 +32,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
+import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -46,8 +47,11 @@ import com.slack.circuit.runtime.ui.Ui
 import com.slack.circuit.runtime.ui.ui
 import org.publicvalue.multiplatform.oauth.screens.ClientListScreen
 import me.tatarka.inject.annotations.Inject
+import org.publicvalue.multiplatform.oauth.compose.components.ColumnHeadline
 import org.publicvalue.multiplatform.oauth.compose.components.ErrorMessageBox
+import org.publicvalue.multiplatform.oauth.compose.components.FormHeadline
 import org.publicvalue.multiplatform.oauth.compose.components.OidcPlaygroundTopBar
+import org.publicvalue.multiplatform.oauth.compose.components.SingleLineInput
 import org.publicvalue.multiplatform.oauth.data.db.Client
 import org.publicvalue.multiplatform.oauth.data.db.Identityprovider
 
@@ -153,7 +157,7 @@ internal fun ClientList(
         Box(modifier.padding(it)) {
             Row() {
                 Column(Modifier.padding(16.dp).weight(1f)) {
-                    Text(style = typography.headlineSmall, text = "IDP Configuration")
+                    ColumnHeadline("IDP Configuration")
                     IdpDetail(
                         modifier = Modifier,
                         idp = idp,
@@ -166,7 +170,7 @@ internal fun ClientList(
                     )
                 }
                 Column(Modifier.padding(16.dp).weight(1f)) {
-                    Text(style = typography.headlineSmall, text = "Clients")
+                    ColumnHeadline("Clients")
                     ClientList(
                         modifier = Modifier,
                         clients = clients,
@@ -188,7 +192,7 @@ internal fun ClientList(
 }
 
 @Composable
-fun IdpDetail(
+internal fun IdpDetail(
     modifier: Modifier,
     idp: Identityprovider?,
     onEndpointTokenChange: (String) -> Unit,
@@ -268,29 +272,7 @@ fun IdpDetail(
 }
 
 @Composable
-fun SingleLineInput(value: String, onValueChange: (String) -> Unit, label: @Composable () -> Unit) {
-    TextField(
-        modifier = Modifier.fillMaxWidth(),
-        singleLine = true,
-        value = value,
-        onValueChange = onValueChange,
-        label = label
-    )
-}
-
-@Composable
-fun FormHeadline(
-    modifier:Modifier = Modifier,
-    text: String
-) {
-    Text(
-        modifier = modifier.padding(vertical = 16.dp),
-        style = typography.titleSmall, text = text
-    )
-}
-
-@Composable
-fun ClientList(
+internal fun ClientList(
     modifier: Modifier = Modifier,
     clients: List<Client>,
     onClientClick: (Client) -> Unit,

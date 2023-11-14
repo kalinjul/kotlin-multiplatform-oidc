@@ -12,7 +12,11 @@ interface ErrorPresenter<UiState : CircuitUiState>: Presenter<UiState> {
     }
 }
 
-//fun <Result> CollectStatusContext<Result>.useError(presenter: ErrorPresenter<*>) {
-//    onStart { presenter.errorMessage.value = null }
-//    onFailure { presenter.errorMessage.value = it.message }
-//}
+suspend fun <T: ErrorPresenter<UiState>, UiState> T.catchErrorMessage(block: suspend T.() -> Unit) {
+    try {
+        block()
+    } catch (t: Throwable) {
+        t.printStackTrace()
+        errorMessage.value = t.message
+    }
+}

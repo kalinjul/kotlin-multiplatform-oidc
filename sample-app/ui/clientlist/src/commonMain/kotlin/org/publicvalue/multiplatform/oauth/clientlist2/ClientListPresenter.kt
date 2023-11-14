@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
+import org.publicvalue.multiplatform.oauth.compose.circuit.catchErrorMessage
 import org.publicvalue.multiplatform.oauth.data.daos.ClientDao
 import org.publicvalue.multiplatform.oauth.data.daos.IdpDao
 import org.publicvalue.multiplatform.oauth.data.db.Identityprovider
@@ -83,8 +84,8 @@ class ClientListPresenter(
                 }
 
                 is ClientListUiEvent.ChangeIdpProperty<*> -> {
-                    scope.launch {
-                        idp?.let {  idp ->
+                    idp?.let {  idp ->
+                        scope.launch {
                             when (event.prop) {
                                 Identityprovider::name -> idpDao.update(idp.copy(name = event.value as String))
                                 Identityprovider::discoveryUrl -> idpDao.update(idp.copy(discoveryUrl = event.value as String))
@@ -122,14 +123,5 @@ class ClientListPresenter(
             clients = clients,
             idp = idp,
         )
-    }
-}
-
-suspend fun <T: ErrorPresenter<UiState>, UiState> T.catchErrorMessage(block: suspend T.() -> Unit) {
-    try {
-        block()
-    } catch (t: Throwable) {
-        t.printStackTrace()
-        errorMessage.value = t.message
     }
 }
