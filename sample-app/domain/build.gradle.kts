@@ -12,6 +12,7 @@ kotlin {
                 api(projects.sampleApp.data.dbSqldelight)
 
                 implementation(libs.kotlinx.coroutines.core)
+                implementation(projects.sampleApp.webserver)
             }
         }
     }

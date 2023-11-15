@@ -24,6 +24,7 @@ kotlin {
                 implementation(libs.kotlin.inject.runtime)
 
                 api(projects.sampleApp.core)
+                api(projects.sampleApp.webserver)
                 api(projects.sampleApp.data.settings)
                 api(projects.sampleApp.data.dbSqldelight)
                 api(projects.sampleApp.common.ui.compose)

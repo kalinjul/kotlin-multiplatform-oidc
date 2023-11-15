@@ -239,14 +239,14 @@ internal fun IdpDetail(
         }
         FormHeadline(text = "Endpoints")
         SingleLineInput(
-            value = endpointToken,
-            onValueChange = { endpointToken = it; onEndpointTokenChange(it)},
-            label = { Text("Token") }
-        )
-        SingleLineInput(
             value = endpointAuthorization,
             onValueChange = { endpointAuthorization = it; onEndpointAuthorizationChange(it)},
             label = { Text("Authorization") }
+        )
+        SingleLineInput(
+            value = endpointToken,
+            onValueChange = { endpointToken = it; onEndpointTokenChange(it)},
+            label = { Text("Token") }
         )
 //        SingleLineInput(
 //            value = "${idp?.endpointDeviceAuthorization}",

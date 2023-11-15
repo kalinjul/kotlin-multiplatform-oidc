@@ -48,6 +48,7 @@ import org.publicvalue.multiplatform.oauth.compose.components.OidcPlaygroundTopB
 import org.publicvalue.multiplatform.oauth.compose.components.SingleLineInput
 import org.publicvalue.multiplatform.oauth.data.db.Client
 import org.publicvalue.multiplatform.oauth.data.types.CodeChallengeMethod
+import org.publicvalue.multiplatform.oauth.domain.Constants
 
 @Inject
 class ClientDetailUiFactory : Ui.Factory {
@@ -210,7 +211,7 @@ internal fun ClientDetail(
 //            RadioButton(false, onClick = null)
 //            Text(modifier = Modifier.padding(start = 16.dp), text = "off")
 //        }
-        Text("Note: redirect_url will always be ...")
+        Text("Note: redirect_url will always be ${Constants.REDIRECT_URL}")
     }
 }
 

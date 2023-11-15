@@ -18,7 +18,8 @@ import org.publicvalue.multiplatform.oauth.compose.circuit.catchErrorMessage
 import org.publicvalue.multiplatform.oauth.data.daos.ClientDao
 import org.publicvalue.multiplatform.oauth.data.db.Client
 import org.publicvalue.multiplatform.oauth.data.types.CodeChallengeMethod
-import org.publicvalue.multiplatform.oauth.domain.Login
+import org.publicvalue.multiplatform.oauth.domain.Authorize
+import org.publicvalue.multiplatform.oauth.domain.ExchangeToken
 import org.publicvalue.multiplatform.oauth.logging.Logger
 import org.publicvalue.multiplatform.oauth.screens.ClientDetailScreen
 import org.publicvalue.multiplatform.oidc.discovery.Discover
@@ -45,7 +46,8 @@ class ClientDetailPresenter(
     @Assisted private val screen: ClientDetailScreen,
     private val logger: Logger,
     private val clientDao: ClientDao,
-    private val login: Login
+    private val authorize: Authorize,
+    private val exchangeToken: ExchangeToken
 ) : ErrorPresenter<ClientDetailUiState> {
 
     override var errorMessage = MutableStateFlow<String?>(null)
@@ -88,7 +90,7 @@ class ClientDetailPresenter(
                     client?.let {
                         scope.launch {
                             catchErrorMessage {
-                                login(it)
+                                authorize(it)
                             }
                         }
                     }
