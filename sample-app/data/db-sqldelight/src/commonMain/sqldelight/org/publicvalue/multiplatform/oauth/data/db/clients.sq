@@ -62,7 +62,8 @@ SELECT
     `login_hint`,
     `domain_hint`,
     `code_challenge_method`
-FROM client;
+FROM client
+WHERE idpId = :idpId;
 
 get:
 SELECT

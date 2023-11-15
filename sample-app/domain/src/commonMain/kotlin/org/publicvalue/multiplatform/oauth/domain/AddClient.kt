@@ -16,7 +16,7 @@ class AddClient(
 ) {
     suspend operator fun invoke(idp: Identityprovider, name: String? = null) {
         withContext(dispatchers.io()) {
-            val size = clientDao.getClients().first().size
+            val size = clientDao.getClients(idp.id).first().size
             clientDao.insert(
                 Client(
                     id = 0,

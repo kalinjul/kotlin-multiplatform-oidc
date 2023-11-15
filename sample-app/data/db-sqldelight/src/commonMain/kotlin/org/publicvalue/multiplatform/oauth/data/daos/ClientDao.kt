@@ -55,8 +55,8 @@ class ClientDao(
         db.clientsQueries.delete(entity.id)
     }
 
-    fun getClients(): Flow<List<Client>> {
-        return db.clientsQueries.getAll().asFlow()
+    fun getClients(idpId: Long): Flow<List<Client>> {
+        return db.clientsQueries.getAll(idpId).asFlow()
             .mapToList(dispatchers.io())
     }
 

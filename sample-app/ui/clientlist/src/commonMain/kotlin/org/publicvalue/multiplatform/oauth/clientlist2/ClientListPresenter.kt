@@ -57,7 +57,7 @@ class ClientListPresenter(
     override fun present(): ClientListUiState {
         val scope = rememberCoroutineScope()
 
-        val clients by clientDao.getClients().collectAsState(listOf())
+        val clients by clientDao.getClients(screen.idpId).collectAsState(listOf())
         val idp by idpDao.getIdp(screen.idpId).collectAsRetainedState(null)
 
         val errorMessage by this.errorMessage.collectAsRetainedState()
