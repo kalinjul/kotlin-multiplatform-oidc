@@ -2,7 +2,6 @@ package org.publicvalue.multiplatform.oauth.idplist
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import com.slack.circuit.retained.collectAsRetainedState
@@ -11,6 +10,7 @@ import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
@@ -80,8 +80,8 @@ class IdpListPresenter(
         }
 
         LaunchedEffect(Unit) {
-            if (idps.isEmpty()) {
-                addIdp() // TODO remove
+            if (idpDao.getIdps().first().isEmpty()) {
+                addIdp()
             }
         }
 

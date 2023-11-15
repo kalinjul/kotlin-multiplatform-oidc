@@ -40,7 +40,7 @@ class KotlinMultiplatformConventionPlugin : Plugin<Project> {
                 ).forEach {
                     it.binaries.framework {
                         baseName = path.substring(1).replace(':', '-')
-//                        isStatic = true
+                        isStatic = true
                     }
                 }
             }

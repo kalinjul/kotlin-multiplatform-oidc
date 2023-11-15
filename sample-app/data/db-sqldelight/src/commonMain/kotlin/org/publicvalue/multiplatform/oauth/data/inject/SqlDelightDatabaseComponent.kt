@@ -18,11 +18,11 @@ interface SqlDelightDatabaseComponent : SqlDelightDatabasePlatformComponent {
         driver: SqlDriver,
     ): Database {
         // TODO remove
-        DestructiveMigrationSchema.migrate(
-            driver,
-            0L,
-            0L
-        )
+//        DestructiveMigrationSchema.migrate(
+//            driver,
+//            0L,
+//            0L
+//        )
 
         return Database(
             driver = driver,

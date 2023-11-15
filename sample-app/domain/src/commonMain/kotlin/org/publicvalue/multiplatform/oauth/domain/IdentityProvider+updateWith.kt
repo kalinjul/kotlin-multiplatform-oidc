@@ -1,7 +1,7 @@
 package org.publicvalue.multiplatform.oauth.domain
 
 import org.publicvalue.multiplatform.oauth.data.db.Identityprovider
-import org.publicvalue.multiplatform.oidc.discovery.OpenIDConnectConfiguration
+import org.publicvalue.multiplatform.oidc.types.OpenIDConnectConfiguration
 
 fun Identityprovider.updateWith(config: OpenIDConnectConfiguration): Identityprovider =
     copy(

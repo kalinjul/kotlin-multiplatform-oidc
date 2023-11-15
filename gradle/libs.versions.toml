@@ -28,7 +28,6 @@ coreKtx = "1.12.0"
 #https://developer.android.com/jetpack/androidx/releases/arch-core
 coreTesting = "2.2.0"
 
-# coroutinesVersion = '1.6.4'
 kotlinxCoroutines = "1.7.3"
 kotlinxSerialization = "1.6.0"
 
@@ -37,7 +36,6 @@ circuit = "0.16.0"
 sqldelight = "2.0.0"
 
 ktor = "2.3.4"
-foundationDesktop = "1.6.0-alpha08"
 
 [libraries]
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidxActivity" }
@@ -48,6 +46,7 @@ auth0 = { module = "com.auth0:java-jwt", version.ref = "auth0" }
 auth0-jwt = { module = "com.auth0:java-jwt", version.ref = "auth0" }
 auth0-jwtdecode = { module = "com.auth0.android:jwtdecode", version.ref = "auth0-android" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutines" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
 
 kotlin-inject-compiler = { module = "me.tatarka.inject:kotlin-inject-compiler-ksp", version.ref = "kotlin-inject" }
@@ -88,7 +87,6 @@ circuit-runtime = { module = "com.slack.circuit:circuit-runtime", version.ref = 
 assertk = "com.willowtreeapps.assertk:assertk:0.27.0"
 
 russhwolf-multiplatformsettings = "com.russhwolf:multiplatform-settings:1.0.0"
-androidx-foundation-desktop = { group = "androidx.compose.foundation", name = "foundation-desktop", version.ref = "foundationDesktop" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

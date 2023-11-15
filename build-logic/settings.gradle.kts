@@ -15,3 +15,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "build-logic"
 include(":convention")
+include(":swift-klib-plugin:plugin")

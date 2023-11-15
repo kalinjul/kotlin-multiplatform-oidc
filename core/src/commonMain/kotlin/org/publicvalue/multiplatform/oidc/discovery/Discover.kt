@@ -6,12 +6,15 @@ import io.ktor.client.request.get
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.Url
 import io.ktor.http.isSuccess
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
+import org.publicvalue.multiplatform.oidc.types.OpenIDConnectConfiguration
 
 class Discover(
     val httpClient: HttpClient = HttpClient()
 ) {
 
+    @OptIn(ExperimentalSerializationApi::class)
     val json = Json {
         ignoreUnknownKeys = true
         explicitNulls = false

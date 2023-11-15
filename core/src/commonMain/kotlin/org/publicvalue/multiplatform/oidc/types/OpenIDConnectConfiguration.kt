@@ -1,7 +1,10 @@
-package org.publicvalue.multiplatform.oidc.discovery
+package org.publicvalue.multiplatform.oidc.types
 
 import kotlinx.serialization.Serializable
 
+/**
+ * Openid-configuration JSON
+ */
 @Serializable
 data class OpenIDConnectConfiguration(
     val authorization_endpoint: String? = null,
