@@ -8,7 +8,7 @@ sealed class OpenIDConnectException(
 
     data class InvalidUrl(val url: String?, override val cause: Throwable? = null): OpenIDConnectException(message = "Invalid URL: $url", cause = cause)
     data class InvalidOrMissingRedirectUri(val redirectUrl: String?): OpenIDConnectException(message = "invalid or missing redirect url: $redirectUrl")
-    data class AuthenticationFailed(override val cause: Throwable): OpenIDConnectException(message = "Authentication failed.", cause = cause)
+    data class AuthenticationFailed(override val message: String, override val cause: Throwable? = null): OpenIDConnectException(message = "Authentication failed. $message", cause = cause)
 
     enum class Type {
         invalidTokenPostData,

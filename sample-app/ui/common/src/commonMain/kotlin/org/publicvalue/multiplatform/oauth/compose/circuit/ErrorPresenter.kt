@@ -10,6 +10,10 @@ interface ErrorPresenter<UiState : CircuitUiState>: Presenter<UiState> {
     fun resetErrorMessage() {
         this.errorMessage.value = null
     }
+
+    fun setErrorMessage(value: String) {
+        this.errorMessage.value = value
+    }
 }
 
 suspend fun <T: ErrorPresenter<UiState>, UiState> T.catchErrorMessage(block: suspend T.() -> Unit) {

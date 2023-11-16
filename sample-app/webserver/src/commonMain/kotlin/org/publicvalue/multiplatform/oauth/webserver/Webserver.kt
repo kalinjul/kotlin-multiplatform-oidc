@@ -10,10 +10,13 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import me.tatarka.inject.annotations.Inject
 import org.publicvalue.multiplatform.oauth.inject.ApplicationScope
+import org.publicvalue.multiplatform.oauth.logging.Logger
 
 @Inject
 @ApplicationScope
-class Webserver() {
+class Webserver(
+    val logger: Logger
+) {
     private var server: CIOApplicationEngine? = null
 
     suspend fun startAndWaitForRedirect(port: Int): ApplicationRequest? {
@@ -24,13 +27,20 @@ class Webserver() {
                 get("/redirect") {
                     this.call.respond(status = HttpStatusCode.OK, Unit)
                     call = this.call.request
+                    logger.d { "Stopping Webserver" }
                     server?.stop()
                 }
             }
         }.apply {
             server = this
+            logger.d { "Starting Webserver" }
             start(wait = true)
         }
         return call
+    }
+
+    fun stop() {
+        logger.d { "Stopping Webserver" }
+        server?.stop()
     }
 }

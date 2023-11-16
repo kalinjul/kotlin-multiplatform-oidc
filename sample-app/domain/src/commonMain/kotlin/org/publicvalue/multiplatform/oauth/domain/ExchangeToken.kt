@@ -1,11 +1,26 @@
 package org.publicvalue.multiplatform.oauth.domain
 
+import io.ktor.http.Parameters
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 import org.publicvalue.multiplatform.oauth.data.daos.IdpDao
 import org.publicvalue.multiplatform.oauth.data.db.Client
 import org.publicvalue.multiplatform.oauth.logging.Logger
 import org.publicvalue.multiplatform.oauth.util.DispatcherProvider
+import org.publicvalue.multiplatform.oidc.AuthCodeRequest
+import org.publicvalue.multiplatform.oidc.types.AccessTokenResponse
+
+sealed class ExchangeTokenResult {
+    data class Request(
+        val parameters: Parameters
+    ): ExchangeTokenResult()
+    data class Response(
+        val accessTokenResponse: AccessTokenResponse?
+    ): ExchangeTokenResult()
+}
 
 @Inject
 class ExchangeToken(
@@ -13,10 +28,29 @@ class ExchangeToken(
     private val dispatchers: DispatcherProvider,
     private val logger: Logger,
 ) {
-    suspend operator fun invoke(client: Client, code: String) {
+    suspend operator fun invoke(client: Client, request: AuthCodeRequest, code: String): Flow<ExchangeTokenResult> {
         logger.d { "Exchange token with $client, authCode: $code" }
 
-        withContext(dispatchers.io()) {
+        val idp = idpDao.getIdp(client.idpId).first()
+        val client = client.createOidcClient(idp)
+
+        return flow {
+            val (_, requestParams) = client.createExchangeTokenRequest(request, code)
+            emit(
+                ExchangeTokenResult.Request(
+                    parameters = requestParams
+                )
+            )
+            val result = withContext(dispatchers.io()) {
+                client.exchangeTokenRequest(request, code)
+            }
+
+            println(result)
+            emit(
+                ExchangeTokenResult.Response(
+                    accessTokenResponse = result
+                )
+            )
 
         }
     }

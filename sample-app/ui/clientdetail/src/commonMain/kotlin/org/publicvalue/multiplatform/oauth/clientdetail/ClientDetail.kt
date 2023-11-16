@@ -5,6 +5,7 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
@@ -13,11 +14,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material3.Button
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme.colorScheme
@@ -27,7 +26,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -40,15 +38,16 @@ import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.screen.Screen
 import com.slack.circuit.runtime.ui.Ui
 import com.slack.circuit.runtime.ui.ui
-import org.publicvalue.multiplatform.oauth.screens.ClientDetailScreen
 import me.tatarka.inject.annotations.Inject
 import org.publicvalue.multiplatform.oauth.compose.components.ColumnHeadline
+import org.publicvalue.multiplatform.oauth.compose.components.ErrorMessageBox
 import org.publicvalue.multiplatform.oauth.compose.components.FormHeadline
 import org.publicvalue.multiplatform.oauth.compose.components.OidcPlaygroundTopBar
 import org.publicvalue.multiplatform.oauth.compose.components.SingleLineInput
 import org.publicvalue.multiplatform.oauth.data.db.Client
 import org.publicvalue.multiplatform.oauth.data.types.CodeChallengeMethod
 import org.publicvalue.multiplatform.oauth.domain.Constants
+import org.publicvalue.multiplatform.oauth.screens.ClientDetailScreen
 
 @Inject
 class ClientDetailUiFactory : Ui.Factory {
@@ -91,6 +90,10 @@ internal fun ClientDetail(
         },
         onLogin = {
             state.eventSink(ClientDetailUiEvent.Login)
+        },
+        errorMessage = state.errorMessage,
+        resetErrorMessage = {
+            state.eventSink(ClientDetailUiEvent.ResetErrorMessage)
         }
     )
 }
@@ -105,7 +108,9 @@ internal fun ClientDetail(
     onClientSecretChange: (String) -> Unit,
     onScopeChange: (String) -> Unit,
     onCodeChallengeMethodClick: (CodeChallengeMethod) -> Unit,
-    onLogin: () -> Unit
+    onLogin: () -> Unit,
+    errorMessage: String?,
+    resetErrorMessage: () -> Unit
 ) {
     Scaffold(
         modifier.fillMaxSize(),
@@ -120,23 +125,33 @@ internal fun ClientDetail(
         },
         contentWindowInsets = ScaffoldDefaults.contentWindowInsets.exclude(WindowInsets.navigationBars),
     ) {
-        Row(Modifier.padding(it).padding(16.dp)) {
-            Column(Modifier.padding(16.dp).weight(1f)) {
-                ColumnHeadline(text = "Client Configuration")
-                ClientDetail(
-                    client = client,
-                    onNameChange = onNameChange,
-                    onClientIdChange = onClientIdChange,
-                    onClientSecretChange = onClientSecretChange,
-                    onScopeChange = onScopeChange,
-                    onCodeChallengeMethodClick = onCodeChallengeMethodClick
-                )
+        Box(modifier = Modifier.padding(it)) {
+            Row(Modifier.padding(16.dp)) {
+                Column(Modifier.padding(16.dp).weight(1f)) {
+                    ColumnHeadline(text = "Client Configuration")
+                    ClientDetail(
+                        client = client,
+                        onNameChange = onNameChange,
+                        onClientIdChange = onClientIdChange,
+                        onClientSecretChange = onClientSecretChange,
+                        onScopeChange = onScopeChange,
+                        onCodeChallengeMethodClick = onCodeChallengeMethodClick
+                    )
+                }
+                Column(Modifier.padding(16.dp).weight(1f)) {
+                    ColumnHeadline(text = "Auth Flow")
+                    AuthFlow(
+                        onLogin = onLogin
+                    )
+                }
             }
-            Column(Modifier.padding(16.dp).weight(1f)) {
-                ColumnHeadline(text = "Auth Flow")
-                AuthFlow(
-                    onLogin = onLogin
-                )
+
+            AnimatedVisibility(
+                visible = errorMessage != null,
+                enter = expandVertically(expandFrom = Alignment.Top) + fadeIn(),
+                exit = shrinkVertically(shrinkTowards = Alignment.Top) + fadeOut()
+            ) {
+                ErrorMessageBox(resetErrorMessage, errorMessage)
             }
         }
     }

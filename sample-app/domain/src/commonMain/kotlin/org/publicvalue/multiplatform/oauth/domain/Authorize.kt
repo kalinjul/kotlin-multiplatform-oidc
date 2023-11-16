@@ -1,16 +1,30 @@
 package org.publicvalue.multiplatform.oauth.domain
 
+import io.ktor.server.request.ApplicationRequest
+import io.ktor.server.request.queryString
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
-import kotlinx.coroutines.withTimeout
 import me.tatarka.inject.annotations.Inject
 import org.publicvalue.multiplatform.oauth.data.daos.IdpDao
 import org.publicvalue.multiplatform.oauth.data.db.Client
 import org.publicvalue.multiplatform.oauth.logging.Logger
 import org.publicvalue.multiplatform.oauth.util.DispatcherProvider
 import org.publicvalue.multiplatform.oauth.webserver.Webserver
-import org.publicvalue.multiplatform.oidc.OpenIDConnectClient
+import org.publicvalue.multiplatform.oidc.AuthCodeRequest
+
+sealed class AuthorizeResult {
+    data class Request(
+        val authCodeRequestUrl: String,
+        val authCodeRequest: AuthCodeRequest
+    ): AuthorizeResult()
+    data class Response(
+        val authCode: String,
+        val authCodeResponseQueryString: String
+    ): AuthorizeResult()
+}
 
 @Inject
 class Authorize(
@@ -20,36 +34,43 @@ class Authorize(
     private val urlHandler: HandleUrl,
     private val webserver: Webserver
 ) {
-    suspend operator fun invoke(client: Client) {
+    suspend operator fun invoke(client: Client): Flow<AuthorizeResult> {
         logger.d { "Login with $client" }
 
-        withContext(dispatchers.io()) {
-            // TODO discover first?
-            val idp = idpDao.getIdp(client.idpId).first()
-            val client = OpenIDConnectClient {
-                endpoints {
-                    tokenEndpoint(idp.endpointToken ?: "")
-                    authEndpoint(idp.endpointAuthorization ?: "")
+        return flow {
+                // TODO discover first?
+                val idp = idpDao.getIdp(client.idpId).first()
+                val client = client.createOidcClient(idp)
+
+                val request = client.createAuthCodeRequest()
+                emit(AuthorizeResult.Request(
+                    authCodeRequest = request,
+                    authCodeRequestUrl = request.url.toString()
+                    )
+                )
+
+            val response =
+                withContext(dispatchers.io()) {
+                    async {
+                        urlHandler.invoke(request.url)
+                        val response = webserver.startAndWaitForRedirect(Constants.WEBSERVER_PORT)
+                        webserver.stop()
+                        response
+                    }.await()
                 }
-                clientId(client.client_id ?: "")
-                clientSecret(client.client_secret ?: "")
-                scope(client.scope ?: "")
-                redirectUri("http://localhost:8080/redirect")
-            }
 
-            val request = client.createAuthCodeRequest()
 
-            val code = async {
-                urlHandler.invoke(request.url)
-                val code = withTimeout(5000) {
-                    webserver.startAndWaitForRedirect(Constants.WEBSERVER_PORT)
-                }
-                code
-            }.await()
-
-            println("received code: ${code?.queryParameters?.get("code")}")
+            println("received code: ${response?.code()}")
             // TODO check state in response
+            emit(
+                AuthorizeResult.Response(
+                    authCode = response?.code() ?: "",
+                    authCodeResponseQueryString = response?.queryString() ?: ""
+                )
+            )
         }
     }
 }
+
+fun ApplicationRequest.code() = queryParameters["code"]
 

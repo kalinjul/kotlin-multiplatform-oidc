@@ -3,8 +3,11 @@ package org.publicvalue.multiplatform.oauth.clientdetail
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import com.slack.circuit.retained.collectAsRetainedState
+import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
@@ -19,9 +22,12 @@ import org.publicvalue.multiplatform.oauth.data.daos.ClientDao
 import org.publicvalue.multiplatform.oauth.data.db.Client
 import org.publicvalue.multiplatform.oauth.data.types.CodeChallengeMethod
 import org.publicvalue.multiplatform.oauth.domain.Authorize
+import org.publicvalue.multiplatform.oauth.domain.AuthorizeResult
 import org.publicvalue.multiplatform.oauth.domain.ExchangeToken
+import org.publicvalue.multiplatform.oauth.domain.ExchangeTokenResult
 import org.publicvalue.multiplatform.oauth.logging.Logger
 import org.publicvalue.multiplatform.oauth.screens.ClientDetailScreen
+import org.publicvalue.multiplatform.oidc.AuthCodeRequest
 import org.publicvalue.multiplatform.oidc.discovery.Discover
 
 @Inject
@@ -59,6 +65,10 @@ class ClientDetailPresenter(
         val client by clientDao.getClient(screen.clientId).collectAsState(null)
         val errorMessage by this.errorMessage.collectAsRetainedState()
 
+        var authcodeRequestUrl: String? by rememberRetained { mutableStateOf(null) }
+        var authcodeResponseQueryString: String? by rememberRetained { mutableStateOf(null) }
+        var authcode: String? by rememberRetained { mutableStateOf(null) }
+
         fun eventSink(event: ClientDetailUiEvent) {
             when (event) {
                 ClientDetailUiEvent.Call -> {
@@ -87,10 +97,36 @@ class ClientDetailPresenter(
                     }
                 }
                 ClientDetailUiEvent.Login -> {
-                    client?.let {
+                    client?.let { client ->
                         scope.launch {
                             catchErrorMessage {
-                                authorize(it)
+                                var authCodeRequest: AuthCodeRequest? = null
+                                authorize(client)
+                                    .collect { it ->
+                                    when (it) {
+                                        is AuthorizeResult.Request -> {
+                                            authcodeRequestUrl = it.authCodeRequestUrl
+                                            authCodeRequest = it.authCodeRequest
+                                        }
+                                        is AuthorizeResult.Response -> {
+                                            authcode = it.authCode
+                                            authcodeResponseQueryString = it.authCodeResponseQueryString
+                                        }
+                                    }
+                                }
+
+                                if (authCodeRequest != null && authcode != null) {
+                                    val tokenExchangeResult = exchangeToken(client, authCodeRequest!!, authcode!!).collect {
+                                        when (it) {
+                                            is ExchangeTokenResult.Request -> {
+                                                // TODO
+                                            }
+                                            is ExchangeTokenResult.Response -> {
+                                                // TODO
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -103,7 +139,10 @@ class ClientDetailPresenter(
             errorMessage = errorMessage,
             isLoading = false,
             eventSink = ::eventSink,
-            client = client
+            client = client,
+            authcodeRequestUrl = authcodeRequestUrl,
+            authcodeResponseQueryString = authcodeResponseQueryString,
+            authcode = authcode
         )
     }
 }

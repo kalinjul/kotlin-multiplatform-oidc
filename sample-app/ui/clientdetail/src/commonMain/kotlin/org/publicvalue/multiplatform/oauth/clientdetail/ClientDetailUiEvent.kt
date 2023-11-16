@@ -4,7 +4,6 @@ import androidx.compose.runtime.Immutable
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
 import org.publicvalue.multiplatform.oauth.data.db.Client
-import org.publicvalue.multiplatform.oauth.data.db.Identityprovider
 import kotlin.reflect.KProperty1
 
 @Immutable
@@ -12,7 +11,10 @@ data class ClientDetailUiState(
     val errorMessage: String?,
     val isLoading: Boolean = false,
     val eventSink: (ClientDetailUiEvent) -> Unit,
-    val client: Client?
+    val client: Client?,
+    val authcodeRequestUrl: String?,
+    val authcodeResponseQueryString: String?,
+    val authcode: String?,
 ) : CircuitUiState {
 }
 
