@@ -3,7 +3,10 @@ package org.publicvalue.multiplatform.oauth.clientdetail
 import androidx.compose.runtime.Immutable
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
+import io.ktor.http.HttpStatusCode
+import io.ktor.http.Parameters
 import org.publicvalue.multiplatform.oauth.data.db.Client
+import org.publicvalue.multiplatform.oidc.types.AccessTokenResponse
 import kotlin.reflect.KProperty1
 
 @Immutable
@@ -15,6 +18,9 @@ data class ClientDetailUiState(
     val authcodeRequestUrl: String?,
     val authcodeResponseQueryString: String?,
     val authcode: String?,
+    val tokenRequestParameters: Parameters?,
+    val tokenResponse: AccessTokenResponse?,
+    val tokenResponseStatusCode: HttpStatusCode?,
 ) : CircuitUiState {
 }
 

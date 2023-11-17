@@ -59,12 +59,15 @@ class Authorize(
                     }.await()
                 }
 
+            // this is how apps usually would receive the response, as plain string
+            val rawQueryParams = response?.queryParameters?.entries()
+                ?.joinToString("&") { "${it.key}=${it.value.joinToString("%20") }" }
+            val authCode = client.parseAuthCode(request, rawQueryParams ?: "")
+            logger.d { "received code: $authCode" }
 
-            println("received code: ${response?.code()}")
-            // TODO check state in response
             emit(
                 AuthorizeResult.Response(
-                    authCode = response?.code() ?: "",
+                    authCode = authCode ?: "",
                     authCodeResponseQueryString = response?.queryString() ?: ""
                 )
             )

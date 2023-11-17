@@ -6,7 +6,7 @@ import org.publicvalue.multiplatform.oidc.s256
 import org.publicvalue.multiplatform.oidc.types.CodeChallengeMethod
 
 class PKCE(
-    val codeChallengeMethod: CodeChallengeMethod,
+    codeChallengeMethod: CodeChallengeMethod,
     /** For token request **/
     val codeVerifier: String = verifier(),
     /** For authorization **/

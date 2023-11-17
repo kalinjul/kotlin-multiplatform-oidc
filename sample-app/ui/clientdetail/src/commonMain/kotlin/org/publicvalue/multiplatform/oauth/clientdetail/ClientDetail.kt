@@ -13,10 +13,12 @@ import androidx.compose.foundation.layout.exclude
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme.colorScheme
@@ -38,6 +40,8 @@ import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.screen.Screen
 import com.slack.circuit.runtime.ui.Ui
 import com.slack.circuit.runtime.ui.ui
+import io.ktor.http.HttpStatusCode
+import io.ktor.http.Parameters
 import me.tatarka.inject.annotations.Inject
 import org.publicvalue.multiplatform.oauth.compose.components.ColumnHeadline
 import org.publicvalue.multiplatform.oauth.compose.components.ErrorMessageBox
@@ -48,6 +52,7 @@ import org.publicvalue.multiplatform.oauth.data.db.Client
 import org.publicvalue.multiplatform.oauth.data.types.CodeChallengeMethod
 import org.publicvalue.multiplatform.oauth.domain.Constants
 import org.publicvalue.multiplatform.oauth.screens.ClientDetailScreen
+import org.publicvalue.multiplatform.oidc.types.AccessTokenResponse
 
 @Inject
 class ClientDetailUiFactory : Ui.Factory {
@@ -94,7 +99,13 @@ internal fun ClientDetail(
         errorMessage = state.errorMessage,
         resetErrorMessage = {
             state.eventSink(ClientDetailUiEvent.ResetErrorMessage)
-        }
+        },
+        authcodeRequestUrl = state.authcodeRequestUrl,
+        authcodeResponseQueryString = state.authcodeResponseQueryString,
+        authcode = state.authcode,
+        tokenRequestParameters = state.tokenRequestParameters,
+        tokenResponse = state.tokenResponse,
+        tokenResponseStatusCode = state.tokenResponseStatusCode,
     )
 }
 
@@ -110,7 +121,13 @@ internal fun ClientDetail(
     onCodeChallengeMethodClick: (CodeChallengeMethod) -> Unit,
     onLogin: () -> Unit,
     errorMessage: String?,
-    resetErrorMessage: () -> Unit
+    resetErrorMessage: () -> Unit,
+    authcodeRequestUrl: String?,
+    authcodeResponseQueryString: String?,
+    authcode: String?,
+    tokenRequestParameters: Parameters?,
+    tokenResponse: AccessTokenResponse?,
+    tokenResponseStatusCode: HttpStatusCode?,
 ) {
     Scaffold(
         modifier.fillMaxSize(),
@@ -141,7 +158,13 @@ internal fun ClientDetail(
                 Column(Modifier.padding(16.dp).weight(1f)) {
                     ColumnHeadline(text = "Auth Flow")
                     AuthFlow(
-                        onLogin = onLogin
+                        authcodeRequestUrl = authcodeRequestUrl,
+                        authcodeResponseQueryString = authcodeResponseQueryString,
+                        authcode = authcode,
+                        tokenRequestParameters = tokenRequestParameters,
+                        tokenResponse = tokenResponse,
+                        tokenResponseStatusCode = tokenResponseStatusCode,
+                        onLogin = onLogin,
                     )
                 }
             }
@@ -233,22 +256,46 @@ internal fun ClientDetail(
 @Composable
 internal fun AuthFlow(
     modifier: Modifier = Modifier,
-    onLogin: () -> Unit
+    authcodeRequestUrl: String?,
+    authcodeResponseQueryString: String?,
+    authcode: String?,
+    tokenRequestParameters: Parameters?,
+    tokenResponse: AccessTokenResponse?,
+    tokenResponseStatusCode: HttpStatusCode?,
+    onLogin: () -> Unit,
 ) {
     Column(modifier = modifier) {
         Button(onClick = { onLogin() }) {
             Text("Login")
         }
-        FormHeadline(text = "Discovery")
-        ExpandableInfo(
-            label = "Request (length: )",
-            text = "Much more information \n including newlines"
-        )
-        FormHeadline(text = "Auth code")
-        FormHeadline(text = "Token exchange")
-        FormHeadline(text = "Access Token")
-        FormHeadline(text = "Refresh Token")
-        FormHeadline(text = "Id Token")
+//        FormHeadline(text = "Discovery")
+        if (authcodeRequestUrl != null) {
+            FormHeadline(text = "Auth code: $authcode")
+            ExpandableInfo(
+                label = "Request (length ${authcodeRequestUrl.length})",
+                text = authcodeRequestUrl
+            )
+            ExpandableInfo(
+                label = "Response (length ${authcodeResponseQueryString?.length}",
+                text = authcodeResponseQueryString.orEmpty(),
+                loading = authcodeResponseQueryString == null
+            )
+        }
+        if (tokenRequestParameters != null) {
+            FormHeadline(text = "Token exchange")
+            ExpandableInfo(
+                label = "Request (length ${tokenRequestParameters.format().length})",
+                text = tokenRequestParameters.format(),
+            )
+            ExpandableInfo(
+                label = "Response (statusCode $tokenResponseStatusCode)",
+                text = tokenResponse?.format().orEmpty(),
+                loading = tokenResponse == null
+            )
+//            FormHeadline(text = "Access Token")
+//            FormHeadline(text = "Refresh Token")
+//            FormHeadline(text = "Id Token")
+        }
     }
 }
 
@@ -256,12 +303,16 @@ internal fun AuthFlow(
 fun ExpandableInfo(
     modifier: Modifier = Modifier,
     label: String,
-    text: String
+    text: String,
+    loading: Boolean = false
 ) {
     var expanded by remember() { mutableStateOf(false) }
     Column(modifier = modifier) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(text = label)
+            if (loading) {
+                CircularProgressIndicator(modifier = Modifier.padding(horizontal = 8.dp).size(24.dp))
+            }
             IconButton(onClick = { expanded = !expanded }) {
                 if (expanded) {
                     Icon(imageVector = Icons.Default.ExpandLess, contentDescription = "show less")
@@ -286,4 +337,21 @@ fun ExpandableInfo(
             }
         }
     }
+}
+
+
+fun AccessTokenResponse.format(): String {
+    return """
+        access_token: $access_token
+        refresh_token: $refresh_token
+        scope: $scope
+        expires_in: $expires_in
+        token_type: $token_type
+    """.trimIndent()
+}
+
+fun Parameters.format(): String {
+    return entries().map {
+        "${it.key}: ${it.value.joinToString(separator = " ")}"
+    }.joinToString(separator = "\n")
 }

@@ -1,5 +1,6 @@
 package org.publicvalue.multiplatform.oauth.domain
 
+import io.ktor.http.HttpStatusCode
 import io.ktor.http.Parameters
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -11,6 +12,7 @@ import org.publicvalue.multiplatform.oauth.data.db.Client
 import org.publicvalue.multiplatform.oauth.logging.Logger
 import org.publicvalue.multiplatform.oauth.util.DispatcherProvider
 import org.publicvalue.multiplatform.oidc.AuthCodeRequest
+import org.publicvalue.multiplatform.oidc.OpenIDConnectException
 import org.publicvalue.multiplatform.oidc.types.AccessTokenResponse
 
 sealed class ExchangeTokenResult {
@@ -18,6 +20,7 @@ sealed class ExchangeTokenResult {
         val parameters: Parameters
     ): ExchangeTokenResult()
     data class Response(
+        val httpStatusCode: HttpStatusCode,
         val accessTokenResponse: AccessTokenResponse?
     ): ExchangeTokenResult()
 }
@@ -41,17 +44,26 @@ class ExchangeToken(
                     parameters = requestParams
                 )
             )
-            val result = withContext(dispatchers.io()) {
-                client.exchangeTokenRequest(request, code)
-            }
-
-            println(result)
-            emit(
-                ExchangeTokenResult.Response(
-                    accessTokenResponse = result
+            try {
+                val result = withContext(dispatchers.io()) {
+                    client.exchangeTokenRequest(request, code)
+                }
+                println(result)
+                emit(
+                    ExchangeTokenResult.Response(
+                        httpStatusCode = HttpStatusCode.OK,
+                        accessTokenResponse = result
+                    )
                 )
-            )
-
+            } catch (e: OpenIDConnectException.UnsuccessfulTokenRequest) {
+                emit(
+                    ExchangeTokenResult.Response(
+                        httpStatusCode = e.statusCode,
+                        accessTokenResponse = null
+                    )
+                )
+                throw e
+            }
         }
     }
 }

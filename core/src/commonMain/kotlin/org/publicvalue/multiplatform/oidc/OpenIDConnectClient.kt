@@ -12,6 +12,7 @@ import io.ktor.http.Url
 import io.ktor.http.decodeURLQueryComponent
 import io.ktor.http.isSuccess
 import io.ktor.http.parameters
+import io.ktor.http.parseUrlEncodedParameters
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
@@ -58,9 +59,9 @@ class OpenIDConnectClient(
             config.scope?.let { parameters.append("scope", it) }
             parameters.append("nonce", nonce)
             parameters.append("code_challenge_method", config.codeChallengeMethod.name)
-            parameters.append("code_challenge", pkce.codeChallenge)
+            if (config.codeChallengeMethod != CodeChallengeMethod.off) { parameters.append("code_challenge", pkce.codeChallenge) }
             config.redirectUri?.let { parameters.append("redirect_uri", it) }
-//            parameters.append("state", currentState)
+            parameters.append("state", state)
         }.build()
 
         println(url)
@@ -68,6 +69,16 @@ class OpenIDConnectClient(
         return AuthCodeRequest(
             url, config, pkce, state, nonce
         )
+    }
+
+    suspend fun parseAuthCode(request: AuthCodeRequest, queryParameters: String): String? {
+        val parameters = queryParameters.parseUrlEncodedParameters()
+        val code = parameters["code"]
+        val state = parameters["state"]
+        if (state != request.state) {
+            throw OpenIDConnectException.AuthenticationFailed("State in response does not match request state: $queryParameters")
+        }
+        return code
     }
 
     /**
@@ -84,7 +95,7 @@ class OpenIDConnectClient(
         return if (response.status.isSuccess()) {
             val body = response.call.body<String>().decodeURLQueryComponent(plusIsSpace = true)
             if (body.startsWith("error")) {
-                throw OpenIDConnectException.AuthenticationFailed("Exchange token failed: ${response.status.value} $body")
+                throw OpenIDConnectException.UnsuccessfulTokenRequest("Exchange token failed: ${response.status.value} $body", response.status, body)
             } else {
                 val body = response.call.body<String>()
 //                SafeJson.decodeFromString(response.call.body<String>())
@@ -96,7 +107,7 @@ class OpenIDConnectClient(
         } else {
             val body = response.call.body<String>().decodeURLQueryComponent(plusIsSpace = true)
             println(body)
-            throw OpenIDConnectException.AuthenticationFailed("Exchange token failed: ${response.status.value} $body")
+            throw OpenIDConnectException.UnsuccessfulTokenRequest("Exchange token failed: ${response.status.value} $body", response.status, body)
         }
     }
 
@@ -111,7 +122,7 @@ class OpenIDConnectClient(
             config.redirectUri?.let { append("redirect_uri", it) }
             append("client_id", config.clientId!!)
             config.clientSecret?.let { append("client_secret", it) }
-            append("code_verifier", authCodeRequest.pkce.codeVerifier)
+            if (config.codeChallengeMethod != CodeChallengeMethod.off) { append("code_verifier", authCodeRequest.pkce.codeVerifier) }
         }
         val request = httpClient.prepareForm(
             formParameters = formParameters
@@ -154,7 +165,7 @@ class OpenIDClientConfig(
     var clientId: String? = null,
     var clientSecret: String? = null, // TODO remove
     var scope: String? = null,
-    var codeChallengeMethod: CodeChallengeMethod = CodeChallengeMethod.S256,
+    var codeChallengeMethod: CodeChallengeMethod = CodeChallengeMethod.off,
     var redirectUri: String? = null,
 ) {
     fun endpoints(
@@ -171,7 +182,7 @@ class OpenIDClientConfig(
         this.clientId = clientId
     }
 
-    fun clientSecret(clientSecret: String) { // TODO remove
+    fun clientSecret(clientSecret: String) {
         this.clientSecret = clientSecret
     }
 

@@ -12,6 +12,8 @@ import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
+import io.ktor.http.HttpStatusCode
+import io.ktor.http.Parameters
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
@@ -29,6 +31,7 @@ import org.publicvalue.multiplatform.oauth.logging.Logger
 import org.publicvalue.multiplatform.oauth.screens.ClientDetailScreen
 import org.publicvalue.multiplatform.oidc.AuthCodeRequest
 import org.publicvalue.multiplatform.oidc.discovery.Discover
+import org.publicvalue.multiplatform.oidc.types.AccessTokenResponse
 
 @Inject
 class ClientDetailUiPresenterFactory(
@@ -68,6 +71,10 @@ class ClientDetailPresenter(
         var authcodeRequestUrl: String? by rememberRetained { mutableStateOf(null) }
         var authcodeResponseQueryString: String? by rememberRetained { mutableStateOf(null) }
         var authcode: String? by rememberRetained { mutableStateOf(null) }
+
+        var tokenRequestParameters: Parameters? by rememberRetained { mutableStateOf(null) }
+        var tokenResponse: AccessTokenResponse? by rememberRetained { mutableStateOf(null) }
+        var tokenResponseStatusCode: HttpStatusCode? by rememberRetained { mutableStateOf(null) }
 
         fun eventSink(event: ClientDetailUiEvent) {
             when (event) {
@@ -116,13 +123,14 @@ class ClientDetailPresenter(
                                 }
 
                                 if (authCodeRequest != null && authcode != null) {
-                                    val tokenExchangeResult = exchangeToken(client, authCodeRequest!!, authcode!!).collect {
+                                    exchangeToken(client, authCodeRequest!!, authcode!!).collect {
                                         when (it) {
                                             is ExchangeTokenResult.Request -> {
-                                                // TODO
+                                                tokenRequestParameters = it.parameters
                                             }
                                             is ExchangeTokenResult.Response -> {
-                                                // TODO
+                                                tokenResponse = it.accessTokenResponse
+                                                tokenResponseStatusCode = it.httpStatusCode
                                             }
                                         }
                                     }
@@ -142,7 +150,10 @@ class ClientDetailPresenter(
             client = client,
             authcodeRequestUrl = authcodeRequestUrl,
             authcodeResponseQueryString = authcodeResponseQueryString,
-            authcode = authcode
+            authcode = authcode,
+            tokenRequestParameters = tokenRequestParameters,
+            tokenResponse = tokenResponse,
+            tokenResponseStatusCode = tokenResponseStatusCode
         )
     }
 }
