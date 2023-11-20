@@ -6,7 +6,6 @@ plugins {
 }
 
 group = "org.publicvalue.multiplatform.oidc"
-version = "0.0.1"
 
 kotlin {
     sourceSets {

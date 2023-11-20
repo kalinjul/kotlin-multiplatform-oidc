@@ -25,7 +25,6 @@ kotlin {
 
                 api(projects.core)
                 api(projects.webserver)
-                api(projects.data.settings)
                 api(projects.data.dbSqldelight)
                 api(projects.common.ui.compose)
                 api(projects.domain)

@@ -58,3 +58,6 @@ dependencyResolutionManagement {
 rootProject.name = "sample-app"
 include(":shared")
 include(":android-app")
+include(":settings")
+//includeBuild("../core")
+//includeBuild("../appsupport")

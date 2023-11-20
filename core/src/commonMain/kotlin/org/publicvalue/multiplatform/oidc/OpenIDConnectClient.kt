@@ -97,8 +97,6 @@ class OpenIDConnectClient(
             if (body.startsWith("error")) {
                 throw OpenIDConnectException.UnsuccessfulTokenRequest("Exchange token failed: ${response.status.value} $body", response.status, body)
             } else {
-                val body = response.call.body<String>()
-//                SafeJson.decodeFromString(response.call.body<String>())
                 val accessTokenResponse: AccessTokenResponse? = response.call.body()
                 println(accessTokenResponse)
                 accessTokenResponse

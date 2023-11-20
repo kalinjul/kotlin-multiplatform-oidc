@@ -5,3 +5,5 @@ plugins {
     alias(libs.plugins.ksp) apply false
     alias(libs.plugins.kmp) apply false
 }
+
+version "0.0.1"

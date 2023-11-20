@@ -1,5 +1,22 @@
 import androidx.compose.ui.window.ComposeUIViewController
+import com.slack.circuit.backstack.rememberSaveableBackStack
+import com.slack.circuit.foundation.rememberCircuitNavigator
+import org.publicvalue.multiplatform.oauth.settings.IosSettingsStore
 
-actual fun getPlatformName(): String = "iOS"
+fun MainViewController() = ComposeUIViewController {
 
-fun MainViewController() = ComposeUIViewController { App() }
+    val backstack = rememberSaveableBackStack {
+        push(HomeScreen)
+    }
+    val navigator = rememberCircuitNavigator(backstack) {
+
+    }
+
+    val settingsStore = IosSettingsStore()
+
+    App(
+        backstack = backstack,
+        navigator = navigator,
+        settingsStore = settingsStore
+    )
+}

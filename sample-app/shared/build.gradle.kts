@@ -5,6 +5,8 @@ plugins {
     id("org.publicvalue.convention.android.library")
     id("org.publicvalue.convention.kotlin.multiplatform")
     id("org.publicvalue.convention.compose.multiplatform")
+    id("kotlin-parcelize")
+    alias(libs.plugins.kotlin.serialization)
 }
 
 kotlin {
@@ -13,9 +15,14 @@ kotlin {
             dependencies {
                 implementation(compose.runtime)
                 implementation(compose.foundation)
-                implementation(compose.material)
-                @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
-                implementation(compose.components.resources)
+                implementation(compose.material3)
+
+                implementation(libs.circuit.runtime)
+                implementation(libs.circuit.foundation)
+                implementation(libs.circuit.retained)
+                implementation("org.publicvalue.multiplatform.oidc:core")
+                implementation(projects.settings)
+                implementation(libs.kotlinx.serialization.json)
             }
         }
         val androidMain by getting {
@@ -23,6 +30,7 @@ kotlin {
                 api(libs.androidx.activity.compose)
                 api(libs.androidx.core.ktx)
                 api(libs.androidx.appcompat)
+                implementation("androidx.datastore:datastore-preferences:1.0.0")
             }
         }
         val iosX64Main by getting
