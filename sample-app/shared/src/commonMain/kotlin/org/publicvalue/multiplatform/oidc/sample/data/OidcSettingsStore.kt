@@ -8,46 +8,23 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import org.publicvalue.multiplatform.oidc.sample.domain.ClientSettings
+import org.publicvalue.multiplatform.oidc.sample.domain.IdpSettings
+import org.publicvalue.multiplatform.oidc.sample.domain.TokenData
 import org.publicvalue.multiplatform.oidc.settings.SettingsStore
 import org.publicvalue.multiplatform.oidc.types.CodeChallengeMethod
 import kotlin.coroutines.CoroutineContext
-
-@Serializable
-data class IdpSettings(
-    val discoveryUrl: String? = null,
-    val endpointToken: String? = null,
-    val endpointAuthorization: String? = null,
-    val endpointDeviceAuthorization: String? = null,
-    val endpointEndSession: String? = null,
-    val endpointUserInfo: String? = null,
-    val endpointIntrospection: String? = null,
-) {
-    companion object {
-        val Empty = IdpSettings()
-    }
-}
-
-@Serializable
-data class ClientSettings(
-    val name: String? = null,
-    val client_id: String? = null,
-    val client_secret: String? = null,
-    val scope: String? = null,
-    val code_challenge_method: CodeChallengeMethod = CodeChallengeMethod.off,
-) {
-    companion object {
-        val Empty = ClientSettings()
-    }
-}
 
 class OidcSettingsStore(
     private val settingsStore: SettingsStore
 ) {
     private val idpSettings = MutableStateFlow<IdpSettings?>(null)
     private val clientSettings = MutableStateFlow<ClientSettings?>(null)
+    private val tokenData = MutableStateFlow<TokenData?>(null)
 
     fun observeIdpSettings() = idpSettings.asStateFlow()
     fun observeClientSettings() = clientSettings.asStateFlow()
+    fun observeTokenData() = tokenData.asStateFlow()
 
     init {
         GlobalScope.launch {
@@ -70,6 +47,12 @@ class OidcSettingsStore(
         this.clientSettings.value = clientSettings
     }
 
+    suspend fun setTokenData(tokenData: TokenData) {
+        settingsStore.put(TOKEN_DATA_KEY, Json.encodeToString(tokenData))
+        this.tokenData.value = tokenData
+    }
+
     private val IDP_SETTINGS_KEY = "idp_settings_key"
     private val CLIENT_SETTINGS_KEY = "client_settings_key"
+    private val TOKEN_DATA_KEY = "token_data_key"
 }

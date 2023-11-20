@@ -1,9 +1,12 @@
 package org.publicvalue.multiplatform.oidc.sample.config
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Settings
@@ -26,8 +29,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import org.publicvalue.multiplatform.oidc.sample.data.ClientSettings
-import org.publicvalue.multiplatform.oidc.sample.data.IdpSettings
+import org.publicvalue.multiplatform.oidc.sample.domain.ClientSettings
+import org.publicvalue.multiplatform.oidc.sample.domain.IdpSettings
 import org.publicvalue.multiplatform.oidc.sample.home.HomeUiEvent
 import org.publicvalue.multiplatform.oidc.types.CodeChallengeMethod
 
@@ -59,12 +62,12 @@ fun Config(
         Config(
             modifier = Modifier.padding(it),
             discoveryUrl = state.idpSettings.discoveryUrl,
-            authEndpoint = null,
-            tokenEndpoint = null,
-            clientId = null,
-            clientSecret = null,
-            scope = null,
-            challengeMethod = null,
+            authEndpoint = state.idpSettings.endpointAuthorization,
+            tokenEndpoint = state.idpSettings.endpointToken,
+            clientId = state.clientSettings.client_id,
+            clientSecret = state.clientSettings.client_secret,
+            scope = state.clientSettings.scope,
+            challengeMethod = state.clientSettings.code_challenge_method,
             onChangeAuthEndpoint = {
                 state.eventSink(
                     ConfigUiEvent.ChangeIdpProperty(IdpSettings::endpointAuthorization, it)
@@ -129,7 +132,8 @@ fun Config(
     onClickDiscover: () -> Unit
 ) {
     Column(modifier
-        .fillMaxWidth(),
+        .fillMaxWidth()
+        .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
@@ -197,24 +201,13 @@ fun Config(
 
         CodeChallengeMethod.entries.forEach {
             Row(
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Start
             ) {
                 RadioButton(challengeMethod == it, onClick = { onChangeChallengeMethod(it) })
                 Text(modifier = Modifier.padding(start = 16.dp), text = it.name)
             }
         }
-//        Row() {
-//            RadioButton(false, onClick = null)
-//            Text(modifier = Modifier.padding(start = 16.dp), text = "S256")
-//        }
-//        Row() {
-//            RadioButton(false, onClick = null)
-//            Text(modifier = Modifier.padding(start = 16.dp), text = "plain")
-//        }
-//        Row() {
-//            RadioButton(false, onClick = null)
-//            Text(modifier = Modifier.padding(start = 16.dp), text = "off")
-//        }
         Text("Note: redirect_url will always be ....")
     }
 }

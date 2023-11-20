@@ -8,14 +8,14 @@ import org.publicvalue.multiplatform.oidc.OpenIDConnectClient
 fun Client.createOidcClient(idp: Identityprovider): OpenIDConnectClient {
     return OpenIDConnectClient {
         endpoints {
-            tokenEndpoint(idp.endpointToken ?: "")
-            authEndpoint(idp.endpointAuthorization ?: "")
+            tokenEndpoint = idp.endpointToken
+            authorizationEndpoint = idp.endpointAuthorization
         }
-        clientId(client_id ?: "")
-        clientSecret(client_secret ?: "")
-        scope?.let { scope(it) }
-        redirectUri(Constants.REDIRECT_URL)
-        codeChallengeMethod(this@createOidcClient.code_challenge_method.toLibrary())
+        clientId = client_id
+        clientSecret = client_secret
+        this.scope = scope
+        redirectUri = Constants.REDIRECT_URL
+        codeChallengeMethod = this@createOidcClient.code_challenge_method.toLibrary()
     }
 }
 

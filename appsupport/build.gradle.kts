@@ -18,7 +18,7 @@ kotlin {
 //                implementation(libs.ktor.client.contentnegotiation)
 //                implementation(libs.ktor.serialization.kotlinx.json)
 
-                implementation(projects.core)
+                api(projects.core)
             }
         }
 

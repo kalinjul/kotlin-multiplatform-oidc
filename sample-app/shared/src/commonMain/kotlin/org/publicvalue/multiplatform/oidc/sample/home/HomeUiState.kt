@@ -8,7 +8,7 @@ data class HomeUiState(
     val loginEnabled: Boolean,
     val refreshEnabled: Boolean,
     val logoutEnabled: Boolean,
-    val tokenData: TokenData,
+    val tokenData: TokenData?,
     val eventSink: (HomeUiEvent) -> Unit
 ): CircuitUiState
 

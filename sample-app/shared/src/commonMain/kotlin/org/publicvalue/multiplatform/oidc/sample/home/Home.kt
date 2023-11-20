@@ -1,5 +1,6 @@
 package org.publicvalue.multiplatform.oidc.sample.home
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,7 +13,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -68,7 +68,7 @@ fun Home(
     onLoginClick: () -> Unit,
     onLogoutClick: () -> Unit,
     onRefreshClick: () -> Unit,
-    tokenData: TokenData
+    tokenData: TokenData?
 ) {
     Column(
         modifier
@@ -76,12 +76,30 @@ fun Home(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        Text("Token Data:")
-        Text(tokenData.token)
-        Text(tokenData.refreshToken)
-        Text(tokenData.tokenLifetime)
+        Row {
+            Text("Token Data:")
+            if (tokenData == null) {
+                Text("No token")
+            }
+        }
+        tokenData?.let {
+            Row() {
+                Text("Access token:")
+                Text(it.accessToken)
+            }
+        }
+        tokenData?.let {
+            Row() {
+                Text("Token lifetime:")
+                Text(it.tokenLifetime)
+            }
+        }
+        tokenData?.let { Row() {
+            Text("Refresh token:")
+            Text(it.refreshToken) }
+        }
 
-        Row() {
+        Row(horizontalArrangement = Arrangement.SpaceEvenly) {
             Button(
                 onClick = {
                     onLoginClick()

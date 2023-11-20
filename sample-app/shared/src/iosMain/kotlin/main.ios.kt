@@ -1,7 +1,8 @@
 import androidx.compose.ui.window.ComposeUIViewController
 import com.slack.circuit.backstack.rememberSaveableBackStack
 import com.slack.circuit.foundation.rememberCircuitNavigator
-import org.publicvalue.multiplatform.oauth.settings.IosSettingsStore
+import org.publicvalue.multiplatform.oidc.sample.screens.HomeScreen
+import org.publicvalue.multiplatform.oidc.settings.IosSettingsStore
 
 fun MainViewController() = ComposeUIViewController {
 

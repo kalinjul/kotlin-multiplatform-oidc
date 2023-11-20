@@ -20,7 +20,7 @@ kotlin {
                 implementation(libs.circuit.runtime)
                 implementation(libs.circuit.foundation)
                 implementation(libs.circuit.retained)
-                implementation("org.publicvalue.multiplatform.oidc:core")
+                implementation("org.publicvalue.multiplatform.oidc:appsupport")
                 implementation(projects.settings)
                 implementation(libs.kotlinx.serialization.json)
             }

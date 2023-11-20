@@ -2,8 +2,8 @@ package org.publicvalue.multiplatform.oidc.sample.config
 
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
-import org.publicvalue.multiplatform.oidc.sample.data.ClientSettings
-import org.publicvalue.multiplatform.oidc.sample.data.IdpSettings
+import org.publicvalue.multiplatform.oidc.sample.domain.ClientSettings
+import org.publicvalue.multiplatform.oidc.sample.domain.IdpSettings
 import kotlin.reflect.KProperty1
 
 data class ConfigUiState(

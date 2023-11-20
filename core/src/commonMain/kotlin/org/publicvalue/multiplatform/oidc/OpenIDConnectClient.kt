@@ -172,36 +172,36 @@ class OpenIDClientConfig(
         this.endpoints = Endpoints().apply(block)
     }
 
-    /**
-     * REQUIRED
-     * https://datatracker.ietf.org/doc/html/rfc6749#section-2.2
-     */
-    fun clientId(clientId: String) {
-        this.clientId = clientId
-    }
-
-    fun clientSecret(clientSecret: String) {
-        this.clientSecret = clientSecret
-    }
-
-    /**
-     * OPTIONAL
-     * https://datatracker.ietf.org/doc/html/rfc6749#section-3.3
-     */
-    fun scope(scope: String) {
-        this.scope = scope
-    }
-
-    fun codeChallengeMethod(codeChallengeMethod: CodeChallengeMethod) {
-        this.codeChallengeMethod = codeChallengeMethod
-    }
-
-    /**
-     * https://datatracker.ietf.org/doc/html/rfc6749#section-3.1.2
-     */
-    fun redirectUri(redirectUri: String) {
-        this.redirectUri = redirectUri
-    }
+//    /**
+//     * REQUIRED
+//     * https://datatracker.ietf.org/doc/html/rfc6749#section-2.2
+//     */
+//    fun clientId(clientId: String?) {
+//        this.clientId = clientId
+//    }
+//
+//    fun clientSecret(clientSecret: String?) {
+//        this.clientSecret = clientSecret
+//    }
+//
+//    /**
+//     * OPTIONAL
+//     * https://datatracker.ietf.org/doc/html/rfc6749#section-3.3
+//     */
+//    fun scope(scope: String?) {
+//        this.scope = scope
+//    }
+//
+//    fun codeChallengeMethod(codeChallengeMethod: CodeChallengeMethod) {
+//        this.codeChallengeMethod = codeChallengeMethod
+//    }
+//
+//    /**
+//     * https://datatracker.ietf.org/doc/html/rfc6749#section-3.1.2
+//     */
+//    fun redirectUri(redirectUri: String?) {
+//        this.redirectUri = redirectUri
+//    }
 }
 
 @DslMarker
@@ -224,13 +224,13 @@ data class Endpoints(
 //        )
     }
 
-    fun tokenEndpoint(tokenEndpoint: String) {
-        this.tokenEndpoint = tokenEndpoint
-    }
-    fun authEndpoint(authorizationEndpoint: String) {
-        this.authorizationEndpoint = authorizationEndpoint
-    }
-    fun userInfoEndpoint(userInfoEndpoint: String) {
-        this.userInfoEndpoint = userInfoEndpoint
-    }
+//    fun tokenEndpoint(tokenEndpoint: String?) {
+//        this.tokenEndpoint = tokenEndpoint
+//    }
+//    fun authEndpoint(authorizationEndpoint: String?) {
+//        this.authorizationEndpoint = authorizationEndpoint
+//    }
+//    fun userInfoEndpoint(userInfoEndpoint: String?) {
+//        this.userInfoEndpoint = userInfoEndpoint
+//    }
 }
