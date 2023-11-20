@@ -1,8 +1,7 @@
 plugins {
     id("org.publicvalue.convention.kotlin.multiplatform")
     alias(libs.plugins.kotlin.serialization)
-//    id("io.github.ttypic.swiftklib") version "0.4.0"
-    id("io.github.ttypic.swiftklib")
+    id("io.github.ttypic.swiftklib") version "0.5.0"
     id("maven-publish")
 }
 
