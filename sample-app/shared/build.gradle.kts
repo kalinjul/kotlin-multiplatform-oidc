@@ -20,7 +20,7 @@ kotlin {
                 implementation(libs.circuit.runtime)
                 implementation(libs.circuit.foundation)
                 implementation(libs.circuit.retained)
-                implementation("org.publicvalue.multiplatform.oidc:appsupport")
+                api("org.publicvalue.multiplatform.oidc:appsupport")
                 implementation(projects.settings)
                 implementation(libs.kotlinx.serialization.json)
             }
@@ -29,7 +29,7 @@ kotlin {
             dependencies {
                 api(libs.androidx.activity.compose)
                 api(libs.androidx.core.ktx)
-                api(libs.androidx.appcompat)
+//                api(libs.androidx.appcompat)
                 implementation("androidx.datastore:datastore-preferences:1.0.0")
             }
         }

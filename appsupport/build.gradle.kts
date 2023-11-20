@@ -34,6 +34,14 @@ kotlin {
             }
         }
 
+        val androidMain by getting {
+            dependencies {
+                implementation(libs.androidx.activity.compose)
+                implementation(libs.androidx.core.ktx)
+                implementation(libs.androidx.appcompat)
+            }
+        }
+
         val commonTest by getting {
             dependencies {
 //                implementation(kotlin("test"))
@@ -42,4 +50,8 @@ kotlin {
             }
         }
     }
+}
+
+android {
+    namespace = "org.publicvalue.multiplatform.oidc.appsupport"
 }

@@ -23,5 +23,11 @@ android {
         applicationId = "org.publicvalue.multiplatform.oauth.sample"
         versionCode = 1
         versionName = "1.0"
+
+        defaultConfig {
+            addManifestPlaceholders(
+                mapOf("oidcRedirectScheme" to "org.publicvalue.multiplatform.oidc.sample")
+            )
+        }
     }
 }

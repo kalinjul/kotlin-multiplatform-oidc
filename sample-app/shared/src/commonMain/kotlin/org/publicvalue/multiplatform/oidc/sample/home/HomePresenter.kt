@@ -13,6 +13,7 @@ import org.publicvalue.multiplatform.oidc.OpenIDConnectClient
 import org.publicvalue.multiplatform.oidc.sample.Constants
 import org.publicvalue.multiplatform.oidc.sample.data.LocalSettingsStore
 import org.publicvalue.multiplatform.oidc.sample.screens.ConfigScreen
+import kotlin.coroutines.suspendCoroutine
 
 class HomePresenter(
     val navigator: Navigator
@@ -47,7 +48,8 @@ class HomePresenter(
                                 }
                             }.createAuthCodeRequest()
 
-                            uriHandler.openUri(authCodeRequest.url.toString())
+                            // TODO platform specific impelementation with callback?
+                           uriHandler.openUri(authCodeRequest.url.toString())
                         }
                     }
                 }
@@ -62,9 +64,6 @@ class HomePresenter(
                 }
             }
         }
-
-        println(idpSettings?.isValid())
-        println(clientSettings?.isValid())
 
         return HomeUiState(
             loginEnabled = idpSettings?.isValid() == true && clientSettings?.isValid() == true,

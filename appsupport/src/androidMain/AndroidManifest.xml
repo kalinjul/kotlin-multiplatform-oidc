@@ -8,14 +8,30 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
 
-<!--    <queries>-->
-<!--        <intent>-->
-<!--            <action android:name="android.intent.action.VIEW" />-->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
 
-<!--            <category android:name="android.intent.category.BROWSABLE" />-->
+            <category android:name="android.intent.category.BROWSABLE" />
 
-<!--            <data android:scheme="https" />-->
-<!--        </intent>-->
-<!--    </queries>-->
+            <data android:scheme="https" />
+        </intent>
+    </queries>
+
+    <application>
+    <activity
+        android:name="org.publicvalue.multiplatform.oidc.appsupport.HandleRedirectActivity"
+        android:exported="true"
+        >
+        <intent-filter>
+            <action android:name="android.intent.action.VIEW" />
+
+            <category android:name="android.intent.category.DEFAULT" />
+            <category android:name="android.intent.category.BROWSABLE" />
+
+            <data android:scheme="${oidcRedirectScheme}" />
+        </intent-filter>
+    </activity>
+    </application>
 
 </manifest>

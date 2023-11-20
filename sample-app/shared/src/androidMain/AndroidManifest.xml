@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest>
-<!--    org.publicvalue.multiplatform.oidc.sample://redirect-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
 </manifest>
