@@ -2,7 +2,7 @@
   <configuration default="false" name="desktopApp" type="GradleRunConfiguration" factoryName="Gradle">
     <ExternalSystemSettings>
       <option name="executionName" />
-      <option name="externalProjectPath" value="$PROJECT_DIR$/sample-app/desktop-app" />
+      <option name="externalProjectPath" value="$PROJECT_DIR$/playground-app/desktop-app" />
       <option name="externalSystemIdString" value="GRADLE" />
       <option name="scriptParameters" value="-DmainClass=OAuthPlaygroundDesktopKt --quiet" />
       <option name="taskDescriptions">
