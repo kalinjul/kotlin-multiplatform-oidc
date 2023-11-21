@@ -1,5 +1,6 @@
 package org.publicvalue.multiplatform.oidc.types
 
+import kotlinx.datetime.Clock
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -9,5 +10,6 @@ data class AccessTokenResponse(
     val expires_in: Int? = null,
     val refresh_token: String? = null,
     val scope: String? = null,
+    val received_at: Long = Clock.System.now().epochSeconds
 ) {
 }

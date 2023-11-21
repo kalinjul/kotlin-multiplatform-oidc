@@ -2,28 +2,29 @@ import androidx.compose.runtime.Composable
 import com.slack.circuit.backstack.SaveableBackStack
 import com.slack.circuit.foundation.Circuit
 import com.slack.circuit.runtime.Navigator
+import org.publicvalue.multiplatform.oidc.appsupport.AuthFlowFactory
 import org.publicvalue.multiplatform.oidc.settings.SettingsStore
 import org.publicvalue.multiplatform.oidc.sample.Root
 import org.publicvalue.multiplatform.oidc.sample.circuit.UiFactories.Companion.presenterFactories
 import org.publicvalue.multiplatform.oidc.sample.circuit.UiFactories.Companion.uiFactories
 
-
 @Composable
 fun App(
     backstack: SaveableBackStack,
     navigator: Navigator,
-    settingsStore: SettingsStore
+    settingsStore: SettingsStore,
+    authFlowFactory: AuthFlowFactory
 ) {
 
     val circuit = Circuit.Builder()
     .addUiFactories(uiFactories)
-    .addPresenterFactories(presenterFactories)
+    .addPresenterFactories(presenterFactories(authFlowFactory))
     .build()
 
     Root(
         circuit = circuit,
         backstack = backstack,
         navigator = navigator,
-        settingsStore = settingsStore
+        settingsStore = settingsStore,
     )
 }

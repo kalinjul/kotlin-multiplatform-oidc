@@ -4,16 +4,16 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.publicvalue.multiplatform.oidc.sample.domain.ClientSettings
 import org.publicvalue.multiplatform.oidc.sample.domain.IdpSettings
 import org.publicvalue.multiplatform.oidc.sample.domain.TokenData
 import org.publicvalue.multiplatform.oidc.settings.SettingsStore
-import org.publicvalue.multiplatform.oidc.types.CodeChallengeMethod
-import kotlin.coroutines.CoroutineContext
+
+private val IDP_SETTINGS_KEY = "idp_settings_key"
+private val CLIENT_SETTINGS_KEY = "client_settings_key"
+private val TOKEN_DATA_KEY = "token_data_key"
 
 class OidcSettingsStore(
     private val settingsStore: SettingsStore
@@ -51,8 +51,4 @@ class OidcSettingsStore(
         settingsStore.put(TOKEN_DATA_KEY, Json.encodeToString(tokenData))
         this.tokenData.value = tokenData
     }
-
-    private val IDP_SETTINGS_KEY = "idp_settings_key"
-    private val CLIENT_SETTINGS_KEY = "client_settings_key"
-    private val TOKEN_DATA_KEY = "token_data_key"
 }

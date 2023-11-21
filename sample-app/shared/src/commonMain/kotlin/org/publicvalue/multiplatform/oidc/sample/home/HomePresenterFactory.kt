@@ -6,17 +6,18 @@ import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
 import com.slack.circuit.runtime.ui.Ui
 import com.slack.circuit.runtime.ui.ui
+import org.publicvalue.multiplatform.oidc.appsupport.AuthFlowFactory
 import org.publicvalue.multiplatform.oidc.sample.screens.HomeScreen
 
 
-object HomePresenterFactory: Presenter.Factory {
+class HomePresenterFactory(val authFlowFactory: AuthFlowFactory): Presenter.Factory {
     override fun create(
         screen: Screen,
         navigator: Navigator,
         context: CircuitContext,
     ): Presenter<*>? {
         return when (screen) {
-            is HomeScreen -> { HomePresenter(navigator) }
+            is HomeScreen -> { HomePresenter(authFlowFactory, navigator) }
             else -> null
         }
     }

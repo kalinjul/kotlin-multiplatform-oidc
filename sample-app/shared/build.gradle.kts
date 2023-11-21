@@ -29,8 +29,6 @@ kotlin {
             dependencies {
                 api(libs.androidx.activity.compose)
                 api(libs.androidx.core.ktx)
-//                api(libs.androidx.appcompat)
-                implementation("androidx.datastore:datastore-preferences:1.0.0")
             }
         }
         val iosX64Main by getting
@@ -54,6 +52,7 @@ kotlin {
         binaries.withType<Framework> {
             isStatic = true
             baseName = "shared"
+            export("org.publicvalue.multiplatform.oidc:appsupport")
         }
     }
 }

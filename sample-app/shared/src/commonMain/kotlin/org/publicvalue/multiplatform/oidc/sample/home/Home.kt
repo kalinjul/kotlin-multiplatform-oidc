@@ -85,21 +85,24 @@ fun Home(
         tokenData?.let {
             Row() {
                 Text("Access token:")
-                Text(it.accessToken)
+                Text(it.accessToken ?: "")
             }
         }
         tokenData?.let {
             Row() {
                 Text("Token lifetime:")
-                Text(it.tokenLifetime)
+                Text("${it.expiresIn}")
             }
         }
         tokenData?.let { Row() {
             Text("Refresh token:")
-            Text(it.refreshToken) }
+            Text(it.refreshToken ?: "") }
         }
 
-        Row(horizontalArrangement = Arrangement.SpaceEvenly) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
             Button(
                 onClick = {
                     onLoginClick()

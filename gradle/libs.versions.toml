@@ -41,6 +41,7 @@ ktor = "2.3.4"
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidxActivity" }
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "androidxAppCompat" }
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
+androidx-browser = { module = "androidx.browser:browser", version = "1.7.0" }
 #auth0
 auth0 = { module = "com.auth0:java-jwt", version.ref = "auth0" }
 auth0-jwt = { module = "com.auth0:java-jwt", version.ref = "auth0" }

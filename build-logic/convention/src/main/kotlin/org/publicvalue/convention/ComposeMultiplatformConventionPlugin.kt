@@ -30,8 +30,6 @@ fun Project.configureComposePreview() {
 
             with(androidMain) {
                 dependencies {
-//                    implementation(libs.compose.ui.tooling)
-//                    implementation(libs.compose.ui.tooling.preview)
                 }
             }
             with(jvmMain) {
@@ -45,12 +43,10 @@ fun Project.configureComposePreview() {
     with(dependencies) {
         add("debugImplementation", compose.uiTooling)
         add("debugImplementation", compose.preview)
-//        add("debugImplementation", libs.compose.ui.tooling)
-//        add("debugImplementation", libs.compose.ui.tooling.preview)
     }
 
     with(extensions.getByType<BaseExtension>()) {
-        buildFeatures.compose = true // TODO is this a problem for multiplatform apps?
+        buildFeatures.compose = true
         composeOptions {
             kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
         }
