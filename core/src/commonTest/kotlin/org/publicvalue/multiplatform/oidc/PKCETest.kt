@@ -2,8 +2,6 @@ package org.publicvalue.multiplatform.oidc
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
-import org.publicvalue.multiplatform.oidc.flows.encodeForPKCE
-import org.publicvalue.multiplatform.oidc.flows.s256
 import kotlin.test.Test
 
 class PKCETest {
