@@ -20,6 +20,7 @@ suspend fun <T: ErrorPresenter<UiState>, UiState> T.catchErrorMessage(block: sus
     try {
         block()
     } catch (t: Throwable) {
+        println("printing trace")
         t.printStackTrace()
         errorMessage.value = t.message
     }

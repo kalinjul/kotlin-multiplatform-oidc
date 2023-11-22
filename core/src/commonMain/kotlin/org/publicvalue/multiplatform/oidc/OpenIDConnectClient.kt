@@ -90,14 +90,15 @@ class OpenIDConnectClient(
      * https://openid.net/specs/openid-connect-rpinitiated-1_0.html
      */
     suspend fun endSession(tokens: AccessTokenResponse): HttpStatusCode {
-        config.endpoints?.endSessionEndpoint?.let {
-            val url = URLBuilder(it)
+        val endpoint = config.endpoints?.endSessionEndpoint?.trim()
+        if (!endpoint.isNullOrEmpty()) {
+            val url = URLBuilder(endpoint)
             val response = httpClient.post {
                 this.url(url.build())
                 parameter("id_token_hint", tokens.id_token)
             }
             return response.status
-        } ?: run {
+        } else {
             throw OpenIDConnectException.InvalidUrl("No endSessionEndpoint set")
         }
     }

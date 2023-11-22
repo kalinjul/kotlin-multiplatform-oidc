@@ -92,12 +92,16 @@ class HomePresenter(
                     if (client != null) {
                         tokenResponse?.let {
                             scope.launch {
-                                catchErrorMessage {
-                                    val result = client.endSession(it)
-                                    if (result.isSuccess() || result == HttpStatusCode.Found) {
-                                        tokenResponse = null
-                                        settingsStore.clearTokenData()
+                                if (!client.config.endpoints?.endSessionEndpoint.isNullOrEmpty()) {
+                                    catchErrorMessage {
+                                        val result = client.endSession(it)
+                                        if (result.isSuccess() || result == HttpStatusCode.Found) {
+                                            tokenResponse = null
+                                            settingsStore.clearTokenData()
+                                        }
                                     }
+                                } else {
+                                    setErrorMessage("No endSessionEndpoint set")
                                 }
                             }
                         }
