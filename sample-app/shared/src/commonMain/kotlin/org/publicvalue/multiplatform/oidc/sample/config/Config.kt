@@ -29,6 +29,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import org.publicvalue.multiplatform.oidc.sample.Constants
 import org.publicvalue.multiplatform.oidc.sample.domain.ClientSettings
 import org.publicvalue.multiplatform.oidc.sample.domain.IdpSettings
 import org.publicvalue.multiplatform.oidc.sample.home.HomeUiEvent
@@ -64,6 +65,7 @@ fun Config(
             discoveryUrl = state.idpSettings.discoveryUrl,
             authEndpoint = state.idpSettings.endpointAuthorization,
             tokenEndpoint = state.idpSettings.endpointToken,
+            endSessionEndpoint = state.idpSettings.endpointEndSession,
             clientId = state.clientSettings.client_id,
             clientSecret = state.clientSettings.client_secret,
             scope = state.clientSettings.scope,
@@ -81,6 +83,11 @@ fun Config(
             onChangeTokenEndpoint = {
                 state.eventSink(
                     ConfigUiEvent.ChangeIdpProperty(IdpSettings::endpointToken, it)
+                )
+            },
+            onChangeEndSessionEndpoint = {
+                state.eventSink(
+                    ConfigUiEvent.ChangeIdpProperty(IdpSettings::endpointEndSession, it)
                 )
             },
             onChangeClientId = {
@@ -118,6 +125,7 @@ fun Config(
     discoveryUrl: String?,
     authEndpoint: String?,
     tokenEndpoint: String?,
+    endSessionEndpoint: String?,
     clientId: String?,
     clientSecret: String?,
     scope: String?,
@@ -125,6 +133,7 @@ fun Config(
     onChangeDiscoveryUrl: (String) -> Unit,
     onChangeAuthEndpoint: (String) -> Unit,
     onChangeTokenEndpoint: (String) -> Unit,
+    onChangeEndSessionEndpoint: (String) -> Unit,
     onChangeClientId: (String) -> Unit,
     onChangeClientSecret: (String) -> Unit,
     onChangeScope: (String) -> Unit,
@@ -145,6 +154,9 @@ fun Config(
         }
         var tokenEndpoint by remember(tokenEndpoint == null) {
             mutableStateOf(tokenEndpoint.orEmpty())
+        }
+        var endSessionEndpoint by remember(endSessionEndpoint == null) {
+            mutableStateOf(endSessionEndpoint.orEmpty())
         }
 
         var clientId by remember(clientId != null) {
@@ -179,6 +191,11 @@ fun Config(
             onValueChange = { tokenEndpoint = it; onChangeTokenEndpoint(it)},
             label = { Text("Token") }
         )
+        SingleLineInput(
+            value = endSessionEndpoint,
+            onValueChange = { endSessionEndpoint = it; onChangeEndSessionEndpoint(it)},
+            label = { Text("End Session") }
+        )
 
         FormHeadline(text = "Client")
         SingleLineInput(
@@ -208,6 +225,6 @@ fun Config(
                 Text(modifier = Modifier.padding(start = 16.dp), text = it.name)
             }
         }
-        Text("Note: redirect_url will always be ....")
+        Text("Note: redirect_url is ${Constants.redirectUrl}")
     }
 }

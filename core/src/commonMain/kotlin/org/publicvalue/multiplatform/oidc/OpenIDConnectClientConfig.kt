@@ -36,12 +36,14 @@ annotation class EndpointMarker
 data class Endpoints(
     var tokenEndpoint: String? = null,
     var authorizationEndpoint: String? = null,
-    var userInfoEndpoint: String? = null
+    var userInfoEndpoint: String? = null,
+    var endSessionEndpoint: String? = null
 ) {
     fun baseUrl(baseUrl: String, block: Endpoints.() -> Unit) {
         val endpoints = Endpoints()
         endpoints.block()
         tokenEndpoint = baseUrl + endpoints.tokenEndpoint
         authorizationEndpoint = baseUrl + endpoints.authorizationEndpoint
+        endSessionEndpoint = baseUrl + endpoints.endSessionEndpoint
     }
 }

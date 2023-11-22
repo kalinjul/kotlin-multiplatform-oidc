@@ -80,6 +80,9 @@ class ConfigPresenter(
                         IdpSettings::endpointAuthorization -> scope.launch {
                             settingsStore.setIdpSettings(idpSettings.copy(endpointAuthorization = event.value as String))
                         }
+                        IdpSettings::endpointEndSession -> scope.launch {
+                            settingsStore.setIdpSettings(idpSettings.copy(endpointEndSession = event.value as String))
+                        }
                     }
                 }
                 ConfigUiEvent.Discover -> {

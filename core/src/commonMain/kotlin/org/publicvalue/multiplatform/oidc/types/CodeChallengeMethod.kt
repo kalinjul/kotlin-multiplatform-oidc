@@ -1,5 +1,7 @@
 package org.publicvalue.multiplatform.oidc.types
 
-enum class CodeChallengeMethod {
-    S256, plain, off
+enum class CodeChallengeMethod(
+    val queryString: String?
+) {
+    S256("S256"), plain("plain"), off(null)
 }

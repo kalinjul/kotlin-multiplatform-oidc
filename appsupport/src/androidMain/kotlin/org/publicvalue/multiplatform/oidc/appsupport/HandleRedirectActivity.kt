@@ -2,6 +2,8 @@ package org.publicvalue.multiplatform.oidc.appsupport
 
 import android.content.Intent
 import androidx.activity.ComponentActivity
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 
 class HandleRedirectActivity : ComponentActivity() {
 
@@ -11,6 +13,7 @@ class HandleRedirectActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
+        println("HandleRedirectActivity.OnResume")
         val data = getIntent().getData()
 
         val responseUri = data
@@ -22,6 +25,8 @@ class HandleRedirectActivity : ComponentActivity() {
             val code = responseUri?.getQueryParameter("code")
             currentCallback?.invoke(AuthResponse.CodeResponse(code, state))
         }
+        println("Calling finish()")
+
         finish()
     }
 }

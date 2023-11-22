@@ -1,19 +1,29 @@
 package org.publicvalue.multiplatform.oidc
 
 import io.ktor.client.HttpClient
+import io.ktor.client.call.NoTransformationFoundException
 import io.ktor.client.call.body
+import io.ktor.client.plugins.api.createClientPlugin
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.forms.prepareForm
+import io.ktor.client.request.parameter
+import io.ktor.client.request.post
 import io.ktor.client.request.url
+import io.ktor.client.statement.HttpResponsePipeline
+import io.ktor.client.statement.HttpStatement
+import io.ktor.http.ContentType
+import io.ktor.http.HttpStatusCode
 import io.ktor.http.URLBuilder
 import io.ktor.http.decodeURLQueryComponent
 import io.ktor.http.isSuccess
 import io.ktor.http.parameters
 import io.ktor.serialization.kotlinx.json.json
+import io.ktor.util.pipeline.PipelinePhase
+import io.ktor.util.pipeline.intercept
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import org.publicvalue.multiplatform.oidc.flows.PKCE
-import org.publicvalue.multiplatform.oidc.types.AccessTokenRequest
+import org.publicvalue.multiplatform.oidc.types.TokenRequest
 import org.publicvalue.multiplatform.oidc.types.AccessTokenResponse
 import org.publicvalue.multiplatform.oidc.types.AuthCodeRequest
 import org.publicvalue.multiplatform.oidc.types.CodeChallengeMethod
@@ -22,10 +32,13 @@ import org.publicvalue.multiplatform.oidc.types.CodeChallengeMethod
 class OpenIDConnectClient(
     val httpClient: HttpClient = HttpClient {
         install(ContentNegotiation) {
-            json(Json {
-                explicitNulls = false
-                ignoreUnknownKeys = true
-            })
+            json(
+                json = Json {
+                    explicitNulls = false
+                    ignoreUnknownKeys = true
+                },
+                contentType = ContentType.Any // support broken IDPs
+            )
         }
     },
     val config: OpenIDConnectClientConfig,
@@ -56,7 +69,7 @@ class OpenIDConnectClient(
             parameters.append("response_mode", "query")
             config.scope?.let { parameters.append("scope", it) }
             parameters.append("nonce", nonce)
-            parameters.append("code_challenge_method", config.codeChallengeMethod.name)
+            config.codeChallengeMethod.queryString?.let { parameters.append("code_challenge_method", it) }
             if (config.codeChallengeMethod != CodeChallengeMethod.off) { parameters.append("code_challenge", pkce.codeChallenge) }
             config.redirectUri?.let { parameters.append("redirect_uri", it) }
             parameters.append("state", state)
@@ -70,31 +83,37 @@ class OpenIDConnectClient(
     }
 
     /**
+     * https://openid.net/specs/openid-connect-rpinitiated-1_0.html
+     */
+    suspend fun endSession(tokens: AccessTokenResponse): HttpStatusCode {
+        config.endpoints?.endSessionEndpoint?.let {
+            val url = URLBuilder(it)
+            val response = httpClient.post {
+                this.url(url.build())
+                parameter("id_token_hint", tokens.id_token)
+            }
+            return response.status
+        } ?: run {
+            throw OpenIDConnectException.InvalidUrl("No endSessionEndpoint set")
+        }
+    }
+
+    /**
      * https://datatracker.ietf.org/doc/html/rfc6749#section-4.1.3
      * + code verifier https://datatracker.ietf.org/doc/html/rfc7636#section-4.5
      */
     suspend fun exchangeToken(authCodeRequest: AuthCodeRequest, code: String): AccessTokenResponse {
         // send code_verifier to server
-        val (httpFormRequest, params) = createAccessTokenRequest(authCodeRequest, code)
-
-        val response = httpFormRequest.execute()
-
-        return if (response.status.isSuccess()) {
-            val body = response.call.body<String>().decodeURLQueryComponent(plusIsSpace = true)
-            if (body.startsWith("error")) {
-                throw OpenIDConnectException.UnsuccessfulTokenRequest("Exchange token failed: ${response.status.value} $body", response.status, body)
-            } else {
-                val accessTokenResponse: AccessTokenResponse = response.call.body()
-                accessTokenResponse
-            }
-
-        } else {
-            val body = response.call.body<String>().decodeURLQueryComponent(plusIsSpace = true)
-            throw OpenIDConnectException.UnsuccessfulTokenRequest("Exchange token failed: ${response.status.value} $body", response.status, body)
-        }
+        val tokenRequest = createAccessTokenRequest(authCodeRequest, code)
+        return executeTokenRequest(tokenRequest.request)
     }
 
-    suspend fun createAccessTokenRequest(authCodeRequest: AuthCodeRequest, code: String): AccessTokenRequest {
+    suspend fun refreshToken(tokens: AccessTokenResponse): AccessTokenResponse {
+        val tokenRequest = createRefreshTokenRequest(tokens)
+        return executeTokenRequest(tokenRequest.request)
+    }
+
+    suspend fun createAccessTokenRequest(authCodeRequest: AuthCodeRequest, code: String): TokenRequest {
         val url = URLBuilder(config.endpoints?.tokenEndpoint!!).build()
 
         val formParameters = parameters {
@@ -110,10 +129,66 @@ class OpenIDConnectClient(
         ) {
             url(url)
         }
-        return AccessTokenRequest(
+        return TokenRequest(
             request,
             formParameters
         )
+    }
+
+    suspend fun createRefreshTokenRequest(tokens: AccessTokenResponse): TokenRequest {
+        val url = URLBuilder(config.endpoints?.tokenEndpoint!!).build()
+
+        val formParameters = parameters {
+            append("grant_type", "refresh_token")
+            append("client_id", config.clientId!!)
+            config.clientSecret?.let { append("client_secret", it) }
+            append("refresh_token", tokens.refresh_token ?: "")
+            config.scope?.let { append("scope", it) }
+        }
+        val request = httpClient.prepareForm(
+            formParameters = formParameters
+        ) {
+            url(url)
+        }
+        return TokenRequest(
+            request,
+            formParameters
+        )
+    }
+
+    private suspend fun executeTokenRequest(httpFormRequest: HttpStatement): AccessTokenResponse {
+        val response = httpFormRequest.execute()
+
+        return if (response.status.isSuccess()) {
+            val body = response.call.body<String>().decodeURLQueryComponent(plusIsSpace = true)
+            if (body.startsWith("error")) {
+                throw OpenIDConnectException.UnsuccessfulTokenRequest(
+                    "Exchange token failed: ${response.status.value} $body",
+                    response.status,
+                    body
+                )
+            } else {
+                try {
+                    val accessTokenResponse: AccessTokenResponse = response.call.body()
+                    accessTokenResponse
+                } catch (e: NoTransformationFoundException) {
+                    throw OpenIDConnectException.UnsuccessfulTokenRequest(
+                        message = "Could not decode response",
+                        cause = e,
+                        statusCode = response.status,
+                        body = response.call.body<String>()
+                    )
+                }
+            }
+
+        } else {
+            val body = response.call.body<String>().decodeURLQueryComponent(plusIsSpace = true)
+            throw OpenIDConnectException.UnsuccessfulTokenRequest(
+                "Exchange token failed: ${response.status.value} $body",
+                response.status,
+                body
+            )
+        }
     }
 }
 

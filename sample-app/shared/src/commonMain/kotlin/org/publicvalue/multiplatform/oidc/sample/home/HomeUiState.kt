@@ -9,7 +9,8 @@ data class HomeUiState(
     val refreshEnabled: Boolean,
     val logoutEnabled: Boolean,
     val tokenData: TokenData?,
-    val eventSink: (HomeUiEvent) -> Unit
+    val eventSink: (HomeUiEvent) -> Unit,
+    val errorMessage: String?
 ): CircuitUiState
 
 sealed interface HomeUiEvent: CircuitUiEvent {
