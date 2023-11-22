@@ -1,5 +1,7 @@
+includeBuild("../")
+
 pluginManagement {
-    includeBuild("build-logic")
+    includeBuild("../build-logic")
 
     repositories {
         mavenCentral()
@@ -10,6 +12,12 @@ pluginManagement {
 }
 
 dependencyResolutionManagement {
+    versionCatalogs {
+        create("libs") {
+            from(files("../gradle/libs.versions.toml"))
+        }
+    }
+
     repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
     repositories {
         mavenCentral()
@@ -47,10 +55,19 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name="kotlin-multiplatform-oauth"
-
+rootProject.name = "playground-app"
+include(":common:ui:compose")
+include(":common:ui:resources:strings")
+include(":common:screens")
+include(":data:settings")
 include(":core")
-
-enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
-// https://docs.gradle.org/8.3/userguide/configuration_cache.html#config_cache:stable
-enableFeaturePreview("STABLE_CONFIGURATION_CACHE")
+include(":webserver")
+include(":shared")
+include(":domain")
+include(":ui:common")
+include(":ui:root")
+include(":ui:idplist")
+include(":ui:clientlist")
+include(":ui:clientdetail")
+include(":desktop-app")
+include(":data:db-sqldelight")

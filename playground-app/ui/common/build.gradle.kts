@@ -10,12 +10,12 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation(projects.playgroundApp.common.ui.compose)
+                implementation(projects.common.ui.compose)
                 implementation(compose.foundation)
-                api(projects.playgroundApp.domain)
+                api(projects.domain)
 //
 //                api(projects.common.ui.resources.strings)
-                api(projects.playgroundApp.common.screens)
+                api(projects.common.screens)
 //
                 implementation(compose.material3)
                 @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)

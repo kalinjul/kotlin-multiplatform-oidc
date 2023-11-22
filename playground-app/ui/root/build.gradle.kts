@@ -11,8 +11,8 @@ kotlin {
         val commonMain by getting {
             dependencies {
 //                implementation(projects.domain)
-                implementation(projects.playgroundApp.core)
-                implementation(projects.playgroundApp.common.ui.compose)
+                implementation(projects.core)
+                implementation(projects.common.ui.compose)
 //
                 api(libs.kotlinx.coroutines.core)
                 implementation(libs.kotlin.inject.runtime)

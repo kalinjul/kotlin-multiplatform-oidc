@@ -9,7 +9,7 @@ kotlin {
                 api(libs.kotlin.inject.runtime)
                 api(libs.kotlinx.coroutines.core)
 
-                implementation(projects.playgroundApp.core)
+                implementation(projects.core)
 
                 api(libs.ktor.server.core)
                 implementation(libs.ktor.server.cio)

@@ -19,8 +19,8 @@ kotlin {
                 implementation(compose.material3)
                 implementation(compose.materialIconsExtended)
 
-                api(projects.playgroundApp.common.screens)
-                api(projects.playgroundApp.common.ui.resources.strings)
+                api(projects.common.screens)
+                api(projects.common.ui.resources.strings)
             }
         }
     }

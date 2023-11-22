@@ -14,7 +14,7 @@ kotlin {
         val jvmMain by getting  {
             dependencies {
                 implementation(compose.desktop.currentOs)
-                implementation(projects.playgroundApp.shared)
+                implementation(projects.shared)
             }
         }
     }

@@ -8,7 +8,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api(libs.kotlinx.datetime)
-                implementation(projects.playgroundApp.core)
+                implementation(projects.core)
             }
         }
     }

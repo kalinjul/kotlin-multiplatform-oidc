@@ -10,9 +10,10 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation(projects.playgroundApp.core)
-                implementation(projects.playgroundApp.common.ui.compose)
-                implementation(projects.playgroundApp.ui.common)
+                implementation("org.publicvalue.multiplatform.oidc:core")
+                implementation(projects.core)
+                implementation(projects.common.ui.compose)
+                implementation(projects.ui.common)
 
                 implementation(projects.core)
 

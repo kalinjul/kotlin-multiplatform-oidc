@@ -7,7 +7,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                api(projects.playgroundApp.core)
+                api(projects.core)
 
                 api(libs.kotlinx.datetime)
 

@@ -23,16 +23,16 @@ kotlin {
 
                 implementation(libs.kotlin.inject.runtime)
 
-                api(projects.playgroundApp.core)
-                api(projects.playgroundApp.webserver)
-                api(projects.playgroundApp.data.settings)
-                api(projects.playgroundApp.data.dbSqldelight)
-                api(projects.playgroundApp.common.ui.compose)
-                api(projects.playgroundApp.domain)
-                api(projects.playgroundApp.ui.root)
-                api(projects.playgroundApp.ui.idplist)
-                api(projects.playgroundApp.ui.clientlist)
-                api(projects.playgroundApp.ui.clientdetail)
+                api(projects.core)
+                api(projects.webserver)
+                api(projects.data.settings)
+                api(projects.data.dbSqldelight)
+                api(projects.common.ui.compose)
+                api(projects.domain)
+                api(projects.ui.root)
+                api(projects.ui.idplist)
+                api(projects.ui.clientlist)
+                api(projects.ui.clientdetail)
             }
         }
         val androidMain by getting {
