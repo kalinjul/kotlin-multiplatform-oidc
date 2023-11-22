@@ -3,42 +3,48 @@ package org.publicvalue.multiplatform.oidc
 import io.ktor.client.HttpClient
 import io.ktor.client.call.NoTransformationFoundException
 import io.ktor.client.call.body
-import io.ktor.client.plugins.api.createClientPlugin
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.forms.prepareForm
 import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.request.url
-import io.ktor.client.statement.HttpResponsePipeline
 import io.ktor.client.statement.HttpStatement
 import io.ktor.http.ContentType
+import io.ktor.http.ContentTypeMatcher
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.URLBuilder
 import io.ktor.http.decodeURLQueryComponent
 import io.ktor.http.isSuccess
 import io.ktor.http.parameters
-import io.ktor.serialization.kotlinx.json.json
-import io.ktor.util.pipeline.PipelinePhase
-import io.ktor.util.pipeline.intercept
+import io.ktor.serialization.kotlinx.KotlinxSerializationConverter
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import org.publicvalue.multiplatform.oidc.flows.PKCE
-import org.publicvalue.multiplatform.oidc.types.TokenRequest
 import org.publicvalue.multiplatform.oidc.types.AccessTokenResponse
 import org.publicvalue.multiplatform.oidc.types.AuthCodeRequest
 import org.publicvalue.multiplatform.oidc.types.CodeChallengeMethod
+import org.publicvalue.multiplatform.oidc.types.TokenRequest
 
 @OptIn(ExperimentalSerializationApi::class)
 class OpenIDConnectClient(
     val httpClient: HttpClient = HttpClient {
         install(ContentNegotiation) {
-            json(
-                json = Json {
-                    explicitNulls = false
-                    ignoreUnknownKeys = true
-                },
-                contentType = ContentType.Any // support broken IDPs
-            )
+            // register custom type matcher to support broken IDPs that don't correct content-type
+            register(
+                contentTypeToSend = ContentType.Application.Json,
+                converter = KotlinxSerializationConverter(
+                    Json {
+                        explicitNulls = false
+                        ignoreUnknownKeys = true
+                    }
+                ),
+                contentTypeMatcher = object : ContentTypeMatcher {
+                    override fun contains(contentType: ContentType): Boolean {
+                        return true
+                    }
+                }
+            ) {
+            }
         }
     },
     val config: OpenIDConnectClientConfig,
