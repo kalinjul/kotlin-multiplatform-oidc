@@ -25,7 +25,7 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>org.publicvalue.multiplatform.oidc.sample</string>
+				<string>$(REDIRECT_SCHEME)</string>
 			</array>
 		</dict>
 	</array>

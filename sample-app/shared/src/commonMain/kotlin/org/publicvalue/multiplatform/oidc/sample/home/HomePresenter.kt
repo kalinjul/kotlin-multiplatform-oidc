@@ -82,8 +82,10 @@ class HomePresenter(
 
                     if (client != null) {
                         scope.launch {
-                            val newTokens = authFlowFactory.createAuthFlow(client).getAccessToken()
-                            updateTokenResponse(newTokens)
+                            catchErrorMessage {
+                                val newTokens = authFlowFactory.createAuthFlow(client).getAccessToken()
+                                updateTokenResponse(newTokens)
+                            }
                         }
                     }
                 }
