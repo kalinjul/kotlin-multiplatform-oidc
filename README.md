@@ -13,3 +13,8 @@ build.gradle.kts:
         )
     }
 ```
+
+If custom tab is not closing:
+```kotlin
+HandleRedirectActivity.mainActivityClass = this.javaClass.kotlin
+```
