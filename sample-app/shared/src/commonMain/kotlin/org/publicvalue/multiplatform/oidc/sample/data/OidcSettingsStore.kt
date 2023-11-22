@@ -51,4 +51,9 @@ class OidcSettingsStore(
         settingsStore.put(TOKEN_DATA_KEY, Json.encodeToString(tokenData))
         this.tokenData.value = tokenData
     }
+
+    suspend fun clearTokenData() {
+        settingsStore.remove(TOKEN_DATA_KEY)
+        this.tokenData.value = null
+    }
 }

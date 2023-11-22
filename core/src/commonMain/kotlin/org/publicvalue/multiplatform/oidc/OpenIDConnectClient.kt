@@ -81,8 +81,6 @@ class OpenIDConnectClient(
             parameters.append("state", state)
         }.build()
 
-        println(url)
-
         return AuthCodeRequest(
             url, config, pkce, state, nonce
         )

@@ -5,17 +5,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.platform.LocalUriHandler
 import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.Navigator
-import com.slack.circuit.runtime.presenter.Presenter
-import io.ktor.client.HttpClient
+import io.ktor.http.HttpStatusCode
+import io.ktor.http.isSuccess
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.publicvalue.multiplatform.oidc.OpenIDConnectClient
 import org.publicvalue.multiplatform.oidc.appsupport.AuthFlowFactory
-import org.publicvalue.multiplatform.oidc.appsupport.PlatformOidcAuthFlow
 import org.publicvalue.multiplatform.oidc.sample.Constants
 import org.publicvalue.multiplatform.oidc.sample.circuit.ErrorPresenter
 import org.publicvalue.multiplatform.oidc.sample.circuit.catchErrorMessage
@@ -95,7 +93,11 @@ class HomePresenter(
                         tokenResponse?.let {
                             scope.launch {
                                 catchErrorMessage {
-                                    client.endSession(it)
+                                    val result = client.endSession(it)
+                                    if (result.isSuccess() || result == HttpStatusCode.Found) {
+                                        tokenResponse = null
+                                        settingsStore.clearTokenData()
+                                    }
                                 }
                             }
                         }

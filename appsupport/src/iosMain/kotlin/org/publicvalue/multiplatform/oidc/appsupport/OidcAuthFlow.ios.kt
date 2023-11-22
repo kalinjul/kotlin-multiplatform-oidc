@@ -29,7 +29,6 @@ actual class PlatformOidcAuthFlow(
                     callbackURLScheme = "org.publicvalue.multiplatform.oidc.sample",
                     completionHandler = object : ASWebAuthenticationSessionCompletionHandler {
                         override fun invoke(p1: NSURL?, p2: NSError?) {
-                            println("Got invoke: $p1 , $p2")
                             if (p1 != null) {
                                 val url = Url(p1.toString()) // use sane url instead of NS garbage
                                 val code = url.parameters["code"] ?: ""
