@@ -15,7 +15,6 @@ actual class PlatformOidcAuthFlow(
     override suspend fun getAccessCode(request: AuthCodeRequest): AuthResponse {
         val intent = Intent(context, HandleRedirectActivity::class.java).apply {
             this.putExtra("url", request.url.toString())
-            this.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         }
         val result = contract.launchSuspend(intent)
 
