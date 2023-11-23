@@ -8,7 +8,9 @@ import org.publicvalue.multiplatform.oidc.settings.AndroidSettingsStore
 import org.publicvalue.multiplatform.oidc.sample.screens.HomeScreen
 
 @Composable
-fun MainView() {
+fun MainView(
+    authFlowFactory: AndroidAuthFlowFactory
+) {
     val context = LocalContext.current
 
     val backstack = rememberSaveableBackStack {
@@ -26,6 +28,6 @@ fun MainView() {
         backstack = backstack,
         navigator = navigator,
         settingsStore = settingsStore,
-        authFlowFactory = AndroidAuthFlowFactory(LocalContext.current)
+        authFlowFactory = authFlowFactory
     )
 }
