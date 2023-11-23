@@ -78,6 +78,7 @@ class HomePresenter(
         fun eventSink(event: HomeUiEvent) {
             when(event) {
                 HomeUiEvent.Login -> {
+                    resetErrorMessage()
                     val client = createClient()
 
                     if (client != null) {
@@ -90,6 +91,7 @@ class HomePresenter(
                     }
                 }
                 HomeUiEvent.Logout -> {
+                    resetErrorMessage()
                     val client = createClient()
                     if (client != null) {
                         tokenResponse?.let {
@@ -113,6 +115,7 @@ class HomePresenter(
                     navigator.goTo(ConfigScreen)
                 }
                 HomeUiEvent.Refresh -> {
+                    resetErrorMessage()
                     val client = createClient()
                     if (client != null) {
                         scope.launch {
