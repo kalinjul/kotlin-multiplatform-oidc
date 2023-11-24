@@ -1,0 +1,64 @@
+name: Android CI
+
+on:
+  push:
+    branches: [ "develop" ]
+  pull_request:
+    branches: [ "develop" ]
+
+jobs:
+  build:
+    runs-on: macos-14
+
+    steps:
+    - uses: actions/checkout@v3
+    - uses: gradle/wrapper-validation-action@v1
+    - uses: actions/cache@v2
+      with:
+        path: |
+          ~/.gradle/caches/modules-*
+          ~/.gradle/caches/jars-*
+          ~/.gradle/caches/build-cache-*
+        key: gradle-${{ runner.os }}-${{ hashFiles('**/build.gradle') }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
+    - name: set up JDK 11
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: gradle
+        
+
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+    - name: Build library
+      run: ./gradlew assembleRelease
+    - name: Build sample apps
+      run: ./gradlew -p sample-app assembleRelease
+    - name: Build playground app
+      run: ./gradlew -p playground-app assembleRelease
+
+  test:
+    runs-on: macos-14
+
+    steps:
+    - uses: actions/checkout@v3
+    - uses: gradle/wrapper-validation-action@v1
+    - uses: actions/cache@v2
+      with:
+        path: |
+          ~/.gradle/caches/modules-*
+          ~/.gradle/caches/jars-*
+          ~/.gradle/caches/build-cache-*
+        key: gradle-${{ runner.os }}-${{ hashFiles('**/build.gradle') }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
+        
+    - name: set up JDK 11
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: gradle
+
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+    - name: Test library
+      run: ./gradlew check
