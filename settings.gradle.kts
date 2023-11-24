@@ -54,4 +54,4 @@ include(":oidc-appsupport")
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 // https://docs.gradle.org/8.3/userguide/configuration_cache.html#config_cache:stable
-enableFeaturePreview("STABLE_CONFIGURATION_CACHE")
+// enableFeaturePreview("STABLE_CONFIGURATION_CACHE")
