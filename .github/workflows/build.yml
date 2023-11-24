@@ -1,4 +1,4 @@
-name: Android CI
+name: Build Snapshot
 
 on:
   push:
@@ -20,7 +20,7 @@ jobs:
           ~/.gradle/caches/jars-*
           ~/.gradle/caches/build-cache-*
         key: gradle-${{ runner.os }}-${{ hashFiles('**/build.gradle') }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
-    - name: set up JDK 11
+    - name: set up JDK
       uses: actions/setup-java@v3
       with:
         java-version: '17'
@@ -51,7 +51,7 @@ jobs:
           ~/.gradle/caches/build-cache-*
         key: gradle-${{ runner.os }}-${{ hashFiles('**/build.gradle') }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
         
-    - name: set up JDK 11
+    - name: set up JDK
       uses: actions/setup-java@v3
       with:
         java-version: '17'
