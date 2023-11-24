@@ -1,0 +1,9 @@
+name: Test
+
+runs:
+  using: "composite"
+  steps:
+    - uses: ./.github/workflows/actions/prepare
+    - name: Test library
+      shell: bash
+      run: ./gradlew check

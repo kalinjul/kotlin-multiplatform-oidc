@@ -1,8 +1,12 @@
+import org.jetbrains.compose.internal.utils.getLocalProperty
+
 plugins {
     id("org.publicvalue.convention.android.library")
     id("org.publicvalue.convention.kotlin.multiplatform.mobile")
-    id("maven-publish")
+    id("org.publicvalue.convention.centralPublish")
 }
+
+description = "Kotlin Multiplatform OIDC appsupport library for Android/iOS"
 
 kotlin {
     sourceSets {

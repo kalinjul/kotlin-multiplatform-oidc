@@ -4,3 +4,4 @@ build
 .hprof
 **/.DS_Store
 *.hprof
+local.properties

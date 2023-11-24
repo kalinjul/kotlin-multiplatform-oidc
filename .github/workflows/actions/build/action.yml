@@ -1,0 +1,21 @@
+name: Build
+
+#inputs:
+#  who-to-greet:  # id of input
+#    description: 'Who to greet'
+#    required: true
+#    default: 'World'
+
+runs:
+  using: "composite"
+  steps:
+    - uses: ./.github/workflows/actions/prepare
+    - name: Build library
+      shell: bash
+      run: ./gradlew assembleRelease
+    - name: Build sample apps
+      shell: bash
+      run: ./gradlew -p sample-app assembleRelease
+    - name: Build playground app
+      shell: bash
+      run: ./gradlew -p playground-app assembleRelease
