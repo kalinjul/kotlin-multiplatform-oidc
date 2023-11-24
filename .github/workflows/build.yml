@@ -15,13 +15,13 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - uses: gradle/wrapper-validation-action@v1
-    - uses: actions/cache@v2
-      with:
-        path: |
-          ~/.gradle/caches/modules-*
-          ~/.gradle/caches/jars-*
-          ~/.gradle/caches/build-cache-*
-        key: gradle-${{ runner.os }}-${{ hashFiles('**/build.gradle') }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
+#    - uses: actions/cache@v2
+#      with:
+#        path: |
+#          ~/.gradle/caches/modules-*
+#          ~/.gradle/caches/jars-*
+#          ~/.gradle/caches/build-cache-*
+#        key: gradle-${{ runner.os }}-${{ hashFiles('**/build.gradle') }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
     - name: set up JDK
       uses: actions/setup-java@v3
       with:
@@ -48,13 +48,13 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - uses: gradle/wrapper-validation-action@v1
-    - uses: actions/cache@v2
-      with:
-        path: |
-          ~/.gradle/caches/modules-*
-          ~/.gradle/caches/jars-*
-          ~/.gradle/caches/build-cache-*
-        key: gradle-${{ runner.os }}-${{ hashFiles('**/build.gradle') }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
+#    - uses: actions/cache@v2
+#      with:
+#        path: |
+#          ~/.gradle/caches/modules-*
+#          ~/.gradle/caches/jars-*
+#          ~/.gradle/caches/build-cache-*
+#        key: gradle-${{ runner.os }}-${{ hashFiles('**/build.gradle') }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
         
     - name: set up JDK
       uses: actions/setup-java@v3
@@ -76,13 +76,13 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: gradle/wrapper-validation-action@v1
-      - uses: actions/cache@v2
-        with:
-          path: |
-            ~/.gradle/caches/modules-*
-            ~/.gradle/caches/jars-*
-            ~/.gradle/caches/build-cache-*
-          key: gradle-${{ runner.os }}-${{ hashFiles('**/build.gradle') }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
+#      - uses: actions/cache@v2
+#        with:
+#          path: |
+#            ~/.gradle/caches/modules-*
+#            ~/.gradle/caches/jars-*
+#            ~/.gradle/caches/build-cache-*
+#          key: gradle-${{ runner.os }}-${{ hashFiles('**/build.gradle') }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
       - name: set up JDK
         uses: actions/setup-java@v3
         with:
