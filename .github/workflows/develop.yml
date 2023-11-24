@@ -12,6 +12,11 @@ concurrency:
   group: ${{ github.name }}-${{ github.workflow }}-${{ github.head_ref }}
   cancel-in-progress: true
 
+permissions:
+  id-token: write
+  contents: read
+  checks: write # required for test-reporter
+
 jobs:
   build:
     runs-on: macos-14
