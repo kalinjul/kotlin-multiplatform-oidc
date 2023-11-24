@@ -19,7 +19,7 @@ import org.publicvalue.multiplatform.oidc.sample.circuit.ErrorPresenter
 import org.publicvalue.multiplatform.oidc.sample.circuit.catchErrorMessage
 import org.publicvalue.multiplatform.oidc.sample.data.LocalSettingsStore
 import org.publicvalue.multiplatform.oidc.sample.screens.ConfigScreen
-import org.publicvalue.multiplatform.oidc.types.AccessTokenResponse
+import org.publicvalue.multiplatform.oidc.types.remote.AccessTokenResponse
 
 class HomePresenter(
     val authFlowFactory: AuthFlowFactory,

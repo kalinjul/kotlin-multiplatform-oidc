@@ -1,8 +1,8 @@
-package org.publicvalue.multiplatform.oidc.appsupport
+package org.publicvalue.multiplatform.oidc.flows
 
 import org.publicvalue.multiplatform.oidc.OpenIDConnectClient
 import org.publicvalue.multiplatform.oidc.OpenIDConnectException
-import org.publicvalue.multiplatform.oidc.types.AccessTokenResponse
+import org.publicvalue.multiplatform.oidc.types.remote.AccessTokenResponse
 import org.publicvalue.multiplatform.oidc.types.AuthCodeRequest
 import org.publicvalue.multiplatform.oidc.types.validateState
 
@@ -15,6 +15,7 @@ import org.publicvalue.multiplatform.oidc.types.validateState
  */
 abstract class OidcCodeAuthFlow(val client: OpenIDConnectClient) {
 
+    @Suppress("unused")
     suspend fun getAccessToken(): AccessTokenResponse {
         val request = client.createAuthorizationCodeRequest()
         return getAccessToken(request)
@@ -29,26 +30,24 @@ abstract class OidcCodeAuthFlow(val client: OpenIDConnectClient) {
      * Uses the request URL to open a browser and perform authorization.
      * Should return the Authorization Code.
      */
-    abstract suspend fun getAuthorizationCode(request: AuthCodeRequest): AuthResponse
+    abstract suspend fun getAuthorizationCode(request: AuthCodeRequest): AuthCodeResponse
 
-    private suspend fun exchangeToken(client: OpenIDConnectClient, request: AuthCodeRequest, authResponse: AuthResponse): AccessTokenResponse {
-        return when (authResponse) {
-            is AuthResponse.CodeResponse -> {
-                if (authResponse.code != null) {
-                    if (!request.validateState(authResponse.state ?: "")) {
+    private suspend fun exchangeToken(client: OpenIDConnectClient, request: AuthCodeRequest, authCodeResponse: AuthCodeResponse): AccessTokenResponse {
+        authCodeResponse.fold(
+            onSuccess = {
+                if (it.code != null) {
+                    if (!request.validateState(it.state ?: "")) {
                         throw OpenIDConnectException.AuthenticationFailed("Invalid state")
                     }
-                    val response = client.exchangeToken(request, authResponse.code)
+                    val response = client.exchangeToken(request, it.code)
                     return response
                 } else {
                     throw OpenIDConnectException.AuthenticationFailed("No auth code", cause = null)
                 }
+            },
+            onFailure = {
+                throw OpenIDConnectException.AuthenticationFailed("AuthCode response was error: ${it.message}", cause = it)
             }
-            is AuthResponse.ErrorResponse -> {
-                throw OpenIDConnectException.AuthenticationFailed(authResponse.error ?: "", cause = null)
-            }
-        }
+        )
     }
 }
-
-expect class PlatformOidcCodeAuthFlow: OidcCodeAuthFlow

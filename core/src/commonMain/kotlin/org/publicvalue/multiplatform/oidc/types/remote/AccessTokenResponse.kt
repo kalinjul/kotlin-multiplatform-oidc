@@ -1,4 +1,4 @@
-package org.publicvalue.multiplatform.oidc.types
+package org.publicvalue.multiplatform.oidc.types.remote
 
 import kotlinx.datetime.Clock
 import kotlinx.serialization.Serializable

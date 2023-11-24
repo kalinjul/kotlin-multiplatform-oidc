@@ -1,7 +1,7 @@
 package org.publicvalue.multiplatform.oidc
 
 import io.ktor.http.HttpStatusCode
-import org.publicvalue.multiplatform.oidc.types.ErrorResponse
+import org.publicvalue.multiplatform.oidc.types.remote.ErrorResponse
 
 sealed class OpenIDConnectException(
     override val message: String,

@@ -1,4 +1,4 @@
-package org.publicvalue.multiplatform.oidc.types
+package org.publicvalue.multiplatform.oidc.types.remote
 
 import kotlinx.serialization.Serializable
 
@@ -25,19 +25,4 @@ data class OpenIDConnectConfiguration(
     val token_endpoint_auth_methods_supported: List<String>? = null,
     val grant_types_supported: List<String>? = null,
     val introspection_endpoint_auth_methods_supported: List<String>? = null,
-) {
-}
-
-//public fun OIDCClient(
-//    block: OIDCConfig.() -> Unit = {}
-//): OIDCConfig { // TODO return client
-//    val config = OIDCConfig().apply(block)
-//    return config
-//}
-//
-//class OIDCConfig {
-//    var config: OpenIDConnectConfiguration = OpenIDConnectConfiguration()
-//
-////    fun clientId(clientId: String) { config = config.copy( = clientId) }
-//
-//}
+)

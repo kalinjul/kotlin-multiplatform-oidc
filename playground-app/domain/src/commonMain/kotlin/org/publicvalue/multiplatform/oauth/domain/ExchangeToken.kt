@@ -11,10 +11,10 @@ import org.publicvalue.multiplatform.oauth.data.daos.IdpDao
 import org.publicvalue.multiplatform.oauth.data.db.Client
 import org.publicvalue.multiplatform.oauth.logging.Logger
 import org.publicvalue.multiplatform.oauth.util.DispatcherProvider
-import org.publicvalue.multiplatform.oidc.types.ErrorResponse
+import org.publicvalue.multiplatform.oidc.types.remote.ErrorResponse
 import org.publicvalue.multiplatform.oidc.types.AuthCodeRequest
 import org.publicvalue.multiplatform.oidc.OpenIDConnectException
-import org.publicvalue.multiplatform.oidc.types.AccessTokenResponse
+import org.publicvalue.multiplatform.oidc.types.remote.AccessTokenResponse
 
 sealed class ExchangeTokenResult {
     data class Request(

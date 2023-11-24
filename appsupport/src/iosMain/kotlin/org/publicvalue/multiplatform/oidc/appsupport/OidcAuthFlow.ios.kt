@@ -3,6 +3,9 @@ package org.publicvalue.multiplatform.oidc.appsupport
 import io.ktor.http.Url
 import org.publicvalue.multiplatform.oidc.OpenIDConnectClient
 import org.publicvalue.multiplatform.oidc.OpenIDConnectException
+import org.publicvalue.multiplatform.oidc.flows.AuthCodeResponse
+import org.publicvalue.multiplatform.oidc.flows.AuthCodeResult
+import org.publicvalue.multiplatform.oidc.flows.OidcCodeAuthFlow
 import org.publicvalue.multiplatform.oidc.types.AuthCodeRequest
 import platform.AuthenticationServices.ASPresentationAnchor
 import platform.AuthenticationServices.ASWebAuthenticationPresentationContextProvidingProtocol
@@ -18,7 +21,7 @@ import kotlin.coroutines.suspendCoroutine
 actual class PlatformOidcCodeAuthFlow(
     client: OpenIDConnectClient
 ): OidcCodeAuthFlow(client) {
-    override suspend fun getAuthorizationCode(request: AuthCodeRequest): AuthResponse {
+    override suspend fun getAuthorizationCode(request: AuthCodeRequest): AuthCodeResponse {
         val authResponse = suspendCoroutine { continuation ->
             val nsurl = NSURL.URLWithString(request.url.toString())
             if (nsurl != null) {
@@ -32,12 +35,12 @@ actual class PlatformOidcCodeAuthFlow(
                                 val code = url.parameters["code"] ?: ""
                                 val state = url.parameters["state"] ?: ""
 
-                                continuation.resume(AuthResponse.CodeResponse(code, state))
+                                continuation.resume(AuthCodeResponse.success(AuthCodeResult(code = code, state = state)))
                             } else {
                                 if (p2 != null) {
-                                    continuation.resume(AuthResponse.ErrorResponse(p2.localizedDescription))
+                                    continuation.resume(AuthCodeResponse.failure<AuthCodeResult>(OpenIDConnectException.AuthenticationFailed(p2.localizedDescription)))
                                 } else {
-                                    continuation.resume(AuthResponse.ErrorResponse("No message"))
+                                    continuation.resume(AuthCodeResponse.failure<AuthCodeResult>(OpenIDConnectException.AuthenticationFailed("No message")))
                                 }
 
                             }

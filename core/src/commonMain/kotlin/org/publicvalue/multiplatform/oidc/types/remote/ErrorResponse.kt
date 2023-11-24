@@ -1,4 +1,4 @@
-package org.publicvalue.multiplatform.oidc.types
+package org.publicvalue.multiplatform.oidc.types.remote
 
 import kotlinx.serialization.Serializable
 

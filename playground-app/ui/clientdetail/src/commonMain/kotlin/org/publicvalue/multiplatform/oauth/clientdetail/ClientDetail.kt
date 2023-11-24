@@ -52,8 +52,8 @@ import org.publicvalue.multiplatform.oauth.data.db.Client
 import org.publicvalue.multiplatform.oauth.data.types.CodeChallengeMethod
 import org.publicvalue.multiplatform.oauth.domain.Constants
 import org.publicvalue.multiplatform.oauth.screens.ClientDetailScreen
-import org.publicvalue.multiplatform.oidc.types.ErrorResponse
-import org.publicvalue.multiplatform.oidc.types.AccessTokenResponse
+import org.publicvalue.multiplatform.oidc.types.remote.ErrorResponse
+import org.publicvalue.multiplatform.oidc.types.remote.AccessTokenResponse
 
 @Inject
 class ClientDetailUiFactory : Ui.Factory {

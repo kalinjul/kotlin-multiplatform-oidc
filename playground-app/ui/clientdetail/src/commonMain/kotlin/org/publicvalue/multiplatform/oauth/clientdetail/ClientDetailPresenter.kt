@@ -29,10 +29,10 @@ import org.publicvalue.multiplatform.oauth.domain.ExchangeToken
 import org.publicvalue.multiplatform.oauth.domain.ExchangeTokenResult
 import org.publicvalue.multiplatform.oauth.logging.Logger
 import org.publicvalue.multiplatform.oauth.screens.ClientDetailScreen
-import org.publicvalue.multiplatform.oidc.types.ErrorResponse
+import org.publicvalue.multiplatform.oidc.types.remote.ErrorResponse
 import org.publicvalue.multiplatform.oidc.types.AuthCodeRequest
 import org.publicvalue.multiplatform.oidc.discovery.Discover
-import org.publicvalue.multiplatform.oidc.types.AccessTokenResponse
+import org.publicvalue.multiplatform.oidc.types.remote.AccessTokenResponse
 
 @Inject
 class ClientDetailUiPresenterFactory(

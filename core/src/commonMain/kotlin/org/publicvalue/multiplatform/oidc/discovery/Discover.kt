@@ -8,7 +8,7 @@ import io.ktor.http.Url
 import io.ktor.http.isSuccess
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
-import org.publicvalue.multiplatform.oidc.types.OpenIDConnectConfiguration
+import org.publicvalue.multiplatform.oidc.types.remote.OpenIDConnectConfiguration
 
 class Discover(
     val httpClient: HttpClient = HttpClient()
