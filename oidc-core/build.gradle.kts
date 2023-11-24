@@ -5,8 +5,6 @@ plugins {
     id("maven-publish")
 }
 
-group = "org.publicvalue.multiplatform.oidc"
-
 kotlin {
     sourceSets {
         val commonMain by getting {

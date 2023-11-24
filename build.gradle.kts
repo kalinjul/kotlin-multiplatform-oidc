@@ -6,4 +6,7 @@ plugins {
     alias(libs.plugins.kmp) apply false
 }
 
-version "0.0.1"
+subprojects {
+    group = "io.github.kalinjul.kotlin.multiplatform"
+    version = "0.0.1"
+}

@@ -17,10 +17,10 @@ kotlin {
 }
 
 android {
-    namespace = "org.publicvalue.multiplatform.oauth.sample"
+    namespace = "org.publicvalue.multiplatform.oidc.sample"
 
     defaultConfig {
-        applicationId = "org.publicvalue.multiplatform.oauth.sample"
+        applicationId = "org.publicvalue.multiplatform.oidc.sample"
         versionCode = 1
         versionName = "1.0"
 

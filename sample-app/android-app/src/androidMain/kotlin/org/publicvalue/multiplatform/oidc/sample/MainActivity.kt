@@ -1,4 +1,4 @@
-package org.publicvalue.multiplatform.oauth.sample
+package org.publicvalue.multiplatform.oidc.sample
 
 import MainView
 import android.os.Bundle

@@ -4,14 +4,12 @@ plugins {
     id("maven-publish")
 }
 
-group = "org.publicvalue.multiplatform.oidc"
-
 kotlin {
 //    applyDefaultHierarchyTemplate()
     sourceSets {
         val commonMain by getting {
             dependencies {
-                api(projects.core)
+                api(projects.oidcCore)
             }
         }
 

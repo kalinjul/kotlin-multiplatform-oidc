@@ -20,7 +20,7 @@ kotlin {
                 implementation(libs.circuit.runtime)
                 implementation(libs.circuit.foundation)
                 implementation(libs.circuit.retained)
-                api("org.publicvalue.multiplatform.oidc:appsupport")
+                api("io.github.kalinjul.kotlin.multiplatform:oidc-appsupport")
                 implementation(projects.settings)
                 implementation(libs.kotlinx.serialization.json)
             }
@@ -52,15 +52,11 @@ kotlin {
         binaries.withType<Framework> {
             isStatic = true
             baseName = "shared"
-            export("org.publicvalue.multiplatform.oidc:appsupport")
+            export("io.github.kalinjul.kotlin.multiplatform:oidc-appsupport")
         }
     }
 }
 
 android {
-    namespace = "org.publicvalue.multiplatform.oauth.shared"
-//
-//    sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
-//    sourceSets["main"].res.srcDirs("src/androidMain/res")
-//    sourceSets["main"].resources.srcDirs("src/commonMain/resources")
+    namespace = "org.publicvalue.multiplatform.oidc.sample.shared"
 }
