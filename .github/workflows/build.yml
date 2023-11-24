@@ -2,6 +2,8 @@ name: Build Snapshot
 
 on:
   push:
+    paths-ignore:
+      - 'README.md'
     branches: [ "develop" ]
   pull_request:
     branches: [ "develop" ]
@@ -38,6 +40,7 @@ jobs:
       run: ./gradlew -p playground-app assembleRelease
 
   test:
+    needs: [ build ]
     runs-on: macos-14
 
     steps:
