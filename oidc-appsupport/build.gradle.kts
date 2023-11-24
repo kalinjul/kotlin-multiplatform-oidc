@@ -1,20 +1,14 @@
 plugins {
     id("org.publicvalue.convention.android.library")
-    id("org.publicvalue.convention.kotlin.multiplatform")
+    id("org.publicvalue.convention.kotlin.multiplatform.mobile")
     id("maven-publish")
 }
 
 kotlin {
-//    applyDefaultHierarchyTemplate()
     sourceSets {
         val commonMain by getting {
             dependencies {
                 api(projects.oidcCore)
-            }
-        }
-
-        val jvmMain by getting {
-            dependencies {
             }
         }
 

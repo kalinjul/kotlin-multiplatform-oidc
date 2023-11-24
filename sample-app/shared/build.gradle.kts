@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
     id("org.publicvalue.convention.android.library")
-    id("org.publicvalue.convention.kotlin.multiplatform")
+    id("org.publicvalue.convention.kotlin.multiplatform.mobile")
     id("org.publicvalue.convention.compose.multiplatform")
     id("kotlin-parcelize")
     alias(libs.plugins.kotlin.serialization)
@@ -39,12 +39,6 @@ kotlin {
             iosX64Main.dependsOn(this)
             iosArm64Main.dependsOn(this)
             iosSimulatorArm64Main.dependsOn(this)
-        }
-        val jvmMain by getting {
-            dependsOn(commonMain)
-            dependencies {
-                implementation(compose.desktop.common)
-            }
         }
     }
 

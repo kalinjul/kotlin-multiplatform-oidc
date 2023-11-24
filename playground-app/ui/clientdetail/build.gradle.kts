@@ -10,7 +10,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation("org.publicvalue.multiplatform.oidc:core")
+                implementation("io.github.kalinjul.kotlin.multiplatform:oidc-core")
                 implementation(projects.core)
                 implementation(projects.common.ui.compose)
                 implementation(projects.ui.common)

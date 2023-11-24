@@ -14,7 +14,7 @@ kotlin {
                 implementation(projects.common.ui.compose)
                 implementation(projects.ui.common)
 
-                implementation("org.publicvalue.multiplatform.oidc:core")
+                implementation("io.github.kalinjul.kotlin.multiplatform:oidc-core")
 
                 api(libs.kotlinx.coroutines.core)
                 implementation(libs.kotlin.inject.runtime)

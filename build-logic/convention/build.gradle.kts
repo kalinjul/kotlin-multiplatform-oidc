@@ -37,6 +37,10 @@ gradlePlugin {
             id = "org.publicvalue.convention.kotlin.multiplatform"
             implementationClass = "org.publicvalue.convention.KotlinMultiplatformConventionPlugin"
         }
+        register("kotlinMultiplatformMobile") {
+            id = "org.publicvalue.convention.kotlin.multiplatform.mobile"
+            implementationClass = "org.publicvalue.convention.KotlinMultiplatformMobileConventionPlugin"
+        }
 
         register("composeMultiplatform") {
             id = "org.publicvalue.convention.compose.multiplatform"

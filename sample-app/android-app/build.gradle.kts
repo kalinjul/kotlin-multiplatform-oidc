@@ -1,6 +1,6 @@
 plugins {
     id("org.publicvalue.convention.android.application")
-    id("org.publicvalue.convention.kotlin.multiplatform")
+    id("org.publicvalue.convention.kotlin.multiplatform.mobile")
     id("org.publicvalue.convention.compose.multiplatform")
 }
 

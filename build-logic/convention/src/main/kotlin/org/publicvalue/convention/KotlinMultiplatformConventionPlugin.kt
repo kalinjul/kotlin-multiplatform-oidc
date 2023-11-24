@@ -1,7 +1,5 @@
 package org.publicvalue.convention
 
-import org.publicvalue.convention.config.configureKotlin
-import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.configurationcache.extensions.capitalized
@@ -14,37 +12,15 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 class KotlinMultiplatformConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
+            // use mobile plugin and add jvm target
             with(pluginManager) {
                 apply("org.jetbrains.kotlin.multiplatform")
+                apply("org.publicvalue.convention.kotlin.multiplatform.mobile")
             }
 
             extensions.configure<KotlinMultiplatformExtension> {
-                applyDefaultHierarchyTemplate()
-
                 jvm()
-                if (pluginManager.hasPlugin("com.android.library")) {
-                    androidTarget {
-                        compilations.all {
-                            kotlinOptions {
-                                jvmTarget = JavaVersion.toVersion(libs.versions.jvmTarget.get()).toString()
-                            }
-                        }
-                    }
-
-                }
-
-                listOf(
-                    iosX64(),
-                    iosArm64(),
-                    iosSimulatorArm64()
-                ).forEach {
-                    it.binaries.framework {
-                        baseName = path.substring(1).replace(':', '-')
-                        isStatic = true
-                    }
-                }
             }
-            configureKotlin()
         }
     }
 }

@@ -8,5 +8,4 @@ plugins {
 
 subprojects {
     group = "io.github.kalinjul.kotlin.multiplatform"
-    version = "0.0.1"
 }
