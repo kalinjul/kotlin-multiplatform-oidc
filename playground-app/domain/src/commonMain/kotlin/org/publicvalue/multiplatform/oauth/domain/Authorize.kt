@@ -13,7 +13,8 @@ import org.publicvalue.multiplatform.oauth.data.db.Client
 import org.publicvalue.multiplatform.oauth.logging.Logger
 import org.publicvalue.multiplatform.oauth.util.DispatcherProvider
 import org.publicvalue.multiplatform.oauth.webserver.Webserver
-import org.publicvalue.multiplatform.oidc.AuthCodeRequest
+import org.publicvalue.multiplatform.oidc.types.AuthCodeRequest
+import org.publicvalue.multiplatform.oidc.types.validateState
 
 sealed class AuthorizeResult {
     data class Request(
@@ -59,10 +60,12 @@ class Authorize(
                     }.await()
                 }
 
-            // this is how apps usually would receive the response, as plain string
-            val rawQueryParams = response?.queryParameters?.entries()
-                ?.joinToString("&") { "${it.key}=${it.value.joinToString("%20") }" }
-            val authCode = client.parseAuthCode(request, rawQueryParams ?: "")
+            val authCode = response?.queryParameters?.get("code")
+            val state = response?.queryParameters?.get("state")
+            // TODO add desktop appsupport?
+            if (!request.validateState(state ?: "")) {
+                throw Exception("Invalid state")
+            }
             logger.d { "received code: $authCode" }
 
             emit(

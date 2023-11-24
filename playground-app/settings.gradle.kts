@@ -59,7 +59,6 @@ rootProject.name = "playground-app"
 include(":common:ui:compose")
 include(":common:ui:resources:strings")
 include(":common:screens")
-include(":data:settings")
 include(":core")
 include(":webserver")
 include(":shared")

@@ -52,6 +52,7 @@ import org.publicvalue.multiplatform.oauth.data.db.Client
 import org.publicvalue.multiplatform.oauth.data.types.CodeChallengeMethod
 import org.publicvalue.multiplatform.oauth.domain.Constants
 import org.publicvalue.multiplatform.oauth.screens.ClientDetailScreen
+import org.publicvalue.multiplatform.oidc.ErrorResponse
 import org.publicvalue.multiplatform.oidc.types.AccessTokenResponse
 
 @Inject
@@ -105,6 +106,7 @@ internal fun ClientDetail(
         authcode = state.authcode,
         tokenRequestParameters = state.tokenRequestParameters,
         tokenResponse = state.tokenResponse,
+        errorTokenResponse = state.errorTokenResponse,
         tokenResponseStatusCode = state.tokenResponseStatusCode,
     )
 }
@@ -127,6 +129,7 @@ internal fun ClientDetail(
     authcode: String?,
     tokenRequestParameters: Parameters?,
     tokenResponse: AccessTokenResponse?,
+    errorTokenResponse: ErrorResponse?,
     tokenResponseStatusCode: HttpStatusCode?,
 ) {
     Scaffold(
@@ -163,6 +166,7 @@ internal fun ClientDetail(
                         authcode = authcode,
                         tokenRequestParameters = tokenRequestParameters,
                         tokenResponse = tokenResponse,
+                        errorTokenResponse = errorTokenResponse,
                         tokenResponseStatusCode = tokenResponseStatusCode,
                         onLogin = onLogin,
                     )
@@ -261,6 +265,7 @@ internal fun AuthFlow(
     authcode: String?,
     tokenRequestParameters: Parameters?,
     tokenResponse: AccessTokenResponse?,
+    errorTokenResponse: ErrorResponse?,
     tokenResponseStatusCode: HttpStatusCode?,
     onLogin: () -> Unit,
 ) {
@@ -289,12 +294,14 @@ internal fun AuthFlow(
             )
             ExpandableInfo(
                 label = "Response (statusCode $tokenResponseStatusCode)",
-                text = tokenResponse?.format().orEmpty(),
-                loading = tokenResponse == null
+                text = tokenResponse?.format() ?: errorTokenResponse?.format().orEmpty(),
+                loading = tokenResponse == null && errorTokenResponse == null
             )
-//            FormHeadline(text = "Access Token")
-//            FormHeadline(text = "Refresh Token")
-//            FormHeadline(text = "Id Token")
+            if (tokenResponse != null) {
+                FormHeadline(text = "Access Token: ${tokenResponse.access_token}")
+                FormHeadline(text = "Refresh Token: ${tokenResponse.refresh_token}")
+                FormHeadline(text = "Id Token: ${tokenResponse.id_token?.substring(0,20)?.let { it + "..."}}")
+            }
         }
     }
 }
@@ -347,6 +354,15 @@ fun AccessTokenResponse.format(): String {
         scope: $scope
         expires_in: $expires_in
         token_type: $token_type
+    """.trimIndent()
+}
+
+fun ErrorResponse.format(): String {
+    return """
+        error: $error
+        error_description: $error_description
+        error_uri: $error_uri
+        state: $state
     """.trimIndent()
 }
 

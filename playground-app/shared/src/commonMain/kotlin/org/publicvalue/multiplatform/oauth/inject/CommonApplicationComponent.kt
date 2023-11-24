@@ -6,11 +6,9 @@ import org.publicvalue.multiplatform.oauth.logging.Logger
 import org.publicvalue.multiplatform.oauth.logging.StdoutLogger
 import me.tatarka.inject.annotations.Provides
 import org.publicvalue.multiplatform.oauth.data.inject.SqlDelightDatabaseComponent
-import org.publicvalue.multiplatform.oauth.settings.SettingsComponent
 
 interface CommonApplicationComponent:
     SqlDelightDatabaseComponent,
-    SettingsComponent,
     NoOpAppInitializerComponent
 {
     val initializers: Set<AppInitializer>

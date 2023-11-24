@@ -14,6 +14,7 @@ sealed class OpenIDConnectException(
         override val message: String,
         val statusCode: HttpStatusCode,
         val body: String?,
+        val errorResponse: ErrorResponse?,
         override val cause: Throwable? = null
     ): OpenIDConnectException(message = "Authentication failed. $message", cause = cause)
 }

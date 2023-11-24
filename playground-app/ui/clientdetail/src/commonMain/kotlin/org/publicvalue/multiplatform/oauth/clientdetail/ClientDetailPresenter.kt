@@ -29,7 +29,8 @@ import org.publicvalue.multiplatform.oauth.domain.ExchangeToken
 import org.publicvalue.multiplatform.oauth.domain.ExchangeTokenResult
 import org.publicvalue.multiplatform.oauth.logging.Logger
 import org.publicvalue.multiplatform.oauth.screens.ClientDetailScreen
-import org.publicvalue.multiplatform.oidc.AuthCodeRequest
+import org.publicvalue.multiplatform.oidc.ErrorResponse
+import org.publicvalue.multiplatform.oidc.types.AuthCodeRequest
 import org.publicvalue.multiplatform.oidc.discovery.Discover
 import org.publicvalue.multiplatform.oidc.types.AccessTokenResponse
 
@@ -74,6 +75,7 @@ class ClientDetailPresenter(
 
         var tokenRequestParameters: Parameters? by rememberRetained { mutableStateOf(null) }
         var tokenResponse: AccessTokenResponse? by rememberRetained { mutableStateOf(null) }
+        var errorTokenResponse: ErrorResponse? by rememberRetained { mutableStateOf(null) }
         var tokenResponseStatusCode: HttpStatusCode? by rememberRetained { mutableStateOf(null) }
 
         fun eventSink(event: ClientDetailUiEvent) {
@@ -131,6 +133,7 @@ class ClientDetailPresenter(
                                             is ExchangeTokenResult.Response -> {
                                                 tokenResponse = it.accessTokenResponse
                                                 tokenResponseStatusCode = it.httpStatusCode
+                                                errorTokenResponse = it.errorResponse
                                             }
                                         }
                                     }
@@ -153,6 +156,7 @@ class ClientDetailPresenter(
             authcode = authcode,
             tokenRequestParameters = tokenRequestParameters,
             tokenResponse = tokenResponse,
+            errorTokenResponse = errorTokenResponse,
             tokenResponseStatusCode = tokenResponseStatusCode
         )
     }

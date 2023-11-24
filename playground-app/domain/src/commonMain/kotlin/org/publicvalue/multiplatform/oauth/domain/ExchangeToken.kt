@@ -11,7 +11,8 @@ import org.publicvalue.multiplatform.oauth.data.daos.IdpDao
 import org.publicvalue.multiplatform.oauth.data.db.Client
 import org.publicvalue.multiplatform.oauth.logging.Logger
 import org.publicvalue.multiplatform.oauth.util.DispatcherProvider
-import org.publicvalue.multiplatform.oidc.AuthCodeRequest
+import org.publicvalue.multiplatform.oidc.ErrorResponse
+import org.publicvalue.multiplatform.oidc.types.AuthCodeRequest
 import org.publicvalue.multiplatform.oidc.OpenIDConnectException
 import org.publicvalue.multiplatform.oidc.types.AccessTokenResponse
 
@@ -21,7 +22,8 @@ sealed class ExchangeTokenResult {
     ): ExchangeTokenResult()
     data class Response(
         val httpStatusCode: HttpStatusCode,
-        val accessTokenResponse: AccessTokenResponse?
+        val accessTokenResponse: AccessTokenResponse?,
+        val errorResponse: ErrorResponse? = null
     ): ExchangeTokenResult()
 }
 
@@ -38,7 +40,7 @@ class ExchangeToken(
         val client = client.createOidcClient(idp)
 
         return flow {
-            val (_, requestParams) = client.createExchangeTokenRequest(request, code)
+            val (_, requestParams) = client.createAccessTokenRequest(request, code)
             emit(
                 ExchangeTokenResult.Request(
                     parameters = requestParams
@@ -46,20 +48,21 @@ class ExchangeToken(
             )
             try {
                 val result = withContext(dispatchers.io()) {
-                    client.exchangeTokenRequest(request, code)
+                    client.exchangeToken(request, code)
                 }
                 println(result)
                 emit(
                     ExchangeTokenResult.Response(
                         httpStatusCode = HttpStatusCode.OK,
-                        accessTokenResponse = result
+                        accessTokenResponse = result,
                     )
                 )
             } catch (e: OpenIDConnectException.UnsuccessfulTokenRequest) {
                 emit(
                     ExchangeTokenResult.Response(
                         httpStatusCode = e.statusCode,
-                        accessTokenResponse = null
+                        accessTokenResponse = null,
+                        errorResponse = e.errorResponse
                     )
                 )
                 throw e

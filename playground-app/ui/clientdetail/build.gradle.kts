@@ -15,7 +15,7 @@ kotlin {
                 implementation(projects.common.ui.compose)
                 implementation(projects.ui.common)
 
-                implementation(projects.core)
+                implementation(projects.domain)
 
                 api(libs.kotlinx.coroutines.core)
                 implementation(libs.kotlin.inject.runtime)

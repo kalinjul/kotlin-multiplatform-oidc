@@ -1,6 +1,7 @@
 package org.publicvalue.multiplatform.oidc
 
 import io.ktor.client.HttpClient
+import io.ktor.client.call.HttpClientCall
 import io.ktor.client.call.NoTransformationFoundException
 import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -8,6 +9,7 @@ import io.ktor.client.request.forms.prepareForm
 import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.request.url
+import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.HttpStatement
 import io.ktor.http.ContentType
 import io.ktor.http.ContentTypeMatcher
@@ -16,8 +18,10 @@ import io.ktor.http.URLBuilder
 import io.ktor.http.decodeURLQueryComponent
 import io.ktor.http.isSuccess
 import io.ktor.http.parameters
+import io.ktor.serialization.JsonConvertException
 import io.ktor.serialization.kotlinx.KotlinxSerializationConverter
 import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import org.publicvalue.multiplatform.oidc.flows.PKCE
 import org.publicvalue.multiplatform.oidc.types.AccessTokenResponse
@@ -163,37 +167,60 @@ class OpenIDConnectClient(
 
     private suspend fun executeTokenRequest(httpFormRequest: HttpStatement): AccessTokenResponse {
         val response = httpFormRequest.execute()
-
         return if (response.status.isSuccess()) {
-            val body = response.call.body<String>().decodeURLQueryComponent(plusIsSpace = true)
-            if (body.startsWith("error")) {
-                throw OpenIDConnectException.UnsuccessfulTokenRequest(
-                    "Exchange token failed: ${response.status.value} $body",
-                    response.status,
-                    body
-                )
-            } else {
-                try {
-                    val accessTokenResponse: AccessTokenResponse = response.call.body()
-                    accessTokenResponse
-                } catch (e: NoTransformationFoundException) {
-                    throw OpenIDConnectException.UnsuccessfulTokenRequest(
-                        message = "Could not decode response",
-                        cause = e,
-                        statusCode = response.status,
-                        body = response.call.body<String>()
-                    )
-                }
+            try {
+                val accessTokenResponse: AccessTokenResponse = response.call.body()
+                accessTokenResponse
+            } catch (e: NoTransformationFoundException) {
+                throw response.toOpenIdConnectException()
+            } catch (e: JsonConvertException) {
+                throw response.toOpenIdConnectException()
             }
-
         } else {
-            val body = response.call.body<String>().decodeURLQueryComponent(plusIsSpace = true)
-            throw OpenIDConnectException.UnsuccessfulTokenRequest(
-                "Exchange token failed: ${response.status.value} $body",
-                response.status,
-                body
-            )
+            throw response.toOpenIdConnectException()
         }
+    }
+
+    private suspend fun HttpResponse.toOpenIdConnectException(): OpenIDConnectException.UnsuccessfulTokenRequest {
+        val errorResponse = call.errorBody()
+        val body = call.body<String>().decodeURLQueryComponent(plusIsSpace = true)
+        return OpenIDConnectException.UnsuccessfulTokenRequest(
+            message = "Exchange token failed: ${status.value} ${errorResponse?.error_description}",
+            statusCode = status,
+            body = body,
+            errorResponse = errorResponse
+        )
+    }
+}
+
+/**
+ * https://datatracker.ietf.org/doc/html/rfc6749#section-4.1.2.1
+ */
+@Serializable
+data class ErrorResponse(
+    val error: Error,
+    val error_description: String?,
+    val error_uri: String?,
+    val state: String?
+) {
+    @Serializable
+    enum class Error {
+        bad_verification_code,
+        invalid_request,
+        unauthorized_client,
+        access_denied,
+        unsupported_response_type,
+        invalid_scope,
+        server_error,
+        temporarily_unavailable
+    }
+}
+
+private suspend fun HttpClientCall.errorBody(): ErrorResponse? {
+    return try {
+        body<ErrorResponse>()
+    } catch (e: Exception) {
+        null
     }
 }
 

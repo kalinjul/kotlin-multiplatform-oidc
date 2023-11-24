@@ -19,13 +19,15 @@ abstract class OidcAuthFlow(val client: OpenIDConnectClient) {
         return tokenResponse
     }
 
-    abstract suspend fun getAccessCode(request: AuthCodeRequest): AuthResponse
+    abstract suspend fun getAccessCode(request: AuthCodeRequest): AuthResponse // TODO rename, extract to core
 
     private suspend fun exchangeToken(client: OpenIDConnectClient, request: AuthCodeRequest, authResponse: AuthResponse): AccessTokenResponse {
         return when (authResponse) {
             is AuthResponse.CodeResponse -> {
                 if (authResponse.code != null) {
-                    request.validateState(authResponse.code)
+                    if (!request.validateState(authResponse.state ?: "")) {
+                        throw OpenIDConnectException.AuthenticationFailed("Invalid state")
+                    }
                     val response = client.exchangeToken(request, authResponse.code)
                     return response
                 } else {
