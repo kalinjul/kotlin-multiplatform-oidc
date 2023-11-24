@@ -1,4 +1,6 @@
 # Kotlin Multiplatform OIDC
+[![Build Snapshot](https://github.com/kalinjul/kotlin-multiplatform-oidc/actions/workflows/build.yml/badge.svg)](https://github.com/kalinjul/kotlin-multiplatform-oidc/actions/workflows/build.yml)
+
 Library for using OpenID Connect / OAuth 2.0 in Kotlin Multiplatform (iOS+Android), Android and soon Xcode projects.
 
 - Currently, it only supports the [Authorization Code Grant Flow](https://datatracker.ietf.org/doc/html/rfc6749#section-4.1).
