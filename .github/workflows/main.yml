@@ -8,20 +8,32 @@ on:
   pull_request:
     branches: [ "main" ]
 
+concurrency:
+  group: ${{ github.name }}-${{ github.workflow }}-${{ github.head_ref }}
+  cancel-in-progress: true
+
+permissions:
+  id-token: write
+  contents: read
+  checks: write # required for test-reporter
+
 jobs:
   build:
     runs-on: macos-14
     steps:
+      - uses: actions/checkout@v3
       - uses: ./.github/workflows/actions/build
 
   test:
     needs: [ build ]
     runs-on: macos-14
     steps:
+      - uses: actions/checkout@v3
       - uses: ./.github/workflows/actions/test
 
   release:
     needs: [ build, test ]
+    if: github.ref == 'refs/heads/develop'
     runs-on: macos-14
     steps:
       - name: Setup git-mkver
