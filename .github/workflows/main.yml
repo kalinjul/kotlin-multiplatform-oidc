@@ -22,7 +22,7 @@ jobs:
 
   release:
     needs: [ build, test ]
-    # TODO make github release
+    runs-on: macos-14
     steps:
       - name: Setup git-mkver
         uses: cperezabo/setup-git-mkver@v1.2.0
@@ -31,8 +31,8 @@ jobs:
       - name: Generate version
         run: |
           export VERSION=$(git mkver next)
-          echo VERSION
-          echo $VERSION >> "$GITHUB_ENV"
+          echo $VERSION
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
       - name: Create Release
         uses: ncipollo/release-action@v1.13.0
         with:

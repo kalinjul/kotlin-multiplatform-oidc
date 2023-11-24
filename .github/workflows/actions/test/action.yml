@@ -7,17 +7,17 @@ runs:
     - name: Test library
       shell: bash
       run: ./gradlew check
-    - name: Test Reporter
+    - name: Report JVM Tests
       uses: dorny/test-reporter@v1.7.0
       if: success() || failure()    # run this step even if previous step failed
       with:
-        name: JVM Test
+        name: JVM Tests
         path: '*/build/test-results/*jvm*/TEST-*.xml'    # Path to test results
         reporter: java-junit        # Format of test results
-    - name: iOS Test
+    - name: Report iOS Tests
       uses: dorny/test-reporter@v1.7.0
       if: success() || failure()    # run this step even if previous step failed
       with:
-        name: Unit Tests            # Name of the check run which will be created
+        name: iOS Tests            # Name of the check run which will be created
         path: '*/build/test-results/*ios*/TEST-*.xml'    # Path to test results
         reporter: java-junit        # Format of test results
