@@ -21,12 +21,12 @@ import io.ktor.http.parameters
 import io.ktor.serialization.JsonConvertException
 import io.ktor.serialization.kotlinx.KotlinxSerializationConverter
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import org.publicvalue.multiplatform.oidc.flows.PKCE
 import org.publicvalue.multiplatform.oidc.types.AccessTokenResponse
 import org.publicvalue.multiplatform.oidc.types.AuthCodeRequest
 import org.publicvalue.multiplatform.oidc.types.CodeChallengeMethod
+import org.publicvalue.multiplatform.oidc.types.ErrorResponse
 import org.publicvalue.multiplatform.oidc.types.TokenRequest
 
 @OptIn(ExperimentalSerializationApi::class)
@@ -67,7 +67,7 @@ class OpenIDConnectClient(
         }
     }
 
-    fun createAuthCodeRequest(): AuthCodeRequest {
+    fun createAuthorizationCodeRequest(): AuthCodeRequest {
         val pkce = PKCE(config.codeChallengeMethod)
         val nonce = randomBytes().encodeForPKCE()
         val state = randomBytes().encodeForPKCE()
@@ -117,6 +117,9 @@ class OpenIDConnectClient(
         return executeTokenRequest(tokenRequest.request)
     }
 
+    /**
+     * https://datatracker.ietf.org/doc/html/rfc6749#section-6
+     */
     suspend fun refreshToken(tokens: AccessTokenResponse): AccessTokenResponse {
         val tokenRequest = createRefreshTokenRequest(tokens)
         return executeTokenRequest(tokenRequest.request)
@@ -190,29 +193,6 @@ class OpenIDConnectClient(
             body = body,
             errorResponse = errorResponse
         )
-    }
-}
-
-/**
- * https://datatracker.ietf.org/doc/html/rfc6749#section-4.1.2.1
- */
-@Serializable
-data class ErrorResponse(
-    val error: Error,
-    val error_description: String?,
-    val error_uri: String?,
-    val state: String?
-) {
-    @Serializable
-    enum class Error {
-        bad_verification_code,
-        invalid_request,
-        unauthorized_client,
-        access_denied,
-        unsupported_response_type,
-        invalid_scope,
-        server_error,
-        temporarily_unavailable
     }
 }
 

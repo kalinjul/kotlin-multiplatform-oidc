@@ -10,17 +10,15 @@ import platform.AuthenticationServices.ASWebAuthenticationSession
 import platform.AuthenticationServices.ASWebAuthenticationSessionCompletionHandler
 import platform.Foundation.NSError
 import platform.Foundation.NSURL
-import platform.SafariServices.SFSafariViewController
-import platform.UIKit.UIViewController
 import platform.darwin.NSObject
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
-actual class PlatformOidcAuthFlow(
+actual class PlatformOidcCodeAuthFlow(
     client: OpenIDConnectClient
-): OidcAuthFlow(client) {
-    override suspend fun getAccessCode(request: AuthCodeRequest): AuthResponse {
+): OidcCodeAuthFlow(client) {
+    override suspend fun getAuthorizationCode(request: AuthCodeRequest): AuthResponse {
         val authResponse = suspendCoroutine { continuation ->
             val nsurl = NSURL.URLWithString(request.url.toString())
             if (nsurl != null) {

@@ -36,8 +36,8 @@ class AndroidAuthFlowFactory(
         )
     }
 
-    override fun createAuthFlow(client: OpenIDConnectClient): OidcAuthFlow {
-        return PlatformOidcAuthFlow(
+    override fun createAuthFlow(client: OpenIDConnectClient): OidcCodeAuthFlow {
+        return PlatformOidcCodeAuthFlow(
             context = activity,
             contract = authRequestContract,
             client = client,

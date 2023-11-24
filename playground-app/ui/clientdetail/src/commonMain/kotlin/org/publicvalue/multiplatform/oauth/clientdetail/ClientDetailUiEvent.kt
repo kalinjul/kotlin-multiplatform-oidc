@@ -6,7 +6,7 @@ import com.slack.circuit.runtime.CircuitUiState
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.Parameters
 import org.publicvalue.multiplatform.oauth.data.db.Client
-import org.publicvalue.multiplatform.oidc.ErrorResponse
+import org.publicvalue.multiplatform.oidc.types.ErrorResponse
 import org.publicvalue.multiplatform.oidc.types.AccessTokenResponse
 import kotlin.reflect.KProperty1
 

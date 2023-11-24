@@ -6,13 +6,13 @@ import android.content.Intent
 import org.publicvalue.multiplatform.oidc.OpenIDConnectClient
 import org.publicvalue.multiplatform.oidc.types.AuthCodeRequest
 
-actual class PlatformOidcAuthFlow(
+actual class PlatformOidcCodeAuthFlow(
     private val context: Context,
     private val contract: ActivityResultLauncherSuspend<Intent>,
     client: OpenIDConnectClient,
-) : OidcAuthFlow(client) {
+) : OidcCodeAuthFlow(client) {
 
-    override suspend fun getAccessCode(request: AuthCodeRequest): AuthResponse {
+    override suspend fun getAuthorizationCode(request: AuthCodeRequest): AuthResponse {
         val intent = Intent(context, HandleRedirectActivity::class.java).apply {
             this.putExtra("url", request.url.toString())
         }

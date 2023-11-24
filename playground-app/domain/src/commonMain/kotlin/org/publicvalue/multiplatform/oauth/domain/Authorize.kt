@@ -43,7 +43,7 @@ class Authorize(
                 val idp = idpDao.getIdp(client.idpId).first()
                 val client = client.createOidcClient(idp)
 
-                val request = client.createAuthCodeRequest()
+                val request = client.createAuthorizationCodeRequest()
                 emit(AuthorizeResult.Request(
                     authCodeRequest = request,
                     authCodeRequestUrl = request.url.toString()
