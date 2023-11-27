@@ -19,6 +19,7 @@ dependencies {
     compileOnly(libs.android.gradlePlugin)
     compileOnly(libs.compose.gradlePlugin)
     compileOnly(libs.nexusPublish.gradlePlugin)
+    compileOnly(libs.multiplatform.swiftpackage.gradlePlugin)
 
     // https://github.com/gradle/gradle/issues/15383
     implementation(files(libs.javaClass.superclass.protectionDomain.codeSource.location))
@@ -54,6 +55,10 @@ gradlePlugin {
         register("centralPublish") {
             id = "org.publicvalue.convention.centralPublish"
             implementationClass = "org.publicvalue.convention.MavenCentralPublishConventionPlugin"
+        }
+        register("multiplatformSwiftPackage") {
+            id = "org.publicvalue.convention.multiplatformSwiftPackage"
+            implementationClass = "org.publicvalue.convention.MultiplatformSwiftPackageConventionPlugin"
         }
     }
 }

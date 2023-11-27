@@ -1,9 +1,8 @@
-import org.jetbrains.compose.internal.utils.getLocalProperty
-
 plugins {
     id("org.publicvalue.convention.android.library")
     id("org.publicvalue.convention.kotlin.multiplatform.mobile")
     id("org.publicvalue.convention.centralPublish")
+    id("org.publicvalue.convention.multiplatformSwiftPackage")
 }
 
 description = "Kotlin Multiplatform OIDC appsupport library for Android/iOS"

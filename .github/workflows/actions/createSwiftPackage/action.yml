@@ -1,0 +1,12 @@
+name: Create swift packages
+
+runs:
+  using: "composite"
+  steps:
+    - uses: ./.github/workflows/actions/prepare
+    - name: Create Swift Package
+      run: ./gradlew createSwiftPackage
+    - uses: actions/upload-artifact@v3
+      with:
+        name: oidc-swiftpackages
+        path: oidc-*/swiftpackage/*.zip

@@ -30,7 +30,21 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/workflows/actions/test
-      
+
+  create-swift-package:
+    needs: [ build ]
+    runs-on: macos-13
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/workflows/actions/createSwiftPackage
+
+  deploy-swift-package-snapshot:
+    needs: [create-swift-package]
+    runs-on: macos-13
+    steps:
+      - uses
+      -
+
   deploy-snapshot:
     needs: [ test ]
     if: github.ref == 'refs/heads/develop'
