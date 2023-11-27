@@ -28,7 +28,7 @@ class MultiplatformSwiftPackageConventionPlugin : Plugin<Project> {
                     tvOS { v("15") }
                 }
                 packageName(packageName)
-                outputDirectory(File(project.projectDir, "swiftpackage"))
+                outputDirectory(File(project.projectDir, "build/swiftpackage"))
                 distributionMode {
                     local()
                 }
