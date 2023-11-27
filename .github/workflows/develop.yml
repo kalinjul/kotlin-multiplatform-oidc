@@ -32,7 +32,7 @@ jobs:
       - uses: ./.github/workflows/actions/test
 
   create-swift-package:
-    needs: [ build ]
+    needs: [ build, test]
     runs-on: macos-13
     steps:
       - uses: actions/checkout@v3
