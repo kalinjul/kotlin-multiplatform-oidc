@@ -42,8 +42,10 @@ jobs:
     needs: [create-swift-package]
     runs-on: macos-13
     steps:
-      - uses
-      -
+      - uses: actions/checkout@v3
+      - uses: ./.github/workflows/actions/deploySwiftPackage
+        with:
+          branch: "develop"
 
   deploy-snapshot:
     needs: [ test ]
