@@ -24,8 +24,8 @@ runs:
         distribution: 'temurin'
         # cache: gradle # TODO reenable cache
 
-    - name: Setup Android SDK # TODO remove on non self-hosted
-      uses: amyu/setup-android@v3
+#    - name: Setup Android SDK # TODO remove on non self-hosted
+#      uses: amyu/setup-android@v3
 
     - name: Grant execute permission for gradlew
       shell: bash
