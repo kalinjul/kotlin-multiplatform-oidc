@@ -33,7 +33,7 @@ jobs:
 
   release:
     needs: [ build, test ]
-    if: github.ref == 'refs/heads/develop'
+    if: github.ref == 'refs/heads/main'
     runs-on: macos-13
     steps:
       - name: Setup git-mkver
