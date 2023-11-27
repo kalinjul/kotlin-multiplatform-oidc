@@ -1,0 +1,29 @@
+name: Deploy swift packages
+
+inputs:
+  branch:
+    description: "Branch to push to"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/download-artifact@v3
+      with:
+        name: oidc-swiftpackages
+    - name: Upload Package
+      shell: bash
+      run: |
+        git config --global user.name "Julian Kalinowski"
+        git config --global user.email "kalinjul@users.noreply.github.com"
+        ls -R
+        rm */swiftpackage/*.zip
+        cd oidc-core/oidc-core-ios
+        git init
+        git checkout -b ${{ inputs.branch }}
+        git add -A
+        git commit -m "New ios package"
+        git remote add origin git@github.com:kalinjul/oidc-core-ios.git
+        git fetch
+        git rebase origin/${{ inputs.branch }}
+        git push origin ${{ inputs.branch }}

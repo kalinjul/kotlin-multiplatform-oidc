@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.composeMultiplatform) apply false
     alias(libs.plugins.ksp) apply false
     alias(libs.plugins.kmp) apply false
+    alias(libs.plugins.multiplatform.swiftpackage) apply false
     alias(libs.plugins.nexusPublish)
 }
 

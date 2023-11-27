@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     id("io.github.ttypic.swiftklib") version "0.5.0"
     id("org.publicvalue.convention.centralPublish")
+    id("org.publicvalue.convention.multiplatformSwiftPackage")
 }
 
 description = "Kotlin Multiplatform OIDC core library"

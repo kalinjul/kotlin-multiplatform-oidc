@@ -22,6 +22,7 @@ fun KotlinMultiplatformExtension.configureIosTargets() {
     ).forEach {
         it.binaries.framework {
             baseName = project.path.substring(1).replace(':', '-')
+                .replace("-", "_") // workaround for https://github.com/luca992/multiplatform-swiftpackage/issues/12
             isStatic = true
         }
     }
