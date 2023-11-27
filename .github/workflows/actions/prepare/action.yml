@@ -36,4 +36,7 @@ runs:
       uses: mobiledevops/xcode-select-version-action@v1
       with:
         xcode-select-version: 15.0.1
-    - run: xcodebuild -version
+
+    - name: show Xcode version
+      shell: bash
+      run: xcodebuild -version
