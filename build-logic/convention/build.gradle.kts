@@ -18,6 +18,7 @@ dependencies {
     compileOnly(libs.kotlin.gradlePlugin)
     compileOnly(libs.android.gradlePlugin)
     compileOnly(libs.compose.gradlePlugin)
+    compileOnly(libs.nexusPublish.gradlePlugin)
 
     // https://github.com/gradle/gradle/issues/15383
     implementation(files(libs.javaClass.superclass.protectionDomain.codeSource.location))
@@ -49,6 +50,10 @@ gradlePlugin {
         register("kotlinAndroid") {
             id = "org.publicvalue.convention.kotlin.android"
             implementationClass = "org.publicvalue.convention.KotlinAndroidConventionPlugin"
+        }
+        register("centralPublish") {
+            id = "org.publicvalue.convention.centralPublish"
+            implementationClass = "org.publicvalue.convention.MavenCentralPublishConventionPlugin"
         }
     }
 }

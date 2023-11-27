@@ -1,9 +1,13 @@
+import org.jetbrains.compose.internal.utils.getLocalProperty
+
 plugins {
     id("org.publicvalue.convention.kotlin.multiplatform")
     alias(libs.plugins.kotlin.serialization)
     id("io.github.ttypic.swiftklib") version "0.5.0"
-    id("maven-publish")
+    id("org.publicvalue.convention.centralPublish")
 }
+
+description = "Kotlin Multiplatform OIDC core library"
 
 kotlin {
     sourceSets {
