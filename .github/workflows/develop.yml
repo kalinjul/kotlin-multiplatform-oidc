@@ -19,14 +19,14 @@ permissions:
 
 jobs:
   build:
-    runs-on: macos-14
+    runs-on: macos-13
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/workflows/actions/build
 
   test:
     needs: [ build ]
-    runs-on: macos-14
+    runs-on: macos-13
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/workflows/actions/test
@@ -34,7 +34,7 @@ jobs:
   deploy-snapshot:
     needs: [ test ]
     if: github.ref == 'refs/heads/develop'
-    runs-on: macos-14
+    runs-on: macos-13
 
     steps:
       - uses: actions/checkout@v3
