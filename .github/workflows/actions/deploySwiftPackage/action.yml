@@ -17,9 +17,9 @@ runs:
         git config --global user.name "Julian Kalinowski"
         git config --global user.email "kalinjul@users.noreply.github.com"
         ls -R
-        rm */build/swiftpackage/*.zip
         echo "oidc-core"
-        cd ${GITHUB_WORKSPACE}/oidc-core/build/swiftpackage/oidc-core-ios
+        echo "${GITHUB_WORKSPACE}/oidc-core/build/swiftpackage/"
+        cd ${GITHUB_WORKSPACE}/oidc-core/build/swiftpackage/
         git init
         git checkout -b ${{ inputs.branch }}
         git add -A
@@ -29,4 +29,4 @@ runs:
         git rebase origin/${{ inputs.branch }}
         git push origin ${{ inputs.branch }}
         echo "oidc-appsupport"
-        cd ${GITHUB_WORKSPACE}/oidc-core/build/swiftpackage/oidc-appsupport-ios
+        cd ${GITHUB_WORKSPACE}/oidc-appsupport/build/swiftpackage/
