@@ -10,7 +10,7 @@ runs:
   using: "composite"
   steps:
     - uses: gradle/wrapper-validation-action@v1
-    - uses: actions/cache@v2
+    - uses: actions/cache@v3
       with:
         path: |
           ~/.gradle/caches/modules-*
@@ -22,7 +22,7 @@ runs:
       with:
         java-version: '17'
         distribution: 'temurin'
-        cache: gradle # TODO reenable cache
+        cache: gradle
 
 #    - name: Setup Android SDK # TODO remove on non self-hosted
 #      uses: amyu/setup-android@v3
@@ -30,7 +30,6 @@ runs:
     - name: Grant execute permission for gradlew
       shell: bash
       run: chmod +x gradlew
-
 
     - name: Select Xcode Version
       uses: mobiledevops/xcode-select-version-action@v1
