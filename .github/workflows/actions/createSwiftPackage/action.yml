@@ -5,8 +5,9 @@ runs:
   steps:
     - uses: ./.github/workflows/actions/prepare
     - name: Create Swift Package
+      shell: bash
       run: ./gradlew createSwiftPackage
     - uses: actions/upload-artifact@v3
       with:
         name: oidc-swiftpackages
-        path: oidc-*/swiftpackage/*.zip
+        path: oidc-*/build/swiftpackage/*.zip
