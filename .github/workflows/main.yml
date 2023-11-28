@@ -35,6 +35,8 @@ jobs:
     needs: [ build, test ]
     if: github.ref == 'refs/heads/main'
     runs-on: macos-13
+    permissions:
+      contents: write
     steps:
       - name: Setup git-mkver
         uses: cperezabo/setup-git-mkver@v1.2.0
