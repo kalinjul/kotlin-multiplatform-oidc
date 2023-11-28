@@ -1,10 +1,12 @@
 package org.publicvalue.multiplatform.oidc
 
 import org.publicvalue.multiplatform.oidc.types.CodeChallengeMethod
+import org.publicvalue.multiplatform.oidc.types.remote.OpenIDConnectConfiguration
 
 @EndpointMarker
 class OpenIDConnectClientConfig(
-    var endpoints: Endpoints? = null,
+    var discoveryUri: String? = null,
+    var endpoints: Endpoints = Endpoints(),
     /**
      * REQUIRED
      * https://datatracker.ietf.org/doc/html/rfc6749#section-2.2
@@ -25,7 +27,21 @@ class OpenIDConnectClientConfig(
     fun endpoints(
         block: Endpoints.() -> Unit
     ) {
-        this.endpoints = Endpoints().apply(block)
+        this.endpoints = endpoints.apply(block)
+    }
+
+    /**
+     * Update this client config with discovery document.
+     * Will NOT override already set properties in config.
+     */
+    fun updateWithDiscovery(config: OpenIDConnectConfiguration) {
+        endpoints {
+            authorizationEndpoint = authorizationEndpoint ?: config.authorization_endpoint
+            tokenEndpoint = tokenEndpoint ?: config.token_endpoint
+            endSessionEndpoint = endSessionEndpoint ?: config.end_session_endpoint
+            userInfoEndpoint = config.userinfo_endpoint
+        }
+        this.scope = scope ?: config.scopes_supported?.joinToString(" ")
     }
 }
 
@@ -45,5 +61,20 @@ data class Endpoints(
         tokenEndpoint = baseUrl + endpoints.tokenEndpoint
         authorizationEndpoint = baseUrl + endpoints.authorizationEndpoint
         endSessionEndpoint = baseUrl + endpoints.endSessionEndpoint
+    }
+}
+
+fun OpenIDConnectClientConfig.validate() {
+    if (discoveryUri == null) {
+        if (endpoints.tokenEndpoint == null) {
+            throw OpenIDConnectException.InvalidUrl("Invalid configuration: tokenEndpoint is null")
+        }
+        if (endpoints.authorizationEndpoint == null) {
+            throw OpenIDConnectException.InvalidUrl("Invalid configuration: authorizationEndpoint is null")
+        }
+    }
+
+    if (clientId == null) {
+        throw OpenIDConnectException.InvalidUrl("Invalid configuration: clientId is null")
     }
 }
