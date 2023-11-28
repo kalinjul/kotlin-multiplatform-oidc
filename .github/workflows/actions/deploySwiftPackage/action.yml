@@ -4,6 +4,9 @@ inputs:
   branch:
     description: "Branch to push to"
     required: true
+  token:
+    description: "PAT Github token"
+    required: true
 
 runs:
   using: "composite"
@@ -24,7 +27,7 @@ runs:
         git checkout -b ${{ inputs.branch }}
         git add -A
         git commit -m "New ios package"
-        git remote add origin https://${{ secrets.PAT }}@github.com/kalinjul/oidc-core-ios.git
+        git remote add origin https://${{ inputs.token }}@github.com/kalinjul/oidc-core-ios.git
         git fetch
         git rebase origin/${{ inputs.branch }}
         git push origin ${{ inputs.branch }}
