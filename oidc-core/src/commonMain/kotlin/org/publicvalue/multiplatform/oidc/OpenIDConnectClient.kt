@@ -22,6 +22,7 @@ import io.ktor.serialization.JsonConvertException
 import io.ktor.serialization.kotlinx.KotlinxSerializationConverter
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
+import org.publicvalue.multiplatform.oidc.discovery.Discover
 import org.publicvalue.multiplatform.oidc.flows.PKCE
 import org.publicvalue.multiplatform.oidc.types.remote.AccessTokenResponse
 import org.publicvalue.multiplatform.oidc.types.AuthCodeRequest
@@ -53,18 +54,9 @@ class OpenIDConnectClient(
     },
     val config: OpenIDConnectClientConfig,
 ) {
-    init {
-//        config.validate() // TODO
-        if (config.endpoints?.tokenEndpoint == null) {
-            throw OpenIDConnectException.InvalidUrl("Invalid configuration: tokenEndpoint is null")
-        }
-        if (config.endpoints?.authorizationEndpoint == null) {
-            throw OpenIDConnectException.InvalidUrl("Invalid configuration: authorizationEndpoint is null")
-        }
 
-        if (config.clientId == null) {
-            throw OpenIDConnectException.InvalidUrl("Invalid configuration: clientId is null")
-        }
+    init {
+        config.validate()
     }
 
     fun createAuthorizationCodeRequest(): AuthCodeRequest {
@@ -72,7 +64,7 @@ class OpenIDConnectClient(
         val nonce = randomBytes().encodeForPKCE()
         val state = randomBytes().encodeForPKCE()
 
-        val url = URLBuilder(config.endpoints?.authorizationEndpoint!!).apply {
+        val url = URLBuilder(config.endpoints.authorizationEndpoint!!).apply {
             parameters.append("client_id", config.clientId!!)
             config.clientSecret?.let { parameters.append("client_secret", it) }
             parameters.append("response_type", "code")
@@ -90,11 +82,20 @@ class OpenIDConnectClient(
         )
     }
 
+    suspend fun discover() {
+        config.discoveryUri?.let { discoveryUri ->
+            val config = Discover(httpClient).downloadConfiguration(discoveryUri)
+            this.config.updateWithDiscovery(config)
+        } ?: run {
+            throw OpenIDConnectException.InvalidUrl("No discoveryUri set")
+        }
+    }
+
     /**
      * https://openid.net/specs/openid-connect-rpinitiated-1_0.html
      */
     suspend fun endSession(tokens: AccessTokenResponse): HttpStatusCode {
-        val endpoint = config.endpoints?.endSessionEndpoint?.trim()
+        val endpoint = config.endpoints.endSessionEndpoint?.trim()
         if (!endpoint.isNullOrEmpty()) {
             val url = URLBuilder(endpoint)
             val response = httpClient.post {
@@ -148,7 +149,7 @@ class OpenIDConnectClient(
     }
 
     suspend fun createRefreshTokenRequest(tokens: AccessTokenResponse): TokenRequest {
-        val url = URLBuilder(config.endpoints?.tokenEndpoint!!).build()
+        val url = URLBuilder(config.endpoints.tokenEndpoint!!).build()
 
         val formParameters = parameters {
             append("grant_type", "refresh_token")
