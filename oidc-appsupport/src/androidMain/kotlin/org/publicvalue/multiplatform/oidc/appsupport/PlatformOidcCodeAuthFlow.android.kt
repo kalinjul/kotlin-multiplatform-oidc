@@ -3,6 +3,7 @@ package org.publicvalue.multiplatform.oidc.appsupport
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import androidx.activity.result.ActivityResult
 import org.publicvalue.multiplatform.oidc.OpenIDConnectClient
 import org.publicvalue.multiplatform.oidc.OpenIDConnectException
 import org.publicvalue.multiplatform.oidc.flows.AuthCodeResponse
@@ -12,7 +13,7 @@ import org.publicvalue.multiplatform.oidc.types.AuthCodeRequest
 
 actual class PlatformOidcCodeAuthFlow(
     private val context: Context,
-    private val contract: ActivityResultLauncherSuspend<Intent>,
+    private val contract: ActivityResultLauncherSuspend<Intent, ActivityResult>,
     client: OpenIDConnectClient,
 ) : OidcCodeAuthFlow(client) {
 

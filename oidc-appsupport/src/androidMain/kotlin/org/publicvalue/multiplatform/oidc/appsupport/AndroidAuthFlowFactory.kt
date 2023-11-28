@@ -2,6 +2,7 @@ package org.publicvalue.multiplatform.oidc.appsupport
 
 import android.content.Intent
 import androidx.activity.ComponentActivity
+import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -13,7 +14,7 @@ class AndroidAuthFlowFactory(
     val activity: ComponentActivity
 ): AuthFlowFactory {
 
-    lateinit var authRequestContract: ActivityResultLauncherSuspend<Intent>
+    lateinit var authRequestLauncher: ActivityResultLauncherSuspend<Intent, ActivityResult>
 
     init {
         activity.lifecycle.addObserver(
@@ -21,7 +22,7 @@ class AndroidAuthFlowFactory(
                 override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
                     when (event) {
                         Lifecycle.Event.ON_CREATE -> {
-                            authRequestContract = activity.registerForActivityResultSuspend(ActivityResultContracts.StartActivityForResult())
+                            authRequestLauncher = activity.registerForActivityResultSuspend(ActivityResultContracts.StartActivityForResult())
                         }
 
                         Lifecycle.Event.ON_DESTROY -> {
@@ -40,7 +41,7 @@ class AndroidAuthFlowFactory(
     override fun createAuthFlow(client: OpenIDConnectClient): OidcCodeAuthFlow {
         return PlatformOidcCodeAuthFlow(
             context = activity,
-            contract = authRequestContract,
+            contract = authRequestLauncher,
             client = client,
         )
     }

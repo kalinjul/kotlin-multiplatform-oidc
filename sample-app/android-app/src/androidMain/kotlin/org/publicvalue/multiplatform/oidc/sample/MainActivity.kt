@@ -10,7 +10,6 @@ import org.publicvalue.multiplatform.oidc.appsupport.HandleRedirectActivity
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // workaround for not-closing custom tab
         val factory = AndroidAuthFlowFactory(this)
         setContent {
             MainView(

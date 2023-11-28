@@ -1,11 +1,8 @@
 package org.publicvalue.multiplatform.oidc.appsupport
 
-import android.content.Intent
 import androidx.activity.ComponentActivity
-import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContract
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityOptionsCompat
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.drop
@@ -16,9 +13,9 @@ import kotlinx.coroutines.flow.first
  * Register for activity result and return an @ActivityResultLauncherSuspend, so result can be
  * consumed in a suspend function.
  */
-fun ComponentActivity.registerForActivityResultSuspend(contract: ActivityResultContracts.StartActivityForResult): ActivityResultLauncherSuspend<Intent> {
+fun <Input, Output> ComponentActivity.registerForActivityResultSuspend(contract: ActivityResultContract<Input, Output>): ActivityResultLauncherSuspend<Input, Output> {
 
-    val resultFlow:MutableStateFlow<ActivityResult?> = MutableStateFlow(null)
+    val resultFlow:MutableStateFlow<Output?> = MutableStateFlow(null)
     val delegate = registerForActivityResult(contract) {
         resultFlow.value = it
     }
@@ -31,16 +28,16 @@ fun ComponentActivity.registerForActivityResultSuspend(contract: ActivityResultC
     return launcher
 }
 
-class ActivityResultLauncherSuspend<T>(
-    val delegate: ActivityResultLauncher<T>,
-    val resultFlow: MutableStateFlow<ActivityResult?>
-): ActivityResultLauncher<T>() {
+class ActivityResultLauncherSuspend<Input, Output>(
+    val delegate: ActivityResultLauncher<Input>,
+    val resultFlow: MutableStateFlow<Output?>
+): ActivityResultLauncher<Input>() {
 
-    override fun launch(input: T, options: ActivityOptionsCompat?) {
+    override fun launch(input: Input, options: ActivityOptionsCompat?) {
         delegate.launch(input, options)
     }
 
-    suspend fun launchSuspend(input: T, options: ActivityOptionsCompat? = null): ActivityResult {
+    suspend fun launchSuspend(input: Input, options: ActivityOptionsCompat? = null): Output {
         delegate.launch(input, options)
         return resultFlow.drop(1).filterNotNull().first()
     }
@@ -49,7 +46,7 @@ class ActivityResultLauncherSuspend<T>(
         delegate.unregister()
     }
 
-    override fun getContract(): ActivityResultContract<T, *> {
+    override fun getContract(): ActivityResultContract<Input, *> {
         return delegate.contract
     }
 }

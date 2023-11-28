@@ -39,7 +39,7 @@ class OpenIDConnectClientConfig(
             authorizationEndpoint = authorizationEndpoint ?: config.authorization_endpoint
             tokenEndpoint = tokenEndpoint ?: config.token_endpoint
             endSessionEndpoint = endSessionEndpoint ?: config.end_session_endpoint
-            userInfoEndpoint = config.userinfo_endpoint
+            userInfoEndpoint = userInfoEndpoint ?: config.userinfo_endpoint
         }
         this.scope = scope ?: config.scopes_supported?.joinToString(" ")
     }
