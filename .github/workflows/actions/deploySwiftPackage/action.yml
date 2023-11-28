@@ -29,7 +29,7 @@ runs:
         git commit -m "New ios package"
         git remote add origin https://${{ inputs.token }}@github.com/kalinjul/oidc-core-ios.git
         git fetch
-        git rebase origin/${{ inputs.branch }}
+        git rebase -X theirs origin/${{ inputs.branch }}
         git push origin ${{ inputs.branch }}
         echo "oidc-appsupport"
         cd ${GITHUB_WORKSPACE}/oidc-appsupport/build/swiftpackage/
