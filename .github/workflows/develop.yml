@@ -46,6 +46,7 @@ jobs:
       - uses: ./.github/workflows/actions/deploySwiftPackage
         with:
           branch: "develop"
+          token: ${{ secrets.PAT }}
 
   deploy-snapshot:
     needs: [ test ]
