@@ -24,7 +24,7 @@ runs:
         git checkout -b ${{ inputs.branch }}
         git add -A
         git commit -m "New ios package"
-        git remote add origin git@github.com:kalinjul/oidc-core-ios.git
+        git remote add origin https://${{ secrets.PAT }}@github.com/kalinjul/oidc-core-ios.git
         git fetch
         git rebase origin/${{ inputs.branch }}
         git push origin ${{ inputs.branch }}
