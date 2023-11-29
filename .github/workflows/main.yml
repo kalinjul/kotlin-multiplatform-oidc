@@ -55,4 +55,3 @@ jobs:
         with:
           tag: ${{ env.VERSION }} #${{ steps.generate-version.outputs.VERSION }}
           generateReleaseNotes: true
-          draft: true

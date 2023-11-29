@@ -1,4 +1,4 @@
-name: Build Release
+name: Publish Release
 
 on:
   release:
@@ -21,7 +21,7 @@ jobs:
         run: |
           export VERSION=${{ github.event.release.tag_name }}
           echo VERSION
-          echo $VERSION >> "$GITHUB_ENV"
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
 
       - name: Publish
         run: |
