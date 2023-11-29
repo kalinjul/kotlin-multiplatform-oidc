@@ -55,11 +55,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - uses: ./.github/workflows/actions/prepare
         with:
-#          ref: ${{ github.ref }}
-#          fetch-tags: true
+          ref: ${{ github.ref }}
+          fetch-tags: true
           fetch-depth: 0
+      - uses: ./.github/workflows/actions/prepare
       - name: Setup git-mkver
         uses: cperezabo/setup-git-mkver@v1.2.0
         with:
@@ -76,6 +76,7 @@ jobs:
           echo ${{ github.ref }}
           git checkout ${{ github.ref }}
           git fetch --tags
+          git log
           git tag
           export VERSION=$(git mkver next --pre-release)
           echo $VERSION
