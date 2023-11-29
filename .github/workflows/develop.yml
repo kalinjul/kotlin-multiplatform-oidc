@@ -66,6 +66,10 @@ jobs:
 
       - name: Generate version
         run: |
+          git log
+          git tag
+          git fetch --tags
+          git tag
           export VERSION=$(git mkver next --pre-release)
           echo $VERSION
           echo "VERSION=$VERSION" >> "$GITHUB_ENV"
