@@ -4,10 +4,12 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.api.publish.maven.tasks.AbstractPublishToMaven
 import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.withType
+import org.gradle.plugins.signing.Sign
 import org.gradle.plugins.signing.SigningExtension
 import org.jetbrains.compose.internal.utils.getLocalProperty
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -87,6 +89,15 @@ class MavenCentralPublishConventionPlugin : Plugin<Project> {
                 val publishing = extensions.getByType<PublishingExtension>()
                 sign(publishing.publications)
             }
+
+
+            //region Fix Gradle warning about signing tasks using publishing task outputs without explicit dependencies
+            // https://github.com/gradle/gradle/issues/26091
+            tasks.withType<AbstractPublishToMaven>().configureEach {
+                val signingTasks = tasks.withType<Sign>()
+                mustRunAfter(signingTasks)
+            }
+            //endregion
         }
     }
 }

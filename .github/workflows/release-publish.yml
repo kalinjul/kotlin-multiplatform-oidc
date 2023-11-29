@@ -41,7 +41,13 @@ jobs:
     runs-on: macos-13
     steps:
       - uses: actions/checkout@v3
+      - name: Generate version
+        run: |
+          export VERSION=${{ github.event.release.tag_name }}
+          echo VERSION
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
       - uses: ./.github/workflows/actions/deploySwiftPackage
         with:
           branch: "main"
           token: ${{ secrets.PAT }}
+          tag: ${{ env.VERSION }}
