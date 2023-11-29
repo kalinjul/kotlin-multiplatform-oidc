@@ -20,6 +20,7 @@ dependencies {
     compileOnly(libs.compose.gradlePlugin)
     compileOnly(libs.nexusPublish.gradlePlugin)
     compileOnly(libs.multiplatform.swiftpackage.gradlePlugin)
+    compileOnly(libs.dokka.gradlePlugin)
 
     // https://github.com/gradle/gradle/issues/15383
     implementation(files(libs.javaClass.superclass.protectionDomain.codeSource.location))

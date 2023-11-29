@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.ksp) apply false
     alias(libs.plugins.kmp) apply false
     alias(libs.plugins.multiplatform.swiftpackage) apply false
+    alias(libs.plugins.dokka) apply false
     alias(libs.plugins.nexusPublish)
 }
 

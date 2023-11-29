@@ -4,11 +4,9 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.configure
-import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.withType
-import org.gradle.plugins.signing.SigningExtension
-import org.jetbrains.compose.internal.utils.getLocalProperty
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
 class MavenCentralPublishConventionPlugin : Plugin<Project> {
@@ -17,8 +15,9 @@ class MavenCentralPublishConventionPlugin : Plugin<Project> {
             with(pluginManager) {
                 apply("maven-publish")
                 apply("signing")
+                apply("org.jetbrains.dokka")
             }
-//
+
             extensions.configure<KotlinMultiplatformExtension> {
                 if (pluginManager.hasPlugin("com.android.library")) {
                     androidTarget {
@@ -27,11 +26,22 @@ class MavenCentralPublishConventionPlugin : Plugin<Project> {
                 }
             }
 
+
+            val javadocJar = tasks.register("javadocJar", Jar::class.java) {
+                archiveClassifier.set("javadoc")
+                from(tasks.getByName("dokkaHtml"))
+            }
+
             extensions.configure<PublishingExtension> {
                 publications.withType<MavenPublication> {
+                    artifact(javadocJar)
                     pom {
                         name.set(project.name)
-                        description.set(project.description)
+                        val pom = this
+                        project.afterEvaluate {
+                            // description seems to be only available after evaluation
+                            pom.description.set(project.description)
+                        }
                         url.set("https://github.com/kalinjul/kotlin-multiplatform-oidc")
                         licenses {
                             license {
