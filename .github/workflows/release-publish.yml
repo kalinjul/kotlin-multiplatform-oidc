@@ -5,7 +5,7 @@ on:
     types: [released]
 
 jobs:
-  deploy:
+  deploy-release:
     runs-on: macos-13
 
     steps:
@@ -34,3 +34,19 @@ jobs:
           SIGNING_KEY_ID: ${{ secrets.SIGNING_KEY_ID }}
           SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
           SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
+
+  create-swift-package:
+    runs-on: macos-13
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/workflows/actions/createSwiftPackage
+
+  deploy-swift-package-release:
+    needs: [ create-swift-package ]
+    runs-on: macos-13
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/workflows/actions/deploySwiftPackage
+        with:
+          branch: "main"
+          token: ${{ secrets.PAT }}
