@@ -29,31 +29,40 @@ import org.publicvalue.multiplatform.oidc.types.AuthCodeRequest
 import org.publicvalue.multiplatform.oidc.types.CodeChallengeMethod
 import org.publicvalue.multiplatform.oidc.types.remote.ErrorResponse
 import org.publicvalue.multiplatform.oidc.types.TokenRequest
+import org.publicvalue.multiplatform.oidc.types.remote.OpenIDConnectConfiguration
 
 @OptIn(ExperimentalSerializationApi::class)
 class OpenIDConnectClient(
-    val httpClient: HttpClient = HttpClient {
-        install(ContentNegotiation) {
-            // register custom type matcher to support broken IDPs that don't correct content-type
-            register(
-                contentTypeToSend = ContentType.Application.Json,
-                converter = KotlinxSerializationConverter(
-                    Json {
-                        explicitNulls = false
-                        ignoreUnknownKeys = true
-                    }
-                ),
-                contentTypeMatcher = object : ContentTypeMatcher {
-                    override fun contains(contentType: ContentType): Boolean {
-                        return true
-                    }
-                }
-            ) {
-            }
-        }
-    },
+    val httpClient: HttpClient = DefaultHttpClient,
     val config: OpenIDConnectClientConfig,
 ) {
+
+    var discoverDocument: OpenIDConnectConfiguration? = null
+
+    companion object {
+        val DefaultHttpClient by lazy {
+            HttpClient {
+                install(ContentNegotiation) {
+                    // register custom type matcher to support broken IDPs that don't correct content-type
+                    register(
+                        contentTypeToSend = ContentType.Application.Json,
+                        converter = KotlinxSerializationConverter(
+                            Json {
+                                explicitNulls = false
+                                ignoreUnknownKeys = true
+                            }
+                        ),
+                        contentTypeMatcher = object : ContentTypeMatcher {
+                            override fun contains(contentType: ContentType): Boolean {
+                                return true
+                            }
+                        }
+                    ) {
+                    }
+                }
+            }
+        }
+    }
 
     init {
         config.validate()
@@ -86,6 +95,7 @@ class OpenIDConnectClient(
         config.discoveryUri?.let { discoveryUri ->
             val config = Discover(httpClient).downloadConfiguration(discoveryUri)
             this.config.updateWithDiscovery(config)
+            discoverDocument = config
         } ?: run {
             throw OpenIDConnectException.InvalidUrl("No discoveryUri set")
         }
@@ -206,9 +216,10 @@ private suspend fun HttpClientCall.errorBody(): ErrorResponse? {
 }
 
 fun OpenIDConnectClient(
+    discoveryUri: String? = null,
     block: OpenIDConnectClientConfig.() -> Unit
 ): OpenIDConnectClient {
-    val config = OpenIDConnectClientConfig().apply(block)
+    val config = OpenIDConnectClientConfig(discoveryUri).apply(block)
     return OpenIDConnectClient(config = config)
 }
 

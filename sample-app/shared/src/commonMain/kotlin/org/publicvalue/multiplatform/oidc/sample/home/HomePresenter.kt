@@ -45,7 +45,7 @@ class HomePresenter(
             val clientSettings = clientSettings
             val idpSettings = idpSettings
             return if (clientSettings != null && idpSettings != null) {
-                OpenIDConnectClient {
+                OpenIDConnectClient(idpSettings.discoveryUrl) {
                     redirectUri = Constants.redirectUrl.trim()
                     codeChallengeMethod = clientSettings.code_challenge_method
                     this.scope = clientSettings.scope?.trim()

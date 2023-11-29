@@ -17,6 +17,9 @@ abstract class OidcCodeAuthFlow(val client: OpenIDConnectClient) {
 
     @Suppress("unused")
     suspend fun getAccessToken(): AccessTokenResponse {
+        if (client.config.discoveryUri != null) {
+            client.discover()
+        }
         val request = client.createAuthorizationCodeRequest()
         return getAccessToken(request)
     }

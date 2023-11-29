@@ -5,7 +5,10 @@ import org.publicvalue.multiplatform.oidc.types.remote.OpenIDConnectConfiguratio
 
 @EndpointMarker
 class OpenIDConnectClientConfig(
-    var discoveryUri: String? = null,
+    /**
+     * If discoveryUri is set, no further endpoints have to be configured.
+     */
+    val discoveryUri: String?,
     var endpoints: Endpoints = Endpoints(),
     /**
      * REQUIRED
@@ -65,13 +68,11 @@ data class Endpoints(
 }
 
 fun OpenIDConnectClientConfig.validate() {
-    if (discoveryUri == null) {
-        if (endpoints.tokenEndpoint == null) {
-            throw OpenIDConnectException.InvalidUrl("Invalid configuration: tokenEndpoint is null")
-        }
-        if (endpoints.authorizationEndpoint == null) {
-            throw OpenIDConnectException.InvalidUrl("Invalid configuration: authorizationEndpoint is null")
-        }
+    if (endpoints.tokenEndpoint == null) {
+        throw OpenIDConnectException.InvalidUrl("Invalid configuration: tokenEndpoint is null")
+    }
+    if (endpoints.authorizationEndpoint == null) {
+        throw OpenIDConnectException.InvalidUrl("Invalid configuration: authorizationEndpoint is null")
     }
 
     if (clientId == null) {
