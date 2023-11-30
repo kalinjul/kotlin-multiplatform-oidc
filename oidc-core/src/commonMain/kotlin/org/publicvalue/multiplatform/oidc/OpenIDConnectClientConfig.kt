@@ -68,13 +68,14 @@ data class Endpoints(
 }
 
 fun OpenIDConnectClientConfig.validate() {
-    if (endpoints.tokenEndpoint == null) {
-        throw OpenIDConnectException.InvalidUrl("Invalid configuration: tokenEndpoint is null")
+    if (discoveryUri.isNullOrBlank()) {
+        if (endpoints.tokenEndpoint == null) {
+            throw OpenIDConnectException.InvalidUrl("Invalid configuration: tokenEndpoint is null")
+        }
+        if (endpoints.authorizationEndpoint == null) {
+            throw OpenIDConnectException.InvalidUrl("Invalid configuration: authorizationEndpoint is null")
+        }
     }
-    if (endpoints.authorizationEndpoint == null) {
-        throw OpenIDConnectException.InvalidUrl("Invalid configuration: authorizationEndpoint is null")
-    }
-
     if (clientId == null) {
         throw OpenIDConnectException.InvalidUrl("Invalid configuration: clientId is null")
     }
