@@ -30,10 +30,12 @@ runs:
         cd ${GITHUB_WORKSPACE}/oidc-core/build/swiftpackage/
         git init
         git checkout -b ${{ inputs.branch }}
+        git lfs track "*/*/*.framework/*"
+        git lfs install
         git add -A
         git commit -m "New ios package"
         git remote add origin https://${{ inputs.token }}@github.com/kalinjul/oidc-core-ios.git
-        git fetch
+        git fetch --depth=1
         git rebase -X theirs origin/${{ inputs.branch }}
         if [ -n "${{ inputs.tag }}" ]; then git tag "${{ inputs.tag }}"; fi
         git push --tags origin ${{ inputs.branch }}
@@ -43,10 +45,12 @@ runs:
         cd ${GITHUB_WORKSPACE}/oidc-appsupport/build/swiftpackage/
         git init
         git checkout -b ${{ inputs.branch }}
+        git lfs track "*/*/*.framework/*"
+        git lfs install
         git add -A
         git commit -m "New ios package"
         git remote add origin https://${{ inputs.token }}@github.com/kalinjul/oidc-appsupport-ios.git
-        git fetch
+        git fetch --depth=1
         git rebase -X theirs origin/${{ inputs.branch }}
         if [ -n "${{ inputs.tag }}" ]; then git tag "${{ inputs.tag }}"; fi
         git push --tags origin ${{ inputs.branch }}
