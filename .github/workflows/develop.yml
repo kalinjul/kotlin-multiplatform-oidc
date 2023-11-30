@@ -70,8 +70,9 @@ jobs:
           echo "tags: $(git tag)"
           echo "log:"
           git log -n 3
+          git status
           export VERSION=$(git mkver next --pre-release)
-          echo $VERSION
+          echo "this is version: $VERSION"
           echo "VERSION=$VERSION" >> "$GITHUB_ENV"
 
       - name: Publish
