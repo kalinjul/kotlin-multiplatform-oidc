@@ -8,7 +8,7 @@ class OpenIDConnectClientConfig(
     /**
      * If discoveryUri is set, no further endpoints have to be configured.
      */
-    val discoveryUri: String?,
+    val discoveryUri: String? = null,
     var endpoints: Endpoints = Endpoints(),
     /**
      * REQUIRED
