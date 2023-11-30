@@ -61,3 +61,4 @@ jobs:
         with:
           tag: ${{ env.VERSION }} #${{ steps.generate-version.outputs.VERSION }}
           generateReleaseNotes: true
+          token: ${{ secrets.PAT }} # required to trigger release-publish, see https://stackoverflow.com/questions/69063452/github-actions-on-release-created-workflow-trigger-not-working

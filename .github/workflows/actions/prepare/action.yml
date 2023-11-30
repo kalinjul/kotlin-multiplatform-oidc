@@ -1,10 +1,5 @@
 name: Prepare
-
-#inputs:
-#  who-to-greet:  # id of input
-#    description: 'Who to greet'
-#    required: true
-#    default: 'World'
+description: Prepare
 
 runs:
   using: "composite"

@@ -1,4 +1,5 @@
 name: Test
+description: Test
 
 runs:
   using: "composite"

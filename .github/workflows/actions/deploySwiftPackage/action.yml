@@ -1,4 +1,5 @@
 name: Deploy swift packages
+description: Deploy swift packages
 
 inputs:
   branch:
