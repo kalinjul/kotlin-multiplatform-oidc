@@ -1,11 +1,15 @@
 package org.publicvalue.multiplatform.oidc.types.remote
 
 import kotlinx.serialization.Serializable
+import kotlin.experimental.ExperimentalObjCName
+import kotlin.native.ObjCName
 
 /**
  * Openid-configuration JSON
  */
+@OptIn(ExperimentalObjCName::class)
 @Serializable
+@ObjCName(swiftName = "OpenIDConnectConfiguration")
 data class OpenIDConnectConfiguration(
     val authorization_endpoint: String? = null,
     val token_endpoint: String? = null,

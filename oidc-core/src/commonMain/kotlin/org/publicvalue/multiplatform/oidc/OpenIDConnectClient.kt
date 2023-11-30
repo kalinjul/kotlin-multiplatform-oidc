@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalObjCName::class)
+
 package org.publicvalue.multiplatform.oidc
 
 import io.ktor.client.HttpClient
@@ -24,18 +26,30 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import org.publicvalue.multiplatform.oidc.discovery.Discover
 import org.publicvalue.multiplatform.oidc.flows.PKCE
-import org.publicvalue.multiplatform.oidc.types.remote.AccessTokenResponse
 import org.publicvalue.multiplatform.oidc.types.AuthCodeRequest
 import org.publicvalue.multiplatform.oidc.types.CodeChallengeMethod
-import org.publicvalue.multiplatform.oidc.types.remote.ErrorResponse
 import org.publicvalue.multiplatform.oidc.types.TokenRequest
+import org.publicvalue.multiplatform.oidc.types.remote.AccessTokenResponse
+import org.publicvalue.multiplatform.oidc.types.remote.ErrorResponse
 import org.publicvalue.multiplatform.oidc.types.remote.OpenIDConnectConfiguration
+import kotlin.experimental.ExperimentalObjCName
+import kotlin.native.ObjCName
 
-@OptIn(ExperimentalSerializationApi::class)
+@ObjCName(swiftName = "HttpClient")
+object OpenIDConnectHttpClient {
+    val DefaultHttpClient = OpenIDConnectClient.DefaultHttpClient
+}
+
+val HttpClient.shared: HttpClient
+    get() = OpenIDConnectClient.DefaultHttpClient
+
+@OptIn(ExperimentalSerializationApi::class, ExperimentalObjCName::class)
+@ObjCName(swiftName = "OpenIDConnectClient")
 class OpenIDConnectClient(
     val httpClient: HttpClient = DefaultHttpClient,
     val config: OpenIDConnectClientConfig,
 ) {
+    constructor(config: OpenIDConnectClientConfig): this(httpClient = DefaultHttpClient, config = config)
 
     var discoverDocument: OpenIDConnectConfiguration? = null
 

@@ -2,6 +2,8 @@ package org.publicvalue.multiplatform.oidc
 
 import org.publicvalue.multiplatform.oidc.types.CodeChallengeMethod
 import org.publicvalue.multiplatform.oidc.types.remote.OpenIDConnectConfiguration
+import kotlin.experimental.ExperimentalObjCName
+import kotlin.native.ObjCName
 
 @EndpointMarker
 class OpenIDConnectClientConfig(
@@ -51,7 +53,9 @@ class OpenIDConnectClientConfig(
 @DslMarker
 annotation class EndpointMarker
 
+@OptIn(ExperimentalObjCName::class)
 @EndpointMarker
+@ObjCName(swiftName = "Endpoints")
 data class Endpoints(
     var tokenEndpoint: String? = null,
     var authorizationEndpoint: String? = null,
