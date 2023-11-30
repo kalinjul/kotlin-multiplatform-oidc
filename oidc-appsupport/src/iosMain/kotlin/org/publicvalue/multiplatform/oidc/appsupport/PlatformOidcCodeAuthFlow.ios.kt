@@ -1,6 +1,8 @@
 package org.publicvalue.multiplatform.oidc.appsupport
 
 import io.ktor.http.Url
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 import org.publicvalue.multiplatform.oidc.OpenIDConnectClient
 import org.publicvalue.multiplatform.oidc.OpenIDConnectException
 import org.publicvalue.multiplatform.oidc.flows.AuthCodeResponse
@@ -17,7 +19,10 @@ import platform.darwin.NSObject
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
+import kotlin.experimental.ExperimentalObjCName
 
+@OptIn(ExperimentalObjCName::class)
+@ObjCName(swiftName = "PlatformOidcCodeAuthFlow", name = "PlatformOidcCodeAuthFlow", exact = true)
 actual class PlatformOidcCodeAuthFlow(
     client: OpenIDConnectClient
 ): OidcCodeAuthFlow(client) {
@@ -50,7 +55,9 @@ actual class PlatformOidcCodeAuthFlow(
                 session.prefersEphemeralWebBrowserSession = true
                 session.presentationContextProvider = PresentationContext()
 
-                session.start()
+                MainScope().launch {
+                    session.start()
+                }
             } else {
                 continuation.resumeWithException(OpenIDConnectException.InvalidUrl(request.url.toString()))
             }
