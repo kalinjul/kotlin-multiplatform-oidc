@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalObjCName::class)
-
 package org.publicvalue.multiplatform.oidc
 
 import io.ktor.client.HttpClient
@@ -24,7 +22,7 @@ import io.ktor.serialization.JsonConvertException
 import io.ktor.serialization.kotlinx.KotlinxSerializationConverter
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
-import org.publicvalue.multiplatform.oidc.discovery.Discover
+import org.publicvalue.multiplatform.oidc.discovery.OpenIDConnectDiscover
 import org.publicvalue.multiplatform.oidc.flows.PKCE
 import org.publicvalue.multiplatform.oidc.types.AuthCodeRequest
 import org.publicvalue.multiplatform.oidc.types.CodeChallengeMethod
@@ -35,16 +33,8 @@ import org.publicvalue.multiplatform.oidc.types.remote.OpenIDConnectConfiguratio
 import kotlin.experimental.ExperimentalObjCName
 import kotlin.native.ObjCName
 
-@ObjCName(swiftName = "HttpClient")
-object OpenIDConnectHttpClient {
-    val DefaultHttpClient = OpenIDConnectClient.DefaultHttpClient
-}
-
-val HttpClient.shared: HttpClient
-    get() = OpenIDConnectClient.DefaultHttpClient
-
 @OptIn(ExperimentalSerializationApi::class, ExperimentalObjCName::class)
-@ObjCName(swiftName = "OpenIDConnectClient")
+@ObjCName(swiftName = "OpenIDConnectClient", name = "OpenIDConnectClient", exact = true)
 class OpenIDConnectClient(
     val httpClient: HttpClient = DefaultHttpClient,
     val config: OpenIDConnectClientConfig,
@@ -107,7 +97,7 @@ class OpenIDConnectClient(
 
     suspend fun discover() {
         config.discoveryUri?.let { discoveryUri ->
-            val config = Discover(httpClient).downloadConfiguration(discoveryUri)
+            val config = OpenIDConnectDiscover(httpClient).downloadConfiguration(discoveryUri)
             this.config.updateWithDiscovery(config)
             discoverDocument = config
         } ?: run {

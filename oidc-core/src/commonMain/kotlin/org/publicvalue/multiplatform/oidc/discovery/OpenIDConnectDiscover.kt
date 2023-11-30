@@ -9,8 +9,12 @@ import io.ktor.http.isSuccess
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import org.publicvalue.multiplatform.oidc.types.remote.OpenIDConnectConfiguration
+import kotlin.experimental.ExperimentalObjCName
+import kotlin.native.ObjCName
 
-class Discover(
+@OptIn(ExperimentalObjCName::class)
+@ObjCName(swiftName = "OpenIDConnectDiscover", name = "OpenIDConnectDiscover", exact = true)
+class OpenIDConnectDiscover(
     val httpClient: HttpClient = HttpClient()
 ) {
 

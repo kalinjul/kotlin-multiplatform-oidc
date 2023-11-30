@@ -1,10 +1,14 @@
 package org.publicvalue.multiplatform.oidc.types.remote
 
 import kotlinx.serialization.Serializable
+import kotlin.experimental.ExperimentalObjCName
+import kotlin.native.ObjCName
 
 /**
  * https://datatracker.ietf.org/doc/html/rfc6749#section-4.1.2.1
  */
+@OptIn(ExperimentalObjCName::class)
+@ObjCName(swiftName = "ErrorResponse", name = "ErrorResponse", exact = true)
 @Serializable
 data class ErrorResponse(
     val error: Error,

@@ -4,7 +4,11 @@ import org.publicvalue.multiplatform.oidc.encodeForPKCE
 import org.publicvalue.multiplatform.oidc.randomBytes
 import org.publicvalue.multiplatform.oidc.s256
 import org.publicvalue.multiplatform.oidc.types.CodeChallengeMethod
+import kotlin.experimental.ExperimentalObjCName
+import kotlin.native.ObjCName
 
+@OptIn(ExperimentalObjCName::class)
+@ObjCName(swiftName = "PKCE", name = "PKCE", exact = true)
 class PKCE(
     codeChallengeMethod: CodeChallengeMethod,
     /** For token request **/

@@ -5,7 +5,9 @@ import org.publicvalue.multiplatform.oidc.types.remote.OpenIDConnectConfiguratio
 import kotlin.experimental.ExperimentalObjCName
 import kotlin.native.ObjCName
 
+@OptIn(ExperimentalObjCName::class)
 @EndpointMarker
+@ObjCName(swiftName = "OpenIDConnectClientConfig", name = "OpenIDConnectClientConfig", exact = true)
 class OpenIDConnectClientConfig(
     /**
      * If discoveryUri is set, no further endpoints have to be configured.
@@ -55,7 +57,7 @@ annotation class EndpointMarker
 
 @OptIn(ExperimentalObjCName::class)
 @EndpointMarker
-@ObjCName(swiftName = "Endpoints")
+@ObjCName(swiftName = "Endpoints", name = "Endpoints", exact = true)
 data class Endpoints(
     var tokenEndpoint: String? = null,
     var authorizationEndpoint: String? = null,

@@ -2,7 +2,11 @@ package org.publicvalue.multiplatform.oidc
 
 import io.ktor.http.HttpStatusCode
 import org.publicvalue.multiplatform.oidc.types.remote.ErrorResponse
+import kotlin.experimental.ExperimentalObjCName
+import kotlin.native.ObjCName
 
+@OptIn(ExperimentalObjCName::class)
+@ObjCName(swiftName = "OpenIDConnectException", name = "OpenIDConnectException", exact = true)
 sealed class OpenIDConnectException(
     override val message: String,
     override val cause: Throwable? = null

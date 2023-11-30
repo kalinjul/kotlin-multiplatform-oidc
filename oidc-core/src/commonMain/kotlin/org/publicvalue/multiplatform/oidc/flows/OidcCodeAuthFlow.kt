@@ -5,6 +5,8 @@ import org.publicvalue.multiplatform.oidc.OpenIDConnectException
 import org.publicvalue.multiplatform.oidc.types.remote.AccessTokenResponse
 import org.publicvalue.multiplatform.oidc.types.AuthCodeRequest
 import org.publicvalue.multiplatform.oidc.types.validateState
+import kotlin.experimental.ExperimentalObjCName
+import kotlin.native.ObjCName
 
 /**
  * Implements the OAuth 2.0 Code Authorization Flow.
@@ -13,6 +15,8 @@ import org.publicvalue.multiplatform.oidc.types.validateState
  * Implementations have to provide their own method to get the authorization code,
  * as this requires user interaction (e.g. via browser).
  */
+@OptIn(ExperimentalObjCName::class)
+@ObjCName(swiftName = "OidcCodeAuthFlow", name = "OidcCodeAuthFlow", exact = true)
 abstract class OidcCodeAuthFlow(val client: OpenIDConnectClient) {
 
     @Suppress("unused")
