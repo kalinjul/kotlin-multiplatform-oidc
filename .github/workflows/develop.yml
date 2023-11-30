@@ -67,17 +67,9 @@ jobs:
 
       - name: Generate version
         run: |
-          git log
-          git status
-          git tag
-          echo "mkver without fetch"
-          git mkver next --pre-release
-          echo "fetching"
-          echo ${{ github.ref }}
-          git checkout ${{ github.ref }}
-          git fetch --tags
-          git log
-          git tag
+          echo "tags: $(git tag)"
+          echo "log:"
+          git log -n 3
           export VERSION=$(git mkver next --pre-release)
           echo $VERSION
           echo "VERSION=$VERSION" >> "$GITHUB_ENV"
