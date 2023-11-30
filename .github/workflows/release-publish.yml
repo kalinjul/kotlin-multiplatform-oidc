@@ -20,8 +20,7 @@ jobs:
 
       - name: Publish
         run: |
-          ./gradlew publishAllPublicationsToSonatypeRepository -Pversion=$VERSION --max-workers 1
-          ./gradlew closeAndReleaseSonatypeStagingRepository
+          ./gradlew publishAllPublicationsToSonatypeRepository closeAndReleaseSonatypeStagingRepository -Pversion=$VERSION --max-workers 1
         env:
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
