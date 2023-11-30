@@ -9,6 +9,11 @@ plugins {
 
 description = "Kotlin Multiplatform OIDC appsupport library for Android/iOS"
 
+multiplatformSwiftPackage {
+    packageName("OpenIdConnectClient")
+    zipFileName("OpenIdConnectClient")
+}
+
 kotlin {
     configureIosTargets(baseName = "OpenIdConnectClient")
     sourceSets {

@@ -18,8 +18,6 @@ class MultiplatformSwiftPackageConventionPlugin : Plugin<Project> {
                 apply("io.github.luca992.multiplatform-swiftpackage")
             }
 
-            val packageName = project.name //.replace("-", "_")
-
             extensions.configure<SwiftPackageExtension> {
                 swiftToolsVersion("5.6")
                 targetPlatforms {
@@ -27,12 +25,10 @@ class MultiplatformSwiftPackageConventionPlugin : Plugin<Project> {
                     macOS {v("15") }
                     tvOS { v("15") }
                 }
-                packageName(packageName)
                 outputDirectory(File(project.projectDir, "build/swiftpackage"))
                 distributionMode {
                     local()
                 }
-                zipFileName(packageName)
             }
         }
     }
