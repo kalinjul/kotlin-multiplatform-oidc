@@ -24,22 +24,7 @@ runs:
         git config --global user.name "Julian Kalinowski"
         git config --global user.email "kalinjul@users.noreply.github.com"
         ls
-        
-        echo "oidc-core"
-        echo "${GITHUB_WORKSPACE}/oidc-core/build/swiftpackage/"
-        cd ${GITHUB_WORKSPACE}/oidc-core/build/swiftpackage/
-        git init
-        git checkout -b ${{ inputs.branch }}
-        git lfs track "*/*/*.framework/*"
-        git lfs install
-        git add -A
-        git commit -m "New ios package"
-        git remote add origin https://${{ inputs.token }}@github.com/kalinjul/oidc-core-ios.git
-        git fetch --depth=1
-        git rebase -X theirs origin/${{ inputs.branch }}
-        if [ -n "${{ inputs.tag }}" ]; then git tag "${{ inputs.tag }}"; fi
-        git push --tags origin ${{ inputs.branch }}
-        
+                
         echo "oidc-appsupport"
         echo "${GITHUB_WORKSPACE}/oidc-appsupport/build/swiftpackage/"
         cd ${GITHUB_WORKSPACE}/oidc-appsupport/build/swiftpackage/
@@ -49,7 +34,7 @@ runs:
         git lfs install
         git add -A
         git commit -m "New ios package"
-        git remote add origin https://${{ inputs.token }}@github.com/kalinjul/oidc-appsupport-ios.git
+        git remote add origin https://${{ inputs.token }}@github.com/kalinjul/OpenIdConnectClient.git
         git fetch --depth=1
         git rebase -X theirs origin/${{ inputs.branch }}
         if [ -n "${{ inputs.tag }}" ]; then git tag "${{ inputs.tag }}"; fi

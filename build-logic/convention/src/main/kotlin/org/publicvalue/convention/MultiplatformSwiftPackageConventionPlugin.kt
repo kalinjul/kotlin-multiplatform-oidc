@@ -18,7 +18,7 @@ class MultiplatformSwiftPackageConventionPlugin : Plugin<Project> {
                 apply("io.github.luca992.multiplatform-swiftpackage")
             }
 
-            val packageName = "${project.name}-ios" //.replace("-", "_")
+            val packageName = project.name //.replace("-", "_")
 
             extensions.configure<SwiftPackageExtension> {
                 swiftToolsVersion("5.6")
@@ -34,12 +34,6 @@ class MultiplatformSwiftPackageConventionPlugin : Plugin<Project> {
                 }
                 zipFileName(packageName)
             }
-
-//            project.afterEvaluate {
-//                val task:Exec = tasks.get("createXCFramework") as Exec
-//                println("ARGS:")
-//                println(task.args)
-//            }
         }
     }
 }

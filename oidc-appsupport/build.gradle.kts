@@ -1,3 +1,5 @@
+import org.publicvalue.convention.config.configureIosTargets
+
 plugins {
     id("org.publicvalue.convention.android.library")
     id("org.publicvalue.convention.kotlin.multiplatform")
@@ -8,6 +10,7 @@ plugins {
 description = "Kotlin Multiplatform OIDC appsupport library for Android/iOS"
 
 kotlin {
+    configureIosTargets(baseName = "OpenIdConnectClient")
     sourceSets {
         val commonMain by getting {
             dependencies {
