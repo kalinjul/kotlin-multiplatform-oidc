@@ -21,7 +21,7 @@ class MultiplatformSwiftPackageConventionPlugin : Plugin<Project> {
             val packageName = "${project.name}-ios" //.replace("-", "_")
 
             extensions.configure<SwiftPackageExtension> {
-                swiftToolsVersion("5.3")
+                swiftToolsVersion("5.6")
                 targetPlatforms {
                     iOS { v("15") }
                     macOS {v("15") }
