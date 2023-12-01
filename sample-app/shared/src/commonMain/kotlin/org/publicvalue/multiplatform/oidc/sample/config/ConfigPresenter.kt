@@ -5,11 +5,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.runtime.Navigator
-import com.slack.circuit.runtime.presenter.Presenter
 import io.ktor.http.Url
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import org.publicvalue.multiplatform.oidc.discovery.Discover
+import org.publicvalue.multiplatform.oidc.discovery.OpenIDConnectDiscover
 import org.publicvalue.multiplatform.oidc.sample.circuit.ErrorPresenter
 import org.publicvalue.multiplatform.oidc.sample.circuit.catchErrorMessage
 import org.publicvalue.multiplatform.oidc.sample.data.LocalSettingsStore
@@ -94,7 +93,7 @@ class ConfigPresenter(
                                         discoveryUrl = idpSettings?.discoveryUrl
                                     )
                                 )
-                                val d = Discover()
+                                val d = OpenIDConnectDiscover()
                                 idpSettings?.let { idpSettings ->
                                     idpSettings.discoveryUrl?.let {
                                         val config = d.downloadConfiguration(it)
