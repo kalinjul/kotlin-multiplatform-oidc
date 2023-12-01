@@ -20,7 +20,6 @@ import org.publicvalue.multiplatform.oauth.domain.AddIdp
 import org.publicvalue.multiplatform.oauth.logging.Logger
 import org.publicvalue.multiplatform.oauth.screens.ClientListScreen
 import org.publicvalue.multiplatform.oauth.screens.IdpListScreen
-import org.publicvalue.multiplatform.oidc.discovery.Discover
 
 @Inject
 class IdpListUiPresenterFactory(
@@ -57,13 +56,6 @@ class IdpListPresenter(
         fun eventSink(event: IdpListUiEvent) {
             when (event) {
                 is IdpListUiEvent.NavigateToIdp -> navigator.goTo(ClientListScreen(event.idp.id))
-                IdpListUiEvent.Call -> {
-                    scope.launch {
-                        val discover = Discover()
-                        val config = discover.downloadConfiguration("https://")
-                        println(config)
-                    }
-                }
 
                 IdpListUiEvent.AddIdp -> {
                     scope.launch {

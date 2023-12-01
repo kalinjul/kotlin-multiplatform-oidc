@@ -29,10 +29,9 @@ import org.publicvalue.multiplatform.oauth.domain.ExchangeToken
 import org.publicvalue.multiplatform.oauth.domain.ExchangeTokenResult
 import org.publicvalue.multiplatform.oauth.logging.Logger
 import org.publicvalue.multiplatform.oauth.screens.ClientDetailScreen
-import org.publicvalue.multiplatform.oidc.types.remote.ErrorResponse
 import org.publicvalue.multiplatform.oidc.types.AuthCodeRequest
-import org.publicvalue.multiplatform.oidc.discovery.Discover
 import org.publicvalue.multiplatform.oidc.types.remote.AccessTokenResponse
+import org.publicvalue.multiplatform.oidc.types.remote.ErrorResponse
 
 @Inject
 class ClientDetailUiPresenterFactory(
@@ -80,14 +79,6 @@ class ClientDetailPresenter(
 
         fun eventSink(event: ClientDetailUiEvent) {
             when (event) {
-                ClientDetailUiEvent.Call -> {
-                    scope.launch {
-                        val discover = Discover()
-                        val config = discover.downloadConfiguration("https://")
-                        println(config)
-                    }
-                }
-
                 ClientDetailUiEvent.NavigateUp -> {
                     navigator.pop()
                 }

@@ -18,6 +18,5 @@ sealed interface IdpListUiEvent : CircuitUiEvent {
     data class NavigateToIdp(val idp: Identityprovider): IdpListUiEvent
     data class RemoveIdp(val idp: Identityprovider) : IdpListUiEvent
 
-    data object Call: IdpListUiEvent
     data object AddIdp: IdpListUiEvent
 }

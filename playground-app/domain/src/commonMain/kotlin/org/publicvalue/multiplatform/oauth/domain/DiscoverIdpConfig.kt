@@ -6,7 +6,7 @@ import org.publicvalue.multiplatform.oauth.data.daos.IdpDao
 import org.publicvalue.multiplatform.oauth.data.db.Identityprovider
 import org.publicvalue.multiplatform.oauth.logging.Logger
 import org.publicvalue.multiplatform.oauth.util.DispatcherProvider
-import org.publicvalue.multiplatform.oidc.discovery.Discover
+import org.publicvalue.multiplatform.oidc.discovery.OpenIDConnectDiscover
 
 @Inject
 class DiscoverIdpConfig(
@@ -29,7 +29,7 @@ class DiscoverIdpConfig(
             ))
 
             idp.discoveryUrl?.let {
-                val config = Discover().downloadConfiguration(it)
+                val config = OpenIDConnectDiscover().downloadConfiguration(it)
                 idpDao.update(
                     idp.updateWith(config)
                 )

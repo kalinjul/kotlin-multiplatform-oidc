@@ -27,7 +27,6 @@ data class ClientDetailUiState(
 }
 
 sealed interface ClientDetailUiEvent : CircuitUiEvent {
-    data object Call: ClientDetailUiEvent
     data object NavigateUp : ClientDetailUiEvent
     data object ResetErrorMessage: ClientDetailUiEvent
 
