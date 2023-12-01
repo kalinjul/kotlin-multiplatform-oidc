@@ -55,6 +55,10 @@ kotlin {
             }
         }
     }
+
+    targets.withType<org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget> {
+        compilations["main"].compilerOptions.options.freeCompilerArgs.add("-Xexport-kdoc")
+    }
 }
 
 swiftklib {

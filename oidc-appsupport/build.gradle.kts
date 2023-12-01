@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.publicvalue.convention.config.configureIosTargets
 
 plugins {
@@ -40,6 +42,14 @@ kotlin {
         val commonTest by getting {
             dependencies {
             }
+        }
+    }
+
+    targets.withType<KotlinNativeTarget> {
+        compilations["main"].compilerOptions.options.freeCompilerArgs.add("-Xexport-kdoc")
+
+        binaries.withType<Framework> {
+            export(projects.oidcCore)
         }
     }
 }

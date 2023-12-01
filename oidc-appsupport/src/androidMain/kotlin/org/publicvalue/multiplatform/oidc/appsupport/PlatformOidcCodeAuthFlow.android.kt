@@ -27,14 +27,14 @@ actual class PlatformOidcCodeAuthFlow(
         return if (result.resultCode == Activity.RESULT_OK && responseUri != null) {
             if (responseUri.queryParameterNames?.contains("error") == true) {
                 // error
-                Result.failure(OpenIDConnectException.AuthenticationFailed(message = responseUri.getQueryParameter("error") ?: ""))
+                Result.failure(OpenIDConnectException.AuthenticationFailure(message = responseUri.getQueryParameter("error") ?: ""))
             } else {
                 val state = responseUri.getQueryParameter("state")
                 val code = responseUri.getQueryParameter("code")
                 Result.success(AuthCodeResult(code, state))
             }
         } else {
-            Result.failure(OpenIDConnectException.AuthenticationFailed(message = "No Uri in callback from browser."))
+            Result.failure(OpenIDConnectException.AuthenticationFailure(message = "No Uri in callback from browser."))
         }
     }
 }

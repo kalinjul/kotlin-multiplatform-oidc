@@ -96,9 +96,9 @@ class HomePresenter(
                     if (client != null) {
                         tokenResponse?.let {
                             scope.launch {
-                                if (!client.config.endpoints?.endSessionEndpoint.isNullOrEmpty()) {
+                                if (!client.config.endpoints.endSessionEndpoint.isNullOrEmpty()) {
                                     catchErrorMessage {
-                                        val result = client.endSession(it)
+                                        val result = client.endSession(idToken = it.id_token ?: "")
                                         if (result.isSuccess() || result == HttpStatusCode.Found) {
                                             tokenResponse = null
                                             settingsStore.clearTokenData()
@@ -121,7 +121,7 @@ class HomePresenter(
                         scope.launch {
                             catchErrorMessage {
                                 tokenResponse?.let {
-                                    val newTokens = client.refreshToken(it)
+                                    val newTokens = client.refreshToken(refreshToken = it.refresh_token ?: "")
                                     updateTokenResponse(newTokens)
                                 }
                             }

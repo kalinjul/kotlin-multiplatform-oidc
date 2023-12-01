@@ -2,8 +2,8 @@ package org.publicvalue.multiplatform.oidc.flows
 
 import org.publicvalue.multiplatform.oidc.OpenIDConnectClient
 import org.publicvalue.multiplatform.oidc.OpenIDConnectException
-import org.publicvalue.multiplatform.oidc.types.remote.AccessTokenResponse
 import org.publicvalue.multiplatform.oidc.types.AuthCodeRequest
+import org.publicvalue.multiplatform.oidc.types.remote.AccessTokenResponse
 import org.publicvalue.multiplatform.oidc.types.validateState
 import kotlin.experimental.ExperimentalObjCName
 import kotlin.native.ObjCName
@@ -16,7 +16,7 @@ import kotlin.native.ObjCName
  * as this requires user interaction (e.g. via browser).
  */
 @OptIn(ExperimentalObjCName::class)
-@ObjCName(swiftName = "OidcCodeAuthFlow", name = "OidcCodeAuthFlow", exact = true)
+@ObjCName(swiftName = "AbstractOidcCodeAuthFlow", name = "AbstractOidcCodeAuthFlow", exact = true)
 abstract class OidcCodeAuthFlow(val client: OpenIDConnectClient) {
 
     @Suppress("unused")
@@ -44,16 +44,16 @@ abstract class OidcCodeAuthFlow(val client: OpenIDConnectClient) {
             onSuccess = {
                 if (it.code != null) {
                     if (!request.validateState(it.state ?: "")) {
-                        throw OpenIDConnectException.AuthenticationFailed("Invalid state")
+                        throw OpenIDConnectException.AuthenticationFailure("Invalid state")
                     }
                     val response = client.exchangeToken(request, it.code)
                     return response
                 } else {
-                    throw OpenIDConnectException.AuthenticationFailed("No auth code", cause = null)
+                    throw OpenIDConnectException.AuthenticationFailure("No auth code", cause = null)
                 }
             },
             onFailure = {
-                throw OpenIDConnectException.AuthenticationFailed("AuthCode response was error: ${it.message}", cause = it)
+                throw OpenIDConnectException.AuthenticationFailure("AuthCode response was error: ${it.message}", cause = it)
             }
         )
     }

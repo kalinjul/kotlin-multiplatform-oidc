@@ -5,9 +5,10 @@ import io.ktor.client.call.HttpClientCall
 import io.ktor.client.call.NoTransformationFoundException
 import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.forms.prepareForm
+import io.ktor.client.request.forms.submitForm
 import io.ktor.client.request.parameter
-import io.ktor.client.request.post
 import io.ktor.client.request.url
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.HttpStatement
@@ -20,6 +21,7 @@ import io.ktor.http.isSuccess
 import io.ktor.http.parameters
 import io.ktor.serialization.JsonConvertException
 import io.ktor.serialization.kotlinx.KotlinxSerializationConverter
+import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import org.publicvalue.multiplatform.oidc.discovery.OpenIDConnectDiscover
@@ -30,6 +32,7 @@ import org.publicvalue.multiplatform.oidc.types.TokenRequest
 import org.publicvalue.multiplatform.oidc.types.remote.AccessTokenResponse
 import org.publicvalue.multiplatform.oidc.types.remote.ErrorResponse
 import org.publicvalue.multiplatform.oidc.types.remote.OpenIDConnectConfiguration
+import kotlin.coroutines.cancellation.CancellationException
 import kotlin.experimental.ExperimentalObjCName
 import kotlin.native.ObjCName
 
@@ -39,8 +42,10 @@ class OpenIDConnectClient(
     val httpClient: HttpClient = DefaultHttpClient,
     val config: OpenIDConnectClientConfig,
 ) {
+    // Swift convenience constructor
     constructor(config: OpenIDConnectClientConfig): this(httpClient = DefaultHttpClient, config = config)
 
+    @Suppress("MemberVisibilityCanBePrivate")
     var discoverDocument: OpenIDConnectConfiguration? = null
 
     companion object {
@@ -72,7 +77,7 @@ class OpenIDConnectClient(
         config.validate()
     }
 
-    fun createAuthorizationCodeRequest(): AuthCodeRequest {
+    fun createAuthorizationCodeRequest(configure: (URLBuilder.() -> Unit)? = null): AuthCodeRequest {
         val pkce = PKCE(config.codeChallengeMethod)
         val nonce = randomBytes().encodeForPKCE()
         val state = randomBytes().encodeForPKCE()
@@ -88,6 +93,7 @@ class OpenIDConnectClient(
             if (config.codeChallengeMethod != CodeChallengeMethod.off) { parameters.append("code_challenge", pkce.codeChallenge) }
             config.redirectUri?.let { parameters.append("redirect_uri", it) }
             parameters.append("state", state)
+            configure?.invoke(this)
         }.build()
 
         return AuthCodeRequest(
@@ -95,7 +101,8 @@ class OpenIDConnectClient(
         )
     }
 
-    suspend fun discover() {
+    @Throws(OpenIDConnectException::class, CancellationException::class)
+    suspend fun discover() = wrapExceptions {
         config.discoveryUri?.let { discoveryUri ->
             val config = OpenIDConnectDiscover(httpClient).downloadConfiguration(discoveryUri)
             this.config.updateWithDiscovery(config)
@@ -106,17 +113,22 @@ class OpenIDConnectClient(
     }
 
     /**
+     * RP-initiated logout.
+     * Just performs the GET request for logout, we skip the redirect part for convenience.
+     *
      * https://openid.net/specs/openid-connect-rpinitiated-1_0.html
      */
-    suspend fun endSession(tokens: AccessTokenResponse): HttpStatusCode {
+    @Throws(OpenIDConnectException::class, CancellationException::class)
+    suspend fun endSession(idToken: String, configure: (HttpRequestBuilder.() -> Unit)? = null): HttpStatusCode = wrapExceptions {
         val endpoint = config.endpoints.endSessionEndpoint?.trim()
         if (!endpoint.isNullOrEmpty()) {
             val url = URLBuilder(endpoint)
-            val response = httpClient.post {
+            val response = httpClient.submitForm {
                 this.url(url.build())
-                parameter("id_token_hint", tokens.id_token)
+                parameter("id_token_hint", idToken)
+                configure?.invoke(this)
             }
-            return response.status
+            response.status
         } else {
             throw OpenIDConnectException.InvalidUrl("No endSessionEndpoint set")
         }
@@ -126,22 +138,25 @@ class OpenIDConnectClient(
      * https://datatracker.ietf.org/doc/html/rfc6749#section-4.1.3
      * + code verifier https://datatracker.ietf.org/doc/html/rfc7636#section-4.5
      */
-    suspend fun exchangeToken(authCodeRequest: AuthCodeRequest, code: String): AccessTokenResponse {
-        // send code_verifier to server
-        val tokenRequest = createAccessTokenRequest(authCodeRequest, code)
+    @Throws(OpenIDConnectException::class, CancellationException::class)
+    suspend fun exchangeToken(authCodeRequest: AuthCodeRequest, code: String, configure: (HttpRequestBuilder.() -> Unit)? = null): AccessTokenResponse = wrapExceptions {
+        val tokenRequest = createAccessTokenRequest(authCodeRequest, code, configure)
         return executeTokenRequest(tokenRequest.request)
     }
 
     /**
      * https://datatracker.ietf.org/doc/html/rfc6749#section-6
      */
-    suspend fun refreshToken(tokens: AccessTokenResponse): AccessTokenResponse {
-        val tokenRequest = createRefreshTokenRequest(tokens)
+    @Throws(OpenIDConnectException::class, CancellationException::class)
+    @Suppress("Unused")
+    suspend fun refreshToken(refreshToken: String, configure: (HttpRequestBuilder.() -> Unit)? = null): AccessTokenResponse = wrapExceptions {
+        val tokenRequest = createRefreshTokenRequest(refreshToken, configure)
         return executeTokenRequest(tokenRequest.request)
     }
 
-    suspend fun createAccessTokenRequest(authCodeRequest: AuthCodeRequest, code: String): TokenRequest {
-        val url = URLBuilder(config.endpoints?.tokenEndpoint!!).build()
+    @Suppress("MemberVisibilityCanBePrivate")
+    fun createAccessTokenRequest(authCodeRequest: AuthCodeRequest, code: String, configure: (HttpRequestBuilder.() -> Unit)? = null): TokenRequest = wrapExceptions {
+        val url = URLBuilder(config.endpoints.tokenEndpoint!!).build()
 
         val formParameters = parameters {
             append("grant_type", "authorization_code")
@@ -151,10 +166,13 @@ class OpenIDConnectClient(
             config.clientSecret?.let { append("client_secret", it) }
             if (config.codeChallengeMethod != CodeChallengeMethod.off) { append("code_verifier", authCodeRequest.pkce.codeVerifier) }
         }
-        val request = httpClient.prepareForm(
-            formParameters = formParameters
-        ) {
-            url(url)
+        val request = runBlocking { // there is no real suspend function happening
+            httpClient.prepareForm(
+                formParameters = formParameters
+            ) {
+                url(url)
+                configure?.invoke(this)
+            }
         }
         return TokenRequest(
             request,
@@ -162,20 +180,24 @@ class OpenIDConnectClient(
         )
     }
 
-    suspend fun createRefreshTokenRequest(tokens: AccessTokenResponse): TokenRequest {
+    @Suppress("MemberVisibilityCanBePrivate")
+    fun createRefreshTokenRequest(refreshToken: String, configure: (HttpRequestBuilder.() -> Unit)? = null): TokenRequest = wrapExceptions {
         val url = URLBuilder(config.endpoints.tokenEndpoint!!).build()
 
         val formParameters = parameters {
             append("grant_type", "refresh_token")
             append("client_id", config.clientId!!)
             config.clientSecret?.let { append("client_secret", it) }
-            append("refresh_token", tokens.refresh_token ?: "")
+            append("refresh_token", refreshToken)
             config.scope?.let { append("scope", it) }
         }
-        val request = httpClient.prepareForm(
-            formParameters = formParameters
-        ) {
-            url(url)
+        val request = runBlocking { // there is no real suspend function happening
+            httpClient.prepareForm(
+                formParameters = formParameters
+            ) {
+                url(url)
+                configure?.invoke(this)
+            }
         }
         return TokenRequest(
             request,
@@ -219,6 +241,7 @@ private suspend fun HttpClientCall.errorBody(): ErrorResponse? {
     }
 }
 
+@Suppress("unused")
 fun OpenIDConnectClient(
     discoveryUri: String? = null,
     block: OpenIDConnectClientConfig.() -> Unit
@@ -226,4 +249,3 @@ fun OpenIDConnectClient(
     val config = OpenIDConnectClientConfig(discoveryUri).apply(block)
     return OpenIDConnectClient(config = config)
 }
-

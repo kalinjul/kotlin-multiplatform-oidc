@@ -21,8 +21,15 @@ import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 import kotlin.experimental.ExperimentalObjCName
 
+/**
+ * Implements the OAuth 2.0 Code Authorization Flow.
+ * See: https://datatracker.ietf.org/doc/html/rfc6749#section-4.1
+ *
+ * Implementations have to provide their own method to get the authorization code,
+ * as this requires user interaction (e.g. via browser).
+ */
 @OptIn(ExperimentalObjCName::class)
-@ObjCName(swiftName = "PlatformOidcCodeAuthFlow", name = "PlatformOidcCodeAuthFlow", exact = true)
+@ObjCName(swiftName = "OidcCodeAuthFlow", name = "OidcCodeAuthFlow", exact = true)
 actual class PlatformOidcCodeAuthFlow(
     client: OpenIDConnectClient
 ): OidcCodeAuthFlow(client) {
@@ -43,9 +50,9 @@ actual class PlatformOidcCodeAuthFlow(
                                 continuation.resume(AuthCodeResponse.success(AuthCodeResult(code = code, state = state)))
                             } else {
                                 if (p2 != null) {
-                                    continuation.resume(AuthCodeResponse.failure<AuthCodeResult>(OpenIDConnectException.AuthenticationFailed(p2.localizedDescription)))
+                                    continuation.resume(AuthCodeResponse.failure<AuthCodeResult>(OpenIDConnectException.AuthenticationFailure(p2.localizedDescription)))
                                 } else {
-                                    continuation.resume(AuthCodeResponse.failure<AuthCodeResult>(OpenIDConnectException.AuthenticationFailed("No message")))
+                                    continuation.resume(AuthCodeResponse.failure<AuthCodeResult>(OpenIDConnectException.AuthenticationFailure("No message")))
                                 }
 
                             }
