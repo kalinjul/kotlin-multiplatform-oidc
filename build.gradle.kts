@@ -18,10 +18,6 @@ subprojects {
 
 nexusPublishing {
     repositories {
-//        val releasesRepoUrl = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
-//        val snapshotsRepoUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
-//        val url = version.endsWith("SNAPSHOT") ? snapshotsRepoUrl : releasesRepoUrl
-
         sonatype {
             nexusUrl.set(URI("https://s01.oss.sonatype.org/service/local/"))
             snapshotRepositoryUrl.set(URI("https://s01.oss.sonatype.org/content/repositories/snapshots/"))

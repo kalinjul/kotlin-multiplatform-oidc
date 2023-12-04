@@ -49,6 +49,7 @@ dependencyResolutionManagement {
 
 rootProject.name="kotlin-multiplatform-oidc"
 
+include(":oidc-crypto")
 include(":oidc-core")
 include(":oidc-appsupport")
 

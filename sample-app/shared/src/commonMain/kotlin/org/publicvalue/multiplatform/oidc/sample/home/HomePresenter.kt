@@ -20,6 +20,7 @@ import org.publicvalue.multiplatform.oidc.sample.circuit.catchErrorMessage
 import org.publicvalue.multiplatform.oidc.sample.data.LocalSettingsStore
 import org.publicvalue.multiplatform.oidc.sample.screens.ConfigScreen
 import org.publicvalue.multiplatform.oidc.types.remote.AccessTokenResponse
+import org.publicvalue.multiplatform.oidc.types.Jwt
 
 class HomePresenter(
     val authFlowFactory: AuthFlowFactory,
@@ -38,6 +39,7 @@ class HomePresenter(
         val tokenData by settingsStore.observeTokenData().collectAsRetainedState()
 
         var tokenResponse by rememberRetained { mutableStateOf<AccessTokenResponse?>(null) }
+        var subject by rememberRetained { mutableStateOf<String?>(null) }
 
         val errorMessage by this.errorMessage.collectAsRetainedState()
 
@@ -64,6 +66,8 @@ class HomePresenter(
 
         suspend fun updateTokenResponse(newTokens: AccessTokenResponse) {
             tokenResponse = newTokens
+            val jwt = newTokens.id_token?.let { Jwt.parse(it) }
+            subject = jwt?.payload?.sub
             settingsStore.setTokenData(
                 org.publicvalue.multiplatform.oidc.sample.domain.TokenData(
                     accessToken = newTokens.access_token,
@@ -136,6 +140,7 @@ class HomePresenter(
             refreshEnabled = tokenData?.refreshToken != null,
             logoutEnabled = tokenData?.accessToken != null,
             tokenData = tokenData,
+            subject = subject,
             eventSink = ::eventSink,
             errorMessage = errorMessage
         )

@@ -55,6 +55,7 @@ fun Home(
             onLogoutClick = { state.eventSink(HomeUiEvent.Logout) },
             onRefreshClick = { state.eventSink(HomeUiEvent.Refresh) },
             tokenData = state.tokenData,
+            subject = state.subject,
             errorMessage = state.errorMessage
         )
     }
@@ -70,6 +71,7 @@ fun Home(
     onLogoutClick: () -> Unit,
     onRefreshClick: () -> Unit,
     tokenData: TokenData?,
+    subject: String?,
     errorMessage: String?
 ) {
     Column(
@@ -99,6 +101,10 @@ fun Home(
         tokenData?.let { Row() {
             Text("Refresh token:")
             Text(it.refreshToken ?: "") }
+        }
+        subject?.let { Row() {
+            Text("Subject:")
+            Text(subject) }
         }
         errorMessage?.let {
             Text("Error: $it")
