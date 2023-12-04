@@ -9,8 +9,8 @@ import kotlin.native.ObjCName
  */
 @OptIn(ExperimentalObjCName::class)
 @Serializable
-@ObjCName(swiftName = "OpenIDConnectConfiguration")
-data class OpenIDConnectConfiguration(
+@ObjCName(swiftName = "OpenIdConnectConfiguration")
+data class OpenIdConnectConfiguration(
     val authorization_endpoint: String? = null,
     val token_endpoint: String? = null,
     val device_authorization_endpoint: String? = null,

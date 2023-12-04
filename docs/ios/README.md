@@ -31,8 +31,8 @@ import OpenIdConnectClient
 
 let config = clientConfig()
 
-let client = OpenIDConnectClient(
-    config: OpenIDConnectClientConfig(
+let client = OpenIdConnectClient(
+    config: OpenIdConnectClientConfig(
         discoveryUri: "<discovery url>",
         endpoints: Endpoints(
             tokenEndpoint: "<tokenEndpoint>",

@@ -12,7 +12,7 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.isSuccess
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import org.publicvalue.multiplatform.oidc.OpenIDConnectClient
+import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
 import org.publicvalue.multiplatform.oidc.appsupport.AuthFlowFactory
 import org.publicvalue.multiplatform.oidc.sample.Constants
 import org.publicvalue.multiplatform.oidc.sample.circuit.ErrorPresenter
@@ -43,11 +43,11 @@ class HomePresenter(
 
         val errorMessage by this.errorMessage.collectAsRetainedState()
 
-        fun createClient(): OpenIDConnectClient? {
+        fun createClient(): OpenIdConnectClient? {
             val clientSettings = clientSettings
             val idpSettings = idpSettings
             return if (clientSettings != null && idpSettings != null) {
-                OpenIDConnectClient(idpSettings.discoveryUrl) {
+                OpenIdConnectClient(idpSettings.discoveryUrl) {
                     redirectUri = Constants.redirectUrl.trim()
                     codeChallengeMethod = clientSettings.code_challenge_method
                     this.scope = clientSettings.scope?.trim()

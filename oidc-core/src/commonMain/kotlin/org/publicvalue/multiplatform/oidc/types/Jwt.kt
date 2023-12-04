@@ -10,7 +10,7 @@ import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
-import org.publicvalue.multiplatform.oidc.OpenIDConnectException
+import org.publicvalue.multiplatform.oidc.OpenIdConnectException
 import org.publicvalue.multiplatform.oidc.wrapExceptions
 import kotlin.experimental.ExperimentalObjCName
 import kotlin.jvm.JvmInline
@@ -37,13 +37,13 @@ data class Jwt(
          * JWTs are either encoded using JWS Compact Serialization (signed, 3 parts) or JWE Compact Serialization (encrypted, 5 parts).
          * We only support JWS Compact Serialization.
          */
-        @Throws(OpenIDConnectException::class)
+        @Throws(OpenIdConnectException::class)
         fun parse(string: String): Jwt {
             val parts = string.split('.')
             if (parts.size > 3) {
-                throw OpenIDConnectException.UnsupportedFormat("Expected at most 3 JWT token parts")
+                throw OpenIdConnectException.UnsupportedFormat("Expected at most 3 JWT token parts")
             } else if (parts.size < 2) {
-                throw OpenIDConnectException.UnsupportedFormat("Expected at least 2 JWT token parts")
+                throw OpenIdConnectException.UnsupportedFormat("Expected at least 2 JWT token parts")
             }
 
             val headerB64 = parts[0]
@@ -53,7 +53,7 @@ data class Jwt(
             return wrapExceptions {
                 Jwt(
                     header = JwtHeader.parse(headerB64.decodeBase64String()),
-                    payload = JwtClaims.parse(payloadB64.decodeBase64String()).toOpenIDConnectToken(),
+                    payload = JwtClaims.parse(payloadB64.decodeBase64String()).toOpenIdConnectToken(),
                     signature = signatureB64
                 )
             }
@@ -105,7 +105,7 @@ value class JwtClaims(
                             if (it is JsonPrimitive) {
                                 it.content
                             } else {
-                                throw OpenIDConnectException.UnsupportedFormat("Could not parse Array item: ${it}")
+                                throw OpenIdConnectException.UnsupportedFormat("Could not parse Array item: ${it}")
                             }
                         }
                         value is JsonObject -> value
@@ -121,7 +121,7 @@ value class JwtClaims(
                         }
                         value is JsonNull -> null
                         else -> {
-                            throw OpenIDConnectException.UnsupportedFormat("Could not parse claim: ${entry.key} with value ${entry.value}")
+                            throw OpenIdConnectException.UnsupportedFormat("Could not parse claim: ${entry.key} with value ${entry.value}")
                         }
                     }
                 }
@@ -131,7 +131,7 @@ value class JwtClaims(
     }
 }
 
-fun JwtClaims.toOpenIDConnectToken(): IdToken =
+fun JwtClaims.toOpenIdConnectToken(): IdToken =
     IdToken(
         iss = claims["iss"] as String?,
         sub = claims["sub"] as String?,

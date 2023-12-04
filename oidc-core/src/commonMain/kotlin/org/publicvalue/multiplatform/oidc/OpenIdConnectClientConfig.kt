@@ -1,14 +1,14 @@
 package org.publicvalue.multiplatform.oidc
 
 import org.publicvalue.multiplatform.oidc.types.CodeChallengeMethod
-import org.publicvalue.multiplatform.oidc.types.remote.OpenIDConnectConfiguration
+import org.publicvalue.multiplatform.oidc.types.remote.OpenIdConnectConfiguration
 import kotlin.experimental.ExperimentalObjCName
 import kotlin.native.ObjCName
 
 @OptIn(ExperimentalObjCName::class)
 @EndpointMarker
-@ObjCName(swiftName = "OpenIDConnectClientConfig", name = "OpenIDConnectClientConfig", exact = true)
-class OpenIDConnectClientConfig(
+@ObjCName(swiftName = "OpenIdConnectClientConfig", name = "OpenIdConnectClientConfig", exact = true)
+class OpenIdConnectClientConfig(
     /**
      * If discoveryUri is set, no further endpoints have to be configured.
      */
@@ -41,7 +41,7 @@ class OpenIDConnectClientConfig(
      * Update this client config with discovery document.
      * Will NOT override already set properties in config.
      */
-    fun updateWithDiscovery(config: OpenIDConnectConfiguration) {
+    fun updateWithDiscovery(config: OpenIdConnectConfiguration) {
         endpoints {
             authorizationEndpoint = authorizationEndpoint ?: config.authorization_endpoint
             tokenEndpoint = tokenEndpoint ?: config.token_endpoint
@@ -73,16 +73,16 @@ data class Endpoints(
     }
 }
 
-fun OpenIDConnectClientConfig.validate() {
+fun OpenIdConnectClientConfig.validate() {
     if (discoveryUri.isNullOrBlank()) {
         if (endpoints.tokenEndpoint == null) {
-            throw OpenIDConnectException.InvalidUrl("Invalid configuration: tokenEndpoint is null")
+            throw OpenIdConnectException.InvalidUrl("Invalid configuration: tokenEndpoint is null")
         }
         if (endpoints.authorizationEndpoint == null) {
-            throw OpenIDConnectException.InvalidUrl("Invalid configuration: authorizationEndpoint is null")
+            throw OpenIdConnectException.InvalidUrl("Invalid configuration: authorizationEndpoint is null")
         }
     }
     if (clientId == null) {
-        throw OpenIDConnectException.InvalidUrl("Invalid configuration: clientId is null")
+        throw OpenIdConnectException.InvalidUrl("Invalid configuration: clientId is null")
     }
 }

@@ -8,13 +8,13 @@ import io.ktor.http.Url
 import io.ktor.http.isSuccess
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
-import org.publicvalue.multiplatform.oidc.types.remote.OpenIDConnectConfiguration
+import org.publicvalue.multiplatform.oidc.types.remote.OpenIdConnectConfiguration
 import kotlin.experimental.ExperimentalObjCName
 import kotlin.native.ObjCName
 
 @OptIn(ExperimentalObjCName::class)
-@ObjCName(swiftName = "OpenIDConnectDiscover", name = "OpenIDConnectDiscover", exact = true)
-class OpenIDConnectDiscover(
+@ObjCName(swiftName = "OpenIdConnectDiscover", name = "OpenIdConnectDiscover", exact = true)
+class OpenIdConnectDiscover(
     val httpClient: HttpClient = HttpClient()
 ) {
 
@@ -24,13 +24,13 @@ class OpenIDConnectDiscover(
         explicitNulls = false
     }
 
-    suspend fun downloadConfiguration(configurationUrl: String): OpenIDConnectConfiguration {
+    suspend fun downloadConfiguration(configurationUrl: String): OpenIdConnectConfiguration {
         return downloadConfiguration(Url(configurationUrl))
     }
 
-    suspend fun downloadConfiguration(configurationUrl: Url): OpenIDConnectConfiguration {
+    suspend fun downloadConfiguration(configurationUrl: Url): OpenIdConnectConfiguration {
         val result = httpClient.get(configurationUrl)
-        val configuration: OpenIDConnectConfiguration = result.forceUnwrapBody(json)
+        val configuration: OpenIdConnectConfiguration = result.forceUnwrapBody(json)
         return configuration
     }
 }

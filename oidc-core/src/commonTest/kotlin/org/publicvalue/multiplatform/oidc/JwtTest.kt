@@ -45,7 +45,7 @@ class JwtTest {
         } catch (ex: Exception) {
             e = ex
         }
-        assertThat(e!!).isInstanceOf<OpenIDConnectException.TechnicalFailure>()
+        assertThat(e!!).isInstanceOf<OpenIdConnectException.TechnicalFailure>()
     }
 
     @Test

@@ -1,8 +1,8 @@
 package org.publicvalue.multiplatform.oidc.types
 
 import io.ktor.http.Url
-import org.publicvalue.multiplatform.oidc.OpenIDConnectClientConfig
-import org.publicvalue.multiplatform.oidc.flows.PKCE
+import org.publicvalue.multiplatform.oidc.OpenIdConnectClientConfig
+import org.publicvalue.multiplatform.oidc.flows.Pkce
 import kotlin.experimental.ExperimentalObjCName
 import kotlin.native.ObjCName
 
@@ -10,8 +10,8 @@ import kotlin.native.ObjCName
 @ObjCName(swiftName = "AuthCodeRequest", name = "AuthCodeRequest", exact = true)
 data class AuthCodeRequest(
     val url: Url,
-    val config: OpenIDConnectClientConfig,
-    val pkce: PKCE,
+    val config: OpenIdConnectClientConfig,
+    val pkce: Pkce,
     val state: String,
     val nonce: String
 )

@@ -27,7 +27,7 @@ fun main() = application {
     )
 
     Window(
-        title = "OIDCPlayground",
+        title = "OpenIdConnect Playground",
         state = state,
         onCloseRequest = ::exitApplication
     ) {

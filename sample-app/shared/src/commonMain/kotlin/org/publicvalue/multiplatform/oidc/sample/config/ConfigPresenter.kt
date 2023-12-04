@@ -8,7 +8,7 @@ import com.slack.circuit.runtime.Navigator
 import io.ktor.http.Url
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import org.publicvalue.multiplatform.oidc.discovery.OpenIDConnectDiscover
+import org.publicvalue.multiplatform.oidc.discovery.OpenIdConnectDiscover
 import org.publicvalue.multiplatform.oidc.sample.circuit.ErrorPresenter
 import org.publicvalue.multiplatform.oidc.sample.circuit.catchErrorMessage
 import org.publicvalue.multiplatform.oidc.sample.data.LocalSettingsStore
@@ -93,7 +93,7 @@ class ConfigPresenter(
                                         discoveryUrl = idpSettings?.discoveryUrl
                                     )
                                 )
-                                val d = OpenIDConnectDiscover()
+                                val d = OpenIdConnectDiscover()
                                 idpSettings?.let { idpSettings ->
                                     idpSettings.discoveryUrl?.let {
                                         val config = d.downloadConfiguration(it)

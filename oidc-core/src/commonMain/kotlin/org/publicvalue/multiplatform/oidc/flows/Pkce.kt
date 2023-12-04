@@ -9,7 +9,7 @@ import kotlin.native.ObjCName
 
 @OptIn(ExperimentalObjCName::class)
 @ObjCName(swiftName = "PKCE", name = "PKCE", exact = true)
-class PKCE(
+class Pkce(
     codeChallengeMethod: CodeChallengeMethod,
     /** For token request **/
     val codeVerifier: String = verifier(),

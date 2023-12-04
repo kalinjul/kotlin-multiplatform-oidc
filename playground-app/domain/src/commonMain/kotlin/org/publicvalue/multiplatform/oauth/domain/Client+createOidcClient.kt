@@ -3,10 +3,10 @@ package org.publicvalue.multiplatform.oauth.domain
 import org.publicvalue.multiplatform.oauth.data.db.Client
 import org.publicvalue.multiplatform.oauth.data.db.Identityprovider
 import org.publicvalue.multiplatform.oauth.data.types.CodeChallengeMethod
-import org.publicvalue.multiplatform.oidc.OpenIDConnectClient
+import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
 
-fun Client.createOidcClient(idp: Identityprovider): OpenIDConnectClient {
-    return OpenIDConnectClient {
+fun Client.createOidcClient(idp: Identityprovider): OpenIdConnectClient {
+    return OpenIdConnectClient {
         endpoints {
             tokenEndpoint = idp.endpointToken
             authorizationEndpoint = idp.endpointAuthorization

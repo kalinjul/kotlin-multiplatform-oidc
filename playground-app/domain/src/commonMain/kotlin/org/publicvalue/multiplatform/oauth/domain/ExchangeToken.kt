@@ -13,7 +13,7 @@ import org.publicvalue.multiplatform.oauth.logging.Logger
 import org.publicvalue.multiplatform.oauth.util.DispatcherProvider
 import org.publicvalue.multiplatform.oidc.types.remote.ErrorResponse
 import org.publicvalue.multiplatform.oidc.types.AuthCodeRequest
-import org.publicvalue.multiplatform.oidc.OpenIDConnectException
+import org.publicvalue.multiplatform.oidc.OpenIdConnectException
 import org.publicvalue.multiplatform.oidc.types.remote.AccessTokenResponse
 
 sealed class ExchangeTokenResult {
@@ -57,7 +57,7 @@ class ExchangeToken(
                         accessTokenResponse = result,
                     )
                 )
-            } catch (e: OpenIDConnectException.UnsuccessfulTokenRequest) {
+            } catch (e: OpenIdConnectException.UnsuccessfulTokenRequest) {
                 emit(
                     ExchangeTokenResult.Response(
                         httpStatusCode = e.statusCode,

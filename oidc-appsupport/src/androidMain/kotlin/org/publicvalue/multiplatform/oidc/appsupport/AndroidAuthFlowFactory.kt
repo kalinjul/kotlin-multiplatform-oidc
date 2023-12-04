@@ -7,8 +7,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
-import org.publicvalue.multiplatform.oidc.OpenIDConnectClient
-import org.publicvalue.multiplatform.oidc.flows.OidcCodeAuthFlow
+import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
+import org.publicvalue.multiplatform.oidc.flows.CodeAuthFlow
 
 class AndroidAuthFlowFactory(
     val activity: ComponentActivity
@@ -38,8 +38,8 @@ class AndroidAuthFlowFactory(
         )
     }
 
-    override fun createAuthFlow(client: OpenIDConnectClient): OidcCodeAuthFlow {
-        return PlatformOidcCodeAuthFlow(
+    override fun createAuthFlow(client: OpenIdConnectClient): CodeAuthFlow {
+        return PlatformCodeAuthFlow(
             context = activity,
             contract = authRequestLauncher,
             client = client,

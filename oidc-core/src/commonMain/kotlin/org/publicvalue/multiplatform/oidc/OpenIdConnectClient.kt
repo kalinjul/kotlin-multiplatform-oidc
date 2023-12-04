@@ -24,29 +24,29 @@ import io.ktor.serialization.kotlinx.KotlinxSerializationConverter
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
-import org.publicvalue.multiplatform.oidc.discovery.OpenIDConnectDiscover
-import org.publicvalue.multiplatform.oidc.flows.PKCE
+import org.publicvalue.multiplatform.oidc.discovery.OpenIdConnectDiscover
+import org.publicvalue.multiplatform.oidc.flows.Pkce
 import org.publicvalue.multiplatform.oidc.types.AuthCodeRequest
 import org.publicvalue.multiplatform.oidc.types.CodeChallengeMethod
 import org.publicvalue.multiplatform.oidc.types.TokenRequest
 import org.publicvalue.multiplatform.oidc.types.remote.AccessTokenResponse
 import org.publicvalue.multiplatform.oidc.types.remote.ErrorResponse
-import org.publicvalue.multiplatform.oidc.types.remote.OpenIDConnectConfiguration
+import org.publicvalue.multiplatform.oidc.types.remote.OpenIdConnectConfiguration
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.experimental.ExperimentalObjCName
 import kotlin.native.ObjCName
 
 @OptIn(ExperimentalSerializationApi::class, ExperimentalObjCName::class)
-@ObjCName(swiftName = "OpenIDConnectClient", name = "OpenIDConnectClient", exact = true)
-class OpenIDConnectClient(
+@ObjCName(swiftName = "OpenIdConnectClient", name = "OpenIdConnectClient", exact = true)
+class OpenIdConnectClient(
     val httpClient: HttpClient = DefaultHttpClient,
-    val config: OpenIDConnectClientConfig,
+    val config: OpenIdConnectClientConfig,
 ) {
     // Swift convenience constructor
-    constructor(config: OpenIDConnectClientConfig): this(httpClient = DefaultHttpClient, config = config)
+    constructor(config: OpenIdConnectClientConfig): this(httpClient = DefaultHttpClient, config = config)
 
     @Suppress("MemberVisibilityCanBePrivate")
-    var discoverDocument: OpenIDConnectConfiguration? = null
+    var discoverDocument: OpenIdConnectConfiguration? = null
 
     companion object {
         val DefaultHttpClient by lazy {
@@ -78,7 +78,7 @@ class OpenIDConnectClient(
     }
 
     fun createAuthorizationCodeRequest(configure: (URLBuilder.() -> Unit)? = null): AuthCodeRequest {
-        val pkce = PKCE(config.codeChallengeMethod)
+        val pkce = Pkce(config.codeChallengeMethod)
         val nonce = randomBytes().encodeForPKCE()
         val state = randomBytes().encodeForPKCE()
 
@@ -101,14 +101,14 @@ class OpenIDConnectClient(
         )
     }
 
-    @Throws(OpenIDConnectException::class, CancellationException::class)
+    @Throws(OpenIdConnectException::class, CancellationException::class)
     suspend fun discover() = wrapExceptions {
         config.discoveryUri?.let { discoveryUri ->
-            val config = OpenIDConnectDiscover(httpClient).downloadConfiguration(discoveryUri)
+            val config = OpenIdConnectDiscover(httpClient).downloadConfiguration(discoveryUri)
             this.config.updateWithDiscovery(config)
             discoverDocument = config
         } ?: run {
-            throw OpenIDConnectException.InvalidUrl("No discoveryUri set")
+            throw OpenIdConnectException.InvalidUrl("No discoveryUri set")
         }
     }
 
@@ -118,7 +118,7 @@ class OpenIDConnectClient(
      *
      * https://openid.net/specs/openid-connect-rpinitiated-1_0.html
      */
-    @Throws(OpenIDConnectException::class, CancellationException::class)
+    @Throws(OpenIdConnectException::class, CancellationException::class)
     suspend fun endSession(idToken: String, configure: (HttpRequestBuilder.() -> Unit)? = null): HttpStatusCode = wrapExceptions {
         val endpoint = config.endpoints.endSessionEndpoint?.trim()
         if (!endpoint.isNullOrEmpty()) {
@@ -130,7 +130,7 @@ class OpenIDConnectClient(
             }
             response.status
         } else {
-            throw OpenIDConnectException.InvalidUrl("No endSessionEndpoint set")
+            throw OpenIdConnectException.InvalidUrl("No endSessionEndpoint set")
         }
     }
 
@@ -138,7 +138,7 @@ class OpenIDConnectClient(
      * https://datatracker.ietf.org/doc/html/rfc6749#section-4.1.3
      * + code verifier https://datatracker.ietf.org/doc/html/rfc7636#section-4.5
      */
-    @Throws(OpenIDConnectException::class, CancellationException::class)
+    @Throws(OpenIdConnectException::class, CancellationException::class)
     suspend fun exchangeToken(authCodeRequest: AuthCodeRequest, code: String, configure: (HttpRequestBuilder.() -> Unit)? = null): AccessTokenResponse = wrapExceptions {
         val tokenRequest = createAccessTokenRequest(authCodeRequest, code, configure)
         return executeTokenRequest(tokenRequest.request)
@@ -147,7 +147,7 @@ class OpenIDConnectClient(
     /**
      * https://datatracker.ietf.org/doc/html/rfc6749#section-6
      */
-    @Throws(OpenIDConnectException::class, CancellationException::class)
+    @Throws(OpenIdConnectException::class, CancellationException::class)
     @Suppress("Unused")
     suspend fun refreshToken(refreshToken: String, configure: (HttpRequestBuilder.() -> Unit)? = null): AccessTokenResponse = wrapExceptions {
         val tokenRequest = createRefreshTokenRequest(refreshToken, configure)
@@ -221,10 +221,10 @@ class OpenIDConnectClient(
         }
     }
 
-    private suspend fun HttpResponse.toOpenIdConnectException(): OpenIDConnectException.UnsuccessfulTokenRequest {
+    private suspend fun HttpResponse.toOpenIdConnectException(): OpenIdConnectException.UnsuccessfulTokenRequest {
         val errorResponse = call.errorBody()
         val body = call.body<String>().decodeURLQueryComponent(plusIsSpace = true)
-        return OpenIDConnectException.UnsuccessfulTokenRequest(
+        return OpenIdConnectException.UnsuccessfulTokenRequest(
             message = "Exchange token failed: ${status.value} ${errorResponse?.error_description}",
             statusCode = status,
             body = body,
@@ -242,10 +242,10 @@ private suspend fun HttpClientCall.errorBody(): ErrorResponse? {
 }
 
 @Suppress("unused")
-fun OpenIDConnectClient(
+fun OpenIdConnectClient(
     discoveryUri: String? = null,
-    block: OpenIDConnectClientConfig.() -> Unit
-): OpenIDConnectClient {
-    val config = OpenIDConnectClientConfig(discoveryUri).apply(block)
-    return OpenIDConnectClient(config = config)
+    block: OpenIdConnectClientConfig.() -> Unit
+): OpenIdConnectClient {
+    val config = OpenIdConnectClientConfig(discoveryUri).apply(block)
+    return OpenIdConnectClient(config = config)
 }

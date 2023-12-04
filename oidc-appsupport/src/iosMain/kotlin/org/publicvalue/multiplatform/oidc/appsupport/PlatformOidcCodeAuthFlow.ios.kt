@@ -3,11 +3,11 @@ package org.publicvalue.multiplatform.oidc.appsupport
 import io.ktor.http.Url
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
-import org.publicvalue.multiplatform.oidc.OpenIDConnectClient
-import org.publicvalue.multiplatform.oidc.OpenIDConnectException
+import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
+import org.publicvalue.multiplatform.oidc.OpenIdConnectException
 import org.publicvalue.multiplatform.oidc.flows.AuthCodeResponse
 import org.publicvalue.multiplatform.oidc.flows.AuthCodeResult
-import org.publicvalue.multiplatform.oidc.flows.OidcCodeAuthFlow
+import org.publicvalue.multiplatform.oidc.flows.CodeAuthFlow
 import org.publicvalue.multiplatform.oidc.types.AuthCodeRequest
 import org.publicvalue.multiplatform.oidc.wrapExceptions
 import platform.AuthenticationServices.ASPresentationAnchor
@@ -30,10 +30,10 @@ import kotlin.experimental.ExperimentalObjCName
  * as this requires user interaction (e.g. via browser).
  */
 @OptIn(ExperimentalObjCName::class)
-@ObjCName(swiftName = "OidcCodeAuthFlow", name = "OidcCodeAuthFlow", exact = true)
-actual class PlatformOidcCodeAuthFlow(
-    client: OpenIDConnectClient
-): OidcCodeAuthFlow(client) {
+@ObjCName(swiftName = "CodeAuthFlow", name = "CodeAuthFlow", exact = true)
+actual class PlatformCodeAuthFlow(
+    client: OpenIdConnectClient
+): CodeAuthFlow(client) {
     override suspend fun getAuthorizationCode(request: AuthCodeRequest): AuthCodeResponse = wrapExceptions {
         val authResponse = suspendCoroutine { continuation ->
             val nsurl = NSURL.URLWithString(request.url.toString())
@@ -51,9 +51,9 @@ actual class PlatformOidcCodeAuthFlow(
                                 continuation.resume(AuthCodeResponse.success(AuthCodeResult(code = code, state = state)))
                             } else {
                                 if (p2 != null) {
-                                    continuation.resume(AuthCodeResponse.failure<AuthCodeResult>(OpenIDConnectException.AuthenticationFailure(p2.localizedDescription)))
+                                    continuation.resume(AuthCodeResponse.failure<AuthCodeResult>(OpenIdConnectException.AuthenticationFailure(p2.localizedDescription)))
                                 } else {
-                                    continuation.resume(AuthCodeResponse.failure<AuthCodeResult>(OpenIDConnectException.AuthenticationFailure("No message")))
+                                    continuation.resume(AuthCodeResponse.failure<AuthCodeResult>(OpenIdConnectException.AuthenticationFailure("No message")))
                                 }
                             }
                         }
@@ -66,7 +66,7 @@ actual class PlatformOidcCodeAuthFlow(
                     session.start()
                 }
             } else {
-                continuation.resumeWithException(OpenIDConnectException.InvalidUrl(request.url.toString()))
+                continuation.resumeWithException(OpenIdConnectException.InvalidUrl(request.url.toString()))
             }
         }
 
