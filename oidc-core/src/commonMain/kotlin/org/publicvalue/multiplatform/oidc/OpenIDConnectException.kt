@@ -22,5 +22,7 @@ sealed class OpenIDConnectException(
         override val cause: Throwable? = null
     ): OpenIDConnectException(message = "Authentication failed. $message", cause = cause)
 
+    data class UnsupportedFormat(override val message: String): OpenIDConnectException(message)
+
     data class TechnicalFailure(override val message: String, override val cause: Throwable?): OpenIDConnectException(message, cause)
 }

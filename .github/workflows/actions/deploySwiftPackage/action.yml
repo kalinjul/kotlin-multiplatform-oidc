@@ -33,6 +33,7 @@ runs:
         git lfs track "*/*/*.framework/*"
         git lfs install
         git add -A
+        cp ${GITHUB_WORKSPACE}/docs/ios/README.md . && git add README.md
         git commit -m "New ios package"
         git remote add origin https://${{ inputs.token }}@github.com/kalinjul/OpenIdConnectClient.git
         git fetch --depth=1
