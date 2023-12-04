@@ -3,6 +3,7 @@
 [![Release Build](https://github.com/kalinjul/kotlin-multiplatform-oidc/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/kalinjul/kotlin-multiplatform-oidc/actions/workflows/main.yml)
 
 Library for using OpenID Connect in iOS Projects. Build with kotlin multiplatform, published for iOS as Swift Package.
+This projet aims to be a lightweight implementation without sophisticated validation on client side.
 
 - Currently, it only supports the [Authorization Code Grant Flow](https://datatracker.ietf.org/doc/html/rfc6749#section-4.1).
 - Support for [discovery](https://openid.net/specs/openid-connect-discovery-1_0.html) via .well-known/openid-configuration.
@@ -11,25 +12,26 @@ Library for using OpenID Connect in iOS Projects. Build with kotlin multiplatfor
 
 # Usage
 ## Redirect scheme
-For OpenIDConnect/OAuth to work, you have to add the redirect uri scheme to your Info.plist:
+For OpenIDConnect/OAuth to work, you have to add the redirect uri scheme to your Info.plist.
+
 In XCode, go to your Project -> Target -> Info -> URL Types.
 Add your redirect schema (ex. org.publicvalue.multiplatform.oidc.sample)
 
+![Xcode Project Urltypes settings](urltypes.png)
+
 ## Swift package
 Add the swift package from https://github.com/kalinjul/OpenIdConnectClient.
-If you're using a swift module, add this:
+If you're using a swift module, add this line:
 ```swift
-    dependencies: [
-        .package(name: "OpenIdConnectClient", url: "https://github.com/kalinjul/OpenIdConnectClient", exact: "0.1.1")
-    ],
+dependencies: [
+    .package(name: "OpenIdConnectClient", url: "https://github.com/kalinjul/OpenIdConnectClient", exact: "0.3.0")
+],
 ```
 
 ## General
 Create OpenID config and client:
 ```swift
 import OpenIdConnectClient
-
-let config = clientConfig()
 
 let client = OpenIdConnectClient(
     config: OpenIdConnectClientConfig(
@@ -48,10 +50,11 @@ let client = OpenIdConnectClient(
     )
 )
 ```
+If you provide a Discovery URI, you may skip the endpoint configuration.
 
 Request access token using code auth flow:
 ```swift 
-let flow = OidcCodeAuthFlow(client: client)
+let flow = CodeAuthFlow(client: client)
 do {
     let tokens = try await flow.getAccessToken()
 } catch {
@@ -59,10 +62,10 @@ do {
 }
 ```
 
-perform refresh or endSession:
+Perform refresh or endSession:
 ```swift
-client.refreshToken(refreshToken: tokens.refresh_token)
-client.endSession(idToken: tokens.id_token)
+try await client.refreshToken(refreshToken: tokens.refresh_token!)
+try await client.endSession(idToken: tokens.id_token!)
 ```
 
 ## Custom headers/url parameters
@@ -76,19 +79,12 @@ try await client.endSession(idToken: idToken) { requestBuilder in
 }
 ```
 
-# Android App usage
-build.gradle.kts:
-```kotlin
-    defaultConfig {
-        addManifestPlaceholders(
-            mapOf("oidcRedirectScheme" to "<uri scheme>")
-        )
-    }
-```
-
 # JWT Parsing
 We provide simple JWT parsing:
 Swift:
 ```swift
-TODO
+let jwt = tokens.id_token.map { try! JwtParser.shared.parse(from: $0) }
+print(jwt?.payload.aud) // print audience
+print(jwt?.payload.iss) // print issuer
+print(jwt?.payload.additionalClaims["email"]) // get claim
 ```

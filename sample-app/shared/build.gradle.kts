@@ -47,6 +47,7 @@ kotlin {
             isStatic = true
             baseName = "shared"
             export("io.github.kalinjul.kotlin.multiplatform:oidc-appsupport")
+            export("io.github.kalinjul.kotlin.multiplatform:oidc-core")
         }
     }
 }

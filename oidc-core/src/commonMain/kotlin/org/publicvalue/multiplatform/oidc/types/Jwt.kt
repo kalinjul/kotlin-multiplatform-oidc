@@ -154,3 +154,5 @@ fun JwtClaims.toOpenIdConnectToken(): IdToken =
         at_hash = claims["at_hash"] as String?,
         additionalClaims = claims
     )
+
+fun String.parseJwt() = Jwt.parse(this)
