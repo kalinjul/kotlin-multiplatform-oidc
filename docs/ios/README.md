@@ -4,6 +4,7 @@
 
 Library for using OpenID Connect in iOS Projects. Build with kotlin multiplatform, published for iOS as Swift Package.
 This project aims to be a lightweight implementation without sophisticated validation on client side.
+This iOS Framework is generated from the [kotlin-multiplatform-oidc](https://github.com/kalinjul/kotlin-multiplatform-oidc) project, where you can find the source code.
 
 - Currently, it only supports the [Authorization Code Grant Flow](https://datatracker.ietf.org/doc/html/rfc6749#section-4.1).
 - Support for [discovery](https://openid.net/specs/openid-connect-discovery-1_0.html) via .well-known/openid-configuration.
@@ -81,7 +82,6 @@ try await client.endSession(idToken: idToken) { requestBuilder in
 
 # JWT Parsing
 We provide simple JWT parsing:
-Swift:
 ```swift
 let jwt = tokens.id_token.map { try! JwtParser.shared.parse(from: $0) }
 print(jwt?.payload.aud) // print audience
