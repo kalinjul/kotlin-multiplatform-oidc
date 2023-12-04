@@ -67,6 +67,7 @@ class HomePresenter(
         suspend fun updateTokenResponse(newTokens: AccessTokenResponse) {
             tokenResponse = newTokens
             val jwt = newTokens.id_token?.let { Jwt.parse(it) }
+            println("parsed jwt: $jwt")
             subject = jwt?.payload?.sub
             settingsStore.setTokenData(
                 org.publicvalue.multiplatform.oidc.sample.domain.TokenData(
