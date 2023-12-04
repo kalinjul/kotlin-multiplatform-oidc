@@ -19,8 +19,10 @@ object Readme {
     val client = OpenIdConnectClient {  }
     val authFlowFactory: AuthFlowFactory = TODO()
     val tokens: AccessTokenResponse = TODO()
+    val idToken: String = TODO()
 
-    fun `Create OpenID config and client`() {
+    // Create OpenID config and client
+    fun `Create_OpenID_config_and_client`() {
         val config = OpenIdConnectClient(discoveryUri = "<discovery url>") {
             endpoints {
                 tokenEndpoint = "<tokenEndpoint>"
@@ -37,7 +39,8 @@ object Readme {
         }
     }
 
-    fun `Create AuthFlowFactory in onCreate`() {
+    // Create AuthFlowFactory in onCreate
+    fun `Create_AuthFlowFactory_in_onCreate`() {
 //        class MainActivity : ComponentActivity() {
 //            override fun onCreate(savedInstanceState: Bundle?) {
 //                super.onCreate(savedInstanceState)
@@ -46,18 +49,28 @@ object Readme {
 //        }
     }
 
-    suspend fun `Request access token using code auth flow`() {
+    // Request access token using code auth flow
+    suspend fun `Request_access_token_using_code_auth_flow`() {
         val flow = authFlowFactory.createAuthFlow(client)
         val tokens = flow.getAccessToken()
     }
 
-    suspend fun `perform refresh or endSession`() {
+    // perform refresh or endSession
+    suspend fun `perform_refresh_or_endSession`() {
         tokens.refresh_token?.let { client.refreshToken(refreshToken = it) }
         tokens.id_token?.let { client.endSession(idToken = it) }
     }
 
+    // Custom headers/url parameters
+    suspend fun `Custom_headers_url_parameters`() {
+        client.endSession(idToken = idToken) {
+            headers.append("X-CUSTOM-HEADER", "value")
+            url.parameters.append("custom_parameter", "value")
+        }
+    }
 
-    fun documentation() {
+    // We provide simple JWT parsing
+    fun `We_provide_simple_JWT_parsing`() {
         val tokens = AccessTokenResponse("abc")
         val jwt = tokens.id_token?.parseJwt()
         println(jwt?.payload?.aud) // print audience

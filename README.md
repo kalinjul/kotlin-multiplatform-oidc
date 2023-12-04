@@ -71,25 +71,24 @@ val tokens = flow.getAccessToken()
 ```
 
 perform refresh or endSession:
-```swift
+```kotlin
 tokens.refresh_token?.let { client.refreshToken(refreshToken = it) }
-        tokens.id_token?.let { client.endSession(idToken = it) }
+tokens.id_token?.let { client.endSession(idToken = it) }
 ```
 
 ## Custom headers/url parameters
 For most calls (```getAccessToken()```, ```refreshToken()```, ```endSession()```), you may provide
 additional configuration for the http call, like headers or parameters using the configure closure parameter:
 
-```swift
-try await client.endSession(idToken: idToken) { requestBuilder in
-    requestBuilder.headers.append(name: "X-CUSTOM-HEADER", value: "value")
-    requestBuilder.url.parameters.append(name: "custom_parameter", value: "value")
+```kotlin
+client.endSession(idToken = idToken) {
+    headers.append("X-CUSTOM-HEADER", "value")
+    url.parameters.append("custom_parameter", "value")
 }
 ```
 
 # JWT Parsing
 We provide simple JWT parsing:
-Kotlin:
 ```kotlin
 val jwt = tokens.id_token?.let { Jwt.parse(it) }
 println(jwt?.payload?.aud) // print audience
