@@ -5,6 +5,8 @@ import org.publicvalue.multiplatform.oidc.OpenIDConnectException
 import org.publicvalue.multiplatform.oidc.types.AuthCodeRequest
 import org.publicvalue.multiplatform.oidc.types.remote.AccessTokenResponse
 import org.publicvalue.multiplatform.oidc.types.validateState
+import org.publicvalue.multiplatform.oidc.wrapExceptions
+import kotlin.coroutines.cancellation.CancellationException
 import kotlin.experimental.ExperimentalObjCName
 import kotlin.native.ObjCName
 
@@ -20,7 +22,8 @@ import kotlin.native.ObjCName
 abstract class OidcCodeAuthFlow(val client: OpenIDConnectClient) {
 
     @Suppress("unused")
-    suspend fun getAccessToken(): AccessTokenResponse {
+    @Throws(CancellationException::class, OpenIDConnectException::class)
+    suspend fun getAccessToken(): AccessTokenResponse = wrapExceptions {
         if (client.config.discoveryUri != null) {
             client.discover()
         }
@@ -37,6 +40,11 @@ abstract class OidcCodeAuthFlow(val client: OpenIDConnectClient) {
      * Uses the request URL to open a browser and perform authorization.
      * Should return the Authorization Code.
      */
+    /**
+     * Uses the request URL to open a browser and perform authorization.
+     * Should return the Authorization Code.
+     */
+    @Throws(CancellationException::class, OpenIDConnectException::class)
     abstract suspend fun getAuthorizationCode(request: AuthCodeRequest): AuthCodeResponse
 
     private suspend fun exchangeToken(client: OpenIDConnectClient, request: AuthCodeRequest, authCodeResponse: AuthCodeResponse): AccessTokenResponse {

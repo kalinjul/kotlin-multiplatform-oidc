@@ -9,6 +9,7 @@ import org.publicvalue.multiplatform.oidc.flows.AuthCodeResponse
 import org.publicvalue.multiplatform.oidc.flows.AuthCodeResult
 import org.publicvalue.multiplatform.oidc.flows.OidcCodeAuthFlow
 import org.publicvalue.multiplatform.oidc.types.AuthCodeRequest
+import org.publicvalue.multiplatform.oidc.wrapExceptions
 import platform.AuthenticationServices.ASPresentationAnchor
 import platform.AuthenticationServices.ASWebAuthenticationPresentationContextProvidingProtocol
 import platform.AuthenticationServices.ASWebAuthenticationSession
@@ -33,7 +34,7 @@ import kotlin.experimental.ExperimentalObjCName
 actual class PlatformOidcCodeAuthFlow(
     client: OpenIDConnectClient
 ): OidcCodeAuthFlow(client) {
-    override suspend fun getAuthorizationCode(request: AuthCodeRequest): AuthCodeResponse {
+    override suspend fun getAuthorizationCode(request: AuthCodeRequest): AuthCodeResponse = wrapExceptions {
         val authResponse = suspendCoroutine { continuation ->
             val nsurl = NSURL.URLWithString(request.url.toString())
             if (nsurl != null) {
@@ -54,7 +55,6 @@ actual class PlatformOidcCodeAuthFlow(
                                 } else {
                                     continuation.resume(AuthCodeResponse.failure<AuthCodeResult>(OpenIDConnectException.AuthenticationFailure("No message")))
                                 }
-
                             }
                         }
                     }
