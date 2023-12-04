@@ -8,7 +8,7 @@ import kotlin.native.ObjCName
  * https://datatracker.ietf.org/doc/html/rfc6749#section-4.1.2.1
  */
 @OptIn(ExperimentalObjCName::class)
-@ObjCName(swiftName = "ErrorResponse", name = "ErrorResponse", exact = true)
+@ObjCName(swiftName = "OpenIdConnectErrorResponse", name = "OpenIdConnectErrorResponse", exact = true)
 @Serializable
 data class ErrorResponse(
     val error: Error,
