@@ -25,7 +25,7 @@ class MultiplatformSwiftPackageConventionPlugin : Plugin<Project> {
                 }
                 outputDirectory(File(project.projectDir, "build/swiftpackage"))
                 distributionMode {
-                    local()
+                    remote("https://github.com/kalinjul/OpenIdConnectClient/raw/${project.version}")
                 }
             }
         }

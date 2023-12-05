@@ -37,6 +37,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/workflows/actions/createSwiftPackage
+        with:
+          version: "develop"
 
   deploy-swift-package-snapshot:
     needs: [create-swift-package]

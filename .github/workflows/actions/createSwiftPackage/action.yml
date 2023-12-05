@@ -1,16 +1,21 @@
 name: Create swift packages
 description: Create swift packages
 
+inputs:
+  version:
+    description: "Version of the package"
+    required: true
+
 runs:
   using: "composite"
   steps:
     - uses: ./.github/workflows/actions/prepare
     - name: Create Swift Package
       shell: bash
-      run: ./gradlew createSwiftPackage
-    - name: Remove zips
+      run: ./gradlew createSwiftPackage -Pversion=${{ inputs.version }}
+    - name: Remove xcframework
       shell: bash
-      run: rm */build/swiftpackage/*.zip
+      run: rm -r */build/swiftpackage/*.xcframework
     - uses: actions/upload-artifact@v3
       with:
         name: oidc-swiftpackages
