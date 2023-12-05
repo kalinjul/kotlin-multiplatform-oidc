@@ -1,6 +1,7 @@
 # OpenIdConnectClient for iOS
 [![Snapshot Build](https://github.com/kalinjul/kotlin-multiplatform-oidc/actions/workflows/develop.yml/badge.svg?branch=develop)](https://github.com/kalinjul/kotlin-multiplatform-oidc/actions/workflows/develop.yml)
 [![Release Build](https://github.com/kalinjul/kotlin-multiplatform-oidc/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/kalinjul/kotlin-multiplatform-oidc/actions/workflows/main.yml)
+![](https://img.shields.io/maven-central/v/io.github.kalinjul.kotlin.multiplatform/oidc-appsupport)
 
 Library for using OpenID Connect in iOS Projects. Build with kotlin multiplatform, published for iOS as Swift Package.
 This project aims to be a lightweight implementation without sophisticated validation on client side.
@@ -17,7 +18,7 @@ Add the swift package from https://github.com/kalinjul/OpenIdConnectClient.
 If you're using a swift module, add this line:
 ```swift
 dependencies: [
-    .package(url: "https://github.com/kalinjul/OpenIdConnectClient", exact: "0.3.0")
+    .package(url: "https://github.com/kalinjul/OpenIdConnectClient.git", exact: "0.3.1")
 ],
 ```
 
