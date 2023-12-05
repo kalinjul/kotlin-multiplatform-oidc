@@ -52,6 +52,7 @@ rootProject.name="kotlin-multiplatform-oidc"
 include(":oidc-crypto")
 include(":oidc-core")
 include(":oidc-appsupport")
+include(":oidc-tokenstore")
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 // https://docs.gradle.org/8.3/userguide/configuration_cache.html#config_cache:stable

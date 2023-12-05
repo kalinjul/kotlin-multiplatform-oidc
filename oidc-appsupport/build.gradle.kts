@@ -22,6 +22,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api(projects.oidcCore)
+                api(projects.oidcTokenstore)
             }
         }
 
@@ -50,6 +51,7 @@ kotlin {
 
         binaries.withType<Framework> {
             export(projects.oidcCore)
+            export(projects.oidcTokenstore)
         }
     }
 }
