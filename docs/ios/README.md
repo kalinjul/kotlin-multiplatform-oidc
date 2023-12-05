@@ -12,14 +12,6 @@ This iOS Framework is generated from the [kotlin-multiplatform-oidc](https://git
 - Simple JWT parsing
 
 # Usage
-## Redirect scheme
-For OpenIDConnect/OAuth to work, you have to add the redirect uri scheme to your Info.plist.
-
-In XCode, go to your Project -> Target -> Info -> URL Types.
-Add your redirect schema (ex. org.publicvalue.multiplatform.oidc.sample)
-
-![Xcode Project Urltypes settings](urltypes.png)
-
 ## Swift package
 Add the swift package from https://github.com/kalinjul/OpenIdConnectClient.
 If you're using a swift module, add this line:

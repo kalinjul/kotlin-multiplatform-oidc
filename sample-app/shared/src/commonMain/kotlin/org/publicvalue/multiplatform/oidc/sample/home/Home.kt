@@ -47,7 +47,7 @@ fun Home(
         }
     ) {
         Home(
-            modifier = Modifier.padding(it),
+            modifier = modifier.padding(it),
             loginEnabled = state.loginEnabled,
             logoutEnabled = state.logoutEnabled,
             refreshEnabled = state.refreshEnabled,

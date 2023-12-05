@@ -1,6 +1,7 @@
 package org.publicvalue.multiplatform.oidc.appsupport
 
 import io.ktor.http.Url
+import io.ktor.http.hostWithPort
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
@@ -40,7 +41,7 @@ actual class PlatformCodeAuthFlow(
             if (nsurl != null) {
                 val session = ASWebAuthenticationSession(
                     uRL = nsurl,
-                    callbackURLScheme = "org.publicvalue.multiplatform.oidc.sample",
+                    callbackURLScheme = request.config.redirectUri?.let { Url(it) }?.protocol?.name,
                     completionHandler = object : ASWebAuthenticationSessionCompletionHandler {
                         override fun invoke(p1: NSURL?, p2: NSError?) {
                             if (p1 != null) {
