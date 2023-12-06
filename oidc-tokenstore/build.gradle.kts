@@ -4,6 +4,8 @@ plugins {
     id("org.publicvalue.convention.centralPublish")
 }
 
+description = "Kotlin Multiplatform OIDC tokenstore library"
+
 kotlin {
     sourceSets {
         val commonMain by getting {
