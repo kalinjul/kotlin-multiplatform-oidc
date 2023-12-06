@@ -1,6 +1,9 @@
+import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
 import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
 import org.publicvalue.multiplatform.oidc.OpenIdConnectClientConfig
+import org.publicvalue.multiplatform.oidc.tokenstore.TokenStore
 import org.publicvalue.multiplatform.oidc.appsupport.AuthFlowFactory
+import org.publicvalue.multiplatform.oidc.appsupport.TokenRefreshHandler
 import org.publicvalue.multiplatform.oidc.flows.CodeAuthFlow
 import org.publicvalue.multiplatform.oidc.types.CodeChallengeMethod
 import org.publicvalue.multiplatform.oidc.types.Jwt
@@ -13,13 +16,14 @@ import kotlin.native.HiddenFromObjC
 /**
  * Sample code for Readme
  */
-@OptIn(ExperimentalObjCRefinement::class)
+@OptIn(ExperimentalObjCRefinement::class, ExperimentalOpenIdConnect::class)
 @HiddenFromObjC
 object Readme {
     val client = OpenIdConnectClient {  }
     val authFlowFactory: AuthFlowFactory = TODO()
     val tokens: AccessTokenResponse = TODO()
     val idToken: String = TODO()
+    val tokenstore: TokenStore = TODO()
 
     // Create OpenID config and client
     fun `Create_OpenID_config_and_client`() {
@@ -76,5 +80,20 @@ object Readme {
         println(jwt?.payload?.aud) // print audience
         println(jwt?.payload?.iss) // print issuer
         println(jwt?.payload?.additionalClaims?.get("email")) // get claim
+    }
+
+
+    // token store
+    @OptIn(ExperimentalOpenIdConnect::class)
+    suspend fun `tokenstore`() {
+        tokenstore.saveTokens(tokens)
+        val accessToken = tokenstore.getAccessToken()
+    }
+
+    // refresh handler
+    @OptIn(ExperimentalOpenIdConnect::class)
+    suspend fun `refresh_handler`() {
+        val refreshHandler = TokenRefreshHandler(tokenStore = tokenstore)
+        refreshHandler.safeRefreshToken(client) // thread-safe refresh and save new tokens to store
     }
 }

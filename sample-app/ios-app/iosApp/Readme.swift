@@ -5,6 +5,7 @@ import shared
 struct Readme {
     let client: OpenIdConnectClient
     let tokens: AccessTokenResponse
+    let tokenstore: KeychainTokenStore
     
     // Create OpenID config and client:
     func _1() {
@@ -48,5 +49,17 @@ struct Readme {
         print(jwt?.payload.aud) // print audience
         print(jwt?.payload.iss) // print issuer
         print(jwt?.payload.additionalClaims["email"]) // get claim
+    }
+    
+    // TokenStore
+    func _5() async throws {
+        let tokenstore = KeychainTokenStore()
+        try await tokenstore.saveTokens(tokens: tokens)
+    }
+    
+    // RefreshHandler
+    func _6() async throws {
+        let refreshHandler = TokenRefreshHandler(tokenStore: tokenstore)
+        try await refreshHandler.safeRefreshToken(client: client)  // thread-safe refresh and save new tokens to store
     }
 }

@@ -2,6 +2,7 @@ package org.publicvalue.multiplatform.oidc.appsupport
 
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
 import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
 import org.publicvalue.multiplatform.oidc.OpenIdConnectException
 import org.publicvalue.multiplatform.oidc.tokenstore.TokenStore
@@ -10,6 +11,7 @@ import kotlin.coroutines.cancellation.CancellationException
 import kotlin.experimental.ExperimentalObjCName
 import kotlin.native.ObjCName
 
+@ExperimentalOpenIdConnect
 @OptIn(ExperimentalObjCName::class)
 @ObjCName("TokenRefreshHandler", "TokenRefreshHandler", exact = true)
 @Suppress("unused")

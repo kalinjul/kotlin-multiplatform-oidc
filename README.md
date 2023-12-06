@@ -1,7 +1,7 @@
 # Kotlin Multiplatform OIDC
 [![Snapshot Build](https://github.com/kalinjul/kotlin-multiplatform-oidc/actions/workflows/develop.yml/badge.svg?branch=develop)](https://github.com/kalinjul/kotlin-multiplatform-oidc/actions/workflows/develop.yml)
 [![Release Build](https://github.com/kalinjul/kotlin-multiplatform-oidc/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/kalinjul/kotlin-multiplatform-oidc/actions/workflows/main.yml)
-![](https://img.shields.io/maven-central/v/io.github.kalinjul.kotlin.multiplatform/oidc-appsupport)
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.kalinjul.kotlin.multiplatform/oidc-appsupport)](https://repo1.maven.org/maven2/io/github/kalinjul/kotlin/multiplatform/oidc-appsupport/)
 
 Library for using OpenId Connect / OAuth 2.0 in Kotlin Multiplatform (iOS+Android), Android and Xcode projects.
 This project aims to be a lightweight implementation without sophisticated validation on client side.
@@ -96,3 +96,13 @@ println(jwt?.payload?.aud) // print audience
 println(jwt?.payload?.iss) // print issuer
 println(jwt?.payload?.additionalClaims?.get("email")) // get claim
 ```
+
+# Token Store (experimental)
+Since persisting tokens is a common task in OpenID Connect Authentication, we provide a 
+```TokenStore``` that uses a [Multiplatform Settings Library](https://github.com/russhwolf/multiplatform-settings)
+to persist tokens in Keystore (iOS) / Encrypted Preferences (Android).
+```kotlin
+tokenstore.saveTokens(tokens)
+val accessToken = tokenstore.getAccessToken()
+```
+Android implementation is ```AndroidEncryptedPreferencesSettingsStore```, for iOS use ```IosKeychainTokenStore```.

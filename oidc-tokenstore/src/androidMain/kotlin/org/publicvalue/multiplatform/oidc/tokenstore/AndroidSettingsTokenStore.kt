@@ -1,10 +1,12 @@
 package org.publicvalue.multiplatform.oidc.tokenstore
 
 import android.content.Context
+import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
 
+@ExperimentalOpenIdConnect
 @Suppress("unused")
 class AndroidSettingsTokenStore(
     context: Context
-): AbstractSettingsTokenStore(
-    settings = AndroidSettingsStore(context)
+): SettingsTokenStore(
+    settings = AndroidEncryptedPreferencesSettingsStore(context)
 )

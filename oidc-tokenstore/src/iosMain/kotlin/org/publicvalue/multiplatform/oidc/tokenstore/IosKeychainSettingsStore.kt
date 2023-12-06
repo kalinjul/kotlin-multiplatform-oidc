@@ -1,5 +1,6 @@
 package org.publicvalue.multiplatform.oidc.tokenstore
 
+import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.ExperimentalSettingsImplementation
 import com.russhwolf.settings.KeychainSettings
 import com.russhwolf.settings.set
@@ -13,9 +14,9 @@ import kotlin.experimental.ExperimentalObjCRefinement
 
 @OptIn(ExperimentalObjCRefinement::class, ExperimentalSettingsImplementation::class)
 @HiddenFromObjC
-class IosSettingsStore: SettingsStore {
+class IosKeychainSettingsStore: SettingsStore {
 
-    @OptIn(ExperimentalForeignApi::class)
+    @OptIn(ExperimentalForeignApi::class, ExperimentalSettingsApi::class)
     private val keyChainSettings by lazy {
         KeychainSettings(
             kSecAttrService to CFBridgingRetain("${NSBundle.mainBundle.bundleIdentifier}.auth"),

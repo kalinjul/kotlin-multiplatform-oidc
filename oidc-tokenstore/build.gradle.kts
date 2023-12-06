@@ -14,5 +14,12 @@ kotlin {
                 api(libs.kotlinx.serialization.json)
             }
         }
+
+        val androidMain by getting {
+            dependencies {
+                implementation(libs.androidx.security.crypto)
+                implementation(libs.androidx.security.crypto.ktx)
+            }
+        }
     }
 }

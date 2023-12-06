@@ -1,14 +1,15 @@
 package org.publicvalue.multiplatform.oidc.tokenstore
 
-import org.publicvalue.multiplatform.oidc.types.remote.AccessTokenResponse
+import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
 
 enum class SettingsKey {
     ACCESSTOKEN, REFRESHTOKEN, IDTOKEN
 }
 
-open class AbstractSettingsTokenStore(
-    val settings: SettingsStore
-): TokenStore() {
+@ExperimentalOpenIdConnect
+open class SettingsTokenStore(
+    private val settings: SettingsStore
+): TokenStore {
 
     override suspend fun getAccessToken(): String? {
         return runOrNull {
