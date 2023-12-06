@@ -13,17 +13,17 @@ import io.ktor.http.isSuccess
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
-import org.publicvalue.multiplatform.oidc.appsupport.AuthFlowFactory
+import org.publicvalue.multiplatform.oidc.appsupport.CodeAuthFlowFactory
 import org.publicvalue.multiplatform.oidc.sample.Constants
 import org.publicvalue.multiplatform.oidc.sample.circuit.ErrorPresenter
 import org.publicvalue.multiplatform.oidc.sample.circuit.catchErrorMessage
 import org.publicvalue.multiplatform.oidc.sample.data.LocalSettingsStore
 import org.publicvalue.multiplatform.oidc.sample.screens.ConfigScreen
-import org.publicvalue.multiplatform.oidc.types.remote.AccessTokenResponse
 import org.publicvalue.multiplatform.oidc.types.Jwt
+import org.publicvalue.multiplatform.oidc.types.remote.AccessTokenResponse
 
 class HomePresenter(
-    val authFlowFactory: AuthFlowFactory,
+    val authFlowFactory: CodeAuthFlowFactory,
     val navigator: Navigator
 ): ErrorPresenter<HomeUiState> {
 

@@ -10,9 +10,9 @@ import androidx.lifecycle.LifecycleOwner
 import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
 import org.publicvalue.multiplatform.oidc.flows.CodeAuthFlow
 
-class AndroidAuthFlowFactory(
+class AndroidCodeAuthFlowFactory(
     val activity: ComponentActivity
-): AuthFlowFactory {
+): CodeAuthFlowFactory {
 
     lateinit var authRequestLauncher: ActivityResultLauncherSuspend<Intent, ActivityResult>
 

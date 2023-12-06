@@ -1,6 +1,6 @@
 package org.publicvalue.multiplatform.oidc.sample.circuit
 
-import org.publicvalue.multiplatform.oidc.appsupport.AuthFlowFactory
+import org.publicvalue.multiplatform.oidc.appsupport.CodeAuthFlowFactory
 import org.publicvalue.multiplatform.oidc.sample.config.ConfigPresenterFactory
 import org.publicvalue.multiplatform.oidc.sample.config.ConfigUiFactory
 import org.publicvalue.multiplatform.oidc.sample.home.HomePresenterFactory
@@ -13,7 +13,7 @@ class UiFactories {
         val uiFactories = listOf(
             HomeUiFactory, ConfigUiFactory
         )
-        fun presenterFactories(authFlowFactory: AuthFlowFactory) = listOf(
+        fun presenterFactories(authFlowFactory: CodeAuthFlowFactory) = listOf(
             HomePresenterFactory(authFlowFactory), ConfigPresenterFactory
         )
     }

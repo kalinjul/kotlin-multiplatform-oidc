@@ -6,8 +6,8 @@ import kotlin.experimental.ExperimentalObjCRefinement
 @OptIn(ExperimentalObjCRefinement::class)
 @HiddenFromObjC
 @Suppress("unused")
-class IosAuthFlowFactory(
-): AuthFlowFactory {
+class IosCodeAuthFlowFactory(
+): CodeAuthFlowFactory {
     override fun createAuthFlow(client: OpenIdConnectClient): PlatformCodeAuthFlow {
         return PlatformCodeAuthFlow(client)
     }

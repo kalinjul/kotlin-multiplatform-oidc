@@ -58,7 +58,7 @@ Create an instance of AuthFlowFactory in your Activity's onCreate():
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val factory = AndroidAuthFlowFactory(this)
+        val factory = AndroidCodeAuthFlowFactory(this)
     }
 }
 ```
