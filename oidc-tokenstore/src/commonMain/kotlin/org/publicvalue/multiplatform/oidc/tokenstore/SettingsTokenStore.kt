@@ -9,7 +9,7 @@ enum class SettingsKey {
 @ExperimentalOpenIdConnect
 open class SettingsTokenStore(
     private val settings: SettingsStore
-): TokenStore {
+): TokenStore() {
 
     override suspend fun getAccessToken(): String? {
         return runOrNull {

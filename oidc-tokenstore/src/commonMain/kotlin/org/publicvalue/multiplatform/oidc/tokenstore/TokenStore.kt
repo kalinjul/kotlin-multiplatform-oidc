@@ -8,28 +8,33 @@ import kotlin.native.ObjCName
 @ExperimentalOpenIdConnect
 @OptIn(ExperimentalObjCName::class)
 @ObjCName("TokenStoreProtocol", "TokenStoreProtocol", exact = true)
-interface TokenStore {
-    suspend fun getAccessToken(): String?
-    suspend fun getRefreshToken(): String?
-    suspend fun getIdToken(): String?
+// not an interface to support extension methods in swift
+abstract class TokenStore {
+    abstract suspend fun getAccessToken(): String?
+    abstract suspend fun getRefreshToken(): String?
+    abstract suspend fun getIdToken(): String?
 
-    suspend fun removeAccessToken()
-    suspend fun removeRefreshToken()
-    suspend fun removeIdToken()
+    abstract suspend fun removeAccessToken()
+    abstract suspend fun removeRefreshToken()
+    abstract suspend fun removeIdToken()
 
-    suspend fun saveTokens(tokens: AccessTokenResponse) {
-        saveTokens(
-            accessToken = tokens.access_token,
-            refreshToken = tokens.refresh_token,
-            idToken = tokens.id_token
-        )
-    }
+    abstract suspend fun saveTokens(accessToken: String, refreshToken: String?, idToken: String?)
+}
 
-    suspend fun saveTokens(accessToken: String, refreshToken: String?, idToken: String?)
+// extension method so no need to overwrite in swift subclasses
+@OptIn(ExperimentalOpenIdConnect::class)
+suspend fun TokenStore.saveTokens(tokens: AccessTokenResponse) {
+    saveTokens(
+        accessToken = tokens.access_token,
+        refreshToken = tokens.refresh_token,
+        idToken = tokens.id_token
+    )
+}
 
-    suspend fun removeTokens() {
-        removeAccessToken()
-        removeIdToken()
-        removeRefreshToken()
-    }
+// extension method so no need to overwrite in swift subclasses
+@OptIn(ExperimentalOpenIdConnect::class)
+suspend fun TokenStore.removeTokens() {
+    removeAccessToken()
+    removeIdToken()
+    removeRefreshToken()
 }
