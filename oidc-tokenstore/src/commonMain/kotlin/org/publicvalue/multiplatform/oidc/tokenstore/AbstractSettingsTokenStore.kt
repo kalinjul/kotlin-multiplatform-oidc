@@ -46,15 +46,18 @@ open class AbstractSettingsTokenStore(
         }
     }
 
-    override suspend fun saveTokens(tokens: AccessTokenResponse, removeIfNull: Boolean) {
+    override suspend fun saveTokens(accessToken: String, refreshToken: String?, idToken: String?) {
         runOrNull {
-            settings.put(SettingsKey.ACCESSTOKEN.name, tokens.access_token)
-            tokens.refresh_token?.let { settings.put(SettingsKey.REFRESHTOKEN.name, it) }
-            tokens.id_token?.let { settings.put(SettingsKey.IDTOKEN.name, it) }
-
-            if (removeIfNull) {
-                if (tokens.refresh_token == null) settings.remove(SettingsKey.REFRESHTOKEN.name)
-                if (tokens.id_token == null) settings.remove(SettingsKey.IDTOKEN.name)
+            settings.put(SettingsKey.ACCESSTOKEN.name, accessToken)
+            if (refreshToken != null) {
+                settings.put(SettingsKey.REFRESHTOKEN.name, refreshToken)
+            } else {
+                settings.remove(SettingsKey.REFRESHTOKEN.name)
+            }
+            if (idToken != null) {
+                settings.put(SettingsKey.IDTOKEN.name, idToken)
+            } else {
+                settings.remove(SettingsKey.IDTOKEN.name)
             }
         }
     }

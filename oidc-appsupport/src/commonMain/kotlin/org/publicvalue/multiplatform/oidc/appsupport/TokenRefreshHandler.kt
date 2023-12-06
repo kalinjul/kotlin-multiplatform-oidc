@@ -15,8 +15,6 @@ import kotlin.native.ObjCName
 @Suppress("unused")
 class TokenRefreshHandler(
     private val tokenStore: TokenStore,
-    /** Remove refresh/id token if it is null during refresh **/
-    private val removeIfNull: Boolean = false
 ) {
     private val mutex = Mutex()
 
@@ -43,7 +41,7 @@ class TokenRefreshHandler(
             } else {
                 val refreshToken = tokenStore.getRefreshToken()
                 val newTokens = refreshCall(refreshToken ?: "")
-                tokenStore.saveTokens(newTokens, removeIfNull)
+                tokenStore.saveTokens(newTokens)
                 newTokens.access_token
             }
         }

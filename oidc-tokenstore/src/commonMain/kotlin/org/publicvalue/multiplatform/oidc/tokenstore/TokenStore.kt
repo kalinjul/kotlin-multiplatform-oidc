@@ -15,7 +15,15 @@ abstract class TokenStore {
     abstract suspend fun removeRefreshToken()
     abstract suspend fun removeIdToken()
 
-    abstract suspend fun saveTokens(tokens: AccessTokenResponse, removeIfNull: Boolean = false)
+    suspend fun saveTokens(tokens: AccessTokenResponse) {
+        saveTokens(
+            accessToken = tokens.access_token,
+            refreshToken = tokens.refresh_token,
+            idToken = tokens.id_token
+        )
+    }
+
+    abstract suspend fun saveTokens(accessToken: String, refreshToken: String?, idToken: String?)
 
     suspend fun removeTokens() {
         removeAccessToken()
