@@ -1,3 +1,5 @@
+import org.publicvalue.convention.config.configureIosTargets
+
 plugins {
     id("org.publicvalue.convention.android.library")
     id("org.publicvalue.convention.kotlin.multiplatform")
@@ -7,6 +9,7 @@ plugins {
 description = "Kotlin Multiplatform OIDC tokenstore library"
 
 kotlin {
+    configureIosTargets()
     sourceSets {
         val commonMain by getting {
             dependencies {

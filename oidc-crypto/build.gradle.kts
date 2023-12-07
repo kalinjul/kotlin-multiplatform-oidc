@@ -1,3 +1,5 @@
+import org.publicvalue.convention.config.configureIosTargets
+
 plugins {
     id("org.publicvalue.convention.kotlin.multiplatform")
     alias(libs.plugins.kotlin.serialization)
@@ -8,6 +10,7 @@ plugins {
 description = "Kotlin Multiplatform OIDC crypto library"
 
 kotlin {
+    configureIosTargets()
     sourceSets {
         val commonMain by getting {
             dependencies {

@@ -1,5 +1,6 @@
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.publicvalue.convention.config.configureIosTargets
 
 plugins {
     id("org.publicvalue.convention.android.library")
@@ -10,6 +11,7 @@ plugins {
 }
 
 kotlin {
+    configureIosTargets()
     sourceSets {
         val commonMain by getting {
             dependencies {

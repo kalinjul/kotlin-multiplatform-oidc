@@ -24,10 +24,6 @@ class KotlinMultiplatformMobileConventionPlugin : Plugin<Project> {
                 if (pluginManager.hasPlugin("com.android.library")) {
                     this.configureAndroidTarget()
                 }
-
-                if (project.name != "oidc-appsupport") {
-                    this.configureIosTargets()
-                }
             }
             configureKotlin()
         }

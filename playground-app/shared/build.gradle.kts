@@ -1,4 +1,5 @@
 import org.publicvalue.convention.addKspDependencyForAllTargets
+import org.publicvalue.convention.config.configureIosTargets
 
 plugins {
     id("org.publicvalue.convention.android.library")
@@ -12,6 +13,7 @@ android {
 }
 
 kotlin {
+    configureIosTargets()
     sourceSets {
         val commonMain by getting {
             dependencies {
