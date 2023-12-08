@@ -34,6 +34,7 @@ jobs:
 
   create-swift-package:
     needs: [ build, test]
+    if: github.ref == 'refs/heads/develop'
     runs-on: macos-13
     steps:
       - uses: actions/checkout@v3
@@ -43,6 +44,7 @@ jobs:
 
   deploy-swift-package-snapshot:
     needs: [create-swift-package]
+    if: github.ref == 'refs/heads/develop'
     runs-on: macos-13
     steps:
       - uses: actions/checkout@v3
