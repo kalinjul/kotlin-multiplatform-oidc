@@ -1,3 +1,4 @@
+import okhttp3.OkHttpClient
 import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
 import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
 import org.publicvalue.multiplatform.oidc.okhttp.OpenIdConnectAuthenticator
@@ -25,8 +26,8 @@ object ReadmeAndroid {
             }
         }
 
-//        val okHttpClient = OkHttpClient.Builder()
-//            .authenticator(authenticator)
-//            .build()
+        val okHttpClient = OkHttpClient.Builder()
+            .authenticator(authenticator)
+            .build()
     }
 }

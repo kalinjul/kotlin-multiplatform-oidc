@@ -32,6 +32,7 @@ kotlin {
                 api(libs.androidx.activity.compose)
                 api(libs.androidx.core.ktx)
                 api("io.github.kalinjul.kotlin.multiplatform:oidc-okhttp4")
+                api(libs.okhttp)
             }
         }
         val iosX64Main by getting
