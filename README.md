@@ -14,7 +14,8 @@ This project aims to be a lightweight implementation without sophisticated valid
 # Add dependency for Kotlin Multiplatform or Android
 Add the dependency to your commonMain sourceSet (KMP) / Android dependencies (android only):
 ```kotlin
-implementation("org.publicvalue.multiplatform.oidc:appsupport:0.1.1")
+implementation("org.publicvalue.multiplatform.oidc:appsupport:0.4.1")
+implementation("org.publicvalue.multiplatform.oidc:okhttp4:0.4.1") // optional, android only
 ```
 
 # iOS App usage
@@ -101,8 +102,31 @@ println(jwt?.payload?.additionalClaims?.get("email")) // get claim
 Since persisting tokens is a common task in OpenID Connect Authentication, we provide a 
 ```TokenStore``` that uses a [Multiplatform Settings Library](https://github.com/russhwolf/multiplatform-settings)
 to persist tokens in Keystore (iOS) / Encrypted Preferences (Android).
+If you use the TokenStore, you may also make use of ```TokenRefreshHandler``` for synchronized token
+refreshes.
 ```kotlin
 tokenstore.saveTokens(tokens)
 val accessToken = tokenstore.getAccessToken()
+
+val refreshHandler = TokenRefreshHandler(tokenStore = tokenstore)
+refreshHandler.safeRefreshToken(client, oldAccessToken = accessToken) // thread-safe refresh and save new tokens to store
 ```
 Android implementation is ```AndroidEncryptedPreferencesSettingsStore```, for iOS use ```IosKeychainTokenStore```.
+
+# OkHttp support (experimental)
+```kotlin
+val authenticator = OpenIdConnectAuthenticator {
+    getAccessToken { tokenStore.getAccessToken() }
+    refreshTokens { oldAccessToken -> refreshHandler.safeRefreshToken(client, oldAccessToken) }
+    onRefreshFailed {
+        // provided by app: user has to authenticate again
+    }
+    buildRequest {
+        header("AdditionalHeader", "value") // add custom header to all requests
+    }
+}
+
+val okHttpClient = OkHttpClient.Builder()
+    .authenticator(authenticator)
+    .build()
+```

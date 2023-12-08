@@ -3,8 +3,8 @@ import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
 import org.publicvalue.multiplatform.oidc.OpenIdConnectClientConfig
 import org.publicvalue.multiplatform.oidc.tokenstore.TokenStore
 import org.publicvalue.multiplatform.oidc.appsupport.CodeAuthFlowFactory
-import org.publicvalue.multiplatform.oidc.appsupport.TokenRefreshHandler
 import org.publicvalue.multiplatform.oidc.flows.CodeAuthFlow
+import org.publicvalue.multiplatform.oidc.tokenstore.TokenRefreshHandler
 import org.publicvalue.multiplatform.oidc.tokenstore.saveTokens
 import org.publicvalue.multiplatform.oidc.types.CodeChallengeMethod
 import org.publicvalue.multiplatform.oidc.types.Jwt
@@ -25,6 +25,8 @@ object Readme {
     val tokens: AccessTokenResponse = TODO()
     val idToken: String = TODO()
     val tokenstore: TokenStore = TODO()
+    val token: String = TODO()
+    val refreshHandler: TokenRefreshHandler = TODO()
 
     // Create OpenID config and client
     fun `Create_OpenID_config_and_client`() {
@@ -95,6 +97,6 @@ object Readme {
     @OptIn(ExperimentalOpenIdConnect::class)
     suspend fun `refresh_handler`() {
         val refreshHandler = TokenRefreshHandler(tokenStore = tokenstore)
-        refreshHandler.safeRefreshToken(client) // thread-safe refresh and save new tokens to store
+        refreshHandler.safeRefreshToken(client, oldAccessToken = token) // thread-safe refresh and save new tokens to store
     }
 }
