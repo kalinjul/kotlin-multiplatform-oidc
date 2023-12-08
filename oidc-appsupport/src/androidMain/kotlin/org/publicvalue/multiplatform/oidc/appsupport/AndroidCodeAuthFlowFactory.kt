@@ -10,9 +10,15 @@ import androidx.lifecycle.LifecycleOwner
 import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
 import org.publicvalue.multiplatform.oidc.flows.CodeAuthFlow
 
+/**
+ * Factory to create an Auth Flow on Android.
+ * In order to handle redirects, the factory needs to be instantiated in your Activity's [Activity.onCreate()].
+ */
 @Suppress("unused")
 class AndroidCodeAuthFlowFactory(
-    val activity: ComponentActivity
+    private val activity: ComponentActivity,
+    /** If true, uses an embedded WebView instead of Chrome CustomTab (not recommended) **/
+    private val useWebView: Boolean = false,
 ): CodeAuthFlowFactory {
 
     lateinit var authRequestLauncher: ActivityResultLauncherSuspend<Intent, ActivityResult>
@@ -44,6 +50,7 @@ class AndroidCodeAuthFlowFactory(
             context = activity,
             contract = authRequestLauncher,
             client = client,
+            useWebView = useWebView
         )
     }
 }
