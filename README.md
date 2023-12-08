@@ -67,7 +67,7 @@ class MainActivity : ComponentActivity() {
 }
 ```
 For multiplatform projects, there is also IosAuthFlowFactory. 
-For more information, have a look in to the [KMP sample](./tree/main/sample-app) 
+For more information, have a look in to the [KMP sample app](./sample-app).
 
 Request tokens using code auth flow:
 ```kotlin 
