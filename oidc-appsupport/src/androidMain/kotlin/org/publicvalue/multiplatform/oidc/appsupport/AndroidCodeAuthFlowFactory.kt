@@ -10,6 +10,7 @@ import androidx.lifecycle.LifecycleOwner
 import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
 import org.publicvalue.multiplatform.oidc.flows.CodeAuthFlow
 
+@Suppress("unused")
 class AndroidCodeAuthFlowFactory(
     val activity: ComponentActivity
 ): CodeAuthFlowFactory {

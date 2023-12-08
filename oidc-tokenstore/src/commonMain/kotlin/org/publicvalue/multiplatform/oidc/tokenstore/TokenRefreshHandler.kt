@@ -1,4 +1,4 @@
-package org.publicvalue.multiplatform.oidc.appsupport
+package org.publicvalue.multiplatform.oidc.tokenstore
 
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -26,8 +26,8 @@ class TokenRefreshHandler(
      * @return The new access token
      */
     @Throws(OpenIdConnectException::class, CancellationException::class)
-    suspend fun safeRefreshToken(client: OpenIdConnectClient): String {
-        return safeRefreshToken({ client.refreshToken(it) })
+    suspend fun safeRefreshToken(client: OpenIdConnectClient, oldAccessToken: String): String {
+        return safeRefreshToken(client::refreshToken, oldAccessToken)
     }
 
     /**
@@ -35,11 +35,10 @@ class TokenRefreshHandler(
      * @return The new access token
      */
     @Throws(OpenIdConnectException::class, CancellationException::class)
-    suspend fun safeRefreshToken(refreshCall: suspend (String) -> AccessTokenResponse): String {
-        val oldToken = tokenStore.getAccessToken()
+    suspend fun safeRefreshToken(refreshCall: suspend (String) -> AccessTokenResponse, oldAccessToken: String): String {
         mutex.withLock {
             val currentToken = tokenStore.getAccessToken()
-            return if (currentToken != null && currentToken != oldToken) {
+            return if (currentToken != null && currentToken != oldAccessToken) {
                 currentToken
             } else {
                 val refreshToken = tokenStore.getRefreshToken()

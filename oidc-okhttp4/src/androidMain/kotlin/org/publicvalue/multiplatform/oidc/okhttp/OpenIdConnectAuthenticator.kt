@@ -27,7 +27,7 @@ abstract class OpenIdConnectAuthenticator: Authenticator {
                 if (token != null && response.code == 401 && response.request.header(HttpHeaders.Authorization)?.contains(token) == true) {
                     // Got 401 -> refresh token
                     Log.d(LOG_TAG, "Refreshing access token as using it returned a 401")
-                    refreshTokens()
+                    refreshTokens(oldToken = token)
                     getAccessToken()
                 } else {
                     token
@@ -52,16 +52,17 @@ abstract class OpenIdConnectAuthenticator: Authenticator {
     }
 
     abstract suspend fun getAccessToken(): String?
-    abstract suspend fun refreshTokens(): Unit
-    abstract fun onRefreshFailed(): Unit
+    abstract suspend fun refreshTokens(oldToken: String)
+    abstract fun onRefreshFailed()
     /** Override to provide additional configuration for the authenticated request **/
     open fun buildRequest(builder: Request.Builder) {}
 }
 
 @ExperimentalOpenIdConnect
+@Suppress("unused")
 data class OpenIdConnectAuthenticatorConfig(
     internal var getAccessToken: (suspend () -> String?)? = null,
-    internal var refreshTokens: (suspend () -> Unit)? = null,
+    internal var refreshTokens: (suspend (oldAccessToken: String) -> Unit)? = null,
     internal var onRefreshFailed: (() -> Unit)? = null,
     internal var buildRequest: Request.Builder.() -> Unit = {}
 ) {
@@ -69,7 +70,7 @@ data class OpenIdConnectAuthenticatorConfig(
         getAccessToken = block
     }
 
-    fun refreshTokens(block: suspend () -> Unit) {
+    fun refreshTokens(block: suspend (oldAccessToken: String) -> Unit) {
         refreshTokens = block
     }
 
@@ -89,6 +90,7 @@ data class OpenIdConnectAuthenticatorConfig(
 }
 
 @ExperimentalOpenIdConnect
+@Suppress("unused")
 fun OpenIdConnectAuthenticator(
     configureBlock: OpenIdConnectAuthenticatorConfig.() -> Unit
 ): OpenIdConnectAuthenticator {
@@ -99,8 +101,8 @@ fun OpenIdConnectAuthenticator(
         override suspend fun getAccessToken(): String? {
             return config.getAccessToken?.invoke()
         }
-        override suspend fun refreshTokens() {
-            config.refreshTokens?.invoke()
+        override suspend fun refreshTokens(oldAccessToken: String) {
+            config.refreshTokens?.invoke(oldAccessToken)
         }
         override fun onRefreshFailed() {
             config.onRefreshFailed?.invoke()

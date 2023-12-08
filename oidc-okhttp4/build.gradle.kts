@@ -11,7 +11,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api(projects.oidcCore)
-                api(projects.oidcAppsupport)
+                implementation(projects.oidcTokenstore)
             }
         }
 
