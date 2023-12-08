@@ -14,3 +14,6 @@ runs:
     - name: Build playground app
       shell: bash
       run: ./gradlew -p playground-app assembleRelease
+    - name: Build dokka
+      shell: bash
+      run: ./gradlew dokkaHtmlCollector

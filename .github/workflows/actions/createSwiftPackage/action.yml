@@ -20,3 +20,4 @@ runs:
       with:
         name: oidc-swiftpackages
         path: oidc-*/build/swiftpackage/*
+        retention-days: 1

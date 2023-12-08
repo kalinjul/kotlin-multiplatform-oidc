@@ -1,0 +1,15 @@
+name: Build
+description: Build
+
+runs:
+  using: "composite"
+  steps:
+    - uses: ./.github/workflows/actions/prepare
+    - name: Build dokka
+      shell: bash
+      run: ./gradlew dokkaHtmlCollector
+    - uses: actions/upload-artifact@v3
+      with:
+        name: oidc-dokka
+        path: build/dokka/htmlCollector/
+        retention-days: 1

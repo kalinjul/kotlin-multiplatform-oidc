@@ -23,6 +23,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/workflows/actions/build
+      - uses: ./.github/workflows/actions/doc
 
   test:
     needs: [ build ]
