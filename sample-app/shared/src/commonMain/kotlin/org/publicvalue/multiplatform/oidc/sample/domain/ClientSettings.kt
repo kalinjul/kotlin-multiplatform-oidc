@@ -9,7 +9,7 @@ data class ClientSettings(
     val client_id: String? = null,
     val client_secret: String? = null,
     val scope: String? = null,
-    val code_challenge_method: CodeChallengeMethod = CodeChallengeMethod.off,
+    val code_challenge_method: CodeChallengeMethod = CodeChallengeMethod.S256,
 ) {
     companion object {
         val Empty = ClientSettings(

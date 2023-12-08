@@ -36,6 +36,35 @@ import kotlin.coroutines.cancellation.CancellationException
 import kotlin.experimental.ExperimentalObjCName
 import kotlin.native.ObjCName
 
+/**
+ * Builds an [OpenIdConnectClientConfig] using the [block] parameter and returns an OpenID Connect
+ * client.
+ *
+ * This uses the default ktor HTTP client. You may provide your own client using the
+ * [OpenIdConnectClient] constructor.
+ *
+ * @param discoveryUri if set, endpoints in the configuration are optional.
+ * Setting an endpoint manually will override a discovered endpoint.
+ * @param block configuration closure. See [OpenIdConnectClientConfig]
+ */
+@Suppress("unused")
+fun OpenIdConnectClient(
+    discoveryUri: String? = null,
+    block: OpenIdConnectClientConfig.() -> Unit
+): OpenIdConnectClient {
+    val config = OpenIdConnectClientConfig(discoveryUri).apply(block)
+    return OpenIdConnectClient(config = config)
+}
+
+/**
+ * OpenIdConnectClient implements the basic methods used to perform OpenID Connect Authentication.
+ * A client may also be constructed using the [Builder method][org.publicvalue.multiplatform.oidc.OpenIdConnectClient]
+ *
+ * @param httpClient The (ktor) HTTP client to be used for code <-> token exchange and endSession requests.
+ * Authentication is performed using [CodeAuthFlow][org.publicvalue.multiplatform.oidc.flows.CodeAuthFlow]
+ *
+ * @param config [Configuration][org.publicvalue.multiplatform.oidc.OpenIdConnectClientConfig] for this client
+ */
 @OptIn(ExperimentalSerializationApi::class, ExperimentalObjCName::class)
 @ObjCName(swiftName = "OpenIdConnectClient", name = "OpenIdConnectClient", exact = true)
 class OpenIdConnectClient(
@@ -77,6 +106,10 @@ class OpenIdConnectClient(
         config.validate()
     }
 
+    /**
+     * Creates an Authorization Code Request which can then be executed by the
+     * [CodeAuthFlow][org.publicvalue.multiplatform.oidc.flows.CodeAuthFlow].
+     */
     fun createAuthorizationCodeRequest(configure: (URLBuilder.() -> Unit)? = null): AuthCodeRequest {
         val pkce = Pkce(config.codeChallengeMethod)
         val nonce = randomBytes().encodeForPKCE()
@@ -101,6 +134,10 @@ class OpenIdConnectClient(
         )
     }
 
+    /**
+     * Discover OpenID Connect Configuration using the discovery endpoint.
+     * See: [OpenID Connect Discovery](https://openid.net/specs/openid-connect-discovery-1_0.html)
+     */
     @Throws(OpenIdConnectException::class, CancellationException::class)
     suspend fun discover() = wrapExceptions {
         config.discoveryUri?.let { discoveryUri ->
@@ -116,7 +153,7 @@ class OpenIdConnectClient(
      * RP-initiated logout.
      * Just performs the GET request for logout, we skip the redirect part for convenience.
      *
-     * https://openid.net/specs/openid-connect-rpinitiated-1_0.html
+     * See: [OpenID Spec](https://openid.net/specs/openid-connect-rpinitiated-1_0.html)
      */
     @Throws(OpenIdConnectException::class, CancellationException::class)
     suspend fun endSession(idToken: String, configure: (HttpRequestBuilder.() -> Unit)? = null): HttpStatusCode = wrapExceptions {
@@ -135,8 +172,8 @@ class OpenIdConnectClient(
     }
 
     /**
-     * https://datatracker.ietf.org/doc/html/rfc6749#section-4.1.3
-     * + code verifier https://datatracker.ietf.org/doc/html/rfc7636#section-4.5
+     * Sends an Access Token Request following [RFC6749: OAuth](https://datatracker.ietf.org/doc/html/rfc6749#section-4.1.3) and
+     * [RFC7636: PKCE](https://datatracker.ietf.org/doc/html/rfc7636#section-4.5)
      */
     @Throws(OpenIdConnectException::class, CancellationException::class)
     suspend fun exchangeToken(authCodeRequest: AuthCodeRequest, code: String, configure: (HttpRequestBuilder.() -> Unit)? = null): AccessTokenResponse = wrapExceptions {
@@ -145,7 +182,7 @@ class OpenIdConnectClient(
     }
 
     /**
-     * https://datatracker.ietf.org/doc/html/rfc6749#section-6
+     * [RFC6749](https://datatracker.ietf.org/doc/html/rfc6749#section-6)
      */
     @Throws(OpenIdConnectException::class, CancellationException::class)
     @Suppress("Unused")
@@ -239,13 +276,4 @@ private suspend fun HttpClientCall.errorBody(): ErrorResponse? {
     } catch (e: Exception) {
         null
     }
-}
-
-@Suppress("unused")
-fun OpenIdConnectClient(
-    discoveryUri: String? = null,
-    block: OpenIdConnectClientConfig.() -> Unit
-): OpenIdConnectClient {
-    val config = OpenIdConnectClientConfig(discoveryUri).apply(block)
-    return OpenIdConnectClient(config = config)
 }

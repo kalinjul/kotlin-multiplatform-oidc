@@ -2,6 +2,7 @@
 [![Snapshot Build](https://github.com/kalinjul/kotlin-multiplatform-oidc/actions/workflows/develop.yml/badge.svg?branch=develop)](https://github.com/kalinjul/kotlin-multiplatform-oidc/actions/workflows/develop.yml)
 [![Release Build](https://github.com/kalinjul/kotlin-multiplatform-oidc/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/kalinjul/kotlin-multiplatform-oidc/actions/workflows/main.yml)
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.kalinjul.kotlin.multiplatform/oidc-appsupport)](https://repo1.maven.org/maven2/io/github/kalinjul/kotlin/multiplatform/oidc-appsupport/)
+[![Docs](https://github.com/kalinjul/kotlin-multiplatform-oidc/actions/workflows/static-docs.yml/badge.svg)](https://kalinjul.github.io/kotlin-multiplatform-oidc/)
 
 Library for using OpenId Connect / OAuth 2.0 in Kotlin Multiplatform (iOS+Android), Android and Xcode projects.
 This project aims to be a lightweight implementation without sophisticated validation on client side.
@@ -10,6 +11,8 @@ This project aims to be a lightweight implementation without sophisticated valid
 - Support for [discovery](https://openid.net/specs/openid-connect-discovery-1_0.html) via .well-known/openid-configuration.
 - Support for [PKCE](https://datatracker.ietf.org/doc/html/rfc7636)
 - Simple JWT parsing
+
+You can find the full Api documentation [here](https://kalinjul.github.io/kotlin-multiplatform-oidc/).
 
 # Add dependency for Kotlin Multiplatform or Android
 Add the dependency to your commonMain sourceSet (KMP) / Android dependencies (android only):

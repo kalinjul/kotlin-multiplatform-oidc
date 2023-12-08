@@ -10,27 +10,44 @@ import kotlin.native.ObjCName
 @ObjCName(swiftName = "OpenIdConnectClientConfig", name = "OpenIdConnectClientConfig", exact = true)
 class OpenIdConnectClientConfig(
     /**
-     * If discoveryUri is set, no further endpoints have to be configured.
+     * If set, no further endpoints have to be configured.
+     * You can override discovered endpoints in [endpoints]
      */
     val discoveryUri: String? = null,
     var endpoints: Endpoints = Endpoints(),
     /**
      * REQUIRED
-     * https://datatracker.ietf.org/doc/html/rfc6749#section-2.2
+     *
+     * [RFC6749](https://datatracker.ietf.org/doc/html/rfc6749#section-2.2)
      */
     var clientId: String? = null,
     var clientSecret: String? = null,
     /**
      * OPTIONAL
-     * https://datatracker.ietf.org/doc/html/rfc6749#section-3.3
+     *
+     * [RFC6749](https://datatracker.ietf.org/doc/html/rfc6749#section-3.3)
      */
     var scope: String? = null,
-    var codeChallengeMethod: CodeChallengeMethod = CodeChallengeMethod.off,
+    /**
+     * The Code Challenge Method to use for PKCE.
+     *
+     * Default is [S256][CodeChallengeMethod.S256]).
+     * Set to [S256][CodeChallengeMethod.off]) to disable PKCE.
+     */
+    var codeChallengeMethod: CodeChallengeMethod = CodeChallengeMethod.S256,
     /**
      * https://datatracker.ietf.org/doc/html/rfc6749#section-3.1.2
      */
     var redirectUri: String? = null,
 ) {
+    /**
+     * Configure the endpoints.
+     *
+     * Either [discoveryUri] or both [authorizationEndpoint][Endpoints.authorizationEndpoint] and
+     * [tokenEndpoint][Endpoints.tokenEndpoint] are required.
+     *
+     * [endSessionEndpoint][Endpoints.endSessionEndpoint] is required if you wish to logout.
+     */
     fun endpoints(
         block: Endpoints.() -> Unit
     ) {
@@ -64,6 +81,13 @@ data class Endpoints(
     var userInfoEndpoint: String? = null,
     var endSessionEndpoint: String? = null
 ) {
+    /**
+     * Set a baseUrl that is applied for all endpoints.
+     * E.g. baseUrl("http://localhost/oauth/") {
+     *      tokenEndpoint = "token"
+     * }
+     */
+    @Suppress("unused")
     fun baseUrl(baseUrl: String, block: Endpoints.() -> Unit) {
         val endpoints = Endpoints()
         endpoints.block()

@@ -12,9 +12,9 @@ import kotlin.native.ObjCName
 
 /**
  * Implements the OAuth 2.0 Code Authorization Flow.
- * See: https://datatracker.ietf.org/doc/html/rfc6749#section-4.1
+ * See: [RFC6749](https://datatracker.ietf.org/doc/html/rfc6749#section-4.1)
  *
- * Implementations have to provide their own method to get the authorization code,
+ * Implementations have to provide their own method [getAuthorizationCode]
  * as this requires user interaction (e.g. via browser).
  */
 @OptIn(ExperimentalObjCName::class)
@@ -38,11 +38,8 @@ abstract class CodeAuthFlow(val client: OpenIdConnectClient) {
 
     /**
      * Uses the request URL to open a browser and perform authorization.
-     * Should return the Authorization Code.
-     */
-    /**
-     * Uses the request URL to open a browser and perform authorization.
-     * Should return the Authorization Code.
+     * @param request The request containing the url and relevant state information
+     * @return the Authorization Code.
      */
     @Throws(CancellationException::class, OpenIdConnectException::class)
     abstract suspend fun getAuthorizationCode(request: AuthCodeRequest): AuthCodeResponse

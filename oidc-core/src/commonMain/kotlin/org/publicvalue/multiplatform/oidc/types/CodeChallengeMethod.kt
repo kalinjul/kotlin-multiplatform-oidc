@@ -3,10 +3,27 @@ package org.publicvalue.multiplatform.oidc.types
 import kotlin.experimental.ExperimentalObjCName
 import kotlin.native.ObjCName
 
+/**
+ * Code Challenge Methods defined by [RFC7636: PKCE](https://datatracker.ietf.org/doc/html/rfc7636)
+ */
 @OptIn(ExperimentalObjCName::class)
 @ObjCName(swiftName = "CodeChallengeMethod", name = "CodeChallengeMethod", exact = true)
 enum class CodeChallengeMethod(
     val queryString: String?
 ) {
-    S256("S256"), plain("plain"), off(null)
+    /** Send a random code_challenge in code request and a SHA-256 hashed code_verifier in token
+     *  request.
+    **/
+    S256("S256"),
+
+    /**
+     *  code_challenge = code_verifier
+     */
+    @Suppress("unused")
+    plain("plain"),
+
+    /**
+     * Disable PKCE Headers.
+     */
+    off(null)
 }
