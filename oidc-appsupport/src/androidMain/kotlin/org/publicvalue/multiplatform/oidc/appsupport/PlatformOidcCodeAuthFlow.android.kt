@@ -14,12 +14,21 @@ import org.publicvalue.multiplatform.oidc.types.AuthCodeRequest
 actual class PlatformCodeAuthFlow(
     private val context: Context,
     private val contract: ActivityResultLauncherSuspend<Intent, ActivityResult>,
+    private val useWebView: Boolean = false,
     client: OpenIdConnectClient,
 ) : CodeAuthFlow(client) {
 
     override suspend fun getAuthorizationCode(request: AuthCodeRequest): AuthCodeResponse {
-        val intent = Intent(context, HandleRedirectActivity::class.java).apply {
-            this.putExtra("url", request.url.toString())
+        val intent = Intent(
+            context,
+            HandleRedirectActivity::class.java
+        )
+        .apply {
+            this.putExtra(EXTRA_KEY_URL, request.url.toString())
+            if (useWebView) {
+                this.putExtra(EXTRA_KEY_USEWEBVIEW, true)
+                this.putExtra(EXTRA_KEY_REDIRECTURL, request.url.parameters.get("redirect_uri"))
+            }
         }
         val result = contract.launchSuspend(intent)
 
@@ -34,7 +43,7 @@ actual class PlatformCodeAuthFlow(
                 Result.success(AuthCodeResult(code, state))
             }
         } else {
-            Result.failure(OpenIdConnectException.AuthenticationFailure(message = "No Uri in callback from browser."))
+            Result.failure(OpenIdConnectException.AuthenticationFailure(message = "CustomTab result not ok (was ${result.resultCode}) or no Uri in callback from browser (was ${responseUri})."))
         }
     }
 }
