@@ -32,8 +32,8 @@ runs:
         # copy readme
         cp ${GITHUB_WORKSPACE}/docs/ios/* .
         git add -A
-        # remove zip, this is distributed as release artifact
-        git reset OpenIdConnectClient.zip
+        # remove zip, this is distributed as release artifact for release builds
+        if [ -n "${{ inputs.tag }}" ]; then git reset OpenIdConnectClient.zip; fi
         git status
         git commit -m "New iOS package (${{ inputs.tag }})"
         git remote add origin https://${{ inputs.token }}@github.com/kalinjul/OpenIdConnectClient.git
