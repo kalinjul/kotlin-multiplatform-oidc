@@ -26,7 +26,7 @@ runs:
         token: ${{ inputs.token }}
         generateReleaseNotes: true
         artifacts: "${GITHUB_WORKSPACE}/oidc-appsupport/build/swiftpackage/OpenIdConnectClient.zip,${GITHUB_WORKSPACE}/oidc-appsupport/build/swiftpackage/Package.swift"
-        repo: "kalinjul/OpenIdConnectClient"
+        repo: "OpenIdConnectClient"
     - name: Upload Package
       shell: bash
       run: |
