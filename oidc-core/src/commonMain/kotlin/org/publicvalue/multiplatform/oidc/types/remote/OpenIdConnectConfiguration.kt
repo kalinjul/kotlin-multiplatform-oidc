@@ -5,7 +5,7 @@ import kotlin.experimental.ExperimentalObjCName
 import kotlin.native.ObjCName
 
 /**
- * Openid-configuration JSON
+ * Openid-configuration JSON expected from discovery endpoint
  */
 @OptIn(ExperimentalObjCName::class)
 @Serializable

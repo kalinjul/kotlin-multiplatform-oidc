@@ -71,7 +71,10 @@ class OpenIdConnectClient(
     val httpClient: HttpClient = DefaultHttpClient,
     val config: OpenIdConnectClientConfig,
 ) {
-    // Swift convenience constructor
+    /**
+     * Swift convenience constructor
+     * @suppress
+     */
     constructor(config: OpenIdConnectClientConfig): this(httpClient = DefaultHttpClient, config = config)
 
     @Suppress("MemberVisibilityCanBePrivate")
@@ -172,8 +175,15 @@ class OpenIdConnectClient(
     }
 
     /**
-     * Sends an Access Token Request following [RFC6749: OAuth](https://datatracker.ietf.org/doc/html/rfc6749#section-4.1.3) and
+     * Create and send an Access Token Request following
+     * [RFC6749: OAuth](https://datatracker.ietf.org/doc/html/rfc6749#section-4.1.3) and
      * [RFC7636: PKCE](https://datatracker.ietf.org/doc/html/rfc7636#section-4.5)
+     *
+     * @param authCodeRequest the original request for auth code
+     * @param code the authcode received via redirect
+     * @param configure configuration closure for the HTTP request
+     *
+     * @return [AccessTokenResponse]
      */
     @Throws(OpenIdConnectException::class, CancellationException::class)
     suspend fun exchangeToken(authCodeRequest: AuthCodeRequest, code: String, configure: (HttpRequestBuilder.() -> Unit)? = null): AccessTokenResponse = wrapExceptions {
@@ -182,7 +192,13 @@ class OpenIdConnectClient(
     }
 
     /**
+     * Create and send a Refresh Token Request.
      * [RFC6749](https://datatracker.ietf.org/doc/html/rfc6749#section-6)
+     *
+     * @param refreshToken the refresh token
+     * @param configure configuration closure for the HTTP request
+     *
+     * @return [AccessTokenResponse]
      */
     @Throws(OpenIdConnectException::class, CancellationException::class)
     @Suppress("Unused")
@@ -191,6 +207,16 @@ class OpenIdConnectClient(
         return executeTokenRequest(tokenRequest.request)
     }
 
+    /**
+     * Create an Access Token Request.
+     * You should use [OpenIdConnectClient.exchangeToken] for creating and executing a request instead.
+     *
+     * @param authCodeRequest the original request for auth code
+     * @param code the authcode received via redirect
+     * @param configure configuration closure for the HTTP request
+     *
+     * @return [TokenRequest]
+     */
     @Suppress("MemberVisibilityCanBePrivate")
     fun createAccessTokenRequest(authCodeRequest: AuthCodeRequest, code: String, configure: (HttpRequestBuilder.() -> Unit)? = null): TokenRequest = wrapExceptions {
         val url = URLBuilder(config.endpoints.tokenEndpoint!!).build()
@@ -217,6 +243,15 @@ class OpenIdConnectClient(
         )
     }
 
+    /**
+     * Create a Refresh Token Request.
+     * You should use [OpenIdConnectClient.refreshToken] for creating and executing a request instead.
+     *
+     * @param refreshToken the refresh token
+     * @param configure configuration closure for the HTTP request
+     *
+     * @return [TokenRequest]
+     */
     @Suppress("MemberVisibilityCanBePrivate")
     fun createRefreshTokenRequest(refreshToken: String, configure: (HttpRequestBuilder.() -> Unit)? = null): TokenRequest = wrapExceptions {
         val url = URLBuilder(config.endpoints.tokenEndpoint!!).build()

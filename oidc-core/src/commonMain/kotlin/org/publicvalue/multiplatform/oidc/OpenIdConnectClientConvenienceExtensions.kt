@@ -9,6 +9,7 @@ import kotlin.coroutines.cancellation.CancellationException
 /**
  * Objective-C convenience function
  * @see OpenIdConnectClient.exchangeToken
+ * @suppress
  */
 @Throws(OpenIdConnectException::class, CancellationException::class)
 suspend fun OpenIdConnectClient.exchangeToken(authCodeRequest: AuthCodeRequest, code: String) =
@@ -17,6 +18,7 @@ suspend fun OpenIdConnectClient.exchangeToken(authCodeRequest: AuthCodeRequest, 
 /**
  * Objective-C convenience function
  * @see OpenIdConnectClient.endSession
+ * @suppress
  */
 @Throws(OpenIdConnectException::class, CancellationException::class)
 suspend fun OpenIdConnectClient.endSession(idToken: String) =
@@ -25,6 +27,7 @@ suspend fun OpenIdConnectClient.endSession(idToken: String) =
 /**
  * Objective-C convenience function
  * @see OpenIDConnectClient.createAccessTokenRequest
+ * @suppress
  */
 @Throws(OpenIdConnectException::class, CancellationException::class)
 fun OpenIdConnectClient.createAccessTokenRequest(authCodeRequest: AuthCodeRequest, code: String) =
@@ -33,6 +36,7 @@ fun OpenIdConnectClient.createAccessTokenRequest(authCodeRequest: AuthCodeReques
 /**
  * Objective-C convenience function
  * @see OpenIdConnectClient.createRefreshTokenRequest
+ * @suppress
  */
 @Throws(OpenIdConnectException::class, CancellationException::class)
 fun OpenIdConnectClient.createRefreshTokenRequest(refreshToken: String) =
@@ -41,6 +45,7 @@ fun OpenIdConnectClient.createRefreshTokenRequest(refreshToken: String) =
 /**
  * Objective-C convenience function
  * @see OpenIdConnectClient.refreshToken
+ * @suppress
  */
 @Throws(OpenIdConnectException::class, CancellationException::class)
 suspend fun OpenIdConnectClient.refreshToken(refreshToken: String) =

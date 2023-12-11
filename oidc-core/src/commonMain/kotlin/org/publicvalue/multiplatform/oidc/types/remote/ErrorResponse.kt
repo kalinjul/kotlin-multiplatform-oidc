@@ -5,7 +5,8 @@ import kotlin.experimental.ExperimentalObjCName
 import kotlin.native.ObjCName
 
 /**
- * https://datatracker.ietf.org/doc/html/rfc6749#section-4.1.2.1
+ * ErrorResponse expected from Authorization or Token endpoint.
+ * [RFC6749](https://datatracker.ietf.org/doc/html/rfc6749#section-4.1.2.1)
  */
 @OptIn(ExperimentalObjCName::class)
 @ObjCName(swiftName = "OpenIdConnectErrorResponse", name = "OpenIdConnectErrorResponse", exact = true)

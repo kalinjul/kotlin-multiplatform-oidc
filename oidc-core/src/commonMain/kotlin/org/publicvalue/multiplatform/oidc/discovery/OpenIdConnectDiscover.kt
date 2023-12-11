@@ -12,22 +12,38 @@ import org.publicvalue.multiplatform.oidc.types.remote.OpenIdConnectConfiguratio
 import kotlin.experimental.ExperimentalObjCName
 import kotlin.native.ObjCName
 
+/**
+ * Basic OpenID Connect Discovery implementation.
+ * For supported json keys, see [OpenIdConnectConfiguration].
+ */
 @OptIn(ExperimentalObjCName::class)
 @ObjCName(swiftName = "OpenIdConnectDiscover", name = "OpenIdConnectDiscover", exact = true)
 class OpenIdConnectDiscover(
-    val httpClient: HttpClient = HttpClient()
+    private val httpClient: HttpClient = HttpClient()
 ) {
 
     @OptIn(ExperimentalSerializationApi::class)
-    val json = Json {
+    private val json = Json {
         ignoreUnknownKeys = true
         explicitNulls = false
     }
 
+    /**
+     * Retrieve configuration document from url.
+     *
+     * @param configurationUrl the url
+     * @return [OpenIdConnectConfiguration]
+     */
     suspend fun downloadConfiguration(configurationUrl: String): OpenIdConnectConfiguration {
         return downloadConfiguration(Url(configurationUrl))
     }
 
+    /**
+     * Retrieve configuration document from url.
+     *
+     * @param configurationUrl the url
+     * @return [OpenIdConnectConfiguration]
+     */
     suspend fun downloadConfiguration(configurationUrl: Url): OpenIdConnectConfiguration {
         val result = httpClient.get(configurationUrl)
         val configuration: OpenIdConnectConfiguration = result.forceUnwrapBody(json)
@@ -35,7 +51,7 @@ class OpenIdConnectDiscover(
     }
 }
 
-suspend inline fun <reified T: Any> HttpResponse.forceUnwrapBody(json: Json = Json): T =
+private suspend inline fun <reified T: Any> HttpResponse.forceUnwrapBody(json: Json = Json): T =
     if (call.response.status.isSuccess()) {
         val bodyString:String = call.body()
         json.decodeFromString(bodyString)

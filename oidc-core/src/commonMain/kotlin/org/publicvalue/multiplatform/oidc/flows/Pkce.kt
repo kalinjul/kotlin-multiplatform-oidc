@@ -7,6 +7,9 @@ import org.publicvalue.multiplatform.oidc.types.CodeChallengeMethod
 import kotlin.experimental.ExperimentalObjCName
 import kotlin.native.ObjCName
 
+/**
+ * Proof Key for Code Exchange [RFC7636](https://datatracker.ietf.org/doc/html/rfc7636) implementation.
+ */
 @OptIn(ExperimentalObjCName::class)
 @ObjCName(swiftName = "PKCE", name = "PKCE", exact = true)
 class Pkce(
@@ -16,16 +19,15 @@ class Pkce(
     /** For authorization **/
     val codeChallenge: String = challenge(codeVerifier, codeChallengeMethod),
 ) {
-    companion object {
-        internal fun verifier(): String {
+    private companion object {
+        fun verifier(): String {
             val bytes = randomBytes()
             return bytes.encodeForPKCE()
         }
 
-        internal fun challenge(codeVerifier: String, method: CodeChallengeMethod): String {
+        fun challenge(codeVerifier: String, method: CodeChallengeMethod): String {
             return if (method == CodeChallengeMethod.S256) codeVerifier.s256().encodeForPKCE() else codeVerifier
         }
-
     }
 }
 

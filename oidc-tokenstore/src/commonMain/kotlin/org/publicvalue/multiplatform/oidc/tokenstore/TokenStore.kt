@@ -5,6 +5,9 @@ import org.publicvalue.multiplatform.oidc.types.remote.AccessTokenResponse
 import kotlin.experimental.ExperimentalObjCName
 import kotlin.native.ObjCName
 
+/**
+ * Concurrency-safe Token Store implementations.
+ */
 @ExperimentalOpenIdConnect
 @OptIn(ExperimentalObjCName::class)
 @ObjCName("TokenStoreProtocol", "TokenStoreProtocol", exact = true)

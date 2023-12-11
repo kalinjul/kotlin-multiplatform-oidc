@@ -11,6 +11,13 @@ import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
 
 private val LOG_TAG = "OpenIdConnectAuthenticator"
 
+/**
+ * OkHttp Authenticator.
+ *
+ * If no authorization header present, it will provide an access token on 401.
+ *
+ * If a 401 is encountered with access token set, it will perform a refresh.
+ */
 @ExperimentalOpenIdConnect
 abstract class OpenIdConnectAuthenticator: Authenticator {
     override fun authenticate(route: Route?, response: Response): Request? {

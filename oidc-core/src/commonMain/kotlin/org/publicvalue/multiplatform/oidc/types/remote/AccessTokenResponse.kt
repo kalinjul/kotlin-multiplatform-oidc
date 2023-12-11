@@ -6,8 +6,10 @@ import kotlin.experimental.ExperimentalObjCName
 import kotlin.native.ObjCName
 
 /**
- * https://openid.net/specs/openid-connect-core-1_0.html#TokenResponse
- * https://datatracker.ietf.org/doc/html/rfc6749#section-5.1
+ * Access Token Response expected from token endpoint.
+ *
+ * [https://openid.net/specs/openid-connect-core-1_0.html#TokenResponse](https://openid.net/specs/openid-connect-core-1_0.html#TokenResponse)
+ * [https://datatracker.ietf.org/doc/html/rfc6749#section-5.1](https://datatracker.ietf.org/doc/html/rfc6749#section-5.1)
  */
 @OptIn(ExperimentalObjCName::class)
 @Serializable

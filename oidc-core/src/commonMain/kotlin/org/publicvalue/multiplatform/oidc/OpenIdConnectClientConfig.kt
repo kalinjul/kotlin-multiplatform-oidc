@@ -5,6 +5,11 @@ import org.publicvalue.multiplatform.oidc.types.remote.OpenIdConnectConfiguratio
 import kotlin.experimental.ExperimentalObjCName
 import kotlin.native.ObjCName
 
+/**
+ * Configuration for an [OpenIdConnectClient].
+ * A configuration can also be built using [OpenIdConnectClient] builder function with block
+ * argument.
+ */
 @OptIn(ExperimentalObjCName::class)
 @EndpointMarker
 @ObjCName(swiftName = "OpenIdConnectClientConfig", name = "OpenIdConnectClientConfig", exact = true)
@@ -70,8 +75,11 @@ class OpenIdConnectClientConfig(
 }
 
 @DslMarker
-annotation class EndpointMarker
+private annotation class EndpointMarker
 
+/**
+ * Endpoint configuration
+ */
 @OptIn(ExperimentalObjCName::class)
 @EndpointMarker
 @ObjCName(swiftName = "Endpoints", name = "Endpoints", exact = true)
@@ -97,6 +105,12 @@ data class Endpoints(
     }
 }
 
+/**
+ * Validate the config
+ *
+ * @receiver the [OpenIdConnectClientConfig] to validate
+ * @throws OpenIdConnectException if the config is invalid
+ */
 fun OpenIdConnectClientConfig.validate() {
     if (discoveryUri.isNullOrBlank()) {
         if (endpoints.tokenEndpoint == null) {

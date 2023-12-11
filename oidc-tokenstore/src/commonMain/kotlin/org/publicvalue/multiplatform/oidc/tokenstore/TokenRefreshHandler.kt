@@ -12,6 +12,9 @@ import kotlin.coroutines.cancellation.CancellationException
 import kotlin.experimental.ExperimentalObjCName
 import kotlin.native.ObjCName
 
+/**
+ * Concurrency-safe Token Refresh Handler.
+ */
 @ExperimentalOpenIdConnect
 @OptIn(ExperimentalObjCName::class)
 @ObjCName("TokenRefreshHandler", "TokenRefreshHandler", exact = true)
