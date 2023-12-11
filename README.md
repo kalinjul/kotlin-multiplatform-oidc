@@ -17,8 +17,17 @@ You can find the full Api documentation [here](https://kalinjul.github.io/kotlin
 # Add dependency for Kotlin Multiplatform or Android
 Add the dependency to your commonMain sourceSet (KMP) / Android dependencies (android only):
 ```kotlin
-implementation("org.publicvalue.multiplatform.oidc:appsupport:0.4.1")
-implementation("org.publicvalue.multiplatform.oidc:okhttp4:0.4.1") // optional, android only
+implementation("io.github.kalinjul.kotlin.multiplatform:oidc-appsupport:0.6.3")
+implementation("io.github.kalinjul.kotlin.multiplatform:oidc-okhttp4:0.6.3") // optional, android only
+```
+
+Or, for your libs.versions.toml:
+```toml
+[versions]
+oidc = "0.6.3"
+[libraries]
+oidc-appsupport = { module = "io.github.kalinjul.kotlin.multiplatform:oidc-appsupport", version.ref = "oidc" }
+oidc-okhttp4 = { module = "io.github.kalinjul.kotlin.multiplatform:oidc-okhttp4", version.ref = "oidc" }
 ```
 
 # iOS App usage
