@@ -25,7 +25,7 @@ runs:
         tag: ${{ inputs.tag }}
         token: ${{ inputs.token }}
         generateReleaseNotes: true
-        artifacts: "${GITHUB_WORKSPACE}/oidc-appsupport/build/swiftpackage/OpenIdConnectClient.zip,${GITHUB_WORKSPACE}/oidc-appsupport/build/swiftpackage/Package.swift"
+        artifacts: "oidc-appsupport/build/swiftpackage/OpenIdConnectClient.zip,oidc-appsupport/build/swiftpackage/Package.swift"
         repo: "OpenIdConnectClient"
     - name: Upload Package
       shell: bash
@@ -45,5 +45,6 @@ runs:
         git remote add origin https://${{ inputs.token }}@github.com/kalinjul/OpenIdConnectClient.git
         git fetch --depth=1
         git rebase -X theirs origin/${{ inputs.branch }}
-        if [ -n "${{ inputs.tag }}" ]; then git tag "${{ inputs.tag }}"; fi
+        git status
+        # if [ -n "${{ inputs.tag }}" ]; then git tag "${{ inputs.tag }}"; fi
         git push --tags origin ${{ inputs.branch }}
