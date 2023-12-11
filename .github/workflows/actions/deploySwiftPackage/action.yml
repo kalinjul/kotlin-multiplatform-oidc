@@ -38,8 +38,6 @@ runs:
         cd ${GITHUB_WORKSPACE}/oidc-appsupport/build/swiftpackage/
         git init
         git checkout -b ${{ inputs.branch }}
-        git lfs track "*.zip"
-        git lfs install
         # copy readme
         cp ${GITHUB_WORKSPACE}/docs/ios/* .
         git add -A

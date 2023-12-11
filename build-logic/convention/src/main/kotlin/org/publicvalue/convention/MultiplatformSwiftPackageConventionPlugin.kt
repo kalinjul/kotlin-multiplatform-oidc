@@ -28,7 +28,11 @@ class MultiplatformSwiftPackageConventionPlugin : Plugin<Project> {
                     if (System.getenv("CI") != "true") {
                         local()
                     } else {
-                        remote("https://github.com/kalinjul/OpenIdConnectClient/raw/${project.version}")
+                        if (project.version == "develop") {
+                            remote("https://github.com/kalinjul/OpenIdConnectClient/raw/${project.version}")
+                        } else {
+                            remote("https://github.com/kalinjul/OpenIdConnectClient/releases/download/${project.version}")
+                        }
                     }
                 }
             }
