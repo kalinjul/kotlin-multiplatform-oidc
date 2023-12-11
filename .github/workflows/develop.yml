@@ -42,16 +42,16 @@ jobs:
         with:
           version: "develop"
 
-  deploy-swift-package-snapshot:
-    needs: [create-swift-package]
-    if: github.ref == 'refs/heads/develop'
-    runs-on: macos-13
-    steps:
-      - uses: actions/checkout@v3
-      - uses: ./.github/workflows/actions/deploySwiftPackage
-        with:
-          branch: "develop"
-          token: ${{ secrets.PAT }}
+#  deploy-swift-package-snapshot:
+#    needs: [create-swift-package]
+#    if: github.ref == 'refs/heads/develop'
+#    runs-on: macos-13
+#    steps:
+#      - uses: actions/checkout@v3
+#      - uses: ./.github/workflows/actions/deploySwiftPackage
+#        with:
+#          branch: "develop"
+#          token: ${{ secrets.PAT }}
 
   deploy-snapshot:
     needs: [ test ]
