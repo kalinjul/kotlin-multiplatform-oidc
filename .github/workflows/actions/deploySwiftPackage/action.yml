@@ -18,15 +18,6 @@ runs:
     - uses: actions/download-artifact@v3
       with:
         name: oidc-swiftpackages
-    - name: Create Release
-      if: ${{ inputs.tag != '' }}
-      uses: ncipollo/release-action@v1.13.0
-      with:
-        tag: ${{ inputs.tag }}
-        token: ${{ inputs.token }}
-        generateReleaseNotes: true
-        artifacts: "oidc-appsupport/build/swiftpackage/OpenIdConnectClient.zip,oidc-appsupport/build/swiftpackage/Package.swift"
-        repo: "OpenIdConnectClient"
     - name: Upload Package
       shell: bash
       run: |
@@ -41,10 +32,21 @@ runs:
         # copy readme
         cp ${GITHUB_WORKSPACE}/docs/ios/* .
         git add -A
-        git commit -m "New ios package"
+        # remove zip, this is distributed as release artifact
+        git reset OpenIdConnectClient.zip
+        git status
+        git commit -m "New iOS package (${{ inputs.tag }})"
         git remote add origin https://${{ inputs.token }}@github.com/kalinjul/OpenIdConnectClient.git
         git fetch --depth=1
         git rebase -X theirs origin/${{ inputs.branch }}
-        git status
         # if [ -n "${{ inputs.tag }}" ]; then git tag "${{ inputs.tag }}"; fi
         git push --tags origin ${{ inputs.branch }}
+    - name: Create Release
+      if: ${{ inputs.tag != '' }}
+      uses: ncipollo/release-action@v1.13.0
+      with:
+        tag: ${{ inputs.tag }}
+        token: ${{ inputs.token }}
+        generateReleaseNotes: true
+        artifacts: "oidc-appsupport/build/swiftpackage/OpenIdConnectClient.zip,oidc-appsupport/build/swiftpackage/Package.swift"
+        repo: "OpenIdConnectClient"
