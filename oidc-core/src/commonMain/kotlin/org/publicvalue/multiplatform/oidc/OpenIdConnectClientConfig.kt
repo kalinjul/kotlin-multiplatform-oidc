@@ -6,6 +6,17 @@ import kotlin.experimental.ExperimentalObjCName
 import kotlin.native.ObjCName
 
 /**
+ * Builds an [OpenIdConnectClientConfig] using the [block] parameter.
+ *
+ * @return [OpenIdConnectClientConfig]
+ */
+fun OpenIdConnectClientConfig(block: OpenIdConnectClientConfig.() -> Unit): OpenIdConnectClientConfig {
+    val config = OpenIdConnectClientConfig()
+    config.block()
+    return config
+}
+
+/**
  * Configuration for an [OpenIdConnectClient].
  * A configuration can also be built using [OpenIdConnectClient] builder function with block
  * argument.
