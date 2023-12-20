@@ -68,7 +68,7 @@ fun OpenIdConnectClient(
 @OptIn(ExperimentalSerializationApi::class, ExperimentalObjCName::class)
 @ObjCName(swiftName = "OpenIdConnectClient", name = "OpenIdConnectClient", exact = true)
 class OpenIdConnectClient(
-    val httpClient: HttpClient = DefaultHttpClient,
+    private val httpClient: HttpClient = DefaultHttpClient,
     val config: OpenIdConnectClientConfig,
 ) {
     /**
@@ -139,6 +139,8 @@ class OpenIdConnectClient(
 
     /**
      * Discover OpenID Connect Configuration using the discovery endpoint.
+     * Updates the configuration, but will keep any existing configuration.
+     *
      * See: [OpenID Connect Discovery](https://openid.net/specs/openid-connect-discovery-1_0.html)
      */
     @Throws(OpenIdConnectException::class, CancellationException::class)

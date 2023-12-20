@@ -30,7 +30,7 @@ object Readme {
 
     // Create OpenID config and client
     fun `Create_OpenID_config_and_client`() {
-        val config = OpenIdConnectClient(discoveryUri = "<discovery url>") {
+        val client = OpenIdConnectClient(discoveryUri = "<discovery url>") {
             endpoints {
                 tokenEndpoint = "<tokenEndpoint>"
                 authorizationEndpoint = "<authorizationEndpoint>"

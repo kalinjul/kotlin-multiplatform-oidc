@@ -1,8 +1,9 @@
 # Kotlin Multiplatform OIDC
-[![Snapshot Build](https://github.com/kalinjul/kotlin-multiplatform-oidc/actions/workflows/develop.yml/badge.svg?branch=develop)](https://github.com/kalinjul/kotlin-multiplatform-oidc/actions/workflows/develop.yml)
-[![Release Build](https://github.com/kalinjul/kotlin-multiplatform-oidc/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/kalinjul/kotlin-multiplatform-oidc/actions/workflows/main.yml)
+[![Snapshot Build](https://img.shields.io/github/actions/workflow/status/kalinjul/kotlin-multiplatform-oidc/develop.yml?label=snapshot)]((https://github.com/kalinjul/kotlin-multiplatform-oidc/actions/workflows/develop.yml))
+[![Release Build](https://img.shields.io/github/actions/workflow/status/kalinjul/kotlin-multiplatform-oidc/main.yml?label=release)]((https://github.com/kalinjul/kotlin-multiplatform-oidc/actions/workflows/main.yml))
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.kalinjul.kotlin.multiplatform/oidc-appsupport)](https://repo1.maven.org/maven2/io/github/kalinjul/kotlin/multiplatform/oidc-appsupport/)
-[![Docs](https://github.com/kalinjul/kotlin-multiplatform-oidc/actions/workflows/static-docs.yml/badge.svg)](https://kalinjul.github.io/kotlin-multiplatform-oidc/)
+![Kotlin Version](https://kotlin-version.aws.icerock.dev/kotlin-version?group=io.github.kalinjul.kotlin.multiplatform&name=oidc-appsupport)
+
 
 Library for using OpenId Connect / OAuth 2.0 in Kotlin Multiplatform (iOS+Android), Android and Xcode projects.
 This project aims to be a lightweight implementation without sophisticated validation on client side.
@@ -10,11 +11,15 @@ This project aims to be a lightweight implementation without sophisticated valid
 - Currently, it only supports the [Authorization Code Grant Flow](https://datatracker.ietf.org/doc/html/rfc6749#section-4.1).
 - Support for [discovery](https://openid.net/specs/openid-connect-discovery-1_0.html) via .well-known/openid-configuration.
 - Support for [PKCE](https://datatracker.ietf.org/doc/html/rfc7636)
+- Uses ```ASWebAuthenticationSession``` (iOS), Chrome Custom Tabs (Android)
 - Simple JWT parsing
+
+The library is designed for kotlin multiplatform, Android-only _and_ iOS only Apps.
+For iOS only, use the [OpenIdConnectClient Swift Package](https://github.com/kalinjul/OpenIdConnectClient).
 
 You can find the full Api documentation [here](https://kalinjul.github.io/kotlin-multiplatform-oidc/).
 
-# Add dependency for Kotlin Multiplatform or Android
+# Dependency
 Add the dependency to your commonMain sourceSet (KMP) / Android dependencies (android only):
 ```kotlin
 implementation("io.github.kalinjul.kotlin.multiplatform:oidc-appsupport:0.6.5")
@@ -30,26 +35,26 @@ oidc-appsupport = { module = "io.github.kalinjul.kotlin.multiplatform:oidc-appsu
 oidc-okhttp4 = { module = "io.github.kalinjul.kotlin.multiplatform:oidc-okhttp4", version.ref = "oidc" }
 ```
 
-# iOS App usage
-See [OpenIdConnectClient Swift Package](https://github.com/kalinjul/OpenIdConnectClient)
-
-# Android App usage
+# Usage
 ## Redirect scheme
-For OpenIDConnect/OAuth to work, you have to provide the redirect uri in your build.gradle:
+For OpenIDConnect/OAuth to work, you have to provide the redirect uri in your Android App's build.gradle:
 
 build.gradle.kts:
 ```kotlin
+android {
     defaultConfig {
         addManifestPlaceholders(
             mapOf("oidcRedirectScheme" to "<uri scheme>")
         )
     }
+}
 ```
+iOS does not require declaring the redirect scheme.
 
-## General
-Create OpenID config and client:
+## OpenID Configuration (common code)
+Create an [OpenIdConnectClient](https://kalinjul.github.io/kotlin-multiplatform-oidc/kotlin-multiplatform-oidc/org.publicvalue.multiplatform.oidc/-open-id-connect-client/index.html):
 ```kotlin
-    val config = OpenIdConnectClient(discoveryUri = "<discovery url>") {
+val client = OpenIdConnectClient(discoveryUri = "<discovery url>") {
     endpoints {
         tokenEndpoint = "<tokenEndpoint>"
         authorizationEndpoint = "<authorizationEndpoint>"
@@ -64,9 +69,13 @@ Create OpenID config and client:
     redirectUri = "<redirectUri>"
 }
 ```
-If you provide a Discovery URI, you may skip the endpoint configuration.
+If you provide a Discovery URI, you may skip the endpoint configuration and call [discover()](https://kalinjul.github.io/kotlin-multiplatform-oidc/kotlin-multiplatform-oidc/org.publicvalue.multiplatform.oidc/-open-id-connect-client/discover.html) on the client to retrieve the endpoint configuration.
 
-Create an instance of AuthFlowFactory in your Activity's onCreate():
+## Create a Code Auth Flow instance (platform specific)
+The Code Auth Flow method is implemented by [CodeAuthFlow](https://kalinjul.github.io/kotlin-multiplatform-oidc/kotlin-multiplatform-oidc/org.publicvalue.multiplatform.oidc.flows/-code-auth-flow/index.html). You'll need platform specific variants, so we'll use a factory to get an instance.
+
+For Android, create an instance of [AndroidCodeAuthFlowFactory](https://kalinjul.github.io/kotlin-multiplatform-oidc/kotlin-multiplatform-oidc/org.publicvalue.multiplatform.oidc.appsupport/-android-code-auth-flow-factory/index.html) in your Activity's onCreate():
+
 ```kotlin
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -75,16 +84,25 @@ class MainActivity : ComponentActivity() {
     }
 }
 ```
-For multiplatform projects, there is also IosAuthFlowFactory. 
-For more information, have a look in to the [KMP sample app](./sample-app).
+> [!IMPORTANT]  
+> The Factory MUST be instanciated in onCreate() or earlier, as it will attach to the ComponentActivity's lifecycle.
+> If you don't use ComponentActivity, you need to implement your own Factory.
+> 
+> If you want to use Dependency Injection, make sure to request an instance early (in your Activity).
 
-Request tokens using code auth flow:
+For the iOS part, you can use [IosCodeAuthFlowFactory](https://kalinjul.github.io/kotlin-multiplatform-oidc/kotlin-multiplatform-oidc/org.publicvalue.multiplatform.oidc.appsupport/-ios-code-auth-flow-factory/index.html). 
+Both factories implement a common interface and can be provided using Dependency Injection.
+
+For more information, have a look at the [KMP sample app](./sample-app).
+
+## Authenticate (common code)
+Request tokens using code auth flow (this will open the browser for login):
 ```kotlin 
 val flow = authFlowFactory.createAuthFlow(client)
 val tokens = flow.getAccessToken()
 ```
 
-perform refresh or endSession:
+Perform refresh or endSession:
 ```kotlin
 tokens.refresh_token?.let { client.refreshToken(refreshToken = it) }
 tokens.id_token?.let { client.endSession(idToken = it) }
@@ -102,7 +120,7 @@ client.endSession(idToken = idToken) {
 ```
 
 # JWT Parsing
-We provide simple JWT parsing:
+We provide simple JWT parsing (without any validation):
 ```kotlin
 val jwt = tokens.id_token?.let { Jwt.parse(it) }
 println(jwt?.payload?.aud) // print audience
@@ -112,9 +130,9 @@ println(jwt?.payload?.additionalClaims?.get("email")) // get claim
 
 # Token Store (experimental)
 Since persisting tokens is a common task in OpenID Connect Authentication, we provide a 
-```TokenStore``` that uses a [Multiplatform Settings Library](https://github.com/russhwolf/multiplatform-settings)
+[TokenStore](https://kalinjul.github.io/kotlin-multiplatform-oidc/kotlin-multiplatform-oidc/org.publicvalue.multiplatform.oidc.tokenstore/-token-store/index.html) that uses a [Multiplatform Settings Library](https://github.com/russhwolf/multiplatform-settings)
 to persist tokens in Keystore (iOS) / Encrypted Preferences (Android).
-If you use the TokenStore, you may also make use of ```TokenRefreshHandler``` for synchronized token
+If you use the TokenStore, you may also make use of [TokenRefreshHandler](https://kalinjul.github.io/kotlin-multiplatform-oidc/kotlin-multiplatform-oidc/org.publicvalue.multiplatform.oidc.tokenstore/-token-refresh-handler/index.html) for synchronized token
 refreshes.
 ```kotlin
 tokenstore.saveTokens(tokens)
@@ -123,9 +141,9 @@ val accessToken = tokenstore.getAccessToken()
 val refreshHandler = TokenRefreshHandler(tokenStore = tokenstore)
 refreshHandler.safeRefreshToken(client, oldAccessToken = accessToken) // thread-safe refresh and save new tokens to store
 ```
-Android implementation is ```AndroidEncryptedPreferencesSettingsStore```, for iOS use ```IosKeychainTokenStore```.
+Android implementation is [AndroidEncryptedPreferencesSettingsStore](https://kalinjul.github.io/kotlin-multiplatform-oidc/kotlin-multiplatform-oidc/org.publicvalue.multiplatform.oidc.tokenstore/-android-encrypted-preferences-settings-store/index.html), for iOS use [IosKeychainTokenStore](https://kalinjul.github.io/kotlin-multiplatform-oidc/kotlin-multiplatform-oidc/org.publicvalue.multiplatform.oidc.tokenstore/-ios-keychain-token-store/index.html).
 
-# OkHttp support (experimental)
+# OkHttp support (Android only) (experimental)
 ```kotlin
 val authenticator = OpenIdConnectAuthenticator {
     getAccessToken { tokenStore.getAccessToken() }

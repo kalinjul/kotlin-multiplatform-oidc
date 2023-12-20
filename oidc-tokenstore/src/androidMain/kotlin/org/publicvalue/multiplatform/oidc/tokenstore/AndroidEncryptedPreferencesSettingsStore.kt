@@ -11,11 +11,11 @@ class AndroidEncryptedPreferencesSettingsStore(
     context: Context
 ) : SettingsStore {
 
-    var masterKey: MasterKey = MasterKey.Builder(context)
+    private var masterKey: MasterKey = MasterKey.Builder(context)
         .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
         .build()
 
-    var sharedPreferences: SharedPreferences = EncryptedSharedPreferences.create(
+    private var sharedPreferences: SharedPreferences = EncryptedSharedPreferences.create(
         context,
         "${context.packageName}.auth",
         masterKey,
@@ -23,7 +23,7 @@ class AndroidEncryptedPreferencesSettingsStore(
         EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
     )
 
-    val settings = SharedPreferencesSettings(
+    private val settings = SharedPreferencesSettings(
         sharedPreferences
     )
     override suspend fun get(key: String): String? {
