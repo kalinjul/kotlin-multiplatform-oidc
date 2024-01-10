@@ -1,5 +1,6 @@
 package org.publicvalue.multiplatform.oidc.tokenstore
 
+import kotlinx.coroutines.flow.Flow
 import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
 import org.publicvalue.multiplatform.oidc.types.remote.AccessTokenResponse
 import kotlin.experimental.ExperimentalObjCName
@@ -7,6 +8,9 @@ import kotlin.native.ObjCName
 
 /**
  * Concurrency-safe Token Store implementations.
+ *
+ * Android Implementation: [org.publicvalue.multiplatform.oidc.tokenstore.AndroidSettingsTokenStore]
+ * iOS implementation: [KeychainTokenStore]
  */
 @ExperimentalOpenIdConnect
 @OptIn(ExperimentalObjCName::class)
@@ -16,6 +20,10 @@ abstract class TokenStore {
     abstract suspend fun getAccessToken(): String?
     abstract suspend fun getRefreshToken(): String?
     abstract suspend fun getIdToken(): String?
+
+    abstract val accessTokenFlow: Flow<String?>
+    abstract val refreshTokenFlow: Flow<String?>
+    abstract val idTokenFlow: Flow<String?>
 
     abstract suspend fun removeAccessToken()
     abstract suspend fun removeRefreshToken()

@@ -8,19 +8,21 @@ import org.publicvalue.multiplatform.oidc.OpenIdConnectException
 import org.publicvalue.multiplatform.oidc.types.remote.AccessTokenResponse
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.experimental.ExperimentalObjCName
+import kotlin.experimental.ExperimentalObjCRefinement
+import kotlin.native.HiddenFromObjC
 import kotlin.native.ObjCName
 
 /**
  * Concurrency-safe Token Refresh Handler.
  */
 @ExperimentalOpenIdConnect
-@OptIn(ExperimentalObjCName::class)
+@OptIn(ExperimentalObjCName::class, ExperimentalObjCRefinement::class)
 @ObjCName("TokenRefreshHandler", "TokenRefreshHandler", exact = true)
 @Suppress("unused")
 class TokenRefreshHandler(
-    private val tokenStore: TokenStore,
+    internal val tokenStore: TokenStore,
 ) {
-    private val mutex = Mutex()
+    internal val mutex = Mutex()
 
     /**
      * Thread-safe refresh the tokens and save to store.
@@ -36,6 +38,7 @@ class TokenRefreshHandler(
      * @return The new access token
      */
     @Throws(OpenIdConnectException::class, CancellationException::class)
+    @HiddenFromObjC
     suspend fun safeRefreshToken(refreshCall: suspend (String) -> AccessTokenResponse, oldAccessToken: String): String {
         mutex.withLock {
             val currentToken = tokenStore.getAccessToken()
