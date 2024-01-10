@@ -82,6 +82,7 @@ open class SettingsTokenStore(
         runOrNull {
             mutex.withLock {
                 settings.remove(SettingsKey.ACCESSTOKEN.name)
+                currentAccessToken.value = null
             }
         }
     }
@@ -90,6 +91,7 @@ open class SettingsTokenStore(
         runOrNull {
             mutex.withLock {
                 settings.remove(SettingsKey.REFRESHTOKEN.name)
+                currentRefreshToken.value = null
             }
         }
     }
@@ -98,6 +100,7 @@ open class SettingsTokenStore(
         runOrNull {
             mutex.withLock {
                 settings.remove(SettingsKey.IDTOKEN.name)
+                currentIdToken.value = null
             }
         }
     }
