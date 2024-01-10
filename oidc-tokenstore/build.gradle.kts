@@ -26,5 +26,13 @@ kotlin {
                 implementation(libs.androidx.security.crypto.ktx)
             }
         }
+
+        val commonTest by getting {
+            dependencies {
+                implementation(kotlin("test"))
+                implementation(libs.assertk)
+                implementation(libs.kotlinx.coroutines.test)
+            }
+        }
     }
 }
