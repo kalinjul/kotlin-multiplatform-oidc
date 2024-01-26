@@ -13,7 +13,6 @@ android {
 }
 
 kotlin {
-    configureIosTargets()
     sourceSets {
         val commonMain by getting {
             dependencies {
@@ -42,15 +41,6 @@ kotlin {
                 api(libs.androidx.core.ktx)
                 api(libs.androidx.appcompat)
             }
-        }
-        val iosX64Main by getting
-        val iosArm64Main by getting
-        val iosSimulatorArm64Main by getting
-        val iosMain by getting {
-            dependsOn(commonMain)
-            iosX64Main.dependsOn(this)
-            iosArm64Main.dependsOn(this)
-            iosSimulatorArm64Main.dependsOn(this)
         }
 
         val jvmMain by getting {
