@@ -13,7 +13,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation(projects.oidcCore)
+                api(projects.oidcCore)
                 implementation(libs.russhwolf.multiplatformsettings)
 
                 api(libs.kotlinx.serialization.json)

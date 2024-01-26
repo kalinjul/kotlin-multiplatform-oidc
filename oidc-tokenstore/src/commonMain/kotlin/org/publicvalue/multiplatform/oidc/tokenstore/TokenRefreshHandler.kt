@@ -35,8 +35,13 @@ class TokenRefreshHandler(
 
     /**
      * Thread-safe refresh the tokens and save to store.
+     *
+     * @param oldAccessToken The access token that was used for the previous get request that failed with 401.
+     * Required to avoid multiple refresh calls when calls return 401 simultaneously.
+     *
      * @return The new access token
      */
+    // TODO return both access and refresh token as required by e.g. ktor?
     @Throws(OpenIdConnectException::class, CancellationException::class)
     @HiddenFromObjC
     suspend fun safeRefreshToken(refreshCall: suspend (String) -> AccessTokenResponse, oldAccessToken: String): String {
