@@ -299,7 +299,7 @@ class OpenIdConnectClient(
         val errorResponse = call.errorBody()
         val body = call.body<String>().decodeURLQueryComponent(plusIsSpace = true)
         return OpenIdConnectException.UnsuccessfulTokenRequest(
-            message = "Exchange token failed: ${status.value} ${errorResponse?.error_description}",
+            message = "Exchange token failed: ${status.value} ${errorResponse?.error_description ?: errorResponse?.error}",
             statusCode = status,
             body = body,
             errorResponse = errorResponse
