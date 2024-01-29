@@ -3,7 +3,7 @@ import org.publicvalue.convention.config.configureIosTargets
 plugins {
     id("org.publicvalue.convention.kotlin.multiplatform")
     alias(libs.plugins.kotlin.serialization)
-    id("io.github.ttypic.swiftklib") version "0.5.0"
+    alias(libs.plugins.swiftklib)
     id("org.publicvalue.convention.centralPublish")
 }
 

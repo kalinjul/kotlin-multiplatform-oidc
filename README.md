@@ -13,6 +13,7 @@ This project aims to be a lightweight implementation without sophisticated valid
 - Support for [PKCE](https://datatracker.ietf.org/doc/html/rfc7636)
 - Uses ```ASWebAuthenticationSession``` (iOS), Chrome Custom Tabs (Android)
 - Simple JWT parsing
+- OkHttp + Ktor support
 
 The library is designed for kotlin multiplatform, Android-only _and_ iOS only Apps.
 For iOS only, use the [OpenIdConnectClient Swift Package](https://github.com/kalinjul/OpenIdConnectClient).
@@ -22,14 +23,15 @@ You can find the full Api documentation [here](https://kalinjul.github.io/kotlin
 # Dependency
 Add the dependency to your commonMain sourceSet (KMP) / Android dependencies (android only):
 ```kotlin
-implementation("io.github.kalinjul.kotlin.multiplatform:oidc-appsupport:0.6.5")
-implementation("io.github.kalinjul.kotlin.multiplatform:oidc-okhttp4:0.6.5") // optional, android only
+implementation("io.github.kalinjul.kotlin.multiplatform:oidc-appsupport:0.8.0")
+implementation("io.github.kalinjul.kotlin.multiplatform:oidc-okhttp4:0.8.0") // optional, android only
+implementation("io.github.kalinjul.kotlin.multiplatform:oidc-ktor:0.8.0") // optional ktor support
 ```
 
 Or, for your libs.versions.toml:
 ```toml
 [versions]
-oidc = "0.6.5"
+oidc = "0.8.0"
 [libraries]
 oidc-appsupport = { module = "io.github.kalinjul.kotlin.multiplatform:oidc-appsupport", version.ref = "oidc" }
 oidc-okhttp4 = { module = "io.github.kalinjul.kotlin.multiplatform:oidc-okhttp4", version.ref = "oidc" }
@@ -159,4 +161,24 @@ val authenticator = OpenIdConnectAuthenticator {
 val okHttpClient = OkHttpClient.Builder()
     .authenticator(authenticator)
     .build()
+```
+
+# Ktor support (experimental)
+```kotlin
+    HttpClient(engine) {
+        install(Auth) {
+            oidcBearer(
+                tokenStore = tokenStore,
+                refreshHandler = refreshHandler,
+                client = client,
+            )
+        }
+    }
+}
+```
+
+Because of the [way ktor works](https://youtrack.jetbrains.com/issue/KTOR-4759/Auth-BearerAuthProvider-caches-result-of-loadToken-until-process-death), you need to tell the client if the token is invalidated outside of 
+ktor's refresh logic, e.g. on logout:
+```kotlin
+    ktorHttpClient.clearTokens()
 ```
