@@ -34,7 +34,7 @@ abstract class OpenIdConnectAuthenticator: Authenticator {
                 if (token != null && response.code == 401 && response.request.header(HttpHeaders.Authorization)?.contains(token) == true) {
                     // Got 401 -> refresh token
                     Log.d(LOG_TAG, "Refreshing access token as using it returned a 401")
-                    refreshTokens(oldToken = token)
+                    refreshTokens(oldAccessToken = token)
                     getAccessToken()
                 } else {
                     token
@@ -59,7 +59,7 @@ abstract class OpenIdConnectAuthenticator: Authenticator {
     }
 
     abstract suspend fun getAccessToken(): String?
-    abstract suspend fun refreshTokens(oldToken: String)
+    abstract suspend fun refreshTokens(oldAccessToken: String)
     abstract fun onRefreshFailed()
     /** Override to provide additional configuration for the authenticated request **/
     open fun buildRequest(builder: Request.Builder) {}
