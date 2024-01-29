@@ -220,8 +220,8 @@ class OpenIdConnectClient(
      * @return [TokenRequest]
      */
     @Suppress("MemberVisibilityCanBePrivate")
-    fun createAccessTokenRequest(authCodeRequest: AuthCodeRequest, code: String, configure: (HttpRequestBuilder.() -> Unit)? = null): TokenRequest = wrapExceptions {
-        val url = URLBuilder(config.endpoints.tokenEndpoint!!).build()
+    suspend fun createAccessTokenRequest(authCodeRequest: AuthCodeRequest, code: String, configure: (HttpRequestBuilder.() -> Unit)? = null): TokenRequest = wrapExceptions {
+        val url = URLBuilder(getOrDiscoverTokenEndpoint()).build()
 
         val formParameters = parameters {
             append("grant_type", "authorization_code")
@@ -255,8 +255,8 @@ class OpenIdConnectClient(
      * @return [TokenRequest]
      */
     @Suppress("MemberVisibilityCanBePrivate")
-    fun createRefreshTokenRequest(refreshToken: String, configure: (HttpRequestBuilder.() -> Unit)? = null): TokenRequest = wrapExceptions {
-        val url = URLBuilder(config.endpoints.tokenEndpoint!!).build()
+    suspend fun createRefreshTokenRequest(refreshToken: String, configure: (HttpRequestBuilder.() -> Unit)? = null): TokenRequest = wrapExceptions {
+        val url = URLBuilder(getOrDiscoverTokenEndpoint()).build()
 
         val formParameters = parameters {
             append("grant_type", "refresh_token")
@@ -277,6 +277,15 @@ class OpenIdConnectClient(
             request,
             formParameters
         )
+    }
+
+    private suspend fun getOrDiscoverTokenEndpoint(): String {
+        return if (config.endpoints.tokenEndpoint != null) {
+            config.endpoints.tokenEndpoint!!
+        } else {
+            discover()
+            config.endpoints.tokenEndpoint!!
+        }
     }
 
     private suspend fun executeTokenRequest(httpFormRequest: HttpStatement): AccessTokenResponse {
