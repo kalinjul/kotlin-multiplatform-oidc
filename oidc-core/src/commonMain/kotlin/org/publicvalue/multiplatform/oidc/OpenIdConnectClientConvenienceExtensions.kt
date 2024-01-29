@@ -30,7 +30,7 @@ suspend fun OpenIdConnectClient.endSession(idToken: String) =
  * @suppress
  */
 @Throws(OpenIdConnectException::class, CancellationException::class)
-fun OpenIdConnectClient.createAccessTokenRequest(authCodeRequest: AuthCodeRequest, code: String) =
+suspend fun OpenIdConnectClient.createAccessTokenRequest(authCodeRequest: AuthCodeRequest, code: String) =
     createAccessTokenRequest(authCodeRequest, code, null)
 
 /**
@@ -39,7 +39,7 @@ fun OpenIdConnectClient.createAccessTokenRequest(authCodeRequest: AuthCodeReques
  * @suppress
  */
 @Throws(OpenIdConnectException::class, CancellationException::class)
-fun OpenIdConnectClient.createRefreshTokenRequest(refreshToken: String) =
+suspend fun OpenIdConnectClient.createRefreshTokenRequest(refreshToken: String) =
     createRefreshTokenRequest(refreshToken, null)
 
 /**
