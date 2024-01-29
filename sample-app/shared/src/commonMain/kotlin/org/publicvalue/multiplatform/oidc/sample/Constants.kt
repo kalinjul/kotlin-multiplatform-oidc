@@ -1,5 +1,7 @@
 package org.publicvalue.multiplatform.oidc.sample
 
-object Constants {
-    val redirectUrl = "org.publicvalue.multiplatform.oidc.sample://redirect"
+interface Constants {
+    val redirectUrl: String
 }
+
+expect object PlatformConstants: Constants

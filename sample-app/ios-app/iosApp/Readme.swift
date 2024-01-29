@@ -6,6 +6,7 @@ struct Readme {
     let client: OpenIdConnectClient
     let tokens: AccessTokenResponse
     let tokenstore: KeychainTokenStore
+    let oldAccessToken: String
     
     // Create OpenID config and client:
     func _1() {
@@ -60,6 +61,6 @@ struct Readme {
     // RefreshHandler
     func _6() async throws {
         let refreshHandler = TokenRefreshHandler(tokenStore: tokenstore)
-        try await refreshHandler.safeRefreshToken(client: client)  // thread-safe refresh and save new tokens to store
+        try await refreshHandler.safeRefreshToken(client: client, oldAccessToken: oldAccessToken)  // thread-safe refresh and save new tokens to store
     }
 }

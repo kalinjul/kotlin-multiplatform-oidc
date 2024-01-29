@@ -38,7 +38,7 @@ kotlinxAtomicfu = "0.23.1"
 
 # https://github.com/slackhq/circuit/releases
 circuit = "0.16.0"
-sqldelight = "2.0.0"
+sqldelight = "2.0.1"
 
 okhttp = "4.12.0"
 
