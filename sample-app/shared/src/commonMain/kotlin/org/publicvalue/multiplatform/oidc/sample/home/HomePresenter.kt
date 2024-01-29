@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
 import org.publicvalue.multiplatform.oidc.appsupport.CodeAuthFlowFactory
-import org.publicvalue.multiplatform.oidc.sample.Constants
+import org.publicvalue.multiplatform.oidc.sample.PlatformConstants
 import org.publicvalue.multiplatform.oidc.sample.circuit.ErrorPresenter
 import org.publicvalue.multiplatform.oidc.sample.circuit.catchErrorMessage
 import org.publicvalue.multiplatform.oidc.sample.data.LocalSettingsStore
@@ -48,7 +48,7 @@ class HomePresenter(
             val idpSettings = idpSettings
             return if (clientSettings != null && idpSettings != null) {
                 OpenIdConnectClient(idpSettings.discoveryUrl) {
-                    redirectUri = Constants.redirectUrl.trim()
+                    redirectUri = PlatformConstants.redirectUrl.trim()
                     codeChallengeMethod = clientSettings.code_challenge_method
                     this.scope = clientSettings.scope?.trim()
                     this.clientId = clientSettings.client_id?.trim()

@@ -2,7 +2,7 @@ import org.publicvalue.convention.config.configureIosTargets
 
 plugins {
     id("org.publicvalue.convention.android.library")
-    id("org.publicvalue.convention.kotlin.multiplatform.mobile")
+    id("org.publicvalue.convention.kotlin.multiplatform")
 }
 
 kotlin {
@@ -15,6 +15,10 @@ kotlin {
 
                 api(libs.kotlinx.serialization.json)
             }
+        }
+
+        val jvmMain by getting {
+            dependsOn(commonMain)
         }
     }
 }
