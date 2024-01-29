@@ -7,11 +7,12 @@
 
 Library for using OpenId Connect / OAuth 2.0 in Kotlin Multiplatform (iOS+Android), Android and Xcode projects.
 This project aims to be a lightweight implementation without sophisticated validation on client side.
+Simple Desktop support is included via an embedded Webserver that listens for redirects.
 
 - Currently, it only supports the [Authorization Code Grant Flow](https://datatracker.ietf.org/doc/html/rfc6749#section-4.1).
 - Support for [discovery](https://openid.net/specs/openid-connect-discovery-1_0.html) via .well-known/openid-configuration.
 - Support for [PKCE](https://datatracker.ietf.org/doc/html/rfc7636)
-- Uses ```ASWebAuthenticationSession``` (iOS), Chrome Custom Tabs (Android)
+- Uses ```ASWebAuthenticationSession``` (iOS), Chrome Custom Tabs (Android), Embedded Webserver + Browser (Desktop)
 - Simple JWT parsing
 
 The library is designed for kotlin multiplatform, Android-only _and_ iOS only Apps.
