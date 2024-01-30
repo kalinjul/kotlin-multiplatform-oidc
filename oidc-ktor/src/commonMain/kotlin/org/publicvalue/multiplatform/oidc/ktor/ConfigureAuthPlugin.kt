@@ -1,6 +1,7 @@
 package org.publicvalue.multiplatform.oidc.ktor
 
 import io.ktor.client.plugins.auth.Auth
+import io.ktor.client.plugins.auth.providers.BearerAuthConfig
 import io.ktor.client.plugins.auth.providers.BearerTokens
 import io.ktor.client.plugins.auth.providers.bearer
 import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
@@ -40,48 +41,68 @@ fun Auth.oidcBearer(
 @ExperimentalOpenIdConnect
 fun Auth.oidcBearer(
     tokenStore: TokenStore,
-    refreshAndSaveTokens: suspend (String) -> Unit, // receives the old access token
+    /** receives the old access token **/
+    refreshAndSaveTokens: suspend (String) -> Unit,
     /** called when refresh throws **/
     onRefreshFailed: suspend (Exception) -> Unit
 ) {
 
     bearer {
-        loadTokens {
-            val accessToken = tokenStore.getAccessToken()
-            val refreshToken = tokenStore.getRefreshToken()
-            val bearer = accessToken?.let {
-                BearerTokens(
-                    accessToken = it,
-                    refreshToken = refreshToken ?: "",
-                )
-            } ?: BearerTokens(
-                accessToken = "",
-                refreshToken = ""
-            )
-            bearer
-        }
+        loadTokens(
+            tokenStore = tokenStore
+        )
 
-        refreshTokens {
-            try {
-                refreshAndSaveTokens(this.oldTokens?.accessToken.orEmpty())
-            } catch (e: OpenIdConnectException) {
-                if (e is OpenIdConnectException.UnsuccessfulTokenRequest) {
-                    onRefreshFailed(e)
-                }
+        refreshTokens(
+            tokenStore = tokenStore,
+            refreshAndSaveTokens = refreshAndSaveTokens,
+            onRefreshFailed = onRefreshFailed
+        )
+    }
+}
+
+@ExperimentalOpenIdConnect
+fun BearerAuthConfig.loadTokens(tokenStore: TokenStore) {
+    loadTokens {
+        val accessToken = tokenStore.getAccessToken()
+        val refreshToken = tokenStore.getRefreshToken()
+        val bearer = accessToken?.let {
+            BearerTokens(
+                accessToken = it,
+                refreshToken = refreshToken ?: "",
+            )
+        } ?: BearerTokens(
+            accessToken = "",
+            refreshToken = ""
+        )
+        bearer
+    }
+}
+
+@ExperimentalOpenIdConnect
+fun BearerAuthConfig.refreshTokens(
+    tokenStore: TokenStore,
+    /** receives the old access token **/
+    refreshAndSaveTokens: suspend (String) -> Unit,
+    /** called when refresh throws **/
+    onRefreshFailed: suspend (Exception) -> Unit
+) {
+    refreshTokens {
+        try {
+            refreshAndSaveTokens(this.oldTokens?.accessToken.orEmpty())
+        } catch (e: OpenIdConnectException) {
+            if (e is OpenIdConnectException.UnsuccessfulTokenRequest) {
+                onRefreshFailed(e)
             }
-            val accessToken = tokenStore.getAccessToken()
-            val refreshToken = tokenStore.getRefreshToken()
-            val bearer = accessToken?.let {
-                BearerTokens(
-                    accessToken = it,
-                    refreshToken = refreshToken ?: "",
-                )
-            } ?: BearerTokens(
-                accessToken = "",
-                refreshToken = ""
-            )
-
-            bearer
         }
+        val accessToken = tokenStore.getAccessToken()
+        val refreshToken = tokenStore.getRefreshToken()
+        val bearer = accessToken?.let {
+            BearerTokens(
+                accessToken = it,
+                refreshToken = refreshToken ?: "",
+            )
+        }
+
+        bearer
     }
 }
