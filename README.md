@@ -142,7 +142,7 @@ tokenstore.saveTokens(tokens)
 val accessToken = tokenstore.getAccessToken()
 
 val refreshHandler = TokenRefreshHandler(tokenStore = tokenstore)
-refreshHandler.safeRefreshToken(client, oldAccessToken = accessToken) // thread-safe refresh and save new tokens to store
+refreshHandler.refreshAndSaveToken(client, oldAccessToken = token) // thread-safe refresh and save new tokens to store
 ```
 Android implementation is [AndroidEncryptedPreferencesSettingsStore](https://kalinjul.github.io/kotlin-multiplatform-oidc/kotlin-multiplatform-oidc/org.publicvalue.multiplatform.oidc.tokenstore/-android-encrypted-preferences-settings-store/index.html), for iOS use [IosKeychainTokenStore](https://kalinjul.github.io/kotlin-multiplatform-oidc/kotlin-multiplatform-oidc/org.publicvalue.multiplatform.oidc.tokenstore/-ios-keychain-token-store/index.html).
 
@@ -150,7 +150,7 @@ Android implementation is [AndroidEncryptedPreferencesSettingsStore](https://kal
 ```kotlin
 val authenticator = OpenIdConnectAuthenticator {
     getAccessToken { tokenStore.getAccessToken() }
-    refreshTokens { oldAccessToken -> refreshHandler.safeRefreshToken(client, oldAccessToken) }
+    refreshTokens { oldAccessToken -> refreshHandler.refreshAndSaveToken(client, oldAccessToken) }
     onRefreshFailed {
         // provided by app: user has to authenticate again
     }

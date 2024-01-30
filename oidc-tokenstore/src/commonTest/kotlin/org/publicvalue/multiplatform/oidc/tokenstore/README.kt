@@ -94,6 +94,6 @@ object README {
     @OptIn(ExperimentalOpenIdConnect::class)
     suspend fun `refresh_handler`() {
         val refreshHandler = TokenRefreshHandler(tokenStore = tokenstore)
-        refreshHandler.safeRefreshToken(client, oldAccessToken = token) // thread-safe refresh and save new tokens to store
+        refreshHandler.refreshAndSaveToken(client, oldAccessToken = token) // thread-safe refresh and save new tokens to store
     }
 }

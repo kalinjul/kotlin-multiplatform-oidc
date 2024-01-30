@@ -8,6 +8,7 @@ import okhttp3.Request
 import okhttp3.Response
 import okhttp3.Route
 import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
+import org.publicvalue.multiplatform.oidc.tokenstore.OauthTokens
 
 private val LOG_TAG = "OpenIdConnectAuthenticator"
 
@@ -34,8 +35,8 @@ abstract class OpenIdConnectAuthenticator: Authenticator {
                 if (token != null && response.code == 401 && response.request.header(HttpHeaders.Authorization)?.contains(token) == true) {
                     // Got 401 -> refresh token
                     Log.d(LOG_TAG, "Refreshing access token as using it returned a 401")
-                    refreshTokens(oldAccessToken = token)
-                    getAccessToken()
+                    val newTokens = refreshTokens(oldAccessToken = token)
+                    newTokens?.accessToken
                 } else {
                     token
                 }
@@ -59,7 +60,7 @@ abstract class OpenIdConnectAuthenticator: Authenticator {
     }
 
     abstract suspend fun getAccessToken(): String?
-    abstract suspend fun refreshTokens(oldAccessToken: String)
+    abstract suspend fun refreshTokens(oldAccessToken: String): OauthTokens?
     abstract fun onRefreshFailed()
     /** Override to provide additional configuration for the authenticated request **/
     open fun buildRequest(builder: Request.Builder) {}
@@ -69,7 +70,7 @@ abstract class OpenIdConnectAuthenticator: Authenticator {
 @Suppress("unused")
 data class OpenIdConnectAuthenticatorConfig(
     internal var getAccessToken: (suspend () -> String?)? = null,
-    internal var refreshTokens: (suspend (oldAccessToken: String) -> Unit)? = null,
+    internal var refreshTokens: (suspend (oldAccessToken: String) -> OauthTokens?)? = null,
     internal var onRefreshFailed: (() -> Unit)? = null,
     internal var buildRequest: Request.Builder.() -> Unit = {}
 ) {
@@ -77,7 +78,7 @@ data class OpenIdConnectAuthenticatorConfig(
         getAccessToken = block
     }
 
-    fun refreshTokens(block: suspend (oldAccessToken: String) -> Unit) {
+    fun refreshTokens(block: suspend (oldAccessToken: String) -> OauthTokens) {
         refreshTokens = block
     }
 
@@ -108,8 +109,8 @@ fun OpenIdConnectAuthenticator(
         override suspend fun getAccessToken(): String? {
             return config.getAccessToken?.invoke()
         }
-        override suspend fun refreshTokens(oldAccessToken: String) {
-            config.refreshTokens?.invoke(oldAccessToken)
+        override suspend fun refreshTokens(oldAccessToken: String): OauthTokens? {
+            return config.refreshTokens?.invoke(oldAccessToken)
         }
         override fun onRefreshFailed() {
             config.onRefreshFailed?.invoke()
