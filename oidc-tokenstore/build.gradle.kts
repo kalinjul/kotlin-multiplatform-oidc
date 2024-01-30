@@ -32,6 +32,7 @@ kotlin {
                 implementation(kotlin("test"))
                 implementation(libs.assertk)
                 implementation(libs.kotlinx.coroutines.test)
+                implementation(projects.oidcAppsupport) // for readme
             }
         }
     }
