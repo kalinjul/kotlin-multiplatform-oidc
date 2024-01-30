@@ -20,17 +20,17 @@ import kotlin.native.ObjCName
 @ObjCName("TokenRefreshHandler", "TokenRefreshHandler", exact = true)
 @Suppress("unused")
 class TokenRefreshHandler(
-    internal val tokenStore: TokenStore,
+    private val tokenStore: TokenStore,
 ) {
-    internal val mutex = Mutex()
+    private val mutex = Mutex()
 
     /**
      * Thread-safe refresh the tokens and save to store.
-     * @return The new access token
+     * @return The new tokens
      */
     @Throws(OpenIdConnectException::class, CancellationException::class)
-    suspend fun safeRefreshToken(client: OpenIdConnectClient, oldAccessToken: String): String {
-        return safeRefreshToken(client::refreshToken, oldAccessToken)
+    suspend fun refreshAndSaveToken(client: OpenIdConnectClient, oldAccessToken: String): OauthTokens {
+        return refreshAndSaveToken(client::refreshToken, oldAccessToken)
     }
 
     /**
@@ -41,19 +41,23 @@ class TokenRefreshHandler(
      *
      * @return The new access token
      */
-    // TODO return both access and refresh token as required by e.g. ktor?
     @Throws(OpenIdConnectException::class, CancellationException::class)
     @HiddenFromObjC
-    suspend fun safeRefreshToken(refreshCall: suspend (String) -> AccessTokenResponse, oldAccessToken: String): String {
+    suspend fun refreshAndSaveToken(refreshCall: suspend (String) -> AccessTokenResponse, oldAccessToken: String): OauthTokens {
         mutex.withLock {
-            val currentToken = tokenStore.getAccessToken()
-            return if (currentToken != null && currentToken != oldAccessToken) {
-                currentToken
+            val currentTokens = tokenStore.getTokens()
+            return if (currentTokens != null && currentTokens.accessToken != oldAccessToken) {
+                currentTokens
             } else {
                 val refreshToken = tokenStore.getRefreshToken()
                 val newTokens = refreshCall(refreshToken ?: "")
                 tokenStore.saveTokens(newTokens)
-                newTokens.access_token
+
+                OauthTokens(
+                    accessToken = newTokens.access_token,
+                    refreshToken = newTokens.refresh_token,
+                    idToken = newTokens.id_token
+                )
             }
         }
     }

@@ -4,6 +4,7 @@ import kotlinx.coroutines.runBlocking
 import okhttp3.Request
 import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
 import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
+import org.publicvalue.multiplatform.oidc.tokenstore.OauthTokens
 import org.publicvalue.multiplatform.oidc.tokenstore.TokenRefreshHandler
 import org.publicvalue.multiplatform.oidc.tokenstore.TokenStore
 import org.publicvalue.multiplatform.oidc.tokenstore.removeTokens
@@ -15,16 +16,16 @@ import org.publicvalue.multiplatform.oidc.tokenstore.removeTokens
 @ExperimentalOpenIdConnect
 @Suppress("unused")
 open class DefaultOpenIdConnectAuthenticator(
-    val tokenStore: TokenStore,
-    val refreshHandler: TokenRefreshHandler,
-    val client: OpenIdConnectClient
+    open val tokenStore: TokenStore,
+    open val refreshHandler: TokenRefreshHandler,
+    open val client: OpenIdConnectClient
 ): OpenIdConnectAuthenticator() {
     override suspend fun getAccessToken(): String? {
         return tokenStore.getAccessToken()
     }
 
-    override suspend fun refreshTokens(oldAccessToken: String) {
-        refreshHandler.safeRefreshToken(client, oldAccessToken)
+    override suspend fun refreshTokens(oldAccessToken: String): OauthTokens? {
+        return refreshHandler.refreshAndSaveToken(client, oldAccessToken)
     }
 
     override fun onRefreshFailed() {

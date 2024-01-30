@@ -7,6 +7,7 @@ import io.ktor.client.plugins.auth.providers.bearer
 import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
 import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
 import org.publicvalue.multiplatform.oidc.OpenIdConnectException
+import org.publicvalue.multiplatform.oidc.tokenstore.OauthTokens
 import org.publicvalue.multiplatform.oidc.tokenstore.TokenRefreshHandler
 import org.publicvalue.multiplatform.oidc.tokenstore.TokenStore
 import org.publicvalue.multiplatform.oidc.tokenstore.removeTokens
@@ -23,7 +24,7 @@ fun Auth.oidcBearer(
 ) {
     oidcBearer(
         tokenStore = tokenStore,
-        refreshAndSaveTokens = { refreshHandler.safeRefreshToken(client = client, it) },
+        refreshAndSaveTokens = { refreshHandler.refreshAndSaveToken(client = client, it) },
         onRefreshFailed = onRefreshFailed
     )
 }
@@ -41,8 +42,10 @@ fun Auth.oidcBearer(
 @ExperimentalOpenIdConnect
 fun Auth.oidcBearer(
     tokenStore: TokenStore,
-    /** receives the old access token **/
-    refreshAndSaveTokens: suspend (String) -> Unit,
+    /** receives the old access token as parameter.
+     *  This function should get new tokens and save them.
+     **/
+    refreshAndSaveTokens: suspend (String) -> OauthTokens?,
     /** called when refresh throws **/
     onRefreshFailed: suspend (Exception) -> Unit
 ) {
@@ -53,13 +56,15 @@ fun Auth.oidcBearer(
         )
 
         refreshTokens(
-            tokenStore = tokenStore,
             refreshAndSaveTokens = refreshAndSaveTokens,
             onRefreshFailed = onRefreshFailed
         )
     }
 }
 
+/**
+ * Load tokens from given token store.
+ */
 @ExperimentalOpenIdConnect
 fun BearerAuthConfig.loadTokens(tokenStore: TokenStore) {
     loadTokens {
@@ -78,31 +83,35 @@ fun BearerAuthConfig.loadTokens(tokenStore: TokenStore) {
     }
 }
 
+/**
+ * Refresh tokens using the given refresh callback
+ *
+ * @param refreshAndSaveTokens The callback receives the old access token and should refresh tokens,
+ * _save_ them into e.g. a token store and return them as result.
+ *
+ * @param onRefreshFailed called when the refresh throws an exception
+ */
 @ExperimentalOpenIdConnect
 fun BearerAuthConfig.refreshTokens(
-    tokenStore: TokenStore,
     /** receives the old access token **/
-    refreshAndSaveTokens: suspend (String) -> Unit,
+    refreshAndSaveTokens: suspend (String) -> OauthTokens?,
     /** called when refresh throws **/
     onRefreshFailed: suspend (Exception) -> Unit
 ) {
     refreshTokens {
-        try {
+        val newTokens = try {
             refreshAndSaveTokens(this.oldTokens?.accessToken.orEmpty())
         } catch (e: OpenIdConnectException) {
             if (e is OpenIdConnectException.UnsuccessfulTokenRequest) {
                 onRefreshFailed(e)
             }
+            null
         }
-        val accessToken = tokenStore.getAccessToken()
-        val refreshToken = tokenStore.getRefreshToken()
-        val bearer = accessToken?.let {
+        newTokens?.let {
             BearerTokens(
-                accessToken = it,
-                refreshToken = refreshToken ?: "",
+                accessToken = it.accessToken,
+                refreshToken = it.refreshToken ?: "",
             )
         }
-
-        bearer
     }
 }

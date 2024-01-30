@@ -18,7 +18,7 @@ object Readme {
         @OptIn(ExperimentalOpenIdConnect::class)
         val authenticator = OpenIdConnectAuthenticator {
             getAccessToken { tokenStore.getAccessToken() }
-            refreshTokens { oldAccessToken -> refreshHandler.safeRefreshToken(client, oldAccessToken) }
+            refreshTokens { oldAccessToken -> refreshHandler.refreshAndSaveToken(client, oldAccessToken) }
             onRefreshFailed {
                 // provided by app: user has to authenticate again
             }

@@ -1,6 +1,7 @@
 package org.publicvalue.multiplatform.oidc.tokenstore
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
 import org.publicvalue.multiplatform.oidc.types.remote.AccessTokenResponse
 import kotlin.experimental.ExperimentalObjCName
@@ -33,7 +34,7 @@ abstract class TokenStore {
 }
 
 // extension method so no need to overwrite in swift subclasses
-@OptIn(ExperimentalOpenIdConnect::class)
+@ExperimentalOpenIdConnect
 suspend fun TokenStore.saveTokens(tokens: AccessTokenResponse) {
     saveTokens(
         accessToken = tokens.access_token,
@@ -43,9 +44,40 @@ suspend fun TokenStore.saveTokens(tokens: AccessTokenResponse) {
 }
 
 // extension method so no need to overwrite in swift subclasses
-@OptIn(ExperimentalOpenIdConnect::class)
+@ExperimentalOpenIdConnect
 suspend fun TokenStore.removeTokens() {
     removeAccessToken()
     removeIdToken()
     removeRefreshToken()
 }
+
+// extension method so no need to overwrite in swift subclasses
+@ExperimentalOpenIdConnect
+suspend fun TokenStore.getTokens(): OauthTokens? {
+    val accessToken = getAccessToken()
+    val refreshToken = getRefreshToken()
+    val idToken = getIdToken()
+
+    return if (accessToken != null) {
+        OauthTokens(
+            accessToken = accessToken,
+            refreshToken = refreshToken,
+            idToken = idToken
+        )
+    } else {
+        null
+    }
+}
+
+val TokenStore.tokensFlow: Flow<OauthTokens?>
+    get() = combine(accessTokenFlow, refreshTokenFlow, idTokenFlow) { accessToken, refreshToken, idToken ->
+        if (accessToken != null) {
+            OauthTokens(
+                accessToken,
+                refreshToken,
+                idToken
+            )
+        } else {
+            null
+        }
+    }
