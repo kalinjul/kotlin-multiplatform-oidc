@@ -1,5 +1,3 @@
-import org.publicvalue.convention.configureComposePreview
-
 plugins {
     id("org.publicvalue.convention.android.library")
     id("org.publicvalue.convention.kotlin.multiplatform")
@@ -29,5 +27,3 @@ kotlin {
         }
     }
 }
-
-configureComposePreview()

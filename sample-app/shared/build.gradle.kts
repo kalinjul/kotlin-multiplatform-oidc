@@ -44,6 +44,14 @@ kotlin {
             iosArm64Main.dependsOn(this)
             iosSimulatorArm64Main.dependsOn(this)
         }
+
+        val commonTest by getting {
+            dependencies {
+                implementation(kotlin("test"))
+                implementation(libs.assertk)
+                implementation(libs.kotlinx.coroutines.test)
+            }
+        }
     }
 
     targets.withType<KotlinNativeTarget>().configureEach {
