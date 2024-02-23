@@ -38,6 +38,16 @@ oidc-appsupport = { module = "io.github.kalinjul.kotlin.multiplatform:oidc-appsu
 oidc-okhttp4 = { module = "io.github.kalinjul.kotlin.multiplatform:oidc-okhttp4", version.ref = "oidc" }
 ```
 
+## Compiler options
+If you want to run tests, currently (as of kotlin 1.9.22), you need to pass additional linker flags (adjust the path to your Xcode installation): 
+```kotlin
+iosSimulatorArm64().compilations.all {
+    kotlinOptions {
+        freeCompilerArgs = listOf("-linker-options", "-L/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphonesimulator")
+    }
+}
+```
+
 # Usage
 ## Redirect scheme
 For OpenIDConnect/OAuth to work, you have to provide the redirect uri in your Android App's build.gradle:
