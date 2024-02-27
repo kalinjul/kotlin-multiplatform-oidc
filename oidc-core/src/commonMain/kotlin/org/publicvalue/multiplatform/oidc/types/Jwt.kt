@@ -131,6 +131,7 @@ value class JwtClaims(
     }
 }
 
+@Suppress("unchecked_cast")
 fun JwtClaims.toOpenIdConnectToken(): IdToken =
     IdToken(
         iss = claims["iss"] as String?,
