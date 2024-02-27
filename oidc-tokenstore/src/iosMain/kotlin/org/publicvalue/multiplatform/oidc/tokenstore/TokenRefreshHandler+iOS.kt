@@ -14,7 +14,7 @@ import kotlin.coroutines.cancellation.CancellationException
 @OptIn(ExperimentalOpenIdConnect::class)
 @Throws(OpenIdConnectException::class, CancellationException::class)
 @Suppress("unused")
-suspend fun TokenRefreshHandler.safeRefreshToken(refresher: TokenRefresher, oldAccessToken: String): OauthTokens {
+suspend fun TokenRefreshHandler.refreshAndSaveToken(refresher: TokenRefresher, oldAccessToken: String): OauthTokens {
     return refreshAndSaveToken(
         refreshCall = { refreshToken ->
             refresher.refreshToken(refreshToken = refreshToken)
