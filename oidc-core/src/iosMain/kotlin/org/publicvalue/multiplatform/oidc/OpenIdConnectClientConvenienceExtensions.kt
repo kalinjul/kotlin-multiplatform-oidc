@@ -5,6 +5,7 @@ import org.publicvalue.multiplatform.oidc.types.AuthCodeRequest
 import kotlin.coroutines.cancellation.CancellationException
 
 // swift convenience overloads with default parameters for suspend functions
+// defined on DefaultOpenIdConnectClient because we cannot export extensions for interfaces yet
 
 /**
  * Objective-C convenience function
@@ -12,7 +13,7 @@ import kotlin.coroutines.cancellation.CancellationException
  * @suppress
  */
 @Throws(OpenIdConnectException::class, CancellationException::class)
-suspend fun OpenIdConnectClient.exchangeToken(authCodeRequest: AuthCodeRequest, code: String) =
+suspend fun DefaultOpenIdConnectClient.exchangeToken(authCodeRequest: AuthCodeRequest, code: String) =
     exchangeToken(authCodeRequest, code, null)
 
 /**
@@ -21,7 +22,7 @@ suspend fun OpenIdConnectClient.exchangeToken(authCodeRequest: AuthCodeRequest, 
  * @suppress
  */
 @Throws(OpenIdConnectException::class, CancellationException::class)
-suspend fun OpenIdConnectClient.endSession(idToken: String) =
+suspend fun DefaultOpenIdConnectClient.endSession(idToken: String) =
     endSession(idToken, null)
 
 /**
@@ -30,7 +31,7 @@ suspend fun OpenIdConnectClient.endSession(idToken: String) =
  * @suppress
  */
 @Throws(OpenIdConnectException::class, CancellationException::class)
-suspend fun OpenIdConnectClient.createAccessTokenRequest(authCodeRequest: AuthCodeRequest, code: String) =
+suspend fun DefaultOpenIdConnectClient.createAccessTokenRequest(authCodeRequest: AuthCodeRequest, code: String) =
     createAccessTokenRequest(authCodeRequest, code, null)
 
 /**
@@ -39,7 +40,7 @@ suspend fun OpenIdConnectClient.createAccessTokenRequest(authCodeRequest: AuthCo
  * @suppress
  */
 @Throws(OpenIdConnectException::class, CancellationException::class)
-suspend fun OpenIdConnectClient.createRefreshTokenRequest(refreshToken: String) =
+suspend fun DefaultOpenIdConnectClient.createRefreshTokenRequest(refreshToken: String) =
     createRefreshTokenRequest(refreshToken, null)
 
 /**
@@ -48,5 +49,5 @@ suspend fun OpenIdConnectClient.createRefreshTokenRequest(refreshToken: String) 
  * @suppress
  */
 @Throws(OpenIdConnectException::class, CancellationException::class)
-suspend fun OpenIdConnectClient.refreshToken(refreshToken: String) =
+suspend fun DefaultOpenIdConnectClient.refreshToken(refreshToken: String) =
     refreshToken(refreshToken, null)
