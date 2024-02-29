@@ -8,6 +8,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
 import org.publicvalue.multiplatform.oidc.flows.CodeAuthFlow
 
@@ -25,8 +26,10 @@ class AndroidCodeAuthFlowFactory(
     private val useWebView: Boolean = false,
 ): CodeAuthFlowFactory {
 
+    private val resultFlow: MutableStateFlow<ActivityResult?> = MutableStateFlow(null)
+
     lateinit var authRequestLauncher: ActivityResultLauncherSuspend<Intent, ActivityResult>
-    lateinit var context: Context
+    private lateinit var context: Context
 
     init {
         if (activity != null) {
@@ -43,7 +46,9 @@ class AndroidCodeAuthFlowFactory(
                 override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
                     when (event) {
                         Lifecycle.Event.ON_CREATE -> {
-                            authRequestLauncher = activity.registerForActivityResultSuspend(ActivityResultContracts.StartActivityForResult())
+                            authRequestLauncher = activity.registerForActivityResultSuspend(
+                                resultFlow,
+                                ActivityResultContracts.StartActivityForResult())
                         }
 
                         Lifecycle.Event.ON_DESTROY -> {
