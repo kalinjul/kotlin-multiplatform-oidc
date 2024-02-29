@@ -5,27 +5,29 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.core.app.ActivityOptionsCompat
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 
 /**
  * Register for activity result and return an @ActivityResultLauncherSuspend, so result can be
  * consumed in a suspend function.
+ *
+ * @param resultFlow a MutableStateFlow(null) that should live longer than the activity
+ * @param contract the contract
  */
-fun <Input, Output> ComponentActivity.registerForActivityResultSuspend(contract: ActivityResultContract<Input, Output>): ActivityResultLauncherSuspend<Input, Output> {
+fun <Input, Output> ComponentActivity.registerForActivityResultSuspend(
+    resultFlow: MutableStateFlow<Output?> = MutableStateFlow(null),
+    contract: ActivityResultContract<Input, Output>
+): ActivityResultLauncherSuspend<Input, Output> {
 
-    val resultFlow:MutableStateFlow<Output?> = MutableStateFlow(null)
     val delegate = registerForActivityResult(contract) {
         resultFlow.value = it
     }
 
-    val launcher = ActivityResultLauncherSuspend(
+    return ActivityResultLauncherSuspend(
         delegate = delegate,
         resultFlow = resultFlow
     )
-
-    return launcher
 }
 
 class ActivityResultLauncherSuspend<Input, Output>(
@@ -39,7 +41,9 @@ class ActivityResultLauncherSuspend<Input, Output>(
 
     suspend fun launchSuspend(input: Input, options: ActivityOptionsCompat? = null): Output {
         delegate.launch(input, options)
-        return resultFlow.drop(1).filterNotNull().first()
+        val result = resultFlow.filterNotNull().first()
+        resultFlow.value = null
+        return result
     }
 
     override fun unregister() {

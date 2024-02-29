@@ -13,9 +13,9 @@ import android.webkit.WebViewClient
 import androidx.activity.ComponentActivity
 import androidx.browser.customtabs.CustomTabsIntent
 
-internal val EXTRA_KEY_USEWEBVIEW = "usewebview"
-internal val EXTRA_KEY_REDIRECTURL = "redirecturl"
-internal val EXTRA_KEY_URL = "url"
+internal const val EXTRA_KEY_USEWEBVIEW = "usewebview"
+internal const val EXTRA_KEY_REDIRECTURL = "redirecturl"
+internal const val EXTRA_KEY_URL = "url"
 
 class HandleRedirectActivity : ComponentActivity() {
 
@@ -64,45 +64,38 @@ class HandleRedirectActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+    }
+
+    override fun onResume() {
+        super.onResume()
 
         val useWebView = intent.extras?.getBoolean(EXTRA_KEY_USEWEBVIEW)
         val url = intent.extras?.getString(EXTRA_KEY_URL)
         val redirectUrl = intent.extras?.getString(EXTRA_KEY_REDIRECTURL)
 
-        if (url == null) { // we're coming back from custom tab without an url set
+        if (intent?.data != null) {
+            // we're called by custom tab
+            setResult(RESULT_OK, intent)
+            finish()
+        } else if (url == null) {
+            // called by custom tab but no intent.data
             setResult(RESULT_CANCELED)
             finish()
-            return
-        }
-
-        if (useWebView == true) {
-            showWebView(url, redirectUrl)
         } else {
-            val builder = CustomTabsIntent.Builder()
-            builder.configureCustomTabsIntent()
-            val intent = builder.build()
-            intent.launchUrl(this, Uri.parse(url))
+            // login requested by app
+            if (useWebView == true) {
+                showWebView(url, redirectUrl)
+            } else {
+                val builder = CustomTabsIntent.Builder()
+                builder.configureCustomTabsIntent()
+                val intent = builder.build()
+                intent.launchUrl(this, Uri.parse(url))
+            }
         }
-    }
-
-    private var customTabStarted: Boolean = false
-
-    override fun onResume() {
-        super.onResume()
-
-        if (intent?.data != null) {
-            setResult(RESULT_OK, intent)
-        }
-
-        if (customTabStarted) {
-            finish()
-        }
-        customTabStarted = true
     }
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-
         setIntent(intent)
     }
 }
