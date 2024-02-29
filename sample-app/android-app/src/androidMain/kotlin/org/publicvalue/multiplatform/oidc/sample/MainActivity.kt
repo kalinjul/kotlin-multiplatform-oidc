@@ -9,7 +9,8 @@ import org.publicvalue.multiplatform.oidc.appsupport.AndroidCodeAuthFlowFactory
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val factory = AndroidCodeAuthFlowFactory(this, useWebView = false)
+        val factory = AndroidCodeAuthFlowFactory(useWebView = true)
+        factory.registerActivity(this)
         setContent {
             MainView(
                 factory
