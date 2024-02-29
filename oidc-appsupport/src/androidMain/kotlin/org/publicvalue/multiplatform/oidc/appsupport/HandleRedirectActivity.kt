@@ -13,9 +13,9 @@ import android.webkit.WebViewClient
 import androidx.activity.ComponentActivity
 import androidx.browser.customtabs.CustomTabsIntent
 
-internal val EXTRA_KEY_USEWEBVIEW = "usewebview"
-internal val EXTRA_KEY_REDIRECTURL = "redirecturl"
-internal val EXTRA_KEY_URL = "url"
+internal const val EXTRA_KEY_USEWEBVIEW = "usewebview"
+internal const val EXTRA_KEY_REDIRECTURL = "redirecturl"
+internal const val EXTRA_KEY_URL = "url"
 
 class HandleRedirectActivity : ComponentActivity() {
 
@@ -65,44 +65,59 @@ class HandleRedirectActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val useWebView = intent.extras?.getBoolean(EXTRA_KEY_USEWEBVIEW)
         val url = intent.extras?.getString(EXTRA_KEY_URL)
-        val redirectUrl = intent.extras?.getString(EXTRA_KEY_REDIRECTURL)
+        println("###### Activity created $this")
+        println("######  with url $url")
+        println("######  and data ${intent.data}")
 
-        if (url == null) { // we're coming back from custom tab without an url set
-            setResult(RESULT_CANCELED)
-            finish()
-            return
-        }
-
-        if (useWebView == true) {
-            showWebView(url, redirectUrl)
-        } else {
-            val builder = CustomTabsIntent.Builder()
-            builder.configureCustomTabsIntent()
-            val intent = builder.build()
-            intent.launchUrl(this, Uri.parse(url))
-        }
     }
-
-    private var customTabStarted: Boolean = false
 
     override fun onResume() {
         super.onResume()
 
-        if (intent?.data != null) {
-            setResult(RESULT_OK, intent)
-        }
+        val useWebView = intent.extras?.getBoolean(EXTRA_KEY_USEWEBVIEW)
+        val url = intent.extras?.getString(EXTRA_KEY_URL)
+        val redirectUrl = intent.extras?.getString(EXTRA_KEY_REDIRECTURL)
 
-        if (customTabStarted) {
+        println("###### Activity resumed $this")
+        println("######  with url $url")
+        println("######  and data ${intent.data}")
+
+
+        if (intent?.data != null) {
+            println("###### Activity reporting RESULT_OK $this")
+            setResult(RESULT_OK, intent)
             finish()
+
+        } else if (url == null) { // we're started without a url
+            println("###### Activity reporting CANCELED $this")
+            setResult(RESULT_CANCELED)
+            finish()
+
+        } else {
+            if (useWebView == true) {
+                println("###### Activity showing webview $this")
+                showWebView(url, redirectUrl)
+            } else {
+                println("###### Activity launchnig CustomTabs $this")
+                val builder = CustomTabsIntent.Builder()
+                builder.configureCustomTabsIntent()
+                val intent = builder.build()
+                intent.launchUrl(this, Uri.parse(url))
+            }
         }
-        customTabStarted = true
     }
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
 
+        println("###### Activity newIntent $this")
+        println("######  with data ${intent?.data}")
         setIntent(intent)
+    }
+
+    override fun onDestroy() {
+        println("###### Activity destroyed $this")
+        super.onDestroy()
     }
 }
