@@ -1,5 +1,8 @@
+import android.os.Bundle
+import androidx.activity.ComponentActivity
 import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
 import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
+import org.publicvalue.multiplatform.oidc.appsupport.AndroidCodeAuthFlowFactory
 import org.publicvalue.multiplatform.oidc.tokenstore.TokenStore
 import org.publicvalue.multiplatform.oidc.appsupport.CodeAuthFlowFactory
 import org.publicvalue.multiplatform.oidc.tokenstore.TokenRefreshHandler
@@ -8,14 +11,12 @@ import org.publicvalue.multiplatform.oidc.types.CodeChallengeMethod
 import org.publicvalue.multiplatform.oidc.types.parseJwt
 import org.publicvalue.multiplatform.oidc.types.remote.AccessTokenResponse
 import kotlin.experimental.ExperimentalObjCRefinement
-import kotlin.native.HiddenFromObjC
 
 
 /**
  * Sample code for Readme
  */
 @OptIn(ExperimentalObjCRefinement::class, ExperimentalOpenIdConnect::class)
-@HiddenFromObjC
 object README {
     val client = OpenIdConnectClient {  }
     val authFlowFactory: CodeAuthFlowFactory = TODO()
@@ -45,12 +46,13 @@ object README {
 
     // Create AuthFlowFactory in onCreate
     fun `Create_AuthFlowFactory_in_onCreate`() {
-//        class MainActivity : ComponentActivity() {
-//            override fun onCreate(savedInstanceState: Bundle?) {
-//                super.onCreate(savedInstanceState)
-//                val factory = AndroidCodeAuthFlowFactory(this)
-//            }
-//        }
+        class MainActivity : ComponentActivity() {
+            override fun onCreate(savedInstanceState: Bundle?) {
+                super.onCreate(savedInstanceState)
+                val factory = AndroidCodeAuthFlowFactory()
+                factory.registerActivity(this)
+            }
+        }
     }
 
     // Request access token using code auth flow

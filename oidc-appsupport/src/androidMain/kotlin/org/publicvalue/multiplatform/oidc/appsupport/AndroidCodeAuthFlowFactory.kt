@@ -1,5 +1,6 @@
 package org.publicvalue.multiplatform.oidc.appsupport
 
+import android.content.Context
 import android.content.Intent
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResult
@@ -12,18 +13,31 @@ import org.publicvalue.multiplatform.oidc.flows.CodeAuthFlow
 
 /**
  * Factory to create an Auth Flow on Android.
- * In order to handle redirects, the factory needs to be instantiated in your Activity's [Activity.onCreate()].
+ *
+ * In order to handle redirects, the factory needs to be instantiated in your Activity's
+ * [Activity.onCreate()] using a non-null activity parameter or you must call registerActivity()
+ * inside your Activity's [Activity.onCreate()].
  */
 @Suppress("unused")
 class AndroidCodeAuthFlowFactory(
-    private val activity: ComponentActivity,
+    activity: ComponentActivity? = null,
     /** If true, uses an embedded WebView instead of Chrome CustomTab (not recommended) **/
     private val useWebView: Boolean = false,
 ): CodeAuthFlowFactory {
 
     lateinit var authRequestLauncher: ActivityResultLauncherSuspend<Intent, ActivityResult>
+    lateinit var context: Context
 
     init {
+        if (activity != null) {
+            registerActivity(activity)
+        }
+    }
+
+    /**
+     * Registers a lifecycle observer to be able to start a browser when required for login.
+     */
+    fun registerActivity(activity: ComponentActivity) {
         activity.lifecycle.addObserver(
             object: LifecycleEventObserver {
                 override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
@@ -43,11 +57,12 @@ class AndroidCodeAuthFlowFactory(
                 }
             }
         )
+        this.context = activity.applicationContext
     }
 
     override fun createAuthFlow(client: OpenIdConnectClient): CodeAuthFlow {
         return PlatformCodeAuthFlow(
-            context = activity,
+            context = context,
             contract = authRequestLauncher,
             client = client,
             useWebView = useWebView

@@ -24,18 +24,19 @@ You can find the full Api documentation [here](https://kalinjul.github.io/kotlin
 # Dependency
 Add the dependency to your commonMain sourceSet (KMP) / Android dependencies (android only):
 ```kotlin
-implementation("io.github.kalinjul.kotlin.multiplatform:oidc-appsupport:0.8.0")
-implementation("io.github.kalinjul.kotlin.multiplatform:oidc-okhttp4:0.8.0") // optional, android only
-implementation("io.github.kalinjul.kotlin.multiplatform:oidc-ktor:0.8.0") // optional ktor support
+implementation("io.github.kalinjul.kotlin.multiplatform:oidc-appsupport:0.8.3")
+implementation("io.github.kalinjul.kotlin.multiplatform:oidc-okhttp4:0.8.3") // optional, android only
+implementation("io.github.kalinjul.kotlin.multiplatform:oidc-ktor:0.8.3") // optional ktor support
 ```
 
 Or, for your libs.versions.toml:
 ```toml
 [versions]
-oidc = "0.8.0"
+oidc = "0.8.3"
 [libraries]
 oidc-appsupport = { module = "io.github.kalinjul.kotlin.multiplatform:oidc-appsupport", version.ref = "oidc" }
 oidc-okhttp4 = { module = "io.github.kalinjul.kotlin.multiplatform:oidc-okhttp4", version.ref = "oidc" }
+oidc-ktor = { module = "io.github.kalinjul.kotlin.multiplatform:oidc-ktor", version.ref = "oidc" }
 ```
 
 ## Compiler options
@@ -93,15 +94,19 @@ For Android, create an instance of [AndroidCodeAuthFlowFactory](https://kalinjul
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val factory = AndroidCodeAuthFlowFactory(this)
+        val factory = AndroidCodeAuthFlowFactory()
+        factory.registerActivity(this)
     }
 }
 ```
 > [!IMPORTANT]  
-> The Factory MUST be instanciated in onCreate() or earlier, as it will attach to the ComponentActivity's lifecycle.
+> The Factory MUST be instanciated (or more precise: registerActivity() must be called) in onCreate()
+> or earlier, as it will attach to the ComponentActivity's lifecycle.
 > If you don't use ComponentActivity, you need to implement your own Factory.
 > 
-> If you want to use Dependency Injection, make sure to request an instance early (in your Activity).
+> If you want to use Dependency Injection and don't have access to your activity, you can register 
+> the factory without an activity, inject it into your onCreate() Method and call registerActivity() 
+> from there. 
 
 For the iOS part, you can use [IosCodeAuthFlowFactory](https://kalinjul.github.io/kotlin-multiplatform-oidc/kotlin-multiplatform-oidc/org.publicvalue.multiplatform.oidc.appsupport/-ios-code-auth-flow-factory/index.html). 
 Both factories implement a common interface and can be provided using Dependency Injection.
