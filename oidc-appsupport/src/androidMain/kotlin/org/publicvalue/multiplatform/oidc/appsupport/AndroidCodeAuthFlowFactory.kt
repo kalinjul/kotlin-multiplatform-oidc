@@ -14,6 +14,7 @@ import org.publicvalue.multiplatform.oidc.flows.CodeAuthFlow
 
 /**
  * Factory to create an Auth Flow on Android.
+ * There should only be a single instance of this factory.
  *
  * In order to handle redirects, the factory needs to be instantiated in your Activity's
  * [Activity.onCreate()] using a non-null activity parameter or you must call registerActivity()
@@ -21,7 +22,6 @@ import org.publicvalue.multiplatform.oidc.flows.CodeAuthFlow
  */
 @Suppress("unused")
 class AndroidCodeAuthFlowFactory(
-    activity: ComponentActivity? = null,
     /** If true, uses an embedded WebView instead of Chrome CustomTab (not recommended) **/
     private val useWebView: Boolean = false,
 ): CodeAuthFlowFactory {
@@ -31,10 +31,11 @@ class AndroidCodeAuthFlowFactory(
 
     private val resultFlow: MutableStateFlow<ActivityResult?> = MutableStateFlow(null)
 
-    init {
-        if (activity != null) {
-            registerActivity(activity)
-        }
+    @Deprecated(
+        message = "Use AndroidCodeAuthFlowFactory(useWebView: Boolean) instead and call registerActivity().",
+        replaceWith = ReplaceWith("AndroidCodeAuthFlowFactory(useWebView).also { it.registerActivity(activity) }"))
+    constructor(activity: ComponentActivity, useWebView: Boolean) : this(useWebView = useWebView) {
+        registerActivity(activity)
     }
 
     /**
