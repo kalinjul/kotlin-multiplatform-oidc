@@ -24,15 +24,15 @@ You can find the full Api documentation [here](https://kalinjul.github.io/kotlin
 # Dependency
 Add the dependency to your commonMain sourceSet (KMP) / Android dependencies (android only):
 ```kotlin
-implementation("io.github.kalinjul.kotlin.multiplatform:oidc-appsupport:0.8.3")
-implementation("io.github.kalinjul.kotlin.multiplatform:oidc-okhttp4:0.8.3") // optional, android only
-implementation("io.github.kalinjul.kotlin.multiplatform:oidc-ktor:0.8.3") // optional ktor support
+implementation("io.github.kalinjul.kotlin.multiplatform:oidc-appsupport:0.9.0")
+implementation("io.github.kalinjul.kotlin.multiplatform:oidc-okhttp4:0.9.0") // optional, android only
+implementation("io.github.kalinjul.kotlin.multiplatform:oidc-ktor:0.9.0") // optional ktor support
 ```
 
 Or, for your libs.versions.toml:
 ```toml
 [versions]
-oidc = "0.8.3"
+oidc = "0.9.0"
 [libraries]
 oidc-appsupport = { module = "io.github.kalinjul.kotlin.multiplatform:oidc-appsupport", version.ref = "oidc" }
 oidc-okhttp4 = { module = "io.github.kalinjul.kotlin.multiplatform:oidc-okhttp4", version.ref = "oidc" }
@@ -88,28 +88,32 @@ If you provide a Discovery URI, you may skip the endpoint configuration and call
 ## Create a Code Auth Flow instance (platform specific)
 The Code Auth Flow method is implemented by [CodeAuthFlow](https://kalinjul.github.io/kotlin-multiplatform-oidc/kotlin-multiplatform-oidc/org.publicvalue.multiplatform.oidc.flows/-code-auth-flow/index.html). You'll need platform specific variants, so we'll use a factory to get an instance.
 
-For Android, create an instance of [AndroidCodeAuthFlowFactory](https://kalinjul.github.io/kotlin-multiplatform-oidc/kotlin-multiplatform-oidc/org.publicvalue.multiplatform.oidc.appsupport/-android-code-auth-flow-factory/index.html) in your Activity's onCreate():
+For Android, you should have a single global instance of [AndroidCodeAuthFlowFactory], preferably 
+using Dependency Injection. 
+You will than need to register your activity in your Activity's onCreate():
 
 ```kotlin
 class MainActivity : ComponentActivity() {
+    companion object {
+        // There should only be one instance of this factory.
+        // The flow should also be created and started from an
+        // Application or ViewModel scope, so it persists Activity.onDestroy() e.g. on low memory
+        // and is still able to process redirect results during login.
+        val codeAuthFlowFactory = AndroidCodeAuthFlowFactory(useWebView = false)
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val factory = AndroidCodeAuthFlowFactory()
-        factory.registerActivity(this)
+        codeAuthFlowFactory.registerActivity(this)
     }
 }
 ```
 > [!IMPORTANT]  
-> The Factory MUST be instanciated (or more precise: registerActivity() must be called) in onCreate()
-> or earlier, as it will attach to the ComponentActivity's lifecycle.
-> If you don't use ComponentActivity, you need to implement your own Factory.
-> 
-> If you want to use Dependency Injection and don't have access to your activity, you can register 
-> the factory without an activity, inject it into your onCreate() Method and call registerActivity() 
-> from there. 
+> You MUST register your activity using registerActivity() in onCreate() or earlier, as the factory 
+> will attach to the ComponentActivity's lifecycle.
+> If you don't use ComponentActivity, you'll need to implement your own Factory.
 
 For the iOS part, you can use [IosCodeAuthFlowFactory](https://kalinjul.github.io/kotlin-multiplatform-oidc/kotlin-multiplatform-oidc/org.publicvalue.multiplatform.oidc.appsupport/-ios-code-auth-flow-factory/index.html). 
-Both factories implement a common interface and can be provided using Dependency Injection.
+Both factories implement [CodeAuthFlowFactory](https://kalinjul.github.io/kotlin-multiplatform-oidc/kotlin-multiplatform-oidc/org.publicvalue.multiplatform.oidc.appsupport/-code-auth-flow-factory/index.html) and can be provided using Dependency Injection.
 
 For more information, have a look at the [KMP sample app](./sample-app).
 
