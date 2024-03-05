@@ -1,8 +1,10 @@
 package org.publicvalue.multiplatform.oidc
 
+import io.ktor.client.HttpClient
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.URLBuilder
+import org.publicvalue.multiplatform.oidc.DefaultOpenIdConnectClient.Companion.DefaultHttpClient
 import org.publicvalue.multiplatform.oidc.types.AuthCodeRequest
 import org.publicvalue.multiplatform.oidc.types.TokenRequest
 import org.publicvalue.multiplatform.oidc.types.remote.AccessTokenResponse
@@ -12,8 +14,8 @@ import kotlin.experimental.ExperimentalObjCName
 import kotlin.native.ObjCName
 
 /**
- * Builds an [OpenIdConnectClientConfig] using the [block] parameter and returns an OpenID Connect
- * client.
+ * Builds an [OpenIdConnectClientConfig] using the [block] parameter and returns a
+ * [DefaultOpenIdConnectClient].
  *
  * This uses the default ktor HTTP client. You may provide your own client using the
  * [DefaultOpenIdConnectClient] constructor.
@@ -22,13 +24,26 @@ import kotlin.native.ObjCName
  * Setting an endpoint manually will override a discovered endpoint.
  * @param block configuration closure. See [OpenIdConnectClientConfig]
  */
-@Suppress("unused")
 fun OpenIdConnectClient(
     discoveryUri: String? = null,
     block: OpenIdConnectClientConfig.() -> Unit
 ): OpenIdConnectClient {
     val config = OpenIdConnectClientConfig(discoveryUri).apply(block)
     return DefaultOpenIdConnectClient(config = config)
+}
+
+/**
+ * Create a [DefaultOpenIdConnectClient].
+ */
+@Deprecated(
+    message = "Use DefaultOpenIdConnectClient constructor instead",
+    replaceWith = ReplaceWith("DefaultOpenIdConnectClient(httpClient, config)")
+)
+fun OpenIdConnectClient(
+    httpClient: HttpClient = DefaultHttpClient,
+    config: OpenIdConnectClientConfig,
+) : OpenIdConnectClient {
+    return DefaultOpenIdConnectClient(httpClient = httpClient, config = config)
 }
 
 @OptIn(ExperimentalObjCName::class)
