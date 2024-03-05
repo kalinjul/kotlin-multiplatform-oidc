@@ -34,7 +34,7 @@ class AndroidCodeAuthFlowFactory(
     @Deprecated(
         message = "Use AndroidCodeAuthFlowFactory(useWebView: Boolean) instead and call registerActivity().",
         replaceWith = ReplaceWith("AndroidCodeAuthFlowFactory(useWebView).also { it.registerActivity(activity) }"))
-    constructor(activity: ComponentActivity, useWebView: Boolean) : this(useWebView = useWebView) {
+    constructor(activity: ComponentActivity, useWebView: Boolean = false) : this(useWebView = useWebView) {
         registerActivity(activity)
     }
 
