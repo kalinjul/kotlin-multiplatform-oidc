@@ -30,6 +30,7 @@ kotlin {
         val androidMain by getting {
             dependencies {
                 api(libs.androidx.activity.compose)
+                implementation(libs.androidx.appcompat)
                 api(libs.androidx.core.ktx)
                 api("io.github.kalinjul.kotlin.multiplatform:oidc-okhttp4")
                 api(libs.okhttp)
