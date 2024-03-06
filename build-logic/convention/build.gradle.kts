@@ -49,10 +49,6 @@ gradlePlugin {
             id = "org.publicvalue.convention.compose.multiplatform"
             implementationClass = "org.publicvalue.convention.ComposeMultiplatformConventionPlugin"
         }
-        register("kotlinAndroid") {
-            id = "org.publicvalue.convention.kotlin.android"
-            implementationClass = "org.publicvalue.convention.KotlinAndroidConventionPlugin"
-        }
         register("centralPublish") {
             id = "org.publicvalue.convention.centralPublish"
             implementationClass = "org.publicvalue.convention.MavenCentralPublishConventionPlugin"
