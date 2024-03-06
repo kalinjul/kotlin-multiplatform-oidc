@@ -61,6 +61,6 @@ struct Readme {
     // RefreshHandler
     func _6() async throws {
         let refreshHandler = TokenRefreshHandler(tokenStore: tokenstore)
-        try await refreshHandler.safeRefreshToken(client: client, oldAccessToken: oldAccessToken)  // thread-safe refresh and save new tokens to store
+        try await refreshHandler.refreshAndSaveToken(client: client, oldAccessToken: oldAccessToken)  // thread-safe refresh and save new tokens to store
     }
 }
