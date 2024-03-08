@@ -16,7 +16,7 @@ runs:
     - name: Remove xcframework
       shell: bash
       run: rm -r */build/swiftpackage/*.xcframework
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       with:
         name: oidc-swiftpackages
         path: oidc-*/build/swiftpackage/*
