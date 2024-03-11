@@ -60,7 +60,7 @@ actual class PlatformCodeAuthFlow(
                         }
                     }
                 )
-                session.prefersEphemeralWebBrowserSession = true
+                session.prefersEphemeralWebBrowserSession = false
                 session.presentationContextProvider = PresentationContext()
 
                 MainScope().launch {
