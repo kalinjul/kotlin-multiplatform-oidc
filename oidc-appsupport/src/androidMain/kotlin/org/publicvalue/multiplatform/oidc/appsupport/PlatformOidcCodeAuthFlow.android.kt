@@ -15,6 +15,7 @@ actual class PlatformCodeAuthFlow(
     private val context: Context,
     private val contract: ActivityResultLauncherSuspend<Intent, ActivityResult>,
     private val useWebView: Boolean = false,
+    private val webViewEpheremalSession: Boolean = false,
     client: OpenIdConnectClient,
 ) : CodeAuthFlow(client) {
 
@@ -28,6 +29,7 @@ actual class PlatformCodeAuthFlow(
             if (useWebView) {
                 this.putExtra(EXTRA_KEY_USEWEBVIEW, true)
                 this.putExtra(EXTRA_KEY_REDIRECTURL, request.url.parameters.get("redirect_uri"))
+                this.putExtra(EXTRA_KEY_WEBVIEW_EPHEREMAL_SESSION, webViewEpheremalSession)
             }
         }
         val result = contract.launchSuspend(intent)
