@@ -1,7 +1,6 @@
 package org.publicvalue.multiplatform.oidc.appsupport
 
 import io.ktor.http.Url
-import io.ktor.http.hostWithPort
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
@@ -33,7 +32,8 @@ import kotlin.experimental.ExperimentalObjCName
 @OptIn(ExperimentalObjCName::class)
 @ObjCName(swiftName = "CodeAuthFlow", name = "CodeAuthFlow", exact = true)
 actual class PlatformCodeAuthFlow(
-    client: OpenIdConnectClient
+    client: OpenIdConnectClient,
+    private val ephemeralBrowserSession: Boolean = false
 ): CodeAuthFlow(client) {
     override suspend fun getAuthorizationCode(request: AuthCodeRequest): AuthCodeResponse = wrapExceptions {
         val authResponse = suspendCoroutine { continuation ->
@@ -60,7 +60,7 @@ actual class PlatformCodeAuthFlow(
                         }
                     }
                 )
-                session.prefersEphemeralWebBrowserSession = true
+                session.prefersEphemeralWebBrowserSession = ephemeralBrowserSession
                 session.presentationContextProvider = PresentationContext()
 
                 MainScope().launch {

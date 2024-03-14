@@ -3,7 +3,6 @@ package org.publicvalue.multiplatform.oidc.appsupport
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
-import android.os.Bundle
 import android.webkit.CookieManager
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceRequest
@@ -12,8 +11,10 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.activity.ComponentActivity
 import androidx.browser.customtabs.CustomTabsIntent
+import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
 
 internal const val EXTRA_KEY_USEWEBVIEW = "usewebview"
+internal const val EXTRA_KEY_WEBVIEW_EPHEREMAL_SESSION = "webview_epheremal_session"
 internal const val EXTRA_KEY_REDIRECTURL = "redirecturl"
 internal const val EXTRA_KEY_URL = "url"
 
@@ -21,40 +22,51 @@ class HandleRedirectActivity : ComponentActivity() {
 
     companion object {
         /** Set to use your own web settings when using WebView **/
-        var configureWebSettings: WebSettings.() -> Unit = {
-            javaScriptCanOpenWindowsAutomatically = false
-            setSupportMultipleWindows(false)
-        }
+        @Deprecated(message = "Set configureWebView instead and use webView.settings.apply()")
+        var configureWebSettings: WebSettings.() -> Unit = { }
 
-        /** Set to implement your own WebView. **/
-        var showWebView: Activity.(url: String, redirectUrl: String?) -> Unit = { url, redirectUrl ->
-            val webView = WebView(this)
-            setContentView(webView)
-
-            CookieManager.getInstance().removeAllCookies({})
-            webView.clearHistory()
-            webView.clearCache(true)
+        @Suppress("DEPRECATION")
+        private val defaultConfigureWebView: (WebView) -> Unit = { webView ->
             webView.settings.apply {
+                javaScriptCanOpenWindowsAutomatically = false
+                setSupportMultipleWindows(false)
                 configureWebSettings()
             }
-            webView.webChromeClient = WebChromeClient()
-            webView.webViewClient = object : WebViewClient() {
+        }
 
-                override fun shouldOverrideUrlLoading(
-                    view: WebView?,
-                    request: WebResourceRequest?
-                ): Boolean {
-                    val requestedUrl = request?.url
-                    return if (requestedUrl != null && redirectUrl != null && requestedUrl.toString().startsWith(redirectUrl)) {
-                        intent.data = request.url
-                        setResult(RESULT_OK, intent)
-                        finish()
-                        true
-                    } else {
-                        false
+        /** Set to use custom configuration when using WebView **/
+        @ExperimentalOpenIdConnect
+        var configureWebView: (WebView) -> Unit = defaultConfigureWebView
+
+
+        @ExperimentalOpenIdConnect
+        var createWebView: Activity.(redirectUrl: String?) -> WebView = { redirectUrl ->
+            WebView(this).apply {
+                configureWebView(this)
+                webChromeClient = WebChromeClient()
+                webViewClient = object : WebViewClient() {
+                    override fun shouldOverrideUrlLoading(
+                        view: WebView?,
+                        request: WebResourceRequest?
+                    ): Boolean {
+                        val requestedUrl = request?.url
+                        return if (requestedUrl != null && redirectUrl != null && requestedUrl.toString().startsWith(redirectUrl)) {
+                            intent.data = request.url
+                            setResult(RESULT_OK, intent)
+                            finish()
+                            true
+                        } else {
+                            false
+                        }
                     }
                 }
             }
+        }
+
+        @ExperimentalOpenIdConnect
+        var showWebView: Activity.(url: String, redirectUrl: String?) -> Unit = { url, redirectUrl ->
+            val webView = createWebView(this, redirectUrl)
+            setContentView(webView)
             webView.loadUrl(url)
         }
 
@@ -62,14 +74,12 @@ class HandleRedirectActivity : ComponentActivity() {
         var configureCustomTabsIntent: CustomTabsIntent.Builder.() -> Unit = {}
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
+    @OptIn(ExperimentalOpenIdConnect::class)
     override fun onResume() {
         super.onResume()
 
         val useWebView = intent.extras?.getBoolean(EXTRA_KEY_USEWEBVIEW)
+        val webViewEpheremalSession = intent.extras?.getBoolean(EXTRA_KEY_WEBVIEW_EPHEREMAL_SESSION)
         val url = intent.extras?.getString(EXTRA_KEY_URL)
         val redirectUrl = intent.extras?.getString(EXTRA_KEY_REDIRECTURL)
 
@@ -84,12 +94,29 @@ class HandleRedirectActivity : ComponentActivity() {
         } else {
             // login requested by app
             if (useWebView == true) {
+                setEpheremalSessionIfRequired(webViewEpheremalSession)
                 showWebView(url, redirectUrl)
             } else {
-                val builder = CustomTabsIntent.Builder()
-                builder.configureCustomTabsIntent()
-                val intent = builder.build()
-                intent.launchUrl(this, Uri.parse(url))
+                launchCustomTabsIntent(url)
+            }
+        }
+    }
+
+    private fun launchCustomTabsIntent(url: String?) {
+        val builder = CustomTabsIntent.Builder()
+        builder.configureCustomTabsIntent()
+        val intent = builder.build()
+        intent.launchUrl(this, Uri.parse(url))
+    }
+
+    @OptIn(ExperimentalOpenIdConnect::class)
+    private fun setEpheremalSessionIfRequired(required: Boolean?) {
+        if (required == true) {
+            configureWebView = { webView ->
+                defaultConfigureWebView(webView)
+                CookieManager.getInstance().removeAllCookies({})
+                webView.clearHistory()
+                webView.clearCache(true)
             }
         }
     }

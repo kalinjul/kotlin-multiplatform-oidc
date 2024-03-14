@@ -24,6 +24,8 @@ import org.publicvalue.multiplatform.oidc.flows.CodeAuthFlow
 class AndroidCodeAuthFlowFactory(
     /** If true, uses an embedded WebView instead of Chrome CustomTab (not recommended) **/
     private val useWebView: Boolean = false,
+    /** Clear cache and cookies in WebView **/
+    private val webViewEpheremalSession: Boolean = false
 ): CodeAuthFlowFactory {
 
     lateinit var authRequestLauncher: ActivityResultLauncherSuspend<Intent, ActivityResult>
@@ -69,7 +71,8 @@ class AndroidCodeAuthFlowFactory(
             context = context,
             contract = authRequestLauncher,
             client = client,
-            useWebView = useWebView
+            useWebView = useWebView,
+            webViewEpheremalSession = webViewEpheremalSession
         )
     }
 }
