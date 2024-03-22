@@ -3,6 +3,7 @@ package org.publicvalue.multiplatform.oidc.appsupport
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
+import android.os.Bundle
 import android.webkit.CookieManager
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceRequest
@@ -74,6 +75,15 @@ class HandleRedirectActivity : ComponentActivity() {
         var configureCustomTabsIntent: CustomTabsIntent.Builder.() -> Unit = {}
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        if (savedInstanceState != null) {
+            // this activity already navigated to login page, which was probably closed by the user
+            // do not navigate to the login page again
+            intent.removeExtra(EXTRA_KEY_URL)
+        }
+    }
+
     @OptIn(ExperimentalOpenIdConnect::class)
     override fun onResume() {
         super.onResume()
@@ -93,6 +103,8 @@ class HandleRedirectActivity : ComponentActivity() {
             finish()
         } else {
             // login requested by app
+            // do not navigate to the login page again in this activity instance
+            intent.removeExtra(EXTRA_KEY_URL)
             if (useWebView == true) {
                 setEpheremalSessionIfRequired(webViewEpheremalSession)
                 showWebView(url, redirectUrl)
