@@ -10,7 +10,7 @@ import okhttp3.Route
 import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
 import org.publicvalue.multiplatform.oidc.tokenstore.OauthTokens
 
-private val LOG_TAG = "OpenIdConnectAuthenticator"
+private val LOG_TAG = "OIDCAuthenticator"
 
 /**
  * OkHttp Authenticator.
