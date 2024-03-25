@@ -25,15 +25,15 @@ You can find the full Api documentation [here](https://kalinjul.github.io/kotlin
 # Dependency
 Add the dependency to your commonMain sourceSet (KMP) / Android dependencies (android only):
 ```kotlin
-implementation("io.github.kalinjul.kotlin.multiplatform:oidc-appsupport:0.9.0")
-implementation("io.github.kalinjul.kotlin.multiplatform:oidc-okhttp4:0.9.0") // optional, android only
-implementation("io.github.kalinjul.kotlin.multiplatform:oidc-ktor:0.9.0") // optional ktor support
+implementation("io.github.kalinjul.kotlin.multiplatform:oidc-appsupport:0.9.1")
+implementation("io.github.kalinjul.kotlin.multiplatform:oidc-okhttp4:0.9.1") // optional, android only
+implementation("io.github.kalinjul.kotlin.multiplatform:oidc-ktor:0.9.1") // optional ktor support
 ```
 
 Or, for your libs.versions.toml:
 ```toml
 [versions]
-oidc = "0.9.0"
+oidc = "0.9.1"
 [libraries]
 oidc-appsupport = { module = "io.github.kalinjul.kotlin.multiplatform:oidc-appsupport", version.ref = "oidc" }
 oidc-okhttp4 = { module = "io.github.kalinjul.kotlin.multiplatform:oidc-okhttp4", version.ref = "oidc" }
