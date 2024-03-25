@@ -65,8 +65,13 @@ class HandleRedirectActivity : ComponentActivity() {
         }
 
         @ExperimentalOpenIdConnect
-        var showWebView: Activity.(url: String, redirectUrl: String?) -> Unit = { url, redirectUrl ->
+        var showWebView: Activity.(url: String, redirectUrl: String?, epheremalSession: Boolean) -> Unit = { url, redirectUrl, epheremalSession ->
             val webView = createWebView(this, redirectUrl)
+            if (epheremalSession) {
+                CookieManager.getInstance().removeAllCookies(null)
+                webView.clearHistory()
+                webView.clearCache(true)
+            }
             setContentView(webView)
             webView.loadUrl(url)
         }
@@ -106,8 +111,7 @@ class HandleRedirectActivity : ComponentActivity() {
             // do not navigate to the login page again in this activity instance
             intent.removeExtra(EXTRA_KEY_URL)
             if (useWebView == true) {
-                setEpheremalSessionIfRequired(webViewEpheremalSession)
-                showWebView(url, redirectUrl)
+                showWebView(url, redirectUrl, webViewEpheremalSession ?: false)
             } else {
                 launchCustomTabsIntent(url)
             }
@@ -119,18 +123,6 @@ class HandleRedirectActivity : ComponentActivity() {
         builder.configureCustomTabsIntent()
         val intent = builder.build()
         intent.launchUrl(this, Uri.parse(url))
-    }
-
-    @OptIn(ExperimentalOpenIdConnect::class)
-    private fun setEpheremalSessionIfRequired(required: Boolean?) {
-        if (required == true) {
-            configureWebView = { webView ->
-                configureWebView(webView)
-                CookieManager.getInstance().removeAllCookies({})
-                webView.clearHistory()
-                webView.clearCache(true)
-            }
-        }
     }
 
     override fun onNewIntent(intent: Intent?) {
