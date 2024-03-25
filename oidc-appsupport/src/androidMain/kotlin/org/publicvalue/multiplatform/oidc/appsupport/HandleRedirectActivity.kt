@@ -125,7 +125,7 @@ class HandleRedirectActivity : ComponentActivity() {
     private fun setEpheremalSessionIfRequired(required: Boolean?) {
         if (required == true) {
             configureWebView = { webView ->
-                defaultConfigureWebView(webView)
+                configureWebView(webView)
                 CookieManager.getInstance().removeAllCookies({})
                 webView.clearHistory()
                 webView.clearCache(true)
