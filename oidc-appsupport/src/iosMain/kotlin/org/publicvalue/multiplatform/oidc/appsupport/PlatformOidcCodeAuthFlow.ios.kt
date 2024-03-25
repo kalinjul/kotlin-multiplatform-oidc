@@ -35,6 +35,10 @@ actual class PlatformCodeAuthFlow(
     client: OpenIdConnectClient,
     private val ephemeralBrowserSession: Boolean = false
 ): CodeAuthFlow(client) {
+
+    // required for swift (no default argument support)
+    constructor(client: OpenIdConnectClient) : this(client = client, ephemeralBrowserSession = false)
+
     override suspend fun getAuthorizationCode(request: AuthCodeRequest): AuthCodeResponse = wrapExceptions {
         val authResponse = suspendCoroutine { continuation ->
             val nsurl = NSURL.URLWithString(request.url.toString())
