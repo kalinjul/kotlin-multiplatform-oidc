@@ -3,6 +3,7 @@ package org.publicvalue.multiplatform.oidc.appsupport
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.webkit.CookieManager
 import android.webkit.WebChromeClient
@@ -100,20 +101,24 @@ class HandleRedirectActivity : ComponentActivity() {
 
         if (intent?.data != null) {
             // we're called by custom tab
-            setResult(RESULT_OK, intent)
+            // create new intent for result to mitigate intent redirection vulnerability
+            setResult(RESULT_OK, Intent().setData(intent?.data))
             finish()
         } else if (url == null) {
             // called by custom tab but no intent.data
             setResult(RESULT_CANCELED)
             finish()
         } else {
-            // login requested by app
-            // do not navigate to the login page again in this activity instance
-            intent.removeExtra(EXTRA_KEY_URL)
-            if (useWebView == true) {
-                showWebView(url, redirectUrl, webViewEpheremalSession ?: false)
-            } else {
-                launchCustomTabsIntent(url)
+            // check if launch tab request is legit
+            if (packageName == applicationContext.packageName) {
+                // login requested by app
+                // do not navigate to the login page again in this activity instance
+                intent.removeExtra(EXTRA_KEY_URL)
+                if (useWebView == true) {
+                    showWebView(url, redirectUrl, webViewEpheremalSession ?: false)
+                } else {
+                    launchCustomTabsIntent(url)
+                }
             }
         }
     }
