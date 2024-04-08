@@ -13,7 +13,7 @@ struct Readme {
         let client = OpenIdConnectClient(
             config: OpenIdConnectClientConfig(
                 discoveryUri: "<discovery url>",
-                endpoints: Endpoints(
+                endpoints: Endpoints( // pass nil if you only want to use discovery
                     tokenEndpoint: "<tokenEndpoint>",
                     authorizationEndpoint: "<authorizationEndpoint>",
                     userInfoEndpoint: nil,

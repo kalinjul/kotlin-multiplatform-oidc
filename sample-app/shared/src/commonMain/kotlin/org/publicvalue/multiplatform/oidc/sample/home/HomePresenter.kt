@@ -101,7 +101,7 @@ class HomePresenter(
                     if (client != null) {
                         tokenResponse?.let {
                             scope.launch {
-                                if (!client.config.endpoints.endSessionEndpoint.isNullOrEmpty()) {
+                                if (!client.config.endpoints?.endSessionEndpoint.isNullOrEmpty()) {
                                     catchErrorMessage {
                                         val result = client.endSession(idToken = it.id_token ?: "")
                                         if (result.isSuccess() || result == HttpStatusCode.Found) {

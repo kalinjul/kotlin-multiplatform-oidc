@@ -56,6 +56,7 @@ interface OpenIdConnectClient {
      * Creates an Authorization Code Request which can then be executed by the
      * [CodeAuthFlow][org.publicvalue.multiplatform.oidc.flows.CodeAuthFlow].
      */
+    @Throws(OpenIdConnectException::class)
     fun createAuthorizationCodeRequest(configure: (URLBuilder.() -> Unit)? = null): AuthCodeRequest
 
     /**
@@ -123,6 +124,7 @@ interface OpenIdConnectClient {
      *
      * @return [TokenRequest]
      */
+    @Throws(OpenIdConnectException::class, CancellationException::class)
     @Suppress("MemberVisibilityCanBePrivate")
     suspend fun createAccessTokenRequest(
         authCodeRequest: AuthCodeRequest,
@@ -139,6 +141,7 @@ interface OpenIdConnectClient {
      *
      * @return [TokenRequest]
      */
+    @Throws(OpenIdConnectException::class, CancellationException::class)
     @Suppress("MemberVisibilityCanBePrivate")
     suspend fun createRefreshTokenRequest(
         refreshToken: String,

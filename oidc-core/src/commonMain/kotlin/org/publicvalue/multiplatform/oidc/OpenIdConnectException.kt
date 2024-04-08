@@ -25,4 +25,6 @@ sealed class OpenIdConnectException(
     data class UnsupportedFormat(override val message: String): OpenIdConnectException(message)
 
     data class TechnicalFailure(override val message: String, override val cause: Throwable?): OpenIdConnectException(message, cause)
+
+    data class InvalidConfiguration(override val message: String): OpenIdConnectException(message)
 }
