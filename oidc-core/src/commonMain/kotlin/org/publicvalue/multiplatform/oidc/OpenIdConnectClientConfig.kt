@@ -30,7 +30,7 @@ class OpenIdConnectClientConfig(
      * You can override discovered endpoints in [endpoints]
      */
     val discoveryUri: String? = null,
-    var endpoints: Endpoints = Endpoints(),
+    var endpoints: Endpoints? = null,
     /**
      * REQUIRED
      *
@@ -67,7 +67,7 @@ class OpenIdConnectClientConfig(
     fun endpoints(
         block: Endpoints.() -> Unit
     ) {
-        this.endpoints = endpoints.apply(block)
+        this.endpoints = (endpoints ?: Endpoints()).apply(block)
     }
 
     /**
@@ -124,10 +124,10 @@ data class Endpoints(
  */
 fun OpenIdConnectClientConfig.validate() {
     if (discoveryUri.isNullOrBlank()) {
-        if (endpoints.tokenEndpoint == null) {
+        if (endpoints?.tokenEndpoint == null) {
             throw OpenIdConnectException.InvalidUrl("Invalid configuration: tokenEndpoint is null")
         }
-        if (endpoints.authorizationEndpoint == null) {
+        if (endpoints?.authorizationEndpoint == null) {
             throw OpenIdConnectException.InvalidUrl("Invalid configuration: authorizationEndpoint is null")
         }
     }

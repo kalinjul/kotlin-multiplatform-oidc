@@ -88,12 +88,14 @@ class DefaultOpenIdConnectClient(
         config.validate()
     }
 
+    @Throws(OpenIdConnectException::class)
     override fun createAuthorizationCodeRequest(configure: (URLBuilder.() -> Unit)?): AuthCodeRequest {
         val pkce = Pkce(config.codeChallengeMethod)
         val nonce = randomBytes().encodeForPKCE()
         val state = randomBytes().encodeForPKCE()
 
-        val url = URLBuilder(config.endpoints.authorizationEndpoint!!).apply {
+        val authorizationEndpoint = config.endpoints?.authorizationEndpoint ?: run { throw OpenIdConnectException.InvalidConfiguration("No authorizationEndpoint set") }
+        val url = URLBuilder(authorizationEndpoint).apply {
             parameters.append("client_id", config.clientId!!)
             config.clientSecret?.let { if (it.isNotBlank()) { parameters.append("client_secret", it) } }
             parameters.append("response_type", "code")
@@ -125,7 +127,7 @@ class DefaultOpenIdConnectClient(
 
     @Throws(OpenIdConnectException::class, CancellationException::class)
     override suspend fun endSession(idToken: String, configure: (HttpRequestBuilder.() -> Unit)?): HttpStatusCode = wrapExceptions {
-        val endpoint = config.endpoints.endSessionEndpoint?.trim()
+        val endpoint = config.endpoints?.endSessionEndpoint?.trim()
         if (!endpoint.isNullOrEmpty()) {
             val url = URLBuilder(endpoint)
             val response = httpClient.submitForm {
@@ -152,6 +154,7 @@ class DefaultOpenIdConnectClient(
         return executeTokenRequest(tokenRequest.request)
     }
 
+    @Throws(OpenIdConnectException::class, CancellationException::class)
     override suspend fun createAccessTokenRequest(authCodeRequest: AuthCodeRequest, code: String, configure: (HttpRequestBuilder.() -> Unit)?): TokenRequest = wrapExceptions {
         val url = URLBuilder(getOrDiscoverTokenEndpoint()).build()
 
@@ -159,11 +162,11 @@ class DefaultOpenIdConnectClient(
             append("grant_type", "authorization_code")
             append("code", code)
             config.redirectUri?.let { append("redirect_uri", it) }
-            append("client_id", config.clientId!!)
+            append("client_id", config.clientId ?: run { throw OpenIdConnectException.InvalidConfiguration("clientId is missing") })
             config.clientSecret?.let { append("client_secret", it) }
             if (config.codeChallengeMethod != CodeChallengeMethod.off) { append("code_verifier", authCodeRequest.pkce.codeVerifier) }
         }
-        val request = runBlocking { // there is no real suspend function happening
+        val request = runBlocking { // there is no suspending happening here
             httpClient.prepareForm(
                 formParameters = formParameters
             ) {
@@ -177,17 +180,18 @@ class DefaultOpenIdConnectClient(
         )
     }
 
+    @Throws(OpenIdConnectException::class, CancellationException::class)
     override suspend fun createRefreshTokenRequest(refreshToken: String, configure: (HttpRequestBuilder.() -> Unit)?): TokenRequest = wrapExceptions {
         val url = URLBuilder(getOrDiscoverTokenEndpoint()).build()
 
         val formParameters = parameters {
             append("grant_type", "refresh_token")
-            append("client_id", config.clientId!!)
+            append("client_id", config.clientId ?: run { throw OpenIdConnectException.InvalidConfiguration("clientId is missing") })
             config.clientSecret?.let { append("client_secret", it) }
             append("refresh_token", refreshToken)
             config.scope?.let { append("scope", it) }
         }
-        val request = runBlocking { // there is no real suspend function happening
+        val request = runBlocking { // there is no suspending happening here
             httpClient.prepareForm(
                 formParameters = formParameters
             ) {
@@ -202,11 +206,11 @@ class DefaultOpenIdConnectClient(
     }
 
     private suspend fun getOrDiscoverTokenEndpoint(): String {
-        return if (config.endpoints.tokenEndpoint != null) {
-            config.endpoints.tokenEndpoint!!
+        return if (config.endpoints?.tokenEndpoint != null) {
+            config.endpoints?.tokenEndpoint!!
         } else {
             discover()
-            config.endpoints.tokenEndpoint!!
+            config.endpoints?.tokenEndpoint!!
         }
     }
 
