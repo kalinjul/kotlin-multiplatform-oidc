@@ -15,7 +15,7 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
 
             extensions.configure<LibraryExtension> {
                 configureKotlinAndroid(this)
-                namespace = "org.publicvalue.multiplatform.mobilecapture.${project.name.replace("-", ".")}"
+                namespace = "org.publicvalue.multiplatform.${project.name.replace("-", ".")}"
             }
         }
     }

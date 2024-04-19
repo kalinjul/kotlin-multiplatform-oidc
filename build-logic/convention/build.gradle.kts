@@ -4,7 +4,7 @@ plugins {
     `kotlin-dsl`
 }
 
-group = "org.publicvalue.multiplatform.mobilecapture.buildlogic"
+group = "org.publicvalue.buildlogic"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17 // hardcode to default android studio embedded jdk version JavaVersion.toVersion(libs.versions.jvmTarget.get())
