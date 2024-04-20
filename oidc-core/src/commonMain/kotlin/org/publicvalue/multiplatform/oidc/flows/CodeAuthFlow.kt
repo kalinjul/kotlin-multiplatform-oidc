@@ -1,5 +1,6 @@
 package org.publicvalue.multiplatform.oidc.flows
 
+import io.ktor.client.request.HttpRequestBuilder
 import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
 import org.publicvalue.multiplatform.oidc.OpenIdConnectException
 import org.publicvalue.multiplatform.oidc.types.AuthCodeRequest
@@ -21,19 +22,25 @@ import kotlin.native.ObjCName
 @ObjCName(swiftName = "AbstractCodeAuthFlow", name = "AbstractCodeAuthFlow", exact = true)
 abstract class CodeAuthFlow(val client: OpenIdConnectClient) {
 
+    /**
+     * Start the authorization flow to request an access token.
+     *
+     * @param configure configuration closure to configure the http request builder with (will _not_
+     * be used for discovery if necessary)
+     */
     @Suppress("unused")
     @Throws(CancellationException::class, OpenIdConnectException::class)
-    suspend fun getAccessToken(): AccessTokenResponse = wrapExceptions {
+    suspend fun getAccessToken(configure: (HttpRequestBuilder.() -> Unit)? = null): AccessTokenResponse = wrapExceptions {
         if (!client.config.discoveryUri.isNullOrEmpty()) {
             client.discover()
         }
         val request = client.createAuthorizationCodeRequest()
-        return getAccessToken(request)
+        return getAccessToken(request, configure)
     }
 
-    private suspend fun getAccessToken(request: AuthCodeRequest): AccessTokenResponse {
+    private suspend fun getAccessToken(request: AuthCodeRequest, configure: (HttpRequestBuilder.() -> Unit)?): AccessTokenResponse {
         val codeResponse = getAuthorizationCode(request)
-        return exchangeToken(client, request, codeResponse)
+        return exchangeToken(client, request, codeResponse, configure)
     }
 
     /**
@@ -44,14 +51,19 @@ abstract class CodeAuthFlow(val client: OpenIdConnectClient) {
     @Throws(CancellationException::class, OpenIdConnectException::class)
     abstract suspend fun getAuthorizationCode(request: AuthCodeRequest): AuthCodeResponse
 
-    private suspend fun exchangeToken(client: OpenIdConnectClient, request: AuthCodeRequest, authCodeResponse: AuthCodeResponse): AccessTokenResponse {
+    private suspend fun exchangeToken(
+        client: OpenIdConnectClient,
+        request: AuthCodeRequest,
+        authCodeResponse: AuthCodeResponse,
+        configure: (HttpRequestBuilder.() -> Unit)?
+    ): AccessTokenResponse {
         authCodeResponse.fold(
             onSuccess = {
                 if (it.code != null) {
                     if (!request.validateState(it.state ?: "")) {
                         throw OpenIdConnectException.AuthenticationFailure("Invalid state")
                     }
-                    val response = client.exchangeToken(request, it.code)
+                    val response = client.exchangeToken(request, it.code, configure)
                     return response
                 } else {
                     throw OpenIdConnectException.AuthenticationFailure("No auth code", cause = null)

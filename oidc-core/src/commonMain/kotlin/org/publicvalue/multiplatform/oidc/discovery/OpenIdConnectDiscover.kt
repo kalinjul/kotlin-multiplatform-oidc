@@ -2,6 +2,7 @@ package org.publicvalue.multiplatform.oidc.discovery
 
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
+import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.get
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.Url
@@ -32,20 +33,24 @@ class OpenIdConnectDiscover(
      * Retrieve configuration document from url.
      *
      * @param configurationUrl the url
+     * @param configure configuration closure to configure the http request builder with
      * @return [OpenIdConnectConfiguration]
      */
-    suspend fun downloadConfiguration(configurationUrl: String): OpenIdConnectConfiguration {
-        return downloadConfiguration(Url(configurationUrl))
+    suspend fun downloadConfiguration(configurationUrl: String, configure: (HttpRequestBuilder.() -> Unit)? = null): OpenIdConnectConfiguration {
+        return downloadConfiguration(Url(configurationUrl), configure)
     }
 
     /**
      * Retrieve configuration document from url.
      *
      * @param configurationUrl the url
+     * @param configure configuration closure to configure the http request builder with
      * @return [OpenIdConnectConfiguration]
      */
-    suspend fun downloadConfiguration(configurationUrl: Url): OpenIdConnectConfiguration {
-        val result = httpClient.get(configurationUrl)
+    suspend fun downloadConfiguration(configurationUrl: Url, configure: (HttpRequestBuilder.() -> Unit)? = null): OpenIdConnectConfiguration {
+        val result = httpClient.get(configurationUrl) {
+            configure?.invoke(this)
+        }
         val configuration: OpenIdConnectConfiguration = result.forceUnwrapBody(json)
         return configuration
     }

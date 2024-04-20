@@ -63,7 +63,7 @@ class DefaultOpenIdConnectClient(
         val DefaultHttpClient by lazy {
             HttpClient {
                 install(ContentNegotiation) {
-                    // register custom type matcher to support broken IDPs that don't correct content-type
+                    // register custom type matcher to support broken IDPs that don't send correct content-type
                     register(
                         contentTypeToSend = ContentType.Application.Json,
                         converter = KotlinxSerializationConverter(
@@ -115,9 +115,9 @@ class DefaultOpenIdConnectClient(
     }
 
     @Throws(OpenIdConnectException::class, CancellationException::class)
-    override suspend fun discover() = wrapExceptions {
+    override suspend fun discover(configure: (HttpRequestBuilder.() -> Unit)?) = wrapExceptions {
         config.discoveryUri?.let { discoveryUri ->
-            val config = OpenIdConnectDiscover(httpClient).downloadConfiguration(discoveryUri)
+            val config = OpenIdConnectDiscover(httpClient).downloadConfiguration(discoveryUri, configure)
             this.config.updateWithDiscovery(config)
             discoverDocument = config
         } ?: run {
@@ -131,7 +131,7 @@ class DefaultOpenIdConnectClient(
         if (!endpoint.isNullOrEmpty()) {
             val url = URLBuilder(endpoint)
             val response = httpClient.submitForm {
-                this.url(url.build())
+                url(url.build())
                 parameter("id_token_hint", idToken)
                 configure?.invoke(this)
             }

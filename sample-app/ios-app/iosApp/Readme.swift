@@ -28,6 +28,32 @@ struct Readme {
         )
     }
     
+    // Create OpenID client with custom http client configuration:
+    func _1b() {
+        let client = OpenIdConnectClient(
+            httpClient: OpenIdConnectClient.companion.DefaultHttpClient.config(block: { config in
+                config.installClientPlugin(
+                    name: "customheader",
+                    onRequest: { requestBuilder, content in
+                        requestBuilder.headers.append(name: "User-Agent", value: "oidcclient")
+                    },
+                    onResponse: {_ in},
+                    onClose: {}
+                )
+            }),
+            config: OpenIdConnectClientConfig(
+                discoveryUri: "<discovery url>",
+                endpoints: nil,
+                clientId: "<clientId>",
+                clientSecret: "<clientSecret>",
+                scope: "openid profile",
+                codeChallengeMethod: .s256,
+                redirectUri: "<redirectUri>"
+            )
+            
+        )
+    }
+    
     // Request access token using code auth flow:
     func _2() async {
         let flow = CodeAuthFlow(client: client)
@@ -40,6 +66,10 @@ struct Readme {
     
     // Perform refresh or endSession:
     func _3() async throws {
+        try await client.refreshToken(refreshToken: "") { builder in
+            builder.headers.append(name: "Accept", value: "application/json")
+            builder.build()
+        }
         try await client.refreshToken(refreshToken: tokens.refresh_token!)
         try await client.endSession(idToken: tokens.id_token!)
     }
