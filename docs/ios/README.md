@@ -45,7 +45,24 @@ let client = OpenIdConnectClient(
     )
 )
 ```
-If you provide a Discovery URI, you may skip the endpoint configuration.
+If you provide a Discovery URI, you may skip the endpoint configuration and set endpoints to nil.
+If required, you can also configure the http client with custom headers etc:
+
+```swift
+let client = OpenIdConnectClient(
+    httpClient: OpenIdConnectClient.companion.DefaultHttpClient.config(block: { config in
+        config.installClientPlugin(
+            name: "customheader",
+            onRequest: { requestBuilder, content in
+                requestBuilder.headers.append(name: "User-Agent", value: "oidcclient")
+            },
+            onResponse: {_ in},
+            onClose: {}
+        )
+    }),
+    config: ...
+)
+```
 
 Request access token using code auth flow:
 ```swift 

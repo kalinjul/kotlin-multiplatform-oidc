@@ -64,15 +64,20 @@ interface OpenIdConnectClient {
      * Updates the configuration, but will keep any existing configuration.
      *
      * See: [OpenID Connect Discovery](https://openid.net/specs/openid-connect-discovery-1_0.html)
+     *
+     * @param configure configuration closure to configure the http request builder with
      */
     @Throws(OpenIdConnectException::class, CancellationException::class)
-    suspend fun discover()
+    suspend fun discover(configure: (HttpRequestBuilder.() -> Unit)? = null)
 
     /**
      * RP-initiated logout.
      * Just performs the GET request for logout, we skip the redirect part for convenience.
      *
      * See: [OpenID Spec](https://openid.net/specs/openid-connect-rpinitiated-1_0.html)
+     *
+     * @param configure configuration closure to configure the http request builder with (will _not_
+     * be used for discovery if necessary)
      */
     @Throws(OpenIdConnectException::class, CancellationException::class)
     suspend fun endSession(
@@ -87,7 +92,8 @@ interface OpenIdConnectClient {
      *
      * @param authCodeRequest the original request for auth code
      * @param code the authcode received via redirect
-     * @param configure configuration closure for the HTTP request
+     * @param configure configuration closure for the HTTP request (will _not_  be used for
+     * discovery if necessary)
      *
      * @return [AccessTokenResponse]
      */
@@ -103,7 +109,8 @@ interface OpenIdConnectClient {
      * [RFC6749](https://datatracker.ietf.org/doc/html/rfc6749#section-6)
      *
      * @param refreshToken the refresh token
-     * @param configure configuration closure for the HTTP request
+     * @param configure configuration closure for the HTTP request (will _not_  be used for
+     * discovery if necessary)
      *
      * @return [AccessTokenResponse]
      */
@@ -137,7 +144,8 @@ interface OpenIdConnectClient {
      * You should use [OpenIdConnectClient.refreshToken] for creating and executing a request instead.
      *
      * @param refreshToken the refresh token
-     * @param configure configuration closure for the HTTP request
+     * @param configure configuration closure for the HTTP request (will _not_  be used for
+     * discovery if necessary)
      *
      * @return [TokenRequest]
      */
