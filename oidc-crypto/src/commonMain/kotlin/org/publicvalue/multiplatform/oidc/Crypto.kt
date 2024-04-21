@@ -4,14 +4,16 @@ import io.ktor.util.encodeBase64
 import kotlin.random.Random
 
 /**
- * Generate random bytes using [Random] and return as byte array.
- * @param number of bytes to generate
+ * Generate random bytes using a cryptographically secure random
+ * number generator.
+ *
+ * On Android, this delegates to [`java.security.SecureRandom`](https://developer.android.com/reference/java/security/SecureRandom)
+ *
+ * On iOS, this delegates to [`SecRandomCopyBytes`](https://developer.apple.com/documentation/security/1399291-secrandomcopybytes?language=objc)
+ *
+ * @param size number of bytes to generate
  */
-fun randomBytes(size: Int = 32): ByteArray {
-    val random = Random.Default
-    val bytes = random.nextBytes(size)
-    return bytes
-}
+expect fun secureRandomBytes(size: Int = 32): ByteArray
 
 /**
  * Implementation of base64urlencode,

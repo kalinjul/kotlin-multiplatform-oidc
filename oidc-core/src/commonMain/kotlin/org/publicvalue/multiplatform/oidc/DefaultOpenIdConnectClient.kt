@@ -90,8 +90,8 @@ class DefaultOpenIdConnectClient(
 
     override fun createAuthorizationCodeRequest(configure: (URLBuilder.() -> Unit)?): AuthCodeRequest {
         val pkce = Pkce(config.codeChallengeMethod)
-        val nonce = randomBytes().encodeForPKCE()
-        val state = randomBytes().encodeForPKCE()
+        val nonce = secureRandomBytes().encodeForPKCE()
+        val state = secureRandomBytes().encodeForPKCE()
 
         val url = URLBuilder(config.endpoints.authorizationEndpoint!!).apply {
             parameters.append("client_id", config.clientId!!)

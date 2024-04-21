@@ -1,8 +1,8 @@
 package org.publicvalue.multiplatform.oidc.flows
 
 import org.publicvalue.multiplatform.oidc.encodeForPKCE
-import org.publicvalue.multiplatform.oidc.randomBytes
 import org.publicvalue.multiplatform.oidc.s256
+import org.publicvalue.multiplatform.oidc.secureRandomBytes
 import org.publicvalue.multiplatform.oidc.types.CodeChallengeMethod
 import kotlin.experimental.ExperimentalObjCName
 import kotlin.native.ObjCName
@@ -21,7 +21,7 @@ class Pkce(
 ) {
     private companion object {
         fun verifier(): String {
-            val bytes = randomBytes()
+            val bytes = secureRandomBytes()
             return bytes.encodeForPKCE()
         }
 
