@@ -22,6 +22,15 @@ import kotlin.native.ObjCName
 @ObjCName(swiftName = "AbstractCodeAuthFlow", name = "AbstractCodeAuthFlow", exact = true)
 abstract class CodeAuthFlow(val client: OpenIdConnectClient) {
 
+
+    /**
+     * For some reason the default parameter is not available in Platform implementations,
+     * so this provides an empty parameter method instead.
+     */
+    @Suppress("unused")
+    @Throws(CancellationException::class, OpenIdConnectException::class)
+    suspend fun getAccessToken(): AccessTokenResponse = getAccessToken(null)
+
     /**
      * Start the authorization flow to request an access token.
      *
