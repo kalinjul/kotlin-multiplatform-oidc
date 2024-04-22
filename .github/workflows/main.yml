@@ -5,8 +5,8 @@ on:
     paths-ignore:
       - 'README.md'
     branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+#  pull_request:
+#    branches: [ "main" ]
 
 concurrency:
   group: ${{ github.name }}-${{ github.workflow }}-${{ github.head_ref }}
@@ -28,6 +28,8 @@ jobs:
   test:
     needs: [ build ]
     runs-on: macos-13
+    permissions:
+      checks: write # required for test-reporter
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/workflows/actions/test
