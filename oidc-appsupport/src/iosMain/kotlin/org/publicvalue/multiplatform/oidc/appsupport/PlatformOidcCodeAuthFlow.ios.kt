@@ -54,13 +54,13 @@ actual class PlatformAuthFlow(
                                 val state = url.parameters["state"]?.ifBlank { null }
 
                                 if (code == null) {
-                                    val accessToken = url.parameters["access_token"]?.ifBlank { null }
+                                    val accessToken = url.getFragmentOrQueryParameter("access_token")?.ifBlank { null }
                                     if (accessToken != null) {
                                         continuation.resume(AuthResponse.success(
                                             AuthResult.AccessToken(
                                                 access_token = accessToken,
-                                                token_type = url.parameters["token_type"]?.ifBlank { null },
-                                                expires_in = url.parameters["expires_in"]?.ifBlank { null }?.toIntOrNull()
+                                                token_type = url.getFragmentOrQueryParameter("token_type")?.ifBlank { null },
+                                                expires_in = url.getFragmentOrQueryParameter("expires_in")?.ifBlank { null }?.toIntOrNull()
                                             )
                                         ))
                                     }

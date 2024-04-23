@@ -3,6 +3,7 @@ package org.publicvalue.multiplatform.oidc.appsupport
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import androidx.activity.result.ActivityResult
 import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
 import org.publicvalue.multiplatform.oidc.OpenIdConnectException
@@ -43,13 +44,13 @@ actual class PlatformAuthFlow(
                 val state = responseUri.getQueryParameter("state")?.ifBlank { null }
                 val code = responseUri.getQueryParameter("code")?.ifBlank { null }
                 if (code == null) {
-                    val accessToken = responseUri.getQueryParameter("access_token")?.ifBlank { null }
+                    val accessToken = responseUri.getFragmentOrQueryParameter("access_token")?.ifBlank { null }
                     if (accessToken != null) {
                         return AuthResponse.success(
                             AuthResult.AccessToken(
                                 access_token = accessToken,
-                                token_type = responseUri.getQueryParameter("token_type")?.ifBlank { null },
-                                expires_in = responseUri.getQueryParameter("expires_in")?.ifBlank { null }?.toIntOrNull()
+                                token_type = responseUri.getFragmentOrQueryParameter("token_type")?.ifBlank { null },
+                                expires_in = responseUri.getFragmentOrQueryParameter("expires_in")?.ifBlank { null }?.toIntOrNull()
                             )
                         )
                     }
@@ -60,4 +61,8 @@ actual class PlatformAuthFlow(
             Result.failure(OpenIdConnectException.AuthenticationFailure(message = "CustomTab result not ok (was ${result.resultCode}) or no Uri in callback from browser (was ${responseUri})."))
         }
     }
+}
+
+private fun Uri.getFragmentOrQueryParameter(param: String): String? {
+    return this.fragment.getFragmentParameter(param) ?: getQueryParameter(param)?.ifBlank { null }
 }
