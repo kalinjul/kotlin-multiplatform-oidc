@@ -4,7 +4,7 @@ import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
 
 @Suppress("unused")
 class JvmCodeAuthFlowFactory(
-): CodeAuthFlowFactory {
+): AuthFlowFactory {
     override fun createAuthFlow(client: OpenIdConnectClient): PlatformCodeAuthFlow {
         return PlatformCodeAuthFlow(client)
     }

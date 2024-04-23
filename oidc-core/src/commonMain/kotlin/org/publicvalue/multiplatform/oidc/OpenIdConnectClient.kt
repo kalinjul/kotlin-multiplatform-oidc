@@ -5,9 +5,8 @@ import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.URLBuilder
 import org.publicvalue.multiplatform.oidc.DefaultOpenIdConnectClient.Companion.DefaultHttpClient
-import org.publicvalue.multiplatform.oidc.types.AuthCodeRequest
-import org.publicvalue.multiplatform.oidc.types.TokenRequest
-import org.publicvalue.multiplatform.oidc.types.remote.AccessTokenResponse
+import org.publicvalue.multiplatform.oidc.types.AuthRequest
+import org.publicvalue.multiplatform.oidc.types.remote.AuthResult
 import org.publicvalue.multiplatform.oidc.types.remote.OpenIdConnectConfiguration
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.experimental.ExperimentalObjCName
@@ -57,7 +56,7 @@ interface OpenIdConnectClient {
      * [CodeAuthFlow][org.publicvalue.multiplatform.oidc.flows.CodeAuthFlow].
      */
     @Throws(OpenIdConnectException::class)
-    fun createAuthorizationCodeRequest(configure: (URLBuilder.() -> Unit)? = null): AuthCodeRequest
+    fun createAuthorizationCodeRequest(configure: (URLBuilder.() -> Unit)? = null): AuthRequest.Code
 
     /**
      * Discover OpenID Connect Configuration using the discovery endpoint.
@@ -99,10 +98,10 @@ interface OpenIdConnectClient {
      */
     @Throws(OpenIdConnectException::class, CancellationException::class)
     suspend fun exchangeToken(
-        authCodeRequest: AuthCodeRequest,
+        authCodeRequest: AuthRequest,
         code: String,
         configure: (HttpRequestBuilder.() -> Unit)? = null
-    ): AccessTokenResponse
+    ): AuthResult.AccessToken
 
     /**
      * Create and send a Refresh Token Request.
@@ -119,7 +118,7 @@ interface OpenIdConnectClient {
     suspend fun refreshToken(
         refreshToken: String,
         configure: (HttpRequestBuilder.() -> Unit)? = null
-    ): AccessTokenResponse
+    ): AuthResult.AccessToken
 
     /**
      * Create an Access Token Request.
@@ -134,10 +133,10 @@ interface OpenIdConnectClient {
     @Throws(OpenIdConnectException::class, CancellationException::class)
     @Suppress("MemberVisibilityCanBePrivate")
     suspend fun createAccessTokenRequest(
-        authCodeRequest: AuthCodeRequest,
+        authCodeRequest: AuthRequest.Code,
         code: String,
         configure: (HttpRequestBuilder.() -> Unit)? = null
-    ): TokenRequest
+    ): AuthRequest.Token
 
     /**
      * Create a Refresh Token Request.
@@ -154,5 +153,8 @@ interface OpenIdConnectClient {
     suspend fun createRefreshTokenRequest(
         refreshToken: String,
         configure: (HttpRequestBuilder.() -> Unit)? = null
-    ): TokenRequest
+    ): AuthRequest.Token
+
+    @Throws(OpenIdConnectException::class, CancellationException::class)
+    suspend fun createImplicitAccessTokenRequest(configure: (HttpRequestBuilder.() -> Unit)? = null): AuthRequest.Token
 }

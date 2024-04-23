@@ -2,7 +2,7 @@ package org.publicvalue.multiplatform.oidc.tokenstore
 
 import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
 import org.publicvalue.multiplatform.oidc.OpenIdConnectException
-import org.publicvalue.multiplatform.oidc.types.remote.AccessTokenResponse
+import org.publicvalue.multiplatform.oidc.types.remote.AuthResult
 import kotlin.coroutines.cancellation.CancellationException
 
 /**
@@ -27,5 +27,5 @@ suspend fun TokenRefreshHandler.refreshAndSaveToken(refresher: TokenRefresher, o
  * For iOS because we cannot accept lambdas as parameters yet
  */
 interface TokenRefresher {
-    suspend fun refreshToken(refreshToken: String): AccessTokenResponse
+    suspend fun refreshToken(refreshToken: String): AuthResult.AccessToken
 }

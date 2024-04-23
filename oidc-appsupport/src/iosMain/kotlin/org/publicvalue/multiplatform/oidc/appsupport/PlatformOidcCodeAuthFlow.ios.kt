@@ -5,10 +5,10 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
 import org.publicvalue.multiplatform.oidc.OpenIdConnectException
-import org.publicvalue.multiplatform.oidc.flows.AuthCodeResponse
-import org.publicvalue.multiplatform.oidc.flows.AuthCodeResult
-import org.publicvalue.multiplatform.oidc.flows.CodeAuthFlow
-import org.publicvalue.multiplatform.oidc.types.AuthCodeRequest
+import org.publicvalue.multiplatform.oidc.flows.AuthFlow
+import org.publicvalue.multiplatform.oidc.types.AuthRequest
+import org.publicvalue.multiplatform.oidc.types.remote.AuthResponse
+import org.publicvalue.multiplatform.oidc.types.remote.AuthResult
 import org.publicvalue.multiplatform.oidc.wrapExceptions
 import platform.AuthenticationServices.ASPresentationAnchor
 import platform.AuthenticationServices.ASWebAuthenticationPresentationContextProvidingProtocol
@@ -34,31 +34,49 @@ import kotlin.experimental.ExperimentalObjCName
 actual class PlatformCodeAuthFlow(
     client: OpenIdConnectClient,
     private val ephemeralBrowserSession: Boolean = false
-): CodeAuthFlow(client) {
+): AuthFlow(client) {
 
     // required for swift (no default argument support)
     constructor(client: OpenIdConnectClient) : this(client = client, ephemeralBrowserSession = false)
 
-    override suspend fun getAuthorizationCode(request: AuthCodeRequest): AuthCodeResponse = wrapExceptions {
+    override suspend fun getAuthorizationResult(request: AuthRequest): AuthResponse = wrapExceptions {
         val authResponse = suspendCoroutine { continuation ->
-            val nsurl = NSURL.URLWithString(request.url.toString())
-            if (nsurl != null) {
+            val nsUrl = NSURL.URLWithString(request.url.toString())
+            if (nsUrl != null) {
                 val session = ASWebAuthenticationSession(
-                    uRL = nsurl,
+                    uRL = nsUrl,
                     callbackURLScheme = request.config.redirectUri?.let { Url(it) }?.protocol?.name,
                     completionHandler = object : ASWebAuthenticationSessionCompletionHandler {
                         override fun invoke(p1: NSURL?, p2: NSError?) {
                             if (p1 != null) {
                                 val url = Url(p1.toString()) // use sane url instead of NS garbage
-                                val code = url.parameters["code"] ?: ""
-                                val state = url.parameters["state"] ?: ""
+                                val code = url.parameters["code"]?.ifBlank { null }
+                                val state = url.parameters["state"]?.ifBlank { null }
 
-                                continuation.resume(AuthCodeResponse.success(AuthCodeResult(code = code, state = state)))
+                                if (code == null) {
+                                    val accessToken = url.parameters["access_token"]?.ifBlank { null }
+                                    if (accessToken != null) {
+                                        continuation.resume(AuthResponse.success(
+                                            AuthResult.AccessToken(
+                                                access_token = accessToken,
+                                                token_type = url.parameters["token_type"]?.ifBlank { null },
+                                                expires_in = url.parameters["expires_in"]?.ifBlank { null }?.toIntOrNull()
+                                            )
+                                        ))
+                                    }
+                                }
+
+                                continuation.resume(AuthResponse.success(
+                                    AuthResult.Code(
+                                        code = code,
+                                        state = state
+                                    )
+                                ))
                             } else {
                                 if (p2 != null) {
-                                    continuation.resume(AuthCodeResponse.failure<AuthCodeResult>(OpenIdConnectException.AuthenticationFailure(p2.localizedDescription)))
+                                    continuation.resume(AuthResponse.failure<AuthResult>(OpenIdConnectException.AuthenticationFailure(p2.localizedDescription)))
                                 } else {
-                                    continuation.resume(AuthCodeResponse.failure<AuthCodeResult>(OpenIdConnectException.AuthenticationFailure("No message")))
+                                    continuation.resume(AuthResponse.failure<AuthResult>(OpenIdConnectException.AuthenticationFailure("No message")))
                                 }
                             }
                         }

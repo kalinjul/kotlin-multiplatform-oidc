@@ -1,5 +1,5 @@
 package org.publicvalue.multiplatform.oidc.appsupport
 
-import org.publicvalue.multiplatform.oidc.flows.CodeAuthFlow
+import org.publicvalue.multiplatform.oidc.flows.AuthFlow
 
-expect class PlatformCodeAuthFlow: CodeAuthFlow
+expect class PlatformCodeAuthFlow: AuthFlow

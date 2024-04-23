@@ -8,10 +8,10 @@ import kotlinx.coroutines.withContext
 import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
 import org.publicvalue.multiplatform.oidc.OpenIdConnectException
 import org.publicvalue.multiplatform.oidc.appsupport.webserver.Webserver
-import org.publicvalue.multiplatform.oidc.flows.AuthCodeResponse
-import org.publicvalue.multiplatform.oidc.flows.AuthCodeResult
-import org.publicvalue.multiplatform.oidc.flows.CodeAuthFlow
-import org.publicvalue.multiplatform.oidc.types.AuthCodeRequest
+import org.publicvalue.multiplatform.oidc.flows.AuthFlow
+import org.publicvalue.multiplatform.oidc.types.AuthRequest
+import org.publicvalue.multiplatform.oidc.types.remote.AuthResponse
+import org.publicvalue.multiplatform.oidc.types.remote.AuthResult
 import java.awt.Desktop
 import java.net.InetAddress
 import java.net.NetworkInterface
@@ -19,13 +19,12 @@ import java.net.SocketException
 
 actual class PlatformCodeAuthFlow(
     client: OpenIdConnectClient
-) : CodeAuthFlow(client) {
+) : AuthFlow(client) {
     companion object {
         var PORT = 8080
     }
 
-    override suspend fun getAuthorizationCode(request: AuthCodeRequest): AuthCodeResponse {
-
+    override suspend fun getAuthorizationResult(request: AuthRequest): AuthResponse {
         val redirectUrl = request.config.redirectUri?.let { Url(it) }
         if (redirectUrl?.port != PORT || !redirectUrl.isLocalhost()) {
             throw OpenIdConnectException.AuthenticationFailure("JVM implementation can only handle redirect uris using localhost port 8080! Redirect uri was: $redirectUrl")
@@ -33,21 +32,32 @@ actual class PlatformCodeAuthFlow(
 
         val webserver = Webserver()
 
-        val response =
-            withContext(Dispatchers.IO) {
-                async {
-                    request.url.openInBrowser()
-                    val response = webserver.startAndWaitForRedirect(PORT, redirectPath = redirectUrl.encodedPath)
-                    webserver.stop()
-                    response
-                }.await()
+        val response = withContext(Dispatchers.IO) {
+            async {
+                request.url.openInBrowser()
+                val response = webserver.startAndWaitForRedirect(PORT, redirectPath = redirectUrl.encodedPath)
+                webserver.stop()
+                response
+            }.await()
+        }
+
+        val authCode = response?.queryParameters?.get("code")?.ifBlank { null }
+        val state = response?.queryParameters?.get("state")?.ifBlank { null }
+
+        if (authCode == null) {
+            val accessToken = response?.queryParameters?.get("access_token")?.ifBlank { null }
+            if (accessToken != null) {
+                return AuthResponse.success(
+                    AuthResult.AccessToken(
+                        access_token = accessToken,
+                        token_type = response.queryParameters["token_type"]?.ifBlank { null },
+                        expires_in = response.queryParameters["expires_in"]?.ifBlank { null }?.toIntOrNull()
+                    )
+                )
             }
-
-        val authCode = response?.queryParameters?.get("code")
-        val state = response?.queryParameters?.get("state")
-
-        return AuthCodeResponse.success(
-            AuthCodeResult(
+        }
+        return AuthResponse.success(
+            AuthResult.Code(
                 code = authCode,
                 state = state
             )

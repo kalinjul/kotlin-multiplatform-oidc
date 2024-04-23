@@ -4,12 +4,12 @@ import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
 import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
 import org.publicvalue.multiplatform.oidc.appsupport.AndroidCodeAuthFlowFactory
 import org.publicvalue.multiplatform.oidc.tokenstore.TokenStore
-import org.publicvalue.multiplatform.oidc.appsupport.CodeAuthFlowFactory
+import org.publicvalue.multiplatform.oidc.appsupport.AuthFlowFactory
 import org.publicvalue.multiplatform.oidc.tokenstore.TokenRefreshHandler
 import org.publicvalue.multiplatform.oidc.tokenstore.saveTokens
 import org.publicvalue.multiplatform.oidc.types.CodeChallengeMethod
 import org.publicvalue.multiplatform.oidc.types.parseJwt
-import org.publicvalue.multiplatform.oidc.types.remote.AccessTokenResponse
+import org.publicvalue.multiplatform.oidc.types.remote.AuthResult
 import kotlin.experimental.ExperimentalObjCRefinement
 
 
@@ -19,8 +19,8 @@ import kotlin.experimental.ExperimentalObjCRefinement
 @OptIn(ExperimentalObjCRefinement::class, ExperimentalOpenIdConnect::class)
 object README {
     val client = OpenIdConnectClient {  }
-    val authFlowFactory: CodeAuthFlowFactory = TODO()
-    val tokens: AccessTokenResponse = TODO()
+    val authFlowFactory: AuthFlowFactory = TODO()
+    val tokens: AuthResult.AccessToken = TODO()
     val idToken: String = TODO()
     val tokenstore: TokenStore = TODO()
     val token: String = TODO()
@@ -77,7 +77,7 @@ object README {
 
     // We provide simple JWT parsing
     fun `We_provide_simple_JWT_parsing`() {
-        val tokens = AccessTokenResponse("abc")
+        val tokens = AuthResult.AccessToken("abc")
         val jwt = tokens.id_token?.parseJwt()
         println(jwt?.payload?.aud) // print audience
         println(jwt?.payload?.iss) // print issuer

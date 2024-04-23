@@ -10,7 +10,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
-import org.publicvalue.multiplatform.oidc.flows.CodeAuthFlow
+import org.publicvalue.multiplatform.oidc.flows.AuthFlow
 
 /**
  * Factory to create an Auth Flow on Android.
@@ -26,7 +26,7 @@ class AndroidCodeAuthFlowFactory(
     private val useWebView: Boolean = false,
     /** Clear cache and cookies in WebView **/
     private val webViewEpheremalSession: Boolean = false
-): CodeAuthFlowFactory {
+): AuthFlowFactory {
 
     lateinit var authRequestLauncher: ActivityResultLauncherSuspend<Intent, ActivityResult>
     lateinit var context: Context
@@ -66,7 +66,7 @@ class AndroidCodeAuthFlowFactory(
         this.context = activity.applicationContext
     }
 
-    override fun createAuthFlow(client: OpenIdConnectClient): CodeAuthFlow {
+    override fun createAuthFlow(client: OpenIdConnectClient): AuthFlow {
         return PlatformCodeAuthFlow(
             context = context,
             contract = authRequestLauncher,

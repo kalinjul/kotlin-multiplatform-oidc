@@ -5,7 +5,7 @@ import io.ktor.client.HttpClientConfig
 import io.ktor.client.plugins.api.createClientPlugin
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.statement.HttpResponse
-import org.publicvalue.multiplatform.oidc.types.AuthCodeRequest
+import org.publicvalue.multiplatform.oidc.types.AuthRequest
 import kotlin.coroutines.cancellation.CancellationException
 
 // swift convenience overloads with default parameters for suspend functions
@@ -26,7 +26,7 @@ suspend fun DefaultOpenIdConnectClient.discover() =
  * @suppress
  */
 @Throws(OpenIdConnectException::class, CancellationException::class)
-suspend fun DefaultOpenIdConnectClient.exchangeToken(authCodeRequest: AuthCodeRequest, code: String) =
+suspend fun DefaultOpenIdConnectClient.exchangeToken(authCodeRequest: AuthRequest.Code, code: String) =
     exchangeToken(authCodeRequest, code, null)
 
 /**
@@ -44,7 +44,7 @@ suspend fun DefaultOpenIdConnectClient.endSession(idToken: String) =
  * @suppress
  */
 @Throws(OpenIdConnectException::class, CancellationException::class)
-suspend fun DefaultOpenIdConnectClient.createAccessTokenRequest(authCodeRequest: AuthCodeRequest, code: String) =
+suspend fun DefaultOpenIdConnectClient.createAccessTokenRequest(authCodeRequest: AuthRequest.Code, code: String) =
     createAccessTokenRequest(authCodeRequest, code, null)
 
 /**

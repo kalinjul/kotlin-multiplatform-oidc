@@ -8,7 +8,7 @@ import kotlin.experimental.ExperimentalObjCRefinement
 @Suppress("unused")
 class IosCodeAuthFlowFactory(
     private val ephemeralBrowserSession: Boolean = false
-): CodeAuthFlowFactory {
+): AuthFlowFactory {
     override fun createAuthFlow(client: OpenIdConnectClient): PlatformCodeAuthFlow {
         return PlatformCodeAuthFlow(client, ephemeralBrowserSession)
     }

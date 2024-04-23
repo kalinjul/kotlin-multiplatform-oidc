@@ -6,7 +6,6 @@ import io.ktor.client.call.NoTransformationFoundException
 import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.HttpRequestBuilder
-import io.ktor.client.request.forms.prepareForm
 import io.ktor.client.request.forms.submitForm
 import io.ktor.client.request.parameter
 import io.ktor.client.request.url
@@ -21,15 +20,14 @@ import io.ktor.http.isSuccess
 import io.ktor.http.parameters
 import io.ktor.serialization.JsonConvertException
 import io.ktor.serialization.kotlinx.KotlinxSerializationConverter
-import kotlinx.coroutines.runBlocking
+
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import org.publicvalue.multiplatform.oidc.discovery.OpenIdConnectDiscover
 import org.publicvalue.multiplatform.oidc.flows.Pkce
-import org.publicvalue.multiplatform.oidc.types.AuthCodeRequest
+import org.publicvalue.multiplatform.oidc.types.AuthRequest
 import org.publicvalue.multiplatform.oidc.types.CodeChallengeMethod
-import org.publicvalue.multiplatform.oidc.types.TokenRequest
-import org.publicvalue.multiplatform.oidc.types.remote.AccessTokenResponse
+import org.publicvalue.multiplatform.oidc.types.remote.AuthResult
 import org.publicvalue.multiplatform.oidc.types.remote.ErrorResponse
 import org.publicvalue.multiplatform.oidc.types.remote.OpenIdConnectConfiguration
 import kotlin.coroutines.cancellation.CancellationException
@@ -89,7 +87,7 @@ class DefaultOpenIdConnectClient(
     }
 
     @Throws(OpenIdConnectException::class)
-    override fun createAuthorizationCodeRequest(configure: (URLBuilder.() -> Unit)?): AuthCodeRequest {
+    override fun createAuthorizationCodeRequest(configure: (URLBuilder.() -> Unit)?): AuthRequest.Code {
         val pkce = Pkce(config.codeChallengeMethod)
         val nonce = secureRandomBytes().encodeForPKCE()
         val state = secureRandomBytes().encodeForPKCE()
@@ -109,7 +107,7 @@ class DefaultOpenIdConnectClient(
             configure?.invoke(this)
         }.build()
 
-        return AuthCodeRequest(
+        return AuthRequest.Code(
             url, config, pkce, state, nonce
         )
     }
@@ -142,23 +140,26 @@ class DefaultOpenIdConnectClient(
     }
 
     @Throws(OpenIdConnectException::class, CancellationException::class)
-    override suspend fun exchangeToken(authCodeRequest: AuthCodeRequest, code: String, configure: (HttpRequestBuilder.() -> Unit)?): AccessTokenResponse = wrapExceptions {
-        val tokenRequest = createAccessTokenRequest(authCodeRequest, code, configure)
-        return executeTokenRequest(tokenRequest.request)
+    override suspend fun exchangeToken(authCodeRequest: AuthRequest, code: String, configure: (HttpRequestBuilder.() -> Unit)?): AuthResult.AccessToken = wrapExceptions {
+        val tokenRequest = when (authCodeRequest) {
+            is AuthRequest.Code -> createAccessTokenRequest(authCodeRequest, code, configure)
+            is AuthRequest.Token -> authCodeRequest
+        }
+        return executeTokenRequest(tokenRequest.prepare(httpClient, configure))
     }
 
     @Throws(OpenIdConnectException::class, CancellationException::class)
     @Suppress("Unused")
-    override suspend fun refreshToken(refreshToken: String, configure: (HttpRequestBuilder.() -> Unit)?): AccessTokenResponse = wrapExceptions {
+    override suspend fun refreshToken(refreshToken: String, configure: (HttpRequestBuilder.() -> Unit)?): AuthResult.AccessToken = wrapExceptions {
         val tokenRequest = createRefreshTokenRequest(refreshToken, configure)
-        return executeTokenRequest(tokenRequest.request)
+        return executeTokenRequest(tokenRequest.prepare(httpClient, configure))
     }
 
     @Throws(OpenIdConnectException::class, CancellationException::class)
-    override suspend fun createAccessTokenRequest(authCodeRequest: AuthCodeRequest, code: String, configure: (HttpRequestBuilder.() -> Unit)?): TokenRequest = wrapExceptions {
+    override suspend fun createAccessTokenRequest(authCodeRequest: AuthRequest.Code, code: String, configure: (HttpRequestBuilder.() -> Unit)?): AuthRequest.Token = wrapExceptions {
         val url = URLBuilder(getOrDiscoverTokenEndpoint()).build()
 
-        val formParameters = parameters {
+        val params = parameters {
             append("grant_type", "authorization_code")
             append("code", code)
             config.redirectUri?.let { append("redirect_uri", it) }
@@ -166,43 +167,37 @@ class DefaultOpenIdConnectClient(
             config.clientSecret?.let { append("client_secret", it) }
             if (config.codeChallengeMethod != CodeChallengeMethod.off) { append("code_verifier", authCodeRequest.pkce.codeVerifier) }
         }
-        val request = runBlocking { // there is no suspending happening here
-            httpClient.prepareForm(
-                formParameters = formParameters
-            ) {
-                url(url)
-                configure?.invoke(this)
-            }
-        }
-        return TokenRequest(
-            request,
-            formParameters
-        )
+
+        return AuthRequest.Token.PostBody(url, params, config)
     }
 
     @Throws(OpenIdConnectException::class, CancellationException::class)
-    override suspend fun createRefreshTokenRequest(refreshToken: String, configure: (HttpRequestBuilder.() -> Unit)?): TokenRequest = wrapExceptions {
+    override suspend fun createRefreshTokenRequest(refreshToken: String, configure: (HttpRequestBuilder.() -> Unit)?): AuthRequest.Token = wrapExceptions {
         val url = URLBuilder(getOrDiscoverTokenEndpoint()).build()
 
-        val formParameters = parameters {
+        val params = parameters {
             append("grant_type", "refresh_token")
             append("client_id", config.clientId ?: run { throw OpenIdConnectException.InvalidConfiguration("clientId is missing") })
+
             config.clientSecret?.let { append("client_secret", it) }
             append("refresh_token", refreshToken)
             config.scope?.let { append("scope", it) }
         }
-        val request = runBlocking { // there is no suspending happening here
-            httpClient.prepareForm(
-                formParameters = formParameters
-            ) {
-                url(url)
-                configure?.invoke(this)
-            }
-        }
-        return TokenRequest(
-            request,
-            formParameters
-        )
+
+        return AuthRequest.Token.PostBody(url, params, config)
+    }
+
+    @Throws(OpenIdConnectException::class, CancellationException::class)
+    override suspend fun createImplicitAccessTokenRequest(configure: (HttpRequestBuilder.() -> Unit)?): AuthRequest.Token = wrapExceptions {
+        val authorizationEndpoint = config.endpoints?.authorizationEndpoint ?: run { throw OpenIdConnectException.InvalidConfiguration("No authorizationEndpoint set") }
+        val url = URLBuilder(authorizationEndpoint).apply {
+            parameters.append("client_id", config.clientId!!)
+            parameters.append("response_type", "token")
+            config.scope?.let { parameters.append("scope", it) }
+            config.redirectUri?.let { parameters.append("redirect_uri", it) }
+        }.build()
+
+        return AuthRequest.Token.UrlEncoded(url, config)
     }
 
     private suspend fun getOrDiscoverTokenEndpoint(): String {
@@ -214,12 +209,12 @@ class DefaultOpenIdConnectClient(
         }
     }
 
-    private suspend fun executeTokenRequest(httpFormRequest: HttpStatement): AccessTokenResponse {
+    private suspend fun executeTokenRequest(httpFormRequest: HttpStatement): AuthResult.AccessToken {
         val response = httpFormRequest.execute()
         return if (response.status.isSuccess()) {
             try {
-                val accessTokenResponse: AccessTokenResponse = response.call.body()
-                accessTokenResponse
+                val accessToken: AuthResult.AccessToken = response.call.body()
+                accessToken
             } catch (e: NoTransformationFoundException) {
                 throw response.toOpenIdConnectException()
             } catch (e: JsonConvertException) {

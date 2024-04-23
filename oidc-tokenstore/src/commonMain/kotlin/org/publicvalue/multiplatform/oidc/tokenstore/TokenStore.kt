@@ -3,7 +3,7 @@ package org.publicvalue.multiplatform.oidc.tokenstore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
-import org.publicvalue.multiplatform.oidc.types.remote.AccessTokenResponse
+import org.publicvalue.multiplatform.oidc.types.remote.AuthResult
 import kotlin.experimental.ExperimentalObjCName
 import kotlin.native.ObjCName
 
@@ -35,7 +35,7 @@ abstract class TokenStore {
 
 // extension method so no need to overwrite in swift subclasses
 @ExperimentalOpenIdConnect
-suspend fun TokenStore.saveTokens(tokens: AccessTokenResponse) {
+suspend fun TokenStore.saveTokens(tokens: AuthResult.AccessToken) {
     saveTokens(
         accessToken = tokens.access_token,
         refreshToken = tokens.refresh_token,
