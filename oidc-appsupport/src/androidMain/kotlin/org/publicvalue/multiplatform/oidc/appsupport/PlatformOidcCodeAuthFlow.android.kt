@@ -11,7 +11,7 @@ import org.publicvalue.multiplatform.oidc.types.AuthRequest
 import org.publicvalue.multiplatform.oidc.types.remote.AuthResponse
 import org.publicvalue.multiplatform.oidc.types.remote.AuthResult
 
-actual class PlatformCodeAuthFlow(
+actual class PlatformAuthFlow(
     private val context: Context,
     private val contract: ActivityResultLauncherSuspend<Intent, ActivityResult>,
     private val useWebView: Boolean = false,

@@ -2,7 +2,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
 import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
-import org.publicvalue.multiplatform.oidc.appsupport.AndroidCodeAuthFlowFactory
+import org.publicvalue.multiplatform.oidc.appsupport.AndroidAuthFlowFactory
 import org.publicvalue.multiplatform.oidc.tokenstore.TokenStore
 import org.publicvalue.multiplatform.oidc.appsupport.AuthFlowFactory
 import org.publicvalue.multiplatform.oidc.tokenstore.TokenRefreshHandler
@@ -49,7 +49,7 @@ object README {
         class MainActivity : ComponentActivity() {
             override fun onCreate(savedInstanceState: Bundle?) {
                 super.onCreate(savedInstanceState)
-                val factory = AndroidCodeAuthFlowFactory()
+                val factory = AndroidAuthFlowFactory()
                 factory.registerActivity(this)
             }
         }

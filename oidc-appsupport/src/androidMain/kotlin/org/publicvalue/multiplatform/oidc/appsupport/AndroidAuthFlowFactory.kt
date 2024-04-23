@@ -21,7 +21,7 @@ import org.publicvalue.multiplatform.oidc.flows.AuthFlow
  * inside your Activity's [Activity.onCreate()].
  */
 @Suppress("unused")
-class AndroidCodeAuthFlowFactory(
+class AndroidAuthFlowFactory(
     /** If true, uses an embedded WebView instead of Chrome CustomTab (not recommended) **/
     private val useWebView: Boolean = false,
     /** Clear cache and cookies in WebView **/
@@ -67,7 +67,7 @@ class AndroidCodeAuthFlowFactory(
     }
 
     override fun createAuthFlow(client: OpenIdConnectClient): AuthFlow {
-        return PlatformCodeAuthFlow(
+        return PlatformAuthFlow(
             context = context,
             contract = authRequestLauncher,
             client = client,

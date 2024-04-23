@@ -17,7 +17,7 @@ import java.net.InetAddress
 import java.net.NetworkInterface
 import java.net.SocketException
 
-actual class PlatformCodeAuthFlow(
+actual class PlatformAuthFlow(
     client: OpenIdConnectClient
 ) : AuthFlow(client) {
     companion object {

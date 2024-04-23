@@ -31,7 +31,7 @@ import kotlin.experimental.ExperimentalObjCName
  */
 @OptIn(ExperimentalObjCName::class)
 @ObjCName(swiftName = "CodeAuthFlow", name = "CodeAuthFlow", exact = true)
-actual class PlatformCodeAuthFlow(
+actual class PlatformAuthFlow(
     client: OpenIdConnectClient,
     private val ephemeralBrowserSession: Boolean = false
 ): AuthFlow(client) {
