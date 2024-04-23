@@ -40,7 +40,7 @@ class ExchangeToken(
         val client = client.createOidcClient(idp)
 
         return flow {
-            val (_, requestParams) = client.createAccessTokenRequest(request, code)
+            val requestParams = client.createAccessTokenRequest(request, code).parameters
             emit(
                 ExchangeTokenResult.Request(
                     parameters = requestParams
