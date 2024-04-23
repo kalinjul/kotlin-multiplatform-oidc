@@ -29,8 +29,8 @@ import org.publicvalue.multiplatform.oauth.domain.ExchangeToken
 import org.publicvalue.multiplatform.oauth.domain.ExchangeTokenResult
 import org.publicvalue.multiplatform.oauth.logging.Logger
 import org.publicvalue.multiplatform.oauth.screens.ClientDetailScreen
-import org.publicvalue.multiplatform.oidc.types.AuthCodeRequest
-import org.publicvalue.multiplatform.oidc.types.remote.AccessTokenResponse
+import org.publicvalue.multiplatform.oidc.types.AuthRequest
+import org.publicvalue.multiplatform.oidc.types.remote.AuthResult
 import org.publicvalue.multiplatform.oidc.types.remote.ErrorResponse
 
 @Inject
@@ -73,7 +73,7 @@ class ClientDetailPresenter(
         var authcode: String? by rememberRetained { mutableStateOf(null) }
 
         var tokenRequestParameters: Parameters? by rememberRetained { mutableStateOf(null) }
-        var tokenResponse: AccessTokenResponse? by rememberRetained { mutableStateOf(null) }
+        var tokenResponse: AuthResult.AccessToken? by rememberRetained { mutableStateOf(null) }
         var errorTokenResponse: ErrorResponse? by rememberRetained { mutableStateOf(null) }
         var tokenResponseStatusCode: HttpStatusCode? by rememberRetained { mutableStateOf(null) }
 
@@ -100,7 +100,7 @@ class ClientDetailPresenter(
                     client?.let { client ->
                         scope.launch {
                             catchErrorMessage {
-                                var authCodeRequest: AuthCodeRequest? = null
+                                var authCodeRequest: AuthRequest.Code? = null
                                 authorize(client)
                                     .collect { it ->
                                     when (it) {

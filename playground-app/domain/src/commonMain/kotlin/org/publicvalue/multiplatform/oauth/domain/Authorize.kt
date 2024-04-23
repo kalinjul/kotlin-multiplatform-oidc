@@ -13,13 +13,13 @@ import org.publicvalue.multiplatform.oauth.data.db.Client
 import org.publicvalue.multiplatform.oauth.logging.Logger
 import org.publicvalue.multiplatform.oauth.util.DispatcherProvider
 import org.publicvalue.multiplatform.oauth.webserver.Webserver
-import org.publicvalue.multiplatform.oidc.types.AuthCodeRequest
+import org.publicvalue.multiplatform.oidc.types.AuthRequest
 import org.publicvalue.multiplatform.oidc.types.validateState
 
 sealed class AuthorizeResult {
     data class Request(
         val authCodeRequestUrl: String,
-        val authCodeRequest: AuthCodeRequest
+        val authCodeRequest: AuthRequest.Code
     ): AuthorizeResult()
     data class Response(
         val authCode: String,

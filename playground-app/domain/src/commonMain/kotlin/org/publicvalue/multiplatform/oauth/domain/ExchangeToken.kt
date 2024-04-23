@@ -12,9 +12,9 @@ import org.publicvalue.multiplatform.oauth.data.db.Client
 import org.publicvalue.multiplatform.oauth.logging.Logger
 import org.publicvalue.multiplatform.oauth.util.DispatcherProvider
 import org.publicvalue.multiplatform.oidc.types.remote.ErrorResponse
-import org.publicvalue.multiplatform.oidc.types.AuthCodeRequest
+import org.publicvalue.multiplatform.oidc.types.AuthRequest
 import org.publicvalue.multiplatform.oidc.OpenIdConnectException
-import org.publicvalue.multiplatform.oidc.types.remote.AccessTokenResponse
+import org.publicvalue.multiplatform.oidc.types.remote.AuthResult
 
 sealed class ExchangeTokenResult {
     data class Request(
@@ -22,7 +22,7 @@ sealed class ExchangeTokenResult {
     ): ExchangeTokenResult()
     data class Response(
         val httpStatusCode: HttpStatusCode,
-        val accessTokenResponse: AccessTokenResponse?,
+        val accessTokenResponse: AuthResult.AccessToken?,
         val errorResponse: ErrorResponse? = null
     ): ExchangeTokenResult()
 }
@@ -33,7 +33,7 @@ class ExchangeToken(
     private val dispatchers: DispatcherProvider,
     private val logger: Logger,
 ) {
-    suspend operator fun invoke(client: Client, request: AuthCodeRequest, code: String): Flow<ExchangeTokenResult> {
+    suspend operator fun invoke(client: Client, request: AuthRequest.Code, code: String): Flow<ExchangeTokenResult> {
         logger.d { "Exchange token with $client, authCode: $code" }
 
         val idp = idpDao.getIdp(client.idpId).first()
