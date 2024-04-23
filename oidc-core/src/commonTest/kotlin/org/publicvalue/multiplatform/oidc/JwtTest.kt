@@ -5,7 +5,6 @@ import assertk.assertions.containsExactlyInAnyOrder
 import assertk.assertions.isEqualTo
 import assertk.assertions.isInstanceOf
 import org.publicvalue.multiplatform.oidc.types.Jwt
-import org.publicvalue.multiplatform.oidc.types.remote.AccessTokenResponse
 import kotlin.test.Test
 
 class JwtTest {
