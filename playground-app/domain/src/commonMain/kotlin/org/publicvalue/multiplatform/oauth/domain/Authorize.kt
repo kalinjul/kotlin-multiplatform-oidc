@@ -14,7 +14,6 @@ import org.publicvalue.multiplatform.oauth.logging.Logger
 import org.publicvalue.multiplatform.oauth.util.DispatcherProvider
 import org.publicvalue.multiplatform.oauth.webserver.Webserver
 import org.publicvalue.multiplatform.oidc.types.AuthRequest
-import org.publicvalue.multiplatform.oidc.types.validateState
 
 sealed class AuthorizeResult {
     data class Request(
@@ -63,7 +62,7 @@ class Authorize(
             val authCode = response?.queryParameters?.get("code")
             val state = response?.queryParameters?.get("state")
             // TODO add desktop appsupport?
-            if (!request.validateState(state ?: "")) {
+            if (!request.validate(state ?: "")) {
                 throw Exception("Invalid state")
             }
             logger.d { "received code: $authCode" }
