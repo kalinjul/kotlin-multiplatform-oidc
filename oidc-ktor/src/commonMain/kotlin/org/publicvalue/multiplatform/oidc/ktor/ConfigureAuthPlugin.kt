@@ -70,16 +70,12 @@ fun BearerAuthConfig.loadTokens(tokenStore: TokenStore) {
     loadTokens {
         val accessToken = tokenStore.getAccessToken()
         val refreshToken = tokenStore.getRefreshToken()
-        val bearer = accessToken?.let {
+        accessToken?.let {
             BearerTokens(
                 accessToken = it,
                 refreshToken = refreshToken ?: "",
             )
-        } ?: BearerTokens(
-            accessToken = "",
-            refreshToken = ""
-        )
-        bearer
+        }
     }
 }
 
