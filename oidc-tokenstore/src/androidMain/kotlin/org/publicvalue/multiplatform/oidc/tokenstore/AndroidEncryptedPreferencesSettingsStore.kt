@@ -17,7 +17,7 @@ class AndroidEncryptedPreferencesSettingsStore(
 
     private var sharedPreferences: SharedPreferences = EncryptedSharedPreferences.create(
         context,
-        "${context.packageName}.auth",
+        "org.publicvalue.multiplatform.oidc.tokenstore",
         masterKey,
         EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
         EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
