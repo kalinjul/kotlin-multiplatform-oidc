@@ -131,29 +131,31 @@ value class JwtClaims(
     }
 }
 
-@Suppress("unchecked_cast")
-fun JwtClaims.toOpenIdConnectToken(): IdToken =
+private fun JwtClaims.toOpenIdConnectToken(): IdToken =
     IdToken(
         iss = claims["iss"] as String?,
         sub = claims["sub"] as String?,
-        aud = claims["aud"]?.let {
-            if (it is List<*>) {
-                it as List<String>
-            } else {
-                listOf(it as String)
-            }
-        },
+        aud = claims["aud"]?.parseListOrString(),
         exp = claims["exp"] as Long?,
         iat = claims["iat"] as Long?,
         auth_time = claims["auth_time"] as Long?,
         nonce = claims["nonce"] as String?,
         acr = claims["acr"] as String?,
-        amr = claims["amr"] as String?,
+        amr = claims["amr"]?.parseListOrString(),
         azp = claims["azp"] as String?,
         alg = claims["alg"] as String?,
         kid = claims["kid"] as String?,
         at_hash = claims["at_hash"] as String?,
         additionalClaims = claims
     )
+
+@Suppress("unchecked_cast")
+private fun Any.parseListOrString() =
+    if (this is List<*>) {
+        this as List<String>
+    } else {
+        listOf(this as String)
+    }
+
 
 fun String.parseJwt() = Jwt.parse(this)
