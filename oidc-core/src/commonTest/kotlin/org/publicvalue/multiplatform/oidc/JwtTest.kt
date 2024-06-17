@@ -5,7 +5,6 @@ import assertk.assertions.containsExactlyInAnyOrder
 import assertk.assertions.isEqualTo
 import assertk.assertions.isInstanceOf
 import org.publicvalue.multiplatform.oidc.types.Jwt
-import org.publicvalue.multiplatform.oidc.types.remote.AccessTokenResponse
 import kotlin.test.Test
 
 class JwtTest {
@@ -43,6 +42,14 @@ class JwtTest {
         val jwt = Jwt.parse(idToken)
 
         assertThat(jwt.payload.aud!!).containsExactlyInAnyOrder("second audience", "www.example.com")
+    }
+
+    @Test
+    fun multipleAmr() {
+        val idToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTg2MTczNzIsImV4cCI6MTc1MDE1MzM3MiwiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsIkdpdmVuTmFtZSI6IkpvaG5ueSIsImFtciI6WyJzbXMiLCJtZmEiLCJwd2QiXX0.t86lfvm-eV3c2JJP4WQLtDGXm3rWSCKy_MD2colIzLA"
+        val jwt = Jwt.parse(idToken)
+
+        assertThat(jwt.payload.amr!!).containsExactlyInAnyOrder("sms", "mfa", "pwd")
     }
 
     @Test
