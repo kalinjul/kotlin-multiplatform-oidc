@@ -91,6 +91,17 @@ try await client.endSession(idToken: idToken) { requestBuilder in
 }
 ```
 
+```swift
+try await flow.getAccessToken(
+    configureAuthUrl: { urlBuilder in
+        urlBuilder.parameters.append(name: "prompt", value: "login")
+    },
+    configureTokenExchange: { requestBuilder in
+            requestBuilder.headers.append(name: "additionalHeaderField", value: "value")
+    }
+)
+```
+
 # JWT Parsing
 We provide simple JWT parsing:
 ```swift

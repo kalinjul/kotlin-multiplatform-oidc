@@ -89,7 +89,11 @@ class HomePresenter(
                     if (client != null) {
                         scope.launch {
                             catchErrorMessage {
-                                val newTokens = authFlowFactory.createAuthFlow(client).getAccessToken()
+                                val newTokens = authFlowFactory.createAuthFlow(client).getAccessToken(
+                                    configureAuthUrl = {
+                                        parameters.append("prompt", "login")
+                                    }
+                                )
                                 updateTokenResponse(newTokens)
                             }
                         }
