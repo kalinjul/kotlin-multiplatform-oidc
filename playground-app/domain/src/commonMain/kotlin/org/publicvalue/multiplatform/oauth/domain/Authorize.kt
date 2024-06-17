@@ -13,13 +13,12 @@ import org.publicvalue.multiplatform.oauth.data.db.Client
 import org.publicvalue.multiplatform.oauth.logging.Logger
 import org.publicvalue.multiplatform.oauth.util.DispatcherProvider
 import org.publicvalue.multiplatform.oauth.webserver.Webserver
-import org.publicvalue.multiplatform.oidc.types.AuthCodeRequest
-import org.publicvalue.multiplatform.oidc.types.validateState
+import org.publicvalue.multiplatform.oidc.types.AuthRequest
 
 sealed class AuthorizeResult {
     data class Request(
         val authCodeRequestUrl: String,
-        val authCodeRequest: AuthCodeRequest
+        val authCodeRequest: AuthRequest.Code
     ): AuthorizeResult()
     data class Response(
         val authCode: String,
@@ -63,7 +62,7 @@ class Authorize(
             val authCode = response?.queryParameters?.get("code")
             val state = response?.queryParameters?.get("state")
             // TODO add desktop appsupport?
-            if (!request.validateState(state ?: "")) {
+            if (!request.validate(state ?: "")) {
                 throw Exception("Invalid state")
             }
             logger.d { "received code: $authCode" }

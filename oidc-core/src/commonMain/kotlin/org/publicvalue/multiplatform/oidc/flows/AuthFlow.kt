@@ -3,9 +3,9 @@ package org.publicvalue.multiplatform.oidc.flows
 import io.ktor.client.request.HttpRequestBuilder
 import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
 import org.publicvalue.multiplatform.oidc.OpenIdConnectException
-import org.publicvalue.multiplatform.oidc.types.AuthCodeRequest
-import org.publicvalue.multiplatform.oidc.types.remote.AccessTokenResponse
-import org.publicvalue.multiplatform.oidc.types.validateState
+import org.publicvalue.multiplatform.oidc.types.AuthRequest
+import org.publicvalue.multiplatform.oidc.types.remote.AuthResponse
+import org.publicvalue.multiplatform.oidc.types.remote.AuthResult
 import org.publicvalue.multiplatform.oidc.wrapExceptions
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.experimental.ExperimentalObjCName
@@ -15,13 +15,12 @@ import kotlin.native.ObjCName
  * Implements the OAuth 2.0 Code Authorization Flow.
  * See: [RFC6749](https://datatracker.ietf.org/doc/html/rfc6749#section-4.1)
  *
- * Implementations have to provide their own method [getAuthorizationCode]
+ * Implementations have to provide their own method [getAuthorizationResult]
  * as this requires user interaction (e.g. via browser).
  */
 @OptIn(ExperimentalObjCName::class)
 @ObjCName(swiftName = "AbstractCodeAuthFlow", name = "AbstractCodeAuthFlow", exact = true)
-abstract class CodeAuthFlow(val client: OpenIdConnectClient) {
-
+abstract class AuthFlow(val client: OpenIdConnectClient) {
 
     /**
      * For some reason the default parameter is not available in Platform implementations,
@@ -29,7 +28,7 @@ abstract class CodeAuthFlow(val client: OpenIdConnectClient) {
      */
     @Suppress("unused")
     @Throws(CancellationException::class, OpenIdConnectException::class)
-    suspend fun getAccessToken(): AccessTokenResponse = getAccessToken(null)
+    suspend fun getAccessToken(): AuthResult.AccessToken = getAccessToken(Type.Code, null)
 
     /**
      * Start the authorization flow to request an access token.
@@ -39,16 +38,22 @@ abstract class CodeAuthFlow(val client: OpenIdConnectClient) {
      */
     @Suppress("unused")
     @Throws(CancellationException::class, OpenIdConnectException::class)
-    suspend fun getAccessToken(configure: (HttpRequestBuilder.() -> Unit)? = null): AccessTokenResponse = wrapExceptions {
+    suspend fun getAccessToken(
+        type: Type = Type.Code,
+        configure: (HttpRequestBuilder.() -> Unit)? = null
+    ): AuthResult.AccessToken = wrapExceptions {
         if (!client.config.discoveryUri.isNullOrEmpty()) {
             client.discover()
         }
-        val request = client.createAuthorizationCodeRequest()
+        val request = when (type) {
+            is Type.Code -> client.createAuthorizationCodeRequest()
+            is Type.Implicit -> client.createImplicitAccessTokenRequest()
+        }
         return getAccessToken(request, configure)
     }
 
-    private suspend fun getAccessToken(request: AuthCodeRequest, configure: (HttpRequestBuilder.() -> Unit)?): AccessTokenResponse {
-        val codeResponse = getAuthorizationCode(request)
+    private suspend fun getAccessToken(request: AuthRequest, configure: (HttpRequestBuilder.() -> Unit)?): AuthResult.AccessToken {
+        val codeResponse = getAuthorizationResult(request)
         return exchangeToken(client, request, codeResponse, configure)
     }
 
@@ -58,29 +63,39 @@ abstract class CodeAuthFlow(val client: OpenIdConnectClient) {
      * @return the Authorization Code.
      */
     @Throws(CancellationException::class, OpenIdConnectException::class)
-    abstract suspend fun getAuthorizationCode(request: AuthCodeRequest): AuthCodeResponse
+    abstract suspend fun getAuthorizationResult(request: AuthRequest): AuthResponse
 
     private suspend fun exchangeToken(
         client: OpenIdConnectClient,
-        request: AuthCodeRequest,
-        authCodeResponse: AuthCodeResponse,
+        request: AuthRequest,
+        authCodeResponse: AuthResponse,
         configure: (HttpRequestBuilder.() -> Unit)?
-    ): AccessTokenResponse {
+    ): AuthResult.AccessToken {
         authCodeResponse.fold(
-            onSuccess = {
-                if (it.code != null) {
-                    if (!request.validateState(it.state ?: "")) {
-                        throw OpenIdConnectException.AuthenticationFailure("Invalid state")
+            onSuccess = { result ->
+                return when (result) {
+                    is AuthResult.Code -> {
+                        if (result.code != null) {
+                            if (!request.validate(result.state ?: "")) {
+                                throw OpenIdConnectException.AuthenticationFailure("Invalid state")
+                            }
+                            val response = client.exchangeToken(request, result.code, configure)
+                            return response
+                        } else {
+                            throw OpenIdConnectException.AuthenticationFailure("No auth code", cause = null)
+                        }
                     }
-                    val response = client.exchangeToken(request, it.code, configure)
-                    return response
-                } else {
-                    throw OpenIdConnectException.AuthenticationFailure("No auth code", cause = null)
+                    is AuthResult.AccessToken -> result
                 }
             },
             onFailure = {
                 throw OpenIdConnectException.AuthenticationFailure("AuthCode response was error: ${it.message}", cause = it)
             }
         )
+    }
+
+    sealed interface Type {
+        data object Code : Type
+        data object Implicit : Type
     }
 }

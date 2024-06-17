@@ -6,10 +6,10 @@ import kotlin.experimental.ExperimentalObjCRefinement
 @OptIn(ExperimentalObjCRefinement::class)
 @HiddenFromObjC
 @Suppress("unused")
-class IosCodeAuthFlowFactory(
+class IosAuthFlowFactory(
     private val ephemeralBrowserSession: Boolean = false
-): CodeAuthFlowFactory {
-    override fun createAuthFlow(client: OpenIdConnectClient): PlatformCodeAuthFlow {
-        return PlatformCodeAuthFlow(client, ephemeralBrowserSession)
+): AuthFlowFactory {
+    override fun createAuthFlow(client: OpenIdConnectClient): PlatformAuthFlow {
+        return PlatformAuthFlow(client, ephemeralBrowserSession)
     }
 }

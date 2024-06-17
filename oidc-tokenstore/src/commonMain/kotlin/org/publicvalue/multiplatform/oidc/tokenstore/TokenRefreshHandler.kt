@@ -5,7 +5,7 @@ import kotlinx.coroutines.sync.withLock
 import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
 import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
 import org.publicvalue.multiplatform.oidc.OpenIdConnectException
-import org.publicvalue.multiplatform.oidc.types.remote.AccessTokenResponse
+import org.publicvalue.multiplatform.oidc.types.remote.AuthResult
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.experimental.ExperimentalObjCName
 import kotlin.experimental.ExperimentalObjCRefinement
@@ -43,7 +43,7 @@ class TokenRefreshHandler(
      */
     @Throws(OpenIdConnectException::class, CancellationException::class)
     @HiddenFromObjC
-    suspend fun refreshAndSaveToken(refreshCall: suspend (String) -> AccessTokenResponse, oldAccessToken: String): OauthTokens {
+    suspend fun refreshAndSaveToken(refreshCall: suspend (String) -> AuthResult.AccessToken, oldAccessToken: String): OauthTokens {
         mutex.withLock {
             val currentTokens = tokenStore.getTokens()
             return if (currentTokens != null && currentTokens.accessToken != oldAccessToken) {

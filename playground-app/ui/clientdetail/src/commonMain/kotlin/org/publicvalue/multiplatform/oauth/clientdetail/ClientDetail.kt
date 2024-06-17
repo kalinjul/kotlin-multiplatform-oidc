@@ -53,7 +53,7 @@ import org.publicvalue.multiplatform.oauth.data.types.CodeChallengeMethod
 import org.publicvalue.multiplatform.oauth.domain.Constants
 import org.publicvalue.multiplatform.oauth.screens.ClientDetailScreen
 import org.publicvalue.multiplatform.oidc.types.remote.ErrorResponse
-import org.publicvalue.multiplatform.oidc.types.remote.AccessTokenResponse
+import org.publicvalue.multiplatform.oidc.types.remote.AuthResult
 
 @Inject
 class ClientDetailUiFactory : Ui.Factory {
@@ -128,7 +128,7 @@ internal fun ClientDetail(
     authcodeResponseQueryString: String?,
     authcode: String?,
     tokenRequestParameters: Parameters?,
-    tokenResponse: AccessTokenResponse?,
+    tokenResponse: AuthResult.AccessToken?,
     errorTokenResponse: ErrorResponse?,
     tokenResponseStatusCode: HttpStatusCode?,
 ) {
@@ -264,7 +264,7 @@ internal fun AuthFlow(
     authcodeResponseQueryString: String?,
     authcode: String?,
     tokenRequestParameters: Parameters?,
-    tokenResponse: AccessTokenResponse?,
+    tokenResponse: AuthResult.AccessToken?,
     errorTokenResponse: ErrorResponse?,
     tokenResponseStatusCode: HttpStatusCode?,
     onLogin: () -> Unit,
@@ -347,7 +347,7 @@ fun ExpandableInfo(
 }
 
 
-fun AccessTokenResponse.format(): String {
+fun AuthResult.AccessToken.format(): String {
     return """
         access_token: $access_token
         refresh_token: $refresh_token

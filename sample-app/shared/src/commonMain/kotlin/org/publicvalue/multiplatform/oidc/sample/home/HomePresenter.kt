@@ -13,17 +13,17 @@ import io.ktor.http.isSuccess
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
-import org.publicvalue.multiplatform.oidc.appsupport.CodeAuthFlowFactory
+import org.publicvalue.multiplatform.oidc.appsupport.AuthFlowFactory
 import org.publicvalue.multiplatform.oidc.sample.PlatformConstants
 import org.publicvalue.multiplatform.oidc.sample.circuit.ErrorPresenter
 import org.publicvalue.multiplatform.oidc.sample.circuit.catchErrorMessage
 import org.publicvalue.multiplatform.oidc.sample.data.LocalSettingsStore
 import org.publicvalue.multiplatform.oidc.sample.screens.ConfigScreen
 import org.publicvalue.multiplatform.oidc.types.Jwt
-import org.publicvalue.multiplatform.oidc.types.remote.AccessTokenResponse
+import org.publicvalue.multiplatform.oidc.types.remote.AuthResult
 
 class HomePresenter(
-    val authFlowFactory: CodeAuthFlowFactory,
+    val authFlowFactory: AuthFlowFactory,
     val navigator: Navigator
 ): ErrorPresenter<HomeUiState> {
 
@@ -38,7 +38,7 @@ class HomePresenter(
         val idpSettings by settingsStore.observeIdpSettings().collectAsRetainedState()
         val tokenData by settingsStore.observeTokenData().collectAsRetainedState()
 
-        var tokenResponse by rememberRetained { mutableStateOf<AccessTokenResponse?>(null) }
+        var tokenResponse by rememberRetained { mutableStateOf<AuthResult.AccessToken?>(null) }
         var subject by rememberRetained { mutableStateOf<String?>(null) }
 
         val errorMessage by this.errorMessage.collectAsRetainedState()
@@ -64,7 +64,7 @@ class HomePresenter(
             }
         }
 
-        suspend fun updateTokenResponse(newTokens: AccessTokenResponse) {
+        suspend fun updateTokenResponse(newTokens: AuthResult.AccessToken) {
             tokenResponse = newTokens
             val jwt = newTokens.id_token?.let { Jwt.parse(it) }
             println("parsed jwt: $jwt")
