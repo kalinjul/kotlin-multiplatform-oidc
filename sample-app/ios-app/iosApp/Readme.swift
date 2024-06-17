@@ -66,12 +66,29 @@ struct Readme {
     
     // Perform refresh or endSession:
     func _3() async throws {
-        try await client.refreshToken(refreshToken: "") { builder in
-            builder.headers.append(name: "Accept", value: "application/json")
-            builder.build()
-        }
         try await client.refreshToken(refreshToken: tokens.refresh_token!)
         try await client.endSession(idToken: tokens.id_token!)
+    }
+    
+    // customize endSession request:
+    func _3a() async throws {
+        try await client.endSession(idToken: "") { requestBuilder in
+            requestBuilder.headers.append(name: "X-CUSTOM-HEADER", value: "value")
+            requestBuilder.url.parameters.append(name: "custom_parameter", value: "value")
+        }
+    }
+    
+    // customize getAccessToken request:
+    func _3b() async throws {
+        let flow = CodeAuthFlow(client: client)
+        try await flow.getAccessToken(
+            configureAuthUrl: { urlBuilder in
+                urlBuilder.parameters.append(name: "prompt", value: "login")
+            },
+            configureTokenExchange: { requestBuilder in
+                requestBuilder.headers.append(name: "additionalHeaderField", value: "value")
+            }
+        )
     }
     
     // We provide simple JWT parsing:

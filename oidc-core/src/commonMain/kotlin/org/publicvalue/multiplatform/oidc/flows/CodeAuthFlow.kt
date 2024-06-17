@@ -1,6 +1,7 @@
 package org.publicvalue.multiplatform.oidc.flows
 
 import io.ktor.client.request.HttpRequestBuilder
+import io.ktor.http.URLBuilder
 import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
 import org.publicvalue.multiplatform.oidc.OpenIdConnectException
 import org.publicvalue.multiplatform.oidc.types.AuthCodeRequest
@@ -29,7 +30,7 @@ abstract class CodeAuthFlow(val client: OpenIdConnectClient) {
      */
     @Suppress("unused")
     @Throws(CancellationException::class, OpenIdConnectException::class)
-    suspend fun getAccessToken(): AccessTokenResponse = getAccessToken(null)
+    suspend fun getAccessToken(): AccessTokenResponse = getAccessToken(null, null)
 
     /**
      * Start the authorization flow to request an access token.
@@ -39,12 +40,30 @@ abstract class CodeAuthFlow(val client: OpenIdConnectClient) {
      */
     @Suppress("unused")
     @Throws(CancellationException::class, OpenIdConnectException::class)
-    suspend fun getAccessToken(configure: (HttpRequestBuilder.() -> Unit)? = null): AccessTokenResponse = wrapExceptions {
+    @Deprecated(
+        message = "Use getAccessToken(configureAuthUrl, configureTokenExchange) instead",
+        replaceWith = ReplaceWith("getAccessToken(configureAuthUrl = null, configureTokenExchange = configure)")
+    )
+    suspend fun getAccessToken(configure: (HttpRequestBuilder.() -> Unit)? = null): AccessTokenResponse = getAccessToken(null, configure)
+
+    /**
+     * Start the authorization flow to request an access token.
+     *
+     * @param configureAuthUrl configuration closure to configure the auth url passed to browser
+     * @param configureTokenExchange configuration closure to configure the http request builder with (will _not_
+     * be used for discovery if necessary)
+     */
+    @Suppress("unused")
+    @Throws(CancellationException::class, OpenIdConnectException::class)
+    suspend fun getAccessToken(
+        configureAuthUrl: (URLBuilder.() -> Unit)? = null,
+        configureTokenExchange: (HttpRequestBuilder.() -> Unit)? = null
+    ): AccessTokenResponse = wrapExceptions {
         if (!client.config.discoveryUri.isNullOrEmpty()) {
             client.discover()
         }
-        val request = client.createAuthorizationCodeRequest()
-        return getAccessToken(request, configure)
+        val request = client.createAuthorizationCodeRequest(configureAuthUrl)
+        return getAccessToken(request, configureTokenExchange)
     }
 
     private suspend fun getAccessToken(request: AuthCodeRequest, configure: (HttpRequestBuilder.() -> Unit)?): AccessTokenResponse {

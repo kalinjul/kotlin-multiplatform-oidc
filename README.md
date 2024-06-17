@@ -142,6 +142,16 @@ client.endSession(idToken = idToken) {
 }
 ```
 
+```kotlin
+val tokens = flow.getAccessToken(configureAuthUrl = {
+    // customize url that is passed to browser for authorization requests
+    parameters.append("prompt", "login")
+}, configureTokenExchange = {
+    // customize token exchange http request
+    header("additionalHeaderField", "value")
+})
+```
+
 # JWT Parsing
 We provide simple JWT parsing (without any validation):
 ```kotlin

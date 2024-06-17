@@ -1,5 +1,6 @@
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import io.ktor.client.request.header
 import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
 import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
 import org.publicvalue.multiplatform.oidc.appsupport.AndroidCodeAuthFlowFactory
@@ -73,6 +74,16 @@ object README {
             headers.append("X-CUSTOM-HEADER", "value")
             url.parameters.append("custom_parameter", "value")
         }
+    }
+
+    // Custom parameters in authorization request / exchange token request
+    suspend fun `Custom auth request`() {
+        val flow = authFlowFactory.createAuthFlow(client)
+        val tokens = flow.getAccessToken(configureAuthUrl = {
+            parameters.append("prompt", "login")
+        }, configureTokenExchange = {
+            header("additionalHeaderField", "value")
+        })
     }
 
     // We provide simple JWT parsing
