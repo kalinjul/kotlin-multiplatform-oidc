@@ -1,4 +1,5 @@
 import org.publicvalue.convention.config.configureIosTargets
+import org.publicvalue.convention.config.configureWasm
 
 plugins {
     id("org.publicvalue.convention.android.library")
@@ -8,6 +9,7 @@ plugins {
 kotlin {
     sourceSets {
         configureIosTargets()
+        configureWasm()
         val commonMain by getting {
             dependencies {
                 implementation("io.github.kalinjul.kotlin.multiplatform:oidc-core")

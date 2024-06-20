@@ -6,6 +6,7 @@ pluginManagement {
         google()
         gradlePluginPortal()
         maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+        maven("https://maven.pkg.jetbrains.space/public/p/ktor/eap")
     }
 }
 
@@ -14,6 +15,7 @@ dependencyResolutionManagement {
     repositories {
         mavenCentral()
         google()
+        maven("https://maven.pkg.jetbrains.space/public/p/ktor/eap")
         // workaround for https://youtrack.jetbrains.com/issue/KT-51379
         exclusiveContent {
             forRepository {

@@ -5,6 +5,7 @@ dependencyResolutionManagement {
         mavenCentral()
         google()
         gradlePluginPortal()
+        maven("https://maven.pkg.jetbrains.space/public/p/ktor/eap")
     }
 
     versionCatalogs {

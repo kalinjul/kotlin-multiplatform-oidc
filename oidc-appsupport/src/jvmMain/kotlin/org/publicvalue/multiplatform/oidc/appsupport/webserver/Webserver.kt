@@ -24,7 +24,7 @@ class Webserver() {
                 }
             }
         }.apply {
-            server = this
+            server = engine
             start(wait = true)
         }
         return call

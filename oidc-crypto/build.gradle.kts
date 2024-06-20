@@ -1,4 +1,5 @@
 import org.publicvalue.convention.config.configureIosTargets
+import org.publicvalue.convention.config.configureWasm
 
 plugins {
     id("org.publicvalue.convention.kotlin.multiplatform")
@@ -11,6 +12,7 @@ description = "Kotlin Multiplatform OIDC crypto library"
 
 kotlin {
     configureIosTargets()
+    configureWasm()
     sourceSets {
         val commonMain by getting {
             dependencies {

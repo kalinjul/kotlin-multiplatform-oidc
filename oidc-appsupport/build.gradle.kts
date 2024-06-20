@@ -2,6 +2,7 @@ import com.android.build.gradle.internal.tasks.factory.dependsOn
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.publicvalue.convention.config.configureIosTargets
+import org.publicvalue.convention.config.configureWasm
 import java.nio.file.Files
 import java.util.stream.Collectors.toList
 import kotlin.io.path.name
@@ -63,6 +64,7 @@ afterEvaluate {
 
 kotlin {
     configureIosTargets(baseName = "OpenIdConnectClient")
+    configureWasm(baseName = "OpenIdConnectClient")
     sourceSets {
         val commonMain by getting {
             dependencies {
