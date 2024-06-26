@@ -31,6 +31,7 @@ kotlin {
         }
     }
 
+
     listOf(
         iosX64(),
         iosArm64(),
@@ -49,6 +50,7 @@ kotlin {
         compilations["main"].compilerOptions.options.freeCompilerArgs.add("-Xexport-kdoc")
     }
 }
+
 
 swiftklib {
     create("KCrypto") {

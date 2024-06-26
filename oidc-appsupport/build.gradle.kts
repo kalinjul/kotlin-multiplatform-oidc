@@ -16,10 +16,12 @@ plugins {
 
 description = "Kotlin Multiplatform OIDC appsupport library for Android/iOS"
 
+
 multiplatformSwiftPackage {
     packageName("OpenIdConnectClient")
     zipFileName("OpenIdConnectClient")
 }
+
 
 // workaround for https://forums.developer.apple.com/forums/thread/748177, remove once apple fixed it
 val fixTask = tasks.create("fixFrameworkPlist") {
@@ -58,6 +60,7 @@ val fixTask = tasks.create("fixFrameworkPlist") {
 
 }
 
+
 afterEvaluate {
     tasks.named("createXCFramework").dependsOn(tasks.named(fixTask.name))
 }
@@ -72,6 +75,7 @@ kotlin {
                 api(projects.oidcTokenstore)
             }
         }
+
 
         val iosMain by getting {
             dependencies {

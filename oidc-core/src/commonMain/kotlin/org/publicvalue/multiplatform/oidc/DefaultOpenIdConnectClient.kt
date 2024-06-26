@@ -21,7 +21,7 @@ import io.ktor.http.isSuccess
 import io.ktor.http.parameters
 import io.ktor.serialization.JsonConvertException
 import io.ktor.serialization.kotlinx.KotlinxSerializationConverter
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import org.publicvalue.multiplatform.oidc.discovery.OpenIdConnectDiscover
@@ -58,6 +58,8 @@ class DefaultOpenIdConnectClient(
     constructor(config: OpenIdConnectClientConfig): this(httpClient = DefaultHttpClient, config = config)
 
     override var discoverDocument: OpenIdConnectConfiguration? = null
+
+    private val scope by lazy { CoroutineScope(Dispatchers.Default + SupervisorJob()) }
 
     companion object {
         val DefaultHttpClient by lazy {
@@ -166,14 +168,14 @@ class DefaultOpenIdConnectClient(
             config.clientSecret?.let { append("client_secret", it) }
             if (config.codeChallengeMethod != CodeChallengeMethod.off) { append("code_verifier", authCodeRequest.pkce.codeVerifier) }
         }
-        val request = runBlocking { // there is no suspending happening here
+        val request = scope.async { // there is no suspending happening here
             httpClient.prepareForm(
                 formParameters = formParameters
             ) {
                 url(url)
                 configure?.invoke(this)
             }
-        }
+        }.await()
         return TokenRequest(
             request,
             formParameters
@@ -191,14 +193,14 @@ class DefaultOpenIdConnectClient(
             append("refresh_token", refreshToken)
             config.scope?.let { append("scope", it) }
         }
-        val request = runBlocking { // there is no suspending happening here
+        val request = scope.async { // there is no suspending happening here
             httpClient.prepareForm(
                 formParameters = formParameters
             ) {
                 url(url)
                 configure?.invoke(this)
             }
-        }
+        }.await()
         return TokenRequest(
             request,
             formParameters
