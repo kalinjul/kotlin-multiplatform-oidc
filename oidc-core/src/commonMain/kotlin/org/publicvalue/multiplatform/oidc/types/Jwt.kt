@@ -131,8 +131,7 @@ value class JwtClaims(
     }
 }
 
-@Suppress("unchecked_cast")
-fun JwtClaims.toOpenIdConnectToken(): IdToken =
+private fun JwtClaims.toOpenIdConnectToken(): IdToken =
     IdToken(
         iss = claims["iss"] as String,
         sub = claims["sub"] as String,
@@ -155,5 +154,14 @@ fun JwtClaims.toOpenIdConnectToken(): IdToken =
         at_hash = claims["at_hash"] as? String?,
         additionalClaims = claims
     )
+
+@Suppress("unchecked_cast")
+private fun Any.parseListOrString() =
+    if (this is List<*>) {
+        this as List<String>
+    } else {
+        listOf(this as String)
+    }
+
 
 fun String.parseJwt() = Jwt.parse(this)

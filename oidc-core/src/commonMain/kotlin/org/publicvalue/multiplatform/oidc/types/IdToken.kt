@@ -27,8 +27,8 @@ data class IdToken(
     val acr: String?,
 
     /** Optional: Authentication Methods References**/
-    val amr: String?,
-    /** Optiona: Authorized Party **/
+    val amr: List<String>?,
+    /** Optional: Authorized Party **/
     val azp: String?,
 
     val alg: String?,

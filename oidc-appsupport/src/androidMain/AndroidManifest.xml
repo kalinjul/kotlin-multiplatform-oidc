@@ -14,7 +14,9 @@
         </intent>
     </queries>
 
-    <application>
+    <application
+        android:fullBackupContent="@xml/backup_rules"
+        android:dataExtractionRules="@xml/data_extraction_rules">
     <activity
         android:name=".HandleRedirectActivity"
         android:exported="true"
