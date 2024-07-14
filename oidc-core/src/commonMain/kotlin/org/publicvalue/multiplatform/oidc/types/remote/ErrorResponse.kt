@@ -20,6 +20,7 @@ data class ErrorResponse(
     @Serializable
     enum class Error {
         invalid_client,
+        invalid_grant,
         bad_verification_code,
         invalid_request,
         unauthorized_client,
