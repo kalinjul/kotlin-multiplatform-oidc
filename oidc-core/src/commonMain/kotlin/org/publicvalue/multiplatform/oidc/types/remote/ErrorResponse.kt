@@ -7,6 +7,7 @@ import kotlin.native.ObjCName
 /**
  * ErrorResponse expected from Authorization or Token endpoint.
  * [RFC6749](https://datatracker.ietf.org/doc/html/rfc6749#section-4.1.2.1)
+ * [RFC6749](https://datatracker.ietf.org/doc/html/rfc6749#section-5.2)
  */
 @OptIn(ExperimentalObjCName::class)
 @ObjCName(swiftName = "OpenIdConnectErrorResponse", name = "OpenIdConnectErrorResponse", exact = true)
@@ -24,6 +25,7 @@ data class ErrorResponse(
         bad_verification_code,
         invalid_request,
         unauthorized_client,
+        unsupported_grant_type,
         access_denied,
         unsupported_response_type,
         invalid_scope,
