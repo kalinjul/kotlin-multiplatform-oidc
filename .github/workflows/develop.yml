@@ -29,6 +29,8 @@ jobs:
     runs-on: macos-13
     permissions:
       checks: write # required for test-reporter
+      pull-requests: write
+      actions: write
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/workflows/actions/test
