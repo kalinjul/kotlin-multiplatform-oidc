@@ -17,7 +17,7 @@ class Webserver() {
         server?.stop()
         embeddedServer(CIO, port = port) {
             routing {
-                get("/redirect") {
+                get(redirectPath) {
                     this.call.respond(status = HttpStatusCode.OK, Unit)
                     call = this.call.request
                     server?.stop()
