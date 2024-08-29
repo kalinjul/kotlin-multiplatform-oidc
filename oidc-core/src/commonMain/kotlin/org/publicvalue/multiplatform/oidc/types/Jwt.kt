@@ -133,11 +133,11 @@ value class JwtClaims(
 
 private fun JwtClaims.toOpenIdConnectToken(): IdToken =
     IdToken(
-        iss = claims["iss"] as String,
-        sub = claims["sub"] as String,
+        iss = claims["iss"] as String?,
+        sub = claims["sub"] as String?,
         aud = claims["aud"]?.parseListOrString(),
-        exp = claims["exp"] as Long,
-        iat = claims["iat"] as Long,
+        exp = claims["exp"] as Long?,
+        iat = claims["iat"] as Long?,
         auth_time = claims["auth_time"] as? Long?,
         nonce = claims["nonce"] as? String?,
         acr = claims["acr"] as? String?,

@@ -4,7 +4,6 @@ import io.ktor.http.*
 import kotlinx.browser.window
 import kotlinx.coroutines.delay
 import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
-import org.publicvalue.multiplatform.oidc.OpenIdConnectException
 import org.publicvalue.multiplatform.oidc.flows.AuthCodeResponse
 import org.publicvalue.multiplatform.oidc.flows.AuthCodeResult
 import org.publicvalue.multiplatform.oidc.flows.CodeAuthFlow
@@ -35,19 +34,17 @@ actual class PlatformCodeAuthFlow(
     suspend fun waitForRedirectUri(loginWindow: Window?): Parameters? {
         while (true) {
             var parameters: Parameters? = null
-            jsCatch {
-                try {
-                    val loginWindowUrl = Url(loginWindow?.location.toString())
-                    if (loginWindowUrl.parameters.contains("code") && loginWindowUrl.parameters.contains("state")) {
-                        println("Ok received all")
-                        loginWindow?.close()
-                        parameters = loginWindowUrl.parameters
-                    } else {
-                        println("Waiting")
-                    }
-                } catch (e: Exception) {
-                    println("I'm running, but login not completed")
+            try {
+                val loginWindowUrl = Url(loginWindow?.location.toString())
+                if (loginWindowUrl.parameters.contains("code") && loginWindowUrl.parameters.contains("state")) {
+                    println("Ok received all")
+                    loginWindow?.close()
+                    parameters = loginWindowUrl.parameters
+                } else {
+                    println("Waiting")
                 }
+            } catch (e: Exception) {
+                println("I'm running, but login not completed")
             }
 
             if (parameters != null) {
@@ -58,16 +55,4 @@ actual class PlatformCodeAuthFlow(
         }
     }
 
-}
-
-fun jsCatch(f: () -> Unit): JsAny? {
-    js("""
-    let result = null;
-    try { 
-        f();
-    } catch (e) {
-       result = e;
-    }
-    return result;
-    """)
 }
