@@ -1,11 +1,11 @@
 pluginManagement {
     includeBuild("build-logic")
-
     repositories {
         mavenCentral()
         google()
         gradlePluginPortal()
         maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+        maven("https://maven.pkg.jetbrains.space/public/p/ktor/eap")
     }
 }
 
@@ -14,6 +14,8 @@ dependencyResolutionManagement {
     repositories {
         mavenCentral()
         google()
+        maven("https://maven.pkg.jetbrains.space/public/p/ktor/eap")
+        maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
         // workaround for https://youtrack.jetbrains.com/issue/KT-51379
         exclusiveContent {
             forRepository {
@@ -43,6 +45,33 @@ dependencyResolutionManagement {
                 }
             }
             filter { includeModuleByRegex(".*", ".*kotlin-native-prebuilt.*") }
+        }
+
+
+        //region Declare the Node.js & Yarn download repositories
+        // workaround for https://youtrack.jetbrains.com/issue/KT-55620
+        exclusiveContent {
+            forRepository {
+                ivy("https://nodejs.org/dist/") {
+                    name = "Node Distributions at $url"
+                    patternLayout { artifact("v[revision]/[artifact](-v[revision]-[classifier]).[ext]") }
+                    metadataSources { artifact() }
+                    content { includeModule("org.nodejs", "node") }
+                }
+            }
+            filter { includeGroup("org.nodejs") }
+        }
+
+        exclusiveContent {
+            forRepository {
+                ivy("https://github.com/yarnpkg/yarn/releases/download") {
+                    name = "Yarn Distributions at $url"
+                    patternLayout { artifact("v[revision]/[artifact](-v[revision]).[ext]") }
+                    metadataSources { artifact() }
+                    content { includeModule("com.yarnpkg", "yarn") }
+                }
+            }
+            filter { includeGroup("com.yarnpkg") }
         }
     }
 }
