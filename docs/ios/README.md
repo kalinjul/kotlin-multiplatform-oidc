@@ -19,7 +19,7 @@ Add the swift package from https://github.com/kalinjul/OpenIdConnectClient.
 If you're using a swift module, add this line:
 ```swift
 dependencies: [
-    .package(url: "https://github.com/kalinjul/OpenIdConnectClient.git", exact: "0.9.1")
+    .package(url: "https://github.com/kalinjul/OpenIdConnectClient.git", exact: "<version>")
 ],
 ```
 
