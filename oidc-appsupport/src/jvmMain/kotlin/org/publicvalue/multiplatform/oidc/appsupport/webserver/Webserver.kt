@@ -1,36 +1,17 @@
 package org.publicvalue.multiplatform.oidc.appsupport.webserver
 
-import io.ktor.http.HttpStatusCode
-import io.ktor.server.application.*
-import io.ktor.server.cio.CIO
-import io.ktor.server.cio.CIOApplicationEngine
-import io.ktor.server.engine.embeddedServer
-import io.ktor.server.request.ApplicationRequest
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
+import org.publicvalue.multiplatform.oidc.flows.AuthCodeResult
 
-class Webserver() {
-    private var server: CIOApplicationEngine? = null
+interface Webserver {
+    /**
+     * Start a local Webserver on the given port, waiting for the redirectPath to be called.
+     *
+     * @return RedirectResponse containing authCode + state.
+     */
+    suspend fun startAndWaitForRedirect(port: Int, redirectPath: String): AuthCodeResult
 
-    suspend fun startAndWaitForRedirect(port: Int, redirectPath: String): ApplicationRequest? {
-        var call: ApplicationRequest? = null
-        server?.stop()
-        embeddedServer(CIO, port = port) {
-            routing {
-                get(redirectPath) {
-                    this.call.respond(status = HttpStatusCode.OK, Unit)
-                    call = this.call.request
-                    server?.stop()
-                }
-            }
-        }.apply {
-            server = this
-            start(wait = true)
-        }
-        return call
-    }
-
-    fun stop() {
-        server?.stop()
-    }
+    /**
+     * Stop the webserver.
+     */
+    suspend fun stop()
 }

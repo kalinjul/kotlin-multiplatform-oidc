@@ -7,9 +7,9 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
 import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
 import org.publicvalue.multiplatform.oidc.OpenIdConnectException
+import org.publicvalue.multiplatform.oidc.appsupport.webserver.SimpleKtorWebserver
 import org.publicvalue.multiplatform.oidc.appsupport.webserver.Webserver
 import org.publicvalue.multiplatform.oidc.flows.AuthCodeResponse
-import org.publicvalue.multiplatform.oidc.flows.AuthCodeResult
 import org.publicvalue.multiplatform.oidc.flows.CodeAuthFlow
 import org.publicvalue.multiplatform.oidc.types.AuthCodeRequest
 import java.awt.Desktop
@@ -18,7 +18,8 @@ import java.net.NetworkInterface
 import java.net.SocketException
 
 actual class PlatformCodeAuthFlow(
-    client: OpenIdConnectClient
+    client: OpenIdConnectClient,
+    private val webserverProvider: () -> Webserver = { SimpleKtorWebserver() }
 ) : CodeAuthFlow(client) {
     companion object {
         var PORT = 8080
@@ -31,7 +32,7 @@ actual class PlatformCodeAuthFlow(
             throw OpenIdConnectException.AuthenticationFailure("JVM implementation can only handle redirect uris using localhost port 8080! Redirect uri was: $redirectUrl")
         }
 
-        val webserver = Webserver()
+        val webserver = webserverProvider()
 
         val response =
             withContext(Dispatchers.IO) {
@@ -43,14 +44,8 @@ actual class PlatformCodeAuthFlow(
                 }.await()
             }
 
-        val authCode = response?.queryParameters?.get("code")
-        val state = response?.queryParameters?.get("state")
-
         return AuthCodeResponse.success(
-            AuthCodeResult(
-                code = authCode,
-                state = state
-            )
+            response
         )
     }
 }
