@@ -95,13 +95,12 @@ You will than need to register your activity in your Activity's onCreate():
 
 ```kotlin
 class MainActivity : ComponentActivity() {
-    companion object {
-        // There should only be one instance of this factory.
-        // The flow should also be created and started from an
-        // Application or ViewModel scope, so it persists Activity.onDestroy() e.g. on low memory
-        // and is still able to process redirect results during login.
-        val codeAuthFlowFactory = AndroidCodeAuthFlowFactory(useWebView = false)
-    }
+    // There should only be one instance of this factory.
+    // The flow should also be created and started from an
+    // Application or ViewModel scope, so it persists Activity.onDestroy() e.g. on low memory
+    // and is still able to process redirect results during login.
+    val codeAuthFlowFactory = AndroidCodeAuthFlowFactory(useWebView = false)
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         codeAuthFlowFactory.registerActivity(this)
