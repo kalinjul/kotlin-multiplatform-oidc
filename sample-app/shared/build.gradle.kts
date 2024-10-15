@@ -1,5 +1,6 @@
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.publicvalue.convention.addParcelizeAnnotation
 import org.publicvalue.convention.config.configureIosTargets
 
 plugins {
@@ -64,6 +65,7 @@ kotlin {
             export("io.github.kalinjul.kotlin.multiplatform:oidc-core")
         }
     }
+    addParcelizeAnnotation("org.publicvalue.multiplatform.oidc.sample.screens.CommonParcelize")
 }
 
 android {

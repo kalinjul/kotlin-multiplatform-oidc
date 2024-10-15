@@ -69,6 +69,7 @@ suspend fun TokenStore.getTokens(): OauthTokens? {
     }
 }
 
+@ExperimentalOpenIdConnect
 val TokenStore.tokensFlow: Flow<OauthTokens?>
     get() = combine(accessTokenFlow, refreshTokenFlow, idTokenFlow) { accessToken, refreshToken, idToken ->
         if (accessToken != null) {
