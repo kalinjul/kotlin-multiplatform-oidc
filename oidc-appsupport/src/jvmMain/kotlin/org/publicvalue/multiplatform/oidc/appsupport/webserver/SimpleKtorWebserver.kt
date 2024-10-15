@@ -51,7 +51,7 @@ class SimpleKtorWebserver(
             start(wait = true)
         }
         val code = call?.queryParameters?.get("code")
-        val state = call?.queryParameters?.get("code")
+        val state = call?.queryParameters?.get("state")
         return AuthCodeResult(code, state)
     }
 
