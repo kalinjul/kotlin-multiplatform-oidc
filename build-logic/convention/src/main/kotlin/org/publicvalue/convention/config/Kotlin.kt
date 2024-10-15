@@ -9,8 +9,10 @@ fun Project.configureKotlin() {
     extensions.configure<KotlinMultiplatformExtension> {
         targets.all {
             compilations.all {
-                compilerOptions.configure {
-                    freeCompilerArgs.add("-Xexpect-actual-classes")
+                compileTaskProvider.configure {
+                    compilerOptions {
+                        freeCompilerArgs.add("-Xexpect-actual-classes")
+                    }
                 }
             }
         }

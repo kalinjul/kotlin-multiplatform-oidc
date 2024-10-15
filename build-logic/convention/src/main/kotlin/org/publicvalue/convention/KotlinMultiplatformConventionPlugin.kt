@@ -6,6 +6,7 @@ import org.gradle.configurationcache.extensions.capitalized
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.getByType
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 
@@ -46,5 +47,18 @@ private fun Project.addKspDependencyForAllTargets(
                     dependencyNotation,
                 )
             }
+    }
+}
+
+fun KotlinMultiplatformExtension.addParcelizeAnnotation(annotationClass: String) {
+    androidTarget {
+        // https://youtrack.jetbrains.com/issue/KT-66448
+        @OptIn(ExperimentalKotlinGradlePluginApi::class)
+        compilerOptions {
+            freeCompilerArgs.addAll(
+                "-P",
+                "plugin:org.jetbrains.kotlin.parcelize:additionalAnnotation=${annotationClass}"
+            )
+        }
     }
 }

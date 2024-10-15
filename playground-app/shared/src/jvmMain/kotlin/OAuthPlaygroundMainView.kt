@@ -8,9 +8,7 @@ import org.publicvalue.multiplatform.oauth.screens.IdpListScreen
 
 @Composable
 fun OauthPlaygroundMainView(component: CommonWindowComponent) {
-    val backstack = rememberSaveableBackStack {
-        push(IdpListScreen)
-    }
+    val backstack = rememberSaveableBackStack(initialScreens = listOf(IdpListScreen))
     val navigator = rememberCircuitNavigator(backstack) {}
 
     component.appContent(
