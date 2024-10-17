@@ -15,16 +15,7 @@ typealias OauthPlaygroundUiViewController = () -> UIViewController
 fun OauthPlaygroundUiViewController(
     OAuthPlaygroundContent: OAuthPlaygroundContent,
 ): UIViewController = ComposeUIViewController {
-
-    val backstack = rememberSaveableBackStack {
-        push(IdpListScreen)
-    }
-    val navigator = rememberCircuitNavigator(backstack, onRootPop = { /* no-op */ })
-    val uiViewController = LocalUIViewController.current
-
     OAuthPlaygroundContent(
-        backstack,
-        navigator,
         { url ->
             // do nothing at the moment
         }
