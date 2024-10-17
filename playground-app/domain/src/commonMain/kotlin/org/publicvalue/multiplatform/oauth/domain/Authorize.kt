@@ -62,7 +62,6 @@ class Authorize(
 
             val authCode = response?.queryParameters?.get("code")
             val state = response?.queryParameters?.get("state")
-            // TODO add desktop appsupport?
             if (!request.validateState(state ?: "")) {
                 throw Exception("Invalid state")
             }

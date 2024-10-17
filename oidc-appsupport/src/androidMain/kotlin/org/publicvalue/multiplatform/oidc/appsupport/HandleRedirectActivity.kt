@@ -3,7 +3,6 @@ package org.publicvalue.multiplatform.oidc.appsupport
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.webkit.CookieManager
 import android.webkit.WebChromeClient
@@ -130,7 +129,7 @@ class HandleRedirectActivity : ComponentActivity() {
         intent.launchUrl(this, Uri.parse(url))
     }
 
-    override fun onNewIntent(intent: Intent?) {
+    override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
     }

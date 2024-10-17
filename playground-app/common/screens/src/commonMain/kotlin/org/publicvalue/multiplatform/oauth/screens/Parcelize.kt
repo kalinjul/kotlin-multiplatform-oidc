@@ -1,4 +1,4 @@
-package org.publicvalue.multiplatform.oidc.sample.screens
+package org.publicvalue.multiplatform.oauth.screens
 
 annotation class CommonParcelize
 

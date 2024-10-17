@@ -32,7 +32,7 @@ fun <Input, Output> ComponentActivity.registerForActivityResultSuspend(
 
 class ActivityResultLauncherSuspend<Input, Output>(
     val delegate: ActivityResultLauncher<Input>,
-    val resultFlow: MutableStateFlow<Output?>
+    val resultFlow: MutableStateFlow<Output?>,
 ): ActivityResultLauncher<Input>() {
 
     override fun launch(input: Input, options: ActivityOptionsCompat?) {
@@ -50,7 +50,5 @@ class ActivityResultLauncherSuspend<Input, Output>(
         delegate.unregister()
     }
 
-    override fun getContract(): ActivityResultContract<Input, *> {
-        return delegate.contract
-    }
+    override val contract: ActivityResultContract<Input, *> = delegate.contract
 }

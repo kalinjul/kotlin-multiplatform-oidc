@@ -1,3 +1,5 @@
+import org.publicvalue.convention.addParcelizeAnnotation
+
 plugins {
     id("org.publicvalue.convention.android.library")
     id("org.publicvalue.convention.kotlin.multiplatform")
@@ -12,5 +14,6 @@ kotlin {
             }
         }
     }
+    addParcelizeAnnotation("org.publicvalue.multiplatform.oauth.screens.CommonParcelize")
 }
 
