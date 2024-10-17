@@ -25,7 +25,7 @@ actual class PlatformCodeAuthFlow(
         var PORT = 8080
     }
 
-    override suspend fun getAuthorizationCode(request: AuthCodeRequest): AuthCodeResponse {
+    actual override suspend fun getAuthorizationCode(request: AuthCodeRequest): AuthCodeResponse {
 
         val redirectUrl = request.config.redirectUri?.let { Url(it) }
         if (redirectUrl?.port != PORT || !redirectUrl.isLocalhost()) {

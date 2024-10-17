@@ -19,7 +19,7 @@ actual class PlatformCodeAuthFlow(
     client: OpenIdConnectClient,
 ) : CodeAuthFlow(client) {
 
-    override suspend fun getAuthorizationCode(request: AuthCodeRequest): AuthCodeResponse {
+    actual override suspend fun getAuthorizationCode(request: AuthCodeRequest): AuthCodeResponse {
         val intent = Intent(
             context,
             HandleRedirectActivity::class.java
