@@ -25,15 +25,15 @@ You can find the full Api documentation [here](https://kalinjul.github.io/kotlin
 # Dependency
 Add the dependency to your commonMain sourceSet (KMP) / Android dependencies (android only):
 ```kotlin
-implementation("io.github.kalinjul.kotlin.multiplatform:oidc-appsupport:0.9.1")
-implementation("io.github.kalinjul.kotlin.multiplatform:oidc-okhttp4:0.9.1") // optional, android only
-implementation("io.github.kalinjul.kotlin.multiplatform:oidc-ktor:0.9.1") // optional ktor support
+implementation("io.github.kalinjul.kotlin.multiplatform:oidc-appsupport:<version>")
+implementation("io.github.kalinjul.kotlin.multiplatform:oidc-okhttp4:<version>") // optional, android only
+implementation("io.github.kalinjul.kotlin.multiplatform:oidc-ktor:<version>") // optional ktor support
 ```
 
 Or, for your libs.versions.toml:
 ```toml
 [versions]
-oidc = "0.9.1"
+oidc = "<version>>"
 [libraries]
 oidc-appsupport = { module = "io.github.kalinjul.kotlin.multiplatform:oidc-appsupport", version.ref = "oidc" }
 oidc-okhttp4 = { module = "io.github.kalinjul.kotlin.multiplatform:oidc-okhttp4", version.ref = "oidc" }
@@ -95,13 +95,12 @@ You will than need to register your activity in your Activity's onCreate():
 
 ```kotlin
 class MainActivity : ComponentActivity() {
-    companion object {
-        // There should only be one instance of this factory.
-        // The flow should also be created and started from an
-        // Application or ViewModel scope, so it persists Activity.onDestroy() e.g. on low memory
-        // and is still able to process redirect results during login.
-        val codeAuthFlowFactory = AndroidCodeAuthFlowFactory(useWebView = false)
-    }
+    // There should only be one instance of this factory.
+    // The flow should also be created and started from an
+    // Application or ViewModel scope, so it persists Activity.onDestroy() e.g. on low memory
+    // and is still able to process redirect results during login.
+    val codeAuthFlowFactory = AndroidCodeAuthFlowFactory(useWebView = false)
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         codeAuthFlowFactory.registerActivity(this)

@@ -1,7 +1,6 @@
 package org.publicvalue.multiplatform.oidc.appsupport.webserver
 
 import io.ktor.http.HttpStatusCode
-import io.ktor.server.application.*
 import io.ktor.server.cio.CIO
 import io.ktor.server.cio.CIOApplicationEngine
 import io.ktor.server.engine.embeddedServer
