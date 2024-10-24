@@ -9,12 +9,8 @@ fun MainViewController() = ComposeUIViewController {
 
     val factory = IosCodeAuthFlowFactory()
 
-    val backstack = rememberSaveableBackStack {
-        push(HomeScreen)
-    }
-    val navigator = rememberCircuitNavigator(backstack) {
-
-    }
+    val backstack = rememberSaveableBackStack(listOf(HomeScreen))
+    val navigator = rememberCircuitNavigator(backstack) {}
 
     val settingsStore = IosSettingsStore()
 
