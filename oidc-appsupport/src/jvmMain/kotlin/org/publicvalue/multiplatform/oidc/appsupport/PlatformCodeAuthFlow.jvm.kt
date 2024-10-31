@@ -76,7 +76,17 @@ fun Url.openInBrowser() {
             throw UrlOpenException(e.message, cause = e)
         }
     } else {
-        throw UrlOpenException("Desktop does not support Browse Action")
+        val result = runCatching {
+            Runtime.getRuntime()
+                .exec(arrayOf("xdg-open", toURI().toString()))
+                .waitFor()
+        }
+
+        if (result.isFailure) {
+            result.exceptionOrNull()?.let { e ->
+                throw UrlOpenException(e.message, cause = e)
+            } ?: throw UrlOpenException("Cannot open browser!")
+        }
     }
 }
 
