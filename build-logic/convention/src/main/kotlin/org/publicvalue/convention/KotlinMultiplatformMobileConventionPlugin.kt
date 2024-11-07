@@ -5,7 +5,6 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.publicvalue.convention.config.configureAndroidTarget
-import org.publicvalue.convention.config.configureIosTargets
 import org.publicvalue.convention.config.configureKotlin
 
 /**

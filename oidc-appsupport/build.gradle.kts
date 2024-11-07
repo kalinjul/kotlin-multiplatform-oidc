@@ -2,6 +2,7 @@ import com.android.build.gradle.internal.tasks.factory.dependsOn
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.publicvalue.convention.config.configureIosTargets
+import org.publicvalue.convention.config.exportKdoc
 import org.publicvalue.convention.config.configureWasm
 import java.nio.file.Files
 import java.util.stream.Collectors.toList
@@ -103,9 +104,8 @@ kotlin {
         }
     }
 
+    exportKdoc()
     targets.withType<KotlinNativeTarget> {
-        compilations["main"].compilerOptions.options.freeCompilerArgs.add("-Xexport-kdoc")
-
         binaries.withType<Framework> {
             export(projects.oidcCore)
             export(projects.oidcTokenstore)

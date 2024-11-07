@@ -52,7 +52,7 @@ fun Root(
                         NavigableCircuitContent(
                             circuit = circuit,
                             navigator = navigator,
-                            backstack = backstack,
+                            backStack = backstack,
                             modifier = Modifier
                                 .weight(1f)
                                 .fillMaxHeight(),

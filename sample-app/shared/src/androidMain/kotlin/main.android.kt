@@ -1,11 +1,10 @@
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalUriHandler
 import com.slack.circuit.backstack.rememberSaveableBackStack
 import com.slack.circuit.foundation.rememberCircuitNavigator
 import org.publicvalue.multiplatform.oidc.appsupport.AndroidCodeAuthFlowFactory
-import org.publicvalue.multiplatform.oidc.settings.AndroidSettingsStore
 import org.publicvalue.multiplatform.oidc.sample.screens.HomeScreen
+import org.publicvalue.multiplatform.oidc.settings.AndroidSettingsStore
 
 @Composable
 fun MainView(
@@ -13,9 +12,8 @@ fun MainView(
 ) {
     val context = LocalContext.current
 
-    val backstack = rememberSaveableBackStack {
-        push(HomeScreen)
-    }
+    val backstack = rememberSaveableBackStack(initialScreens = listOf(HomeScreen))
+
     val navigator = rememberCircuitNavigator(backstack) {
 
     }

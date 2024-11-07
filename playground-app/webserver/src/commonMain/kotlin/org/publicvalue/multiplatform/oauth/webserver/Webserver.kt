@@ -32,7 +32,6 @@ class Webserver(
                 }
             }
         }.apply {
-            server = this
             logger.d { "Starting Webserver" }
             start(wait = true)
         }

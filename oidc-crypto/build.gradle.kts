@@ -1,5 +1,6 @@
 import org.publicvalue.convention.config.configureIosTargets
 import org.publicvalue.convention.config.configureWasm
+import org.publicvalue.convention.config.exportKdoc
 
 plugins {
     id("org.publicvalue.convention.kotlin.multiplatform")
@@ -46,9 +47,7 @@ kotlin {
         }
     }
 
-    targets.withType<org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget> {
-        compilations["main"].compilerOptions.options.freeCompilerArgs.add("-Xexport-kdoc")
-    }
+    exportKdoc()
 }
 
 

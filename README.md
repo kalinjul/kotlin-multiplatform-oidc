@@ -22,6 +22,15 @@ For iOS only, use the [OpenIdConnectClient Swift Package](https://github.com/kal
 
 You can find the full Api documentation [here](https://kalinjul.github.io/kotlin-multiplatform-oidc/).
 
+Library dependency versions:
+
+| kmp-oidc version | kotlin version | ktor version |
+|------------------|----------------|--------------|
+| 0.11.+           | 1.9.23         | 2.3.7        |
+| 0.12.+           | 2.0.20         | 2.3.+        |
+| future version   | 2.0.20         | 3.0.+        |
+Note that while the library may work with other kotlin/ktor versions, proceed at your own risk.
+
 # Dependency
 Add the dependency to your commonMain sourceSet (KMP) / Android dependencies (android only):
 ```kotlin
