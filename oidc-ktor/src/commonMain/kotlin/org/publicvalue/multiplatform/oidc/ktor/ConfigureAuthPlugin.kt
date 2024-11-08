@@ -1,6 +1,6 @@
 package org.publicvalue.multiplatform.oidc.ktor
 
-import io.ktor.client.plugins.auth.Auth
+import io.ktor.client.plugins.auth.AuthConfig
 import io.ktor.client.plugins.auth.providers.BearerAuthConfig
 import io.ktor.client.plugins.auth.providers.BearerTokens
 import io.ktor.client.plugins.auth.providers.bearer
@@ -16,7 +16,7 @@ import org.publicvalue.multiplatform.oidc.tokenstore.removeTokens
  * Configure Bearer Authentication using TokenStore + RefreshHandler.
  */
 @ExperimentalOpenIdConnect
-fun Auth.oidcBearer(
+fun AuthConfig.oidcBearer(
     tokenStore: TokenStore,
     refreshHandler: TokenRefreshHandler,
     client: OpenIdConnectClient,
@@ -40,7 +40,7 @@ fun Auth.oidcBearer(
  * save it into the store.
  */
 @ExperimentalOpenIdConnect
-fun Auth.oidcBearer(
+fun AuthConfig.oidcBearer(
     tokenStore: TokenStore,
     /** receives the old access token as parameter.
      *  This function should get new tokens and save them.
