@@ -19,7 +19,8 @@ import java.net.SocketException
 
 actual class PlatformCodeAuthFlow(
     client: OpenIdConnectClient,
-    private val webserverProvider: () -> Webserver = { SimpleKtorWebserver() }
+    private val webserverProvider: () -> Webserver = { SimpleKtorWebserver() },
+    private val openUrl: (Url) -> Unit = { it.openInBrowser() }
 ) : CodeAuthFlow(client) {
     companion object {
         var PORT = 8080
@@ -37,7 +38,7 @@ actual class PlatformCodeAuthFlow(
         val response =
             withContext(Dispatchers.IO) {
                 async {
-                    request.url.openInBrowser()
+                    openUrl(request.url)
                     val response = webserver.startAndWaitForRedirect(PORT, redirectPath = redirectUrl.encodedPath)
                     webserver.stop()
                     response
