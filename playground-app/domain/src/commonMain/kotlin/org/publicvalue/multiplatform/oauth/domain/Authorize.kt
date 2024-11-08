@@ -62,9 +62,6 @@ class Authorize(
 
             val authCode = response?.queryParameters?.get("code")
             val state = response?.queryParameters?.get("state")
-            if (!request.validateState(state ?: "")) {
-                throw Exception("Invalid state")
-            }
             logger.d { "received code: $authCode" }
 
             emit(
@@ -73,6 +70,10 @@ class Authorize(
                     authCodeResponseQueryString = response?.queryString() ?: ""
                 )
             )
+
+            if (!request.validateState(state ?: "")) {
+                throw Exception("Invalid state")
+            }
         }
     }
 }
