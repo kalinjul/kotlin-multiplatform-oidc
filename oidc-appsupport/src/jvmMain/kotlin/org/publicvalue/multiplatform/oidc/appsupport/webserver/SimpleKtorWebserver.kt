@@ -2,19 +2,18 @@ package org.publicvalue.multiplatform.oidc.appsupport.webserver
 
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
-import io.ktor.server.application.ApplicationCall
-import io.ktor.server.application.call
 import io.ktor.server.cio.CIO
 import io.ktor.server.cio.CIOApplicationEngine
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.request.ApplicationRequest
 import io.ktor.server.response.respondText
+import io.ktor.server.routing.RoutingContext
 import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
 import org.publicvalue.multiplatform.oidc.flows.AuthCodeResult
 
 class SimpleKtorWebserver(
-    val createResponse: suspend io.ktor.util.pipeline.PipelineContext<Unit, ApplicationCall>.() -> Unit = {
+    val createResponse: suspend RoutingContext.() -> Unit = {
         call.respondText(
             status = HttpStatusCode.OK,
             text = """
@@ -47,7 +46,7 @@ class SimpleKtorWebserver(
                 }
             }
         }.apply {
-            server = this
+            server = engine
             start(wait = true)
         }
         val code = call?.queryParameters?.get("code")
