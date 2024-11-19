@@ -26,9 +26,9 @@ Library dependency versions:
 
 | kmp-oidc version | kotlin version | ktor version |
 |------------------|----------------|--------------|
-| 0.11.+           | 1.9.23         | 2.3.7        |
-| 0.12.+           | 2.0.20         | 2.3.+        |
-| 0.13.+           | 2.0.20         | 3.0.+        |
+| <=0.11.1         | 1.9.23         | 2.3.7        |
+| 0.11.2           | 2.0.20         | 2.3.7        |
+| 0.12.+           | 2.0.20         | 3.0.+        |
 
 Note that while the library may work with other kotlin/ktor versions, proceed at your own risk.
 
