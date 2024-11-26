@@ -1,8 +1,8 @@
-Hi, thanks for getting into this project!
+Hi, thanks for contributing to this project!
 
 Checklist for your PR:
 - [ ] Check if there's any open issue
-- [ ] Please file your request against the _develop_ branch
+- [ ] Please file your request against the _main_ branch
 
 # Description of your changes
 Please include a summary of the changes and the related issue. Please also include relevant motivation and context.
