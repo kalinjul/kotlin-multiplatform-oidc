@@ -1,6 +1,5 @@
 # Kotlin Multiplatform OIDC
-[![Release Build](https://img.shields.io/github/actions/workflow/status/kalinjul/kotlin-multiplatform-oidc/main.yml?label=release)]((https://github.com/kalinjul/kotlin-multiplatform-oidc/actions/workflows/main.yml))
-[![Snapshot Build](https://img.shields.io/github/actions/workflow/status/kalinjul/kotlin-multiplatform-oidc/develop.yml?label=snapshot)]((https://github.com/kalinjul/kotlin-multiplatform-oidc/actions/workflows/develop.yml))
+[![Build](https://img.shields.io/github/actions/workflow/status/kalinjul/kotlin-multiplatform-oidc/main.yml?label=release)]((https://github.com/kalinjul/kotlin-multiplatform-oidc/actions/workflows/main.yml))
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.kalinjul.kotlin.multiplatform/oidc-appsupport)](https://repo1.maven.org/maven2/io/github/kalinjul/kotlin/multiplatform/oidc-appsupport/)
 [![Snapshot](https://img.shields.io/nexus/s/io.github.kalinjul.kotlin.multiplatform/oidc-appsupport?server=https%3A%2F%2Fs01.oss.sonatype.org&label=latest%20snapshot)](https://s01.oss.sonatype.org/content/repositories/snapshots/io/github/kalinjul/kotlin/multiplatform/oidc-appsupport/)
 ![Kotlin Version](https://kotlin-version.aws.icerock.dev/kotlin-version?group=io.github.kalinjul.kotlin.multiplatform&name=oidc-appsupport)
