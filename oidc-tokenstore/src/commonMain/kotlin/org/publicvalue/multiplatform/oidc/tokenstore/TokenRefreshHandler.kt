@@ -55,7 +55,7 @@ class TokenRefreshHandler(
 
                 OauthTokens(
                     accessToken = newTokens.access_token,
-                    refreshToken = newTokens.refresh_token,
+                    refreshToken = newTokens.refresh_token ?: refreshToken,
                     idToken = newTokens.id_token
                 )
             }
