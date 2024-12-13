@@ -1,8 +1,7 @@
 # Kotlin Multiplatform OIDC
-[![Release Build](https://img.shields.io/github/actions/workflow/status/kalinjul/kotlin-multiplatform-oidc/main.yml?label=release)]((https://github.com/kalinjul/kotlin-multiplatform-oidc/actions/workflows/main.yml))
-[![Snapshot Build](https://img.shields.io/github/actions/workflow/status/kalinjul/kotlin-multiplatform-oidc/develop.yml?label=snapshot)]((https://github.com/kalinjul/kotlin-multiplatform-oidc/actions/workflows/develop.yml))
+[![Build](https://img.shields.io/github/actions/workflow/status/kalinjul/kotlin-multiplatform-oidc/main.yml?label=release)]((https://github.com/kalinjul/kotlin-multiplatform-oidc/actions/workflows/main.yml))
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.kalinjul.kotlin.multiplatform/oidc-appsupport)](https://repo1.maven.org/maven2/io/github/kalinjul/kotlin/multiplatform/oidc-appsupport/)
-[![Snapshot](https://img.shields.io/nexus/s/io.github.kalinjul.kotlin.multiplatform/oidc-appsupport?server=https%3A%2F%2Fs01.oss.sonatype.org&label=latest%20snapshot)](https://s01.oss.sonatype.org/content/repositories/snapshots/io/github/kalinjul/kotlin/multiplatform/oidc-appsupport//)
+[![Snapshot](https://img.shields.io/nexus/s/io.github.kalinjul.kotlin.multiplatform/oidc-appsupport?server=https%3A%2F%2Fs01.oss.sonatype.org&label=latest%20snapshot)](https://s01.oss.sonatype.org/content/repositories/snapshots/io/github/kalinjul/kotlin/multiplatform/oidc-appsupport/)
 ![Kotlin Version](https://kotlin-version.aws.icerock.dev/kotlin-version?group=io.github.kalinjul.kotlin.multiplatform&name=oidc-appsupport)
 
 
@@ -26,9 +25,10 @@ Library dependency versions:
 
 | kmp-oidc version | kotlin version | ktor version |
 |------------------|----------------|--------------|
-| 0.11.+           | 1.9.23         | 2.3.7        |
-| 0.12.+           | 2.0.20         | 2.3.+        |
-| future version   | 2.0.20         | 3.0.+        |
+| <=0.11.1         | 1.9.23         | 2.3.7        |
+| 0.11.2           | 2.0.20         | 2.3.7        |
+| 0.12.+           | 2.0.20         | 3.0.+        |
+
 Note that while the library may work with other kotlin/ktor versions, proceed at your own risk.
 
 # Dependency
@@ -48,6 +48,10 @@ oidc-appsupport = { module = "io.github.kalinjul.kotlin.multiplatform:oidc-appsu
 oidc-okhttp4 = { module = "io.github.kalinjul.kotlin.multiplatform:oidc-okhttp4", version.ref = "oidc" }
 oidc-ktor = { module = "io.github.kalinjul.kotlin.multiplatform:oidc-ktor", version.ref = "oidc" }
 ```
+
+## Using a snapshot version
+If you want try a snapshot version, just add maven("https://s01.oss.sonatype.org/content/repositories/snapshots/") to your repositories.
+See [available snapshots](https://s01.oss.sonatype.org/content/repositories/snapshots/io/github/kalinjul/kotlin/multiplatform/oidc-appsupport/).
 
 ## Compiler options
 If you want to run tests, currently (as of kotlin 1.9.22), you need to pass additional linker flags (adjust the path to your Xcode installation): 

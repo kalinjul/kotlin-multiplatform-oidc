@@ -50,7 +50,10 @@ class TokenRefreshHandler(
                 currentTokens
             } else {
                 val refreshToken = tokenStore.getRefreshToken()
-                val newTokens = refreshCall(refreshToken ?: "")
+                var newTokens = refreshCall(refreshToken ?: "")
+                if(newTokens.refresh_token == null) {
+                    newTokens = newTokens.copy(refresh_token = refreshToken)
+                }
                 tokenStore.saveTokens(newTokens)
 
                 OauthTokens(

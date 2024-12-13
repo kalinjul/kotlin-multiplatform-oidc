@@ -1,5 +1,6 @@
 package org.publicvalue.multiplatform.oauth.webserver
 
+import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.*
 import io.ktor.server.cio.CIO
@@ -19,23 +20,26 @@ class Webserver(
 ) {
     private var server: CIOApplicationEngine? = null
 
-    suspend fun startAndWaitForRedirect(port: Int): ApplicationRequest? {
-        var call: ApplicationRequest? = null
+    fun startAndWaitForRedirect(port: Int): ApplicationRequest? {
+        var request: ApplicationRequest? = null
         server?.stop()
         embeddedServer(CIO, port = port) {
             routing {
                 get("/redirect") {
-                    this.call.respond(status = HttpStatusCode.OK, Unit)
-                    call = this.call.request
-                    logger.d { "Stopping Webserver" }
-                    server?.stop()
+                    request = call.request
+                    call.respondText(
+                        status = HttpStatusCode.OK,
+                        text = """Authorization redirect successful""".trimIndent(),
+                        contentType = ContentType.parse("text/plain")
+                    )
                 }
             }
         }.apply {
+            server = engine
             logger.d { "Starting Webserver" }
             start(wait = true)
         }
-        return call
+        return request
     }
 
     fun stop() {

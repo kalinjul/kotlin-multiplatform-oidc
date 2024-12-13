@@ -1,6 +1,6 @@
 package org.publicvalue.multiplatform.oidc.ktor
 
-import io.ktor.client.plugins.auth.*
+import io.ktor.client.plugins.auth.AuthConfig
 import io.ktor.client.plugins.auth.providers.BearerAuthConfig
 import io.ktor.client.plugins.auth.providers.BearerTokens
 import io.ktor.client.plugins.auth.providers.bearer

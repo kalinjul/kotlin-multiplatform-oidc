@@ -1,5 +1,4 @@
 import org.publicvalue.convention.addKspDependencyForAllTargets
-import org.publicvalue.convention.config.configureIosTargets
 
 plugins {
     id("org.publicvalue.convention.android.library")
@@ -44,7 +43,6 @@ kotlin {
         }
 
         val jvmMain by getting {
-            dependsOn(commonMain)
             dependencies {
                 implementation(compose.desktop.common)
                 implementation(libs.kotlin.inject.runtime)
