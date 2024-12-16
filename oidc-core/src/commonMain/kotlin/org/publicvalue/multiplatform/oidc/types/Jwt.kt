@@ -13,7 +13,9 @@ import kotlinx.serialization.json.JsonPrimitive
 import org.publicvalue.multiplatform.oidc.OpenIdConnectException
 import org.publicvalue.multiplatform.oidc.wrapExceptions
 import kotlin.experimental.ExperimentalObjCName
+import kotlin.experimental.ExperimentalObjCRefinement
 import kotlin.jvm.JvmInline
+import kotlin.native.HiddenFromObjC
 import kotlin.native.ObjCName
 
 @OptIn(ExperimentalSerializationApi::class)
@@ -37,7 +39,9 @@ data class Jwt(
          * JWTs are either encoded using JWS Compact Serialization (signed, 3 parts) or JWE Compact Serialization (encrypted, 5 parts).
          * We only support JWS Compact Serialization.
          */
+        @OptIn(ExperimentalObjCRefinement::class)
         @Throws(OpenIdConnectException::class)
+        @HiddenFromObjC
         fun parse(string: String): Jwt {
             val parts = string.split('.')
             if (parts.size > 3) {
@@ -96,37 +100,44 @@ value class JwtClaims(
     val claims: Map<String, Any?>
 ) {
     companion object {
+        @Throws(OpenIdConnectException::class)
         fun parse(string: String): JwtClaims {
-            val map = json.decodeFromString<Map<String, JsonElement>>(string)
-                .map { entry ->
-                    val value = entry.value
-                    entry.key to when {
-                        value is JsonArray -> value.map {
-                            if (it is JsonPrimitive) {
-                                it.content
-                            } else {
-                                throw OpenIdConnectException.UnsupportedFormat("Could not parse Array item: ${it}")
+            try {
+                val map = json.decodeFromString<Map<String, JsonElement>>(string)
+                    .map { entry ->
+                        val value = entry.value
+                        entry.key to when {
+                            value is JsonArray -> value.map {
+                                if (it is JsonPrimitive) {
+                                    it.content
+                                } else {
+                                    throw OpenIdConnectException.UnsupportedFormat("Could not parse Array item: ${it}")
+                                }
                             }
-                        }
-                        value is JsonObject -> value
-                        value is JsonPrimitive -> {
-                            if (value.isString) {
-                                value.content
-                            } else {
-                                value.content.toLongOrNull()
-                                    ?: value.content.toDoubleOrNull()
-                                    ?: value.content.toBooleanStrictOrNull()
-                                    ?: value.content
+
+                            value is JsonObject -> value
+                            value is JsonPrimitive -> {
+                                if (value.isString) {
+                                    value.content
+                                } else {
+                                    value.content.toLongOrNull()
+                                        ?: value.content.toDoubleOrNull()
+                                        ?: value.content.toBooleanStrictOrNull()
+                                        ?: value.content
+                                }
                             }
-                        }
-                        value is JsonNull -> null
-                        else -> {
-                            throw OpenIdConnectException.UnsupportedFormat("Could not parse claim: ${entry.key} with value ${entry.value}")
+
+                            value is JsonNull -> null
+                            else -> {
+                                throw OpenIdConnectException.UnsupportedFormat("Could not parse claim: ${entry.key} with value ${entry.value}")
+                            }
                         }
                     }
-                }
-                .toMap()
-            return JwtClaims(map)
+                    .toMap()
+                return JwtClaims(map)
+            } catch (e: Exception) {
+                throw OpenIdConnectException.TechnicalFailure(e.message ?: "Could not parse JWT", e)
+            }
         }
     }
 }
@@ -157,5 +168,6 @@ private fun Any.parseListOrString() =
         listOf(this as String)
     }
 
-
+// this is visible from swift as JwtKt.parse()
+@Throws(OpenIdConnectException::class)
 fun String.parseJwt() = Jwt.parse(this)
