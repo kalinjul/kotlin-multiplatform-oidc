@@ -1,10 +1,9 @@
 package org.publicvalue.multiplatform.oidc.ktor
 
-import io.ktor.client.HttpClient
-import io.ktor.client.plugins.auth.Auth
-import io.ktor.client.plugins.auth.authProvider
-import io.ktor.client.plugins.auth.providers.BearerAuthProvider
-import io.ktor.client.plugins.plugin
+import io.ktor.client.*
+import io.ktor.client.plugins.auth.*
+import io.ktor.client.plugins.auth.providers.*
+import io.ktor.utils.io.core.*
 
 /**
  * Force the Auth plugin to invoke the `loadTokens` block again on the next client request.

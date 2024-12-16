@@ -1,11 +1,11 @@
 pluginManagement {
     includeBuild("build-logic")
-
     repositories {
         mavenCentral()
         google()
         gradlePluginPortal()
         maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+        maven("https://maven.pkg.jetbrains.space/public/p/ktor/eap")
     }
 }
 
