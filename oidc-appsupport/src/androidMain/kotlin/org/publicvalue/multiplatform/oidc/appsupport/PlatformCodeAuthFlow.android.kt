@@ -35,17 +35,28 @@ actual class PlatformCodeAuthFlow(
         val result = contract.launchSuspend(intent)
 
         val responseUri = result.data?.data
-        return if (result.resultCode == Activity.RESULT_OK && responseUri != null) {
-            if (responseUri.queryParameterNames?.contains("error") == true) {
-                // error
-                Result.failure(OpenIdConnectException.AuthenticationFailure(message = responseUri.getQueryParameter("error") ?: ""))
+        return if (result.resultCode == Activity.RESULT_OK) {
+            if (responseUri != null) {
+                if (responseUri.queryParameterNames?.contains("error") == true) {
+                    // error
+                    Result.failure(
+                        OpenIdConnectException.AuthenticationFailure(
+                            message = responseUri.getQueryParameter(
+                                "error"
+                            ) ?: ""
+                        )
+                    )
+                } else {
+                    val state = responseUri.getQueryParameter("state")
+                    val code = responseUri.getQueryParameter("code")
+                    Result.success(AuthCodeResult(code, state))
+                }
             } else {
-                val state = responseUri.getQueryParameter("state")
-                val code = responseUri.getQueryParameter("code")
-                Result.success(AuthCodeResult(code, state))
+                Result.failure(OpenIdConnectException.AuthenticationFailure(message = "No Uri in callback from browser (was ${responseUri})."))
             }
         } else {
-            Result.failure(OpenIdConnectException.AuthenticationFailure(message = "CustomTab result not ok (was ${result.resultCode}) or no Uri in callback from browser (was ${responseUri})."))
+            // browser closed, no redirect
+            Result.failure(OpenIdConnectException.AuthenticationCancelled())
         }
     }
 }
