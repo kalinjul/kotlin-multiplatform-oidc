@@ -14,6 +14,7 @@ sealed class OpenIdConnectException(
 
     data class InvalidUrl(val url: String?, override val cause: Throwable? = null): OpenIdConnectException(message = "Invalid URL: $url", cause = cause)
     data class AuthenticationFailure(override val message: String, override val cause: Throwable? = null): OpenIdConnectException(message = "Authentication failed. $message", cause = cause)
+    data class AuthenticationCancelled(override val message: String = "Authentication cancelled"): OpenIdConnectException(message = "Authentication cancelled", cause = null)
     data class UnsuccessfulTokenRequest(
         override val message: String,
         val statusCode: HttpStatusCode,

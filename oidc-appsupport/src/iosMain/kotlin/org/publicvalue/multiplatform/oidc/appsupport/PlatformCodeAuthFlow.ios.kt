@@ -55,11 +55,8 @@ actual class PlatformCodeAuthFlow(
 
                                 continuation.resume(AuthCodeResponse.success(AuthCodeResult(code = code, state = state)))
                             } else {
-                                if (p2 != null) {
-                                    continuation.resume(AuthCodeResponse.failure<AuthCodeResult>(OpenIdConnectException.AuthenticationFailure(p2.localizedDescription)))
-                                } else {
-                                    continuation.resume(AuthCodeResponse.failure<AuthCodeResult>(OpenIdConnectException.AuthenticationFailure("No message")))
-                                }
+                                // browser closed, no redirect.
+                                continuation.resume(AuthCodeResponse.failure<AuthCodeResult>(OpenIdConnectException.AuthenticationCancelled(p2?.localizedDescription() ?: "Authentication cancelled")))
                             }
                         }
                     }
