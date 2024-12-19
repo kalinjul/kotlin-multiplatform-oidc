@@ -68,7 +68,16 @@ abstract class CodeAuthFlow(val client: OpenIdConnectClient) {
 
     private suspend fun getAccessToken(request: AuthCodeRequest, configure: (HttpRequestBuilder.() -> Unit)?): AccessTokenResponse {
         val codeResponse = getAuthorizationCode(request)
-        return exchangeToken(client, request, codeResponse, configure)
+        return codeResponse.fold(
+            onSuccess = {
+                exchangeToken(
+                    client = client, request = request, result = it, configure = configure
+                )
+            },
+            onFailure = {
+                throw it
+            }
+        )
     }
 
     /**
@@ -82,24 +91,17 @@ abstract class CodeAuthFlow(val client: OpenIdConnectClient) {
     private suspend fun exchangeToken(
         client: OpenIdConnectClient,
         request: AuthCodeRequest,
-        authCodeResponse: AuthCodeResponse,
+        result: AuthCodeResult,
         configure: (HttpRequestBuilder.() -> Unit)?
     ): AccessTokenResponse {
-        authCodeResponse.fold(
-            onSuccess = {
-                if (it.code != null) {
-                    if (!request.validateState(it.state ?: "")) {
-                        throw OpenIdConnectException.AuthenticationFailure("Invalid state")
-                    }
-                    val response = client.exchangeToken(request, it.code, configure)
-                    return response
-                } else {
-                    throw OpenIdConnectException.AuthenticationFailure("No auth code", cause = null)
+            if (result.code != null) {
+                if (!request.validateState(result.state ?: "")) {
+                    throw OpenIdConnectException.AuthenticationFailure("Invalid state")
                 }
-            },
-            onFailure = {
-                throw OpenIdConnectException.AuthenticationFailure("AuthCode response was error: ${it.message}", cause = it)
+                val response = client.exchangeToken(request, result.code, configure)
+                return response
+            } else {
+                throw OpenIdConnectException.AuthenticationFailure("No auth code", cause = null)
             }
-        )
     }
 }
