@@ -12,7 +12,7 @@ import org.publicvalue.multiplatform.oauth.data.daos.IdpDao
 import org.publicvalue.multiplatform.oauth.data.db.Client
 import org.publicvalue.multiplatform.oauth.logging.Logger
 import org.publicvalue.multiplatform.oauth.util.DispatcherProvider
-import org.publicvalue.multiplatform.oauth.webserver.Webserver
+import org.publicvalue.multiplatform.oidc.appsupport.webserver.Webserver
 import org.publicvalue.multiplatform.oidc.types.AuthCodeRequest
 import org.publicvalue.multiplatform.oidc.types.validateState
 
@@ -54,8 +54,7 @@ class Authorize(
                 withContext(dispatchers.io()) {
                     async {
                         urlHandler.invoke(request.url)
-                        val response = webserver.startAndWaitForRedirect(Constants.WEBSERVER_PORT)
-                        webserver.stop()
+                        val response = webserver.startAndWaitForRedirect(Constants.WEBSERVER_PORT, Constants.REDIRECT_PATH)
                         response
                     }.await()
                 }

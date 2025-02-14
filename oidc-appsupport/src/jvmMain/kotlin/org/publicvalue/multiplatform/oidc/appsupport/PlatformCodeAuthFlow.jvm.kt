@@ -10,6 +10,7 @@ import org.publicvalue.multiplatform.oidc.OpenIdConnectException
 import org.publicvalue.multiplatform.oidc.appsupport.webserver.SimpleKtorWebserver
 import org.publicvalue.multiplatform.oidc.appsupport.webserver.Webserver
 import org.publicvalue.multiplatform.oidc.flows.AuthCodeResponse
+import org.publicvalue.multiplatform.oidc.flows.AuthCodeResult
 import org.publicvalue.multiplatform.oidc.flows.CodeAuthFlow
 import org.publicvalue.multiplatform.oidc.types.AuthCodeRequest
 import java.awt.Desktop
@@ -40,13 +41,18 @@ actual class PlatformCodeAuthFlow(
                 async {
                     openUrl(request.url)
                     val response = webserver.startAndWaitForRedirect(PORT, redirectPath = redirectUrl.encodedPath)
-                    webserver.stop()
                     response
                 }.await()
             }
 
+        val authCode = response?.queryParameters?.get("code")
+        val state = response?.queryParameters?.get("state")
+
         return AuthCodeResponse.success(
-            response
+            AuthCodeResult(
+                code = authCode,
+                state = state
+            )
         )
     }
 }

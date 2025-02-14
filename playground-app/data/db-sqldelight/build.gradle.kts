@@ -7,6 +7,10 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
+                api("io.github.kalinjul.kotlin.multiplatform:oidc-appsupport")
+
+                api(libs.ktor.server.core)
+
                 api(projects.core)
 
                 api(libs.kotlinx.datetime)
