@@ -97,7 +97,6 @@ class DefaultOpenIdConnectClient(
         val authorizationEndpoint = config.endpoints?.authorizationEndpoint ?: run { throw OpenIdConnectException.InvalidConfiguration("No authorizationEndpoint set") }
         val url = URLBuilder(authorizationEndpoint).apply {
             parameters.append("client_id", config.clientId!!)
-            config.clientSecret?.let { if (it.isNotBlank()) { parameters.append("client_secret", it) } }
             parameters.append("response_type", "code")
             parameters.append("response_mode", "query")
             config.scope?.let { parameters.append("scope", it) }
