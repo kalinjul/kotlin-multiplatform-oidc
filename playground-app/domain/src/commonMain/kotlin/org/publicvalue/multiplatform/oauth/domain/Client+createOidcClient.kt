@@ -11,9 +11,9 @@ fun Client.createOidcClient(idp: Identityprovider): OpenIdConnectClient {
             tokenEndpoint = idp.endpointToken
             authorizationEndpoint = idp.endpointAuthorization
         }
-        clientId = client_id
-        clientSecret = client_secret
-        this.scope = scope
+        clientId = this@createOidcClient.client_id
+        clientSecret = this@createOidcClient.client_secret
+        this.scope = this@createOidcClient.scope
         redirectUri = Constants.REDIRECT_URL
         codeChallengeMethod = this@createOidcClient.code_challenge_method.toLibrary()
     }
