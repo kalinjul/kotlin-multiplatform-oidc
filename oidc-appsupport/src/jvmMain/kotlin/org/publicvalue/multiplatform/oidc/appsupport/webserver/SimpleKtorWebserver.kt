@@ -11,6 +11,8 @@ import io.ktor.server.routing.RoutingContext
 import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
 import org.publicvalue.multiplatform.oidc.flows.AuthCodeResult
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 class SimpleKtorWebserver(
     val createResponse: suspend RoutingContext.() -> Unit = {
@@ -34,24 +36,23 @@ class SimpleKtorWebserver(
 ): Webserver {
     private var server: CIOApplicationEngine? = null
 
-    override suspend fun startAndWaitForRedirect(port: Int, redirectPath: String): AuthCodeResult {
-        var call: ApplicationRequest? = null
+    override suspend fun startAndWaitForRedirect(port: Int, redirectPath: String): ApplicationRequest? {
         server?.stop()
-        embeddedServer(CIO, port = port) {
-            routing {
-                get(redirectPath) {
-                    createResponse()
-                    call = this.call.request
-                    server?.stop()
+        return suspendCoroutine<ApplicationRequest> {
+            embeddedServer(CIO, port = port) {
+                routing {
+                    get(redirectPath) {
+                        createResponse()
+
+                        server?.stop()
+                        it.resume(this.call.request)
+                    }
                 }
+            }.apply {
+                server = engine
+                start(wait = true)
             }
-        }.apply {
-            server = engine
-            start(wait = true)
         }
-        val code = call?.queryParameters?.get("code")
-        val state = call?.queryParameters?.get("state")
-        return AuthCodeResult(code, state)
     }
 
     override suspend fun stop() {
