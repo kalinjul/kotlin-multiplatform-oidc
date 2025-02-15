@@ -26,8 +26,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.publicvalue.multiplatform.oidc.sample.PlatformConstants
-import org.publicvalue.multiplatform.oidc.sample.domain.ClientSettings
-import org.publicvalue.multiplatform.oidc.sample.domain.IdpSettings
 import org.publicvalue.multiplatform.oidc.types.CodeChallengeMethod
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -67,42 +65,42 @@ fun Config(
             challengeMethod = state.clientSettings.code_challenge_method,
             onChangeAuthEndpoint = {
                 state.eventSink(
-                    ConfigUiEvent.ChangeIdpProperty(IdpSettings::endpointAuthorization, it)
+                    ConfigUiEvent.ChangeEndpointAuthorization(it)
                 )
             },
             onChangeDiscoveryUrl = {
                 state.eventSink(
-                    ConfigUiEvent.ChangeIdpProperty(IdpSettings::discoveryUrl, it)
+                    ConfigUiEvent.ChangeDiscoveryUrl(it)
                 )
             },
             onChangeTokenEndpoint = {
                 state.eventSink(
-                    ConfigUiEvent.ChangeIdpProperty(IdpSettings::endpointToken, it)
+                    ConfigUiEvent.ChangeEndpointToken(it)
                 )
             },
             onChangeEndSessionEndpoint = {
                 state.eventSink(
-                    ConfigUiEvent.ChangeIdpProperty(IdpSettings::endpointEndSession, it)
+                    ConfigUiEvent.ChangeEndpointEndSession(it)
                 )
             },
             onChangeClientId = {
                 state.eventSink(
-                    ConfigUiEvent.ChangeClientProperty(ClientSettings::client_id, it)
+                    ConfigUiEvent.ChangeClientId(it)
                 )
             },
             onChangeClientSecret = {
                 state.eventSink(
-                    ConfigUiEvent.ChangeClientProperty(ClientSettings::client_secret, it)
+                    ConfigUiEvent.ChangeClientSecret(it)
                 )
             },
             onChangeScope = {
                 state.eventSink(
-                    ConfigUiEvent.ChangeClientProperty(ClientSettings::scope, it)
+                    ConfigUiEvent.ChangeScope(it)
                 )
             },
             onChangeChallengeMethod = {
                 state.eventSink(
-                    ConfigUiEvent.ChangeClientProperty(ClientSettings::code_challenge_method, it)
+                    ConfigUiEvent.ChangeCodeChallengeMethod(it)
                 )
             },
             onClickDiscover = {

@@ -1,4 +1,5 @@
 import org.publicvalue.convention.config.configureIosTargets
+import org.publicvalue.convention.config.configureWasm
 import org.publicvalue.convention.config.exportKdoc
 
 plugins {
@@ -12,6 +13,7 @@ description = "Kotlin Multiplatform OIDC crypto library"
 
 kotlin {
     configureIosTargets()
+    configureWasm()
     sourceSets {
         val commonMain by getting {
             dependencies {
@@ -23,9 +25,19 @@ kotlin {
 
         val commonTest by getting {
             dependencies {
+                implementation(projects.oidcCore)
                 implementation(kotlin("test"))
                 implementation(libs.assertk)
                 implementation(libs.kotlinx.coroutines.test)
+            }
+        }
+
+        val wasmJsMain by getting {
+            dependencies {
+                implementation(project.dependencies.platform(libs.kotlincrypto.hash.bom))
+                implementation(libs.kotlincrypto.hash.sha2)
+
+                implementation(libs.ktor.utils)
             }
         }
     }

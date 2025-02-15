@@ -2,7 +2,11 @@ package org.publicvalue.multiplatform.oidc
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
+import org.publicvalue.multiplatform.oidc.flows.Pkce
+import org.publicvalue.multiplatform.oidc.types.CodeChallengeMethod
 import kotlin.test.Test
+import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
 
 class PKCETest {
     @Test
@@ -28,5 +32,43 @@ class PKCETest {
         assertThat("49f28fec29cfc6243be4348e20dbb3c45a5ca230dbd2508b61d3bb80".s256().encodeForPKCE()).isEqualTo("71_p-2XnQNtp0ejBitMKotd0KXC4mOrBGQCrV2NB_SM")
         assertThat("gdFYQb_89x1lV7c0oHoCkJEQjRXhQzGRD4kmzYk1s5M".s256().encodeForPKCE()).isEqualTo("t0hcawUItzlHvJczV9dDP18E--htlBE1MlBd37OgZRc")
         assertThat("FvquH4N_qH-YZRxkkfauVCXv0nWmLtbLjnAqQS5LVVU".s256().encodeForPKCE()).isEqualTo("QkfMjldvTK49kFrHLjwm1ZIy1SHkmKong4BmKBATIL0")
+        assertThat("12W5Fscr8w34Q6510F8MmiDoN3cBhA_XSWSONObhKUg".s256().encodeForPKCE()).isEqualTo("vPGsmc1pTnazk-Q9lwMOBrzG2wNdEa8KkYoVXq7Tknk")
+    }
+
+    @Test
+    fun `should generate valid code verifier`() {
+        val pkse = Pkce(codeChallengeMethod = CodeChallengeMethod.S256)
+
+        val codeVerifier = pkse.codeVerifier
+
+        assertTrue("Code verifier length must be between 43 and 128") {
+            codeVerifier.length in 43..128
+        }
+        assertTrue("Code verifier must match Base64 URL format") {
+            codeVerifier.matches(Regex("^[A-Za-z0-9-_]+$"))
+        }
+    }
+
+    @Test
+    fun `should generate valid code challenge from code verifier`() {
+        val pkse = Pkce(codeChallengeMethod = CodeChallengeMethod.S256)
+        val codeVerifier = pkse.codeVerifier
+        val codeChallenge = codeVerifier.s256().encodeForPKCE()
+
+        assertNotNull(codeChallenge, "Code challenge should not be null", )
+        assertTrue("Code challenge must match Base64 URL format") {
+            codeChallenge.matches(Regex("^[A-Za-z0-9-_]+$"))
+        }
+    }
+
+    @Test
+    fun `should generate correct code challenge for a known verifier`() {
+        val knownVerifier = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+        val expectedChallenge = knownVerifier.s256().encodeForPKCE()
+
+        assertNotNull(expectedChallenge, "Expected challenge should not be null")
+        assertTrue("Expected challenge must match Base64 URL format") {
+            expectedChallenge.matches(Regex("^[A-Za-z0-9-_]+$"))
+        }
     }
 }

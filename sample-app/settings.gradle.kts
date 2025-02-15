@@ -18,7 +18,7 @@ dependencyResolutionManagement {
         }
     }
 
-    repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
+//    repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
     repositories {
         mavenCentral()
         google()
@@ -29,4 +29,5 @@ rootProject.name = "sample-app"
 include(":shared")
 include(":android-app")
 include(":desktop-app")
+include(":wasm-js-app")
 include(":settings")

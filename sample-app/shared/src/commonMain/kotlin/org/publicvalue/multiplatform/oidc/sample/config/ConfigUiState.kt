@@ -2,8 +2,10 @@ package org.publicvalue.multiplatform.oidc.sample.config
 
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
+import org.publicvalue.multiplatform.oidc.sample.config.ConfigUiEvent
 import org.publicvalue.multiplatform.oidc.sample.domain.ClientSettings
 import org.publicvalue.multiplatform.oidc.sample.domain.IdpSettings
+import org.publicvalue.multiplatform.oidc.types.CodeChallengeMethod
 import kotlin.reflect.KProperty1
 
 data class ConfigUiState(
@@ -14,7 +16,16 @@ data class ConfigUiState(
 
 sealed interface ConfigUiEvent: CircuitUiEvent {
     data object NavigateBack: ConfigUiEvent
-    data class ChangeIdpProperty<V: Comparable<V>>(val prop: KProperty1<IdpSettings, V?>, val value: V): ConfigUiEvent
-    data class ChangeClientProperty<V: Comparable<V>>(val prop: KProperty1<ClientSettings, V?>, val value: V): ConfigUiEvent
+
+    data class ChangeDiscoveryUrl(val discoveryUrl: String): ConfigUiEvent
+    data class ChangeEndpointToken(val endpointToken: String): ConfigUiEvent
+    data class ChangeEndpointAuthorization(val endpointAuthorization: String): ConfigUiEvent
+    data class ChangeEndpointEndSession(val endpointEndSession: String): ConfigUiEvent
+
+    data class ChangeClientId(val clientId: String): ConfigUiEvent
+    data class ChangeClientSecret(val clientSecret: String): ConfigUiEvent
+    data class ChangeScope(val scope: String): ConfigUiEvent
+    data class ChangeCodeChallengeMethod(val codeChallengeMethod: CodeChallengeMethod): ConfigUiEvent
+
     data object Discover: ConfigUiEvent
 }

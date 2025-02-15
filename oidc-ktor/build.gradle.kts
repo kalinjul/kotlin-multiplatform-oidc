@@ -1,5 +1,6 @@
 import org.publicvalue.convention.config.configureAndroidTarget
 import org.publicvalue.convention.config.configureIosTargets
+import org.publicvalue.convention.config.configureWasm
 
 plugins {
     id("org.publicvalue.convention.android.library")
@@ -11,6 +12,7 @@ description = "Kotlin Multiplatform OIDC support library for ktor clients"
 
 kotlin {
     configureIosTargets()
+    configureWasm()
     sourceSets {
         val commonMain by getting {
             dependencies {

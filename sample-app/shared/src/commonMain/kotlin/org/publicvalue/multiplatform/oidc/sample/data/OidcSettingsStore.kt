@@ -1,6 +1,8 @@
 package org.publicvalue.multiplatform.oidc.sample.data
 
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -26,8 +28,10 @@ class OidcSettingsStore(
     fun observeClientSettings() = clientSettings.asStateFlow()
     fun observeTokenData() = tokenData.asStateFlow()
 
+    private val scope by lazy { CoroutineScope(Dispatchers.Default + SupervisorJob()) }
+    
     init {
-        GlobalScope.launch {
+        scope.launch {
             settingsStore.get(IDP_SETTINGS_KEY)?.let {
                 idpSettings.value = Json.decodeFromString(it)
             }
