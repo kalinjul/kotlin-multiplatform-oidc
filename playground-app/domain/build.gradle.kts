@@ -13,7 +13,6 @@ kotlin {
                 api(projects.playgroundApp.data.dbSqldelight)
 
                 implementation(libs.kotlinx.coroutines.core)
-                implementation(projects.playgroundApp.webserver)
             }
         }
     }

@@ -69,6 +69,8 @@ kotlin {
             dependencies {
                 api(projects.oidcCore)
                 api(projects.oidcTokenstore)
+                implementation(libs.ktor.server.core)
+                implementation(libs.ktor.server.cio)
             }
         }
 
@@ -87,8 +89,6 @@ kotlin {
 
         val jvmMain by getting {
             dependencies {
-                implementation(libs.ktor.server.core)
-                implementation(libs.ktor.server.cio)
             }
         }
 
