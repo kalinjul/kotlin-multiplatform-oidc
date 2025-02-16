@@ -1,4 +1,3 @@
-import org.publicvalue.convention.config.configureAndroidTarget
 import org.publicvalue.convention.config.configureIosTargets
 import org.publicvalue.convention.config.configureWasm
 
@@ -19,16 +18,6 @@ kotlin {
                 api(projects.oidcCore)
                 implementation(projects.oidcTokenstore)
                 implementation(libs.ktor.client.auth)
-            }
-        }
-
-        val androidMain by getting {
-            dependencies {
-            }
-        }
-
-        val commonTest by getting {
-            dependencies {
             }
         }
     }
