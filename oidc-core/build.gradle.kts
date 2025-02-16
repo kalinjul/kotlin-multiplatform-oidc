@@ -1,5 +1,6 @@
 import org.publicvalue.convention.config.configureIosTargets
 import org.publicvalue.convention.config.exportKdoc
+import org.publicvalue.convention.config.configureWasm
 
 plugins {
     id("org.publicvalue.convention.kotlin.multiplatform")
@@ -11,6 +12,7 @@ description = "Kotlin Multiplatform OIDC core library"
 
 kotlin {
     configureIosTargets()
+    configureWasm("oidc-core")
     sourceSets {
         val commonMain by getting {
             dependencies {
@@ -31,6 +33,7 @@ kotlin {
                 implementation(libs.ktor.client.okhttp)
             }
         }
+
 
         val iosMain by getting {
             dependencies {
