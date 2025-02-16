@@ -1,7 +1,6 @@
 package org.publicvalue.multiplatform.oidc.appsupport.webserver
 
 import io.ktor.server.request.ApplicationRequest
-import org.publicvalue.multiplatform.oidc.flows.AuthCodeResult
 
 interface Webserver {
     /**

@@ -10,7 +10,6 @@ import io.ktor.server.response.respondText
 import io.ktor.server.routing.RoutingContext
 import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
-import org.publicvalue.multiplatform.oidc.flows.AuthCodeResult
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
