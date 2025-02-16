@@ -20,6 +20,11 @@ kotlin {
                 implementation(libs.ktor.client.auth)
             }
         }
+        val commonTest by getting {
+            dependencies {
+                implementation(kotlin("test"))
+            }
+        }
     }
 }
 
