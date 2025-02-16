@@ -1,8 +1,10 @@
 package org.publicvalue.multiplatform.oidc.appsupport
 
 import io.ktor.http.Url
+import kotlinx.coroutines.CancellableContinuation
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
 import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
 import org.publicvalue.multiplatform.oidc.OpenIdConnectException
 import org.publicvalue.multiplatform.oidc.flows.AuthCodeResponse
@@ -19,7 +21,6 @@ import platform.Foundation.NSURL
 import platform.darwin.NSObject
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
-import kotlin.coroutines.suspendCoroutine
 import kotlin.experimental.ExperimentalObjCName
 
 /**
@@ -40,7 +41,7 @@ actual class PlatformCodeAuthFlow(
     constructor(client: OpenIdConnectClient) : this(client = client, ephemeralBrowserSession = false)
 
     actual override suspend fun getAuthorizationCode(request: AuthCodeRequest): AuthCodeResponse = wrapExceptions {
-        val authResponse = suspendCoroutine { continuation ->
+        val authResponse = suspendCancellableCoroutine { continuation ->
             val nsurl = NSURL.URLWithString(request.url.toString())
             if (nsurl != null) {
                 val session = ASWebAuthenticationSession(
@@ -53,10 +54,10 @@ actual class PlatformCodeAuthFlow(
                                 val code = url.parameters["code"] ?: ""
                                 val state = url.parameters["state"] ?: ""
 
-                                continuation.resume(AuthCodeResponse.success(AuthCodeResult(code = code, state = state)))
+                                continuation.resumeIfActive(AuthCodeResponse.success(AuthCodeResult(code = code, state = state)))
                             } else {
                                 // browser closed, no redirect.
-                                continuation.resume(AuthCodeResponse.failure<AuthCodeResult>(OpenIdConnectException.AuthenticationCancelled(p2?.localizedDescription() ?: "Authentication cancelled")))
+                                continuation.resumeIfActive(AuthCodeResponse.failure<AuthCodeResult>(OpenIdConnectException.AuthenticationCancelled(p2?.localizedDescription()?: "Authentication cancelled"))                                    )
                             }
                         }
                     }
@@ -68,7 +69,9 @@ actual class PlatformCodeAuthFlow(
                     session.start()
                 }
             } else {
-                continuation.resumeWithException(OpenIdConnectException.InvalidUrl(request.url.toString()))
+                if (continuation.isActive) {
+                    continuation.resumeWithExceptionIfActive(OpenIdConnectException.InvalidUrl(request.url.toString()))
+                }
             }
         }
 
@@ -79,5 +82,19 @@ actual class PlatformCodeAuthFlow(
 class PresentationContext: NSObject(), ASWebAuthenticationPresentationContextProvidingProtocol {
     override fun presentationAnchorForWebAuthenticationSession(session: ASWebAuthenticationSession): ASPresentationAnchor {
         return ASPresentationAnchor()
+    }
+}
+
+/** fix for multiple callbacks from ASWebAuthenticationSession (https://github.com/kalinjul/kotlin-multiplatform-oidc/issues/89) **/
+fun <T> CancellableContinuation<T>.resumeIfActive(value: T) {
+    if (isActive) {
+        resume(value)
+    }
+}
+
+/** fix for multiple callbacks from ASWebAuthenticationSession (https://github.com/kalinjul/kotlin-multiplatform-oidc/issues/89) **/
+fun <T> CancellableContinuation<T>.resumeWithExceptionIfActive(value: Exception) {
+    if (isActive) {
+        resumeWithException(value)
     }
 }
