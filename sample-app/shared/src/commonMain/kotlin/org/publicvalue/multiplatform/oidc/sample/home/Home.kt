@@ -23,6 +23,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import org.publicvalue.multiplatform.oidc.sample.domain.TokenData
 
+@Composable
+expect fun HandleRedirect(state: HomeUiState)
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Home(
@@ -31,6 +34,8 @@ fun Home(
 ) {
     var greetingText by remember { mutableStateOf("Hello, World!") }
     var showImage by remember { mutableStateOf(false) }
+
+    HandleRedirect(state)
 
 //    val settingsStore = LocalSettingsStore.current
 

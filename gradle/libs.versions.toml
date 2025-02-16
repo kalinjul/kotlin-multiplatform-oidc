@@ -48,6 +48,8 @@ securityCryptoKtx = "1.1.0-alpha06"
 assertk = "0.28.1"
 russhwolf = "1.2.0"
 
+kotlincrypto-hash = "0.6.1"
+
 [libraries]
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidxActivity" }
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "androidxAppCompat" }
@@ -107,6 +109,9 @@ circuit-overlay = { module = "com.slack.circuit:circuit-overlay", version.ref = 
 circuit-retained = { module = "com.slack.circuit:circuit-retained", version.ref = "circuit" }
 circuit-runtime = { module = "com.slack.circuit:circuit-runtime", version.ref = "circuit" }
 russhwolf-multiplatformsettings = { module = "com.russhwolf:multiplatform-settings", version.ref = "russhwolf" }
+
+kotlincrypto-hash-bom = { module = "org.kotlincrypto.hash:bom", version.ref = "kotlincrypto-hash" }
+kotlincrypto-hash-sha2 = { module = "org.kotlincrypto.hash:sha2", version.ref = "kotlincrypto-hash" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

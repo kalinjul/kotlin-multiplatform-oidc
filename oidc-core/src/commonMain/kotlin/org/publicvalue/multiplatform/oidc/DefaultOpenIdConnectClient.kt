@@ -1,27 +1,19 @@
 package org.publicvalue.multiplatform.oidc
 
-import io.ktor.client.HttpClient
-import io.ktor.client.call.HttpClientCall
-import io.ktor.client.call.NoTransformationFoundException
-import io.ktor.client.call.body
-import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.client.request.HttpRequestBuilder
-import io.ktor.client.request.forms.prepareForm
-import io.ktor.client.request.forms.submitForm
-import io.ktor.client.request.parameter
+import io.ktor.client.*
+import io.ktor.client.call.*
+import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.request.*
+import io.ktor.client.request.forms.*
 import io.ktor.client.request.url
-import io.ktor.client.statement.HttpResponse
-import io.ktor.client.statement.HttpStatement
-import io.ktor.http.ContentType
-import io.ktor.http.ContentTypeMatcher
-import io.ktor.http.HttpStatusCode
-import io.ktor.http.URLBuilder
-import io.ktor.http.decodeURLQueryComponent
-import io.ktor.http.isSuccess
-import io.ktor.http.parameters
+import io.ktor.client.statement.*
+import io.ktor.http.*
 import io.ktor.serialization.JsonConvertException
-import io.ktor.serialization.kotlinx.KotlinxSerializationConverter
-import kotlinx.coroutines.runBlocking
+import io.ktor.serialization.kotlinx.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import org.publicvalue.multiplatform.oidc.discovery.OpenIdConnectDiscover
@@ -58,6 +50,8 @@ class DefaultOpenIdConnectClient(
     constructor(config: OpenIdConnectClientConfig): this(httpClient = DefaultHttpClient, config = config)
 
     override var discoverDocument: OpenIdConnectConfiguration? = null
+
+    private val scope by lazy { CoroutineScope(Dispatchers.Default + SupervisorJob()) }
 
     companion object {
         val DefaultHttpClient by lazy {
@@ -165,14 +159,15 @@ class DefaultOpenIdConnectClient(
             config.clientSecret?.let { append("client_secret", it) }
             if (config.codeChallengeMethod != CodeChallengeMethod.off) { append("code_verifier", authCodeRequest.pkce.codeVerifier) }
         }
-        val request = runBlocking { // there is no suspending happening here
+        val request = scope.async { // there is no suspending happening here
             httpClient.prepareForm(
                 formParameters = formParameters
             ) {
                 url(url)
                 configure?.invoke(this)
             }
-        }
+        }.await()
+
         return TokenRequest(
             request,
             formParameters
@@ -190,14 +185,14 @@ class DefaultOpenIdConnectClient(
             append("refresh_token", refreshToken)
             config.scope?.let { append("scope", it) }
         }
-        val request = runBlocking { // there is no suspending happening here
+        val request = scope.async { // there is no suspending happening here
             httpClient.prepareForm(
                 formParameters = formParameters
             ) {
                 url(url)
                 configure?.invoke(this)
             }
-        }
+        }.await()
         return TokenRequest(
             request,
             formParameters

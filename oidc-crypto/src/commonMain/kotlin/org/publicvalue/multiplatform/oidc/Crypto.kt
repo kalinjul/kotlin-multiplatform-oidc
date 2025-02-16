@@ -11,6 +11,8 @@ import kotlin.random.Random
  *
  * On iOS, this delegates to [`SecRandomCopyBytes`](https://developer.apple.com/documentation/security/1399291-secrandomcopybytes?language=objc)
  *
+ * On wasmJs, this delegates to [`crypto.getRandomValues`](https://developer.mozilla.org/en-US/docs/Web/API/Crypto/getRandomValues)
+ *
  * @param size number of bytes to generate
  */
 expect fun secureRandomBytes(size: Int = 32): ByteArray

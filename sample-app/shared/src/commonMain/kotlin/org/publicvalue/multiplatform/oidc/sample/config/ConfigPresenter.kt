@@ -14,7 +14,7 @@ import org.publicvalue.multiplatform.oidc.sample.circuit.catchErrorMessage
 import org.publicvalue.multiplatform.oidc.sample.data.LocalSettingsStore
 import org.publicvalue.multiplatform.oidc.sample.domain.ClientSettings
 import org.publicvalue.multiplatform.oidc.sample.domain.IdpSettings
-import org.publicvalue.multiplatform.oidc.types.CodeChallengeMethod
+import kotlin.String
 
 class ConfigPresenter(
     val navigator: Navigator
@@ -35,53 +35,60 @@ class ConfigPresenter(
                 ConfigUiEvent.NavigateBack -> {
                      navigator.pop()
                 }
-
-                is ConfigUiEvent.ChangeClientProperty<*> -> {
+                is ConfigUiEvent.ChangeClientId -> {
                     val clientSettings = clientSettings ?: ClientSettings.Empty
 
-                    when (event.prop) {
-
-                        ClientSettings::client_id -> {
-                            scope.launch {
-                                settingsStore.setClientSettings(clientSettings.copy(client_id = event.value as String))
-                            }
-                        }
-
-                        ClientSettings::client_secret -> {
-                            scope.launch {
-                                settingsStore.setClientSettings(clientSettings.copy(client_secret = event.value as String))
-                            }
-                        }
-
-                        ClientSettings::scope -> {
-                            scope.launch {
-                                settingsStore.setClientSettings(clientSettings.copy(scope = event.value as String))
-                            }
-                        }
-
-                        ClientSettings::code_challenge_method -> {
-                            scope.launch {
-                                settingsStore.setClientSettings(clientSettings.copy(code_challenge_method = event.value as CodeChallengeMethod))
-                            }
-                        }
+                    scope.launch {
+                        settingsStore.setClientSettings(clientSettings.copy(client_id = event.clientId))
                     }
                 }
-                is ConfigUiEvent.ChangeIdpProperty<*> -> {
+                is ConfigUiEvent.ChangeClientSecret -> {
+                    val clientSettings = clientSettings ?: ClientSettings.Empty
+
+                    scope.launch {
+                        settingsStore.setClientSettings(clientSettings.copy(client_secret = event.clientSecret))
+                    }
+                }
+                is ConfigUiEvent.ChangeScope -> {
+                    val clientSettings = clientSettings ?: ClientSettings.Empty
+
+                    scope.launch {
+                        settingsStore.setClientSettings(clientSettings.copy(scope = event.scope))
+                    }
+                }
+                is ConfigUiEvent.ChangeCodeChallengeMethod -> {
+                    val clientSettings = clientSettings ?: ClientSettings.Empty
+
+                    scope.launch {
+                        settingsStore.setClientSettings(clientSettings.copy(code_challenge_method = event.codeChallengeMethod))
+                    }
+                }
+                is ConfigUiEvent.ChangeDiscoveryUrl -> {
                     val idpSettings = idpSettings ?: IdpSettings.Empty
 
-                    when (event.prop) {
-                        IdpSettings::discoveryUrl -> scope.launch {
-                            settingsStore.setIdpSettings(idpSettings.copy(discoveryUrl = event.value as String))
-                        }
-                        IdpSettings::endpointToken -> scope.launch {
-                            settingsStore.setIdpSettings(idpSettings.copy(endpointToken = event.value as String))
-                        }
-                        IdpSettings::endpointAuthorization -> scope.launch {
-                            settingsStore.setIdpSettings(idpSettings.copy(endpointAuthorization = event.value as String))
-                        }
-                        IdpSettings::endpointEndSession -> scope.launch {
-                            settingsStore.setIdpSettings(idpSettings.copy(endpointEndSession = event.value as String))
-                        }
+                    scope.launch {
+                        settingsStore.setIdpSettings(idpSettings.copy(discoveryUrl = event.discoveryUrl))
+                    }
+                }
+                is ConfigUiEvent.ChangeEndpointAuthorization -> {
+                    val idpSettings = idpSettings ?: IdpSettings.Empty
+
+                    scope.launch {
+                        settingsStore.setIdpSettings(idpSettings.copy(endpointAuthorization = event.endpointAuthorization))
+                    }
+                }
+                is ConfigUiEvent.ChangeEndpointEndSession -> {
+                    val idpSettings = idpSettings ?: IdpSettings.Empty
+
+                    scope.launch {
+                        settingsStore.setIdpSettings(idpSettings.copy(endpointEndSession = event.endpointEndSession))
+                    }
+                }
+                is ConfigUiEvent.ChangeEndpointToken -> {
+                    val idpSettings = idpSettings ?: IdpSettings.Empty
+
+                    scope.launch {
+                        settingsStore.setIdpSettings(idpSettings.copy(endpointToken = event.endpointToken))
                     }
                 }
                 ConfigUiEvent.Discover -> {
