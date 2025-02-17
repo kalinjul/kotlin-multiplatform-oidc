@@ -20,14 +20,6 @@ import org.publicvalue.multiplatform.oidc.sample.screens.ConfigScreen
 import org.publicvalue.multiplatform.oidc.types.Jwt
 import org.publicvalue.multiplatform.oidc.types.remote.AccessTokenResponse
 
-expect suspend fun login(authFlowFactory: CodeAuthFlowFactory, client: OpenIdConnectClient, updateTokenResponse: suspend (AccessTokenResponse) -> Unit)
-expect suspend fun redirect(
-    client: OpenIdConnectClient,
-    state: String,
-    code: String,
-    updateTokenResponse: suspend (AccessTokenResponse) -> Unit
-)
-
 class HomePresenter(
     val authFlowFactory: CodeAuthFlowFactory,
     val navigator: Navigator
@@ -95,27 +87,12 @@ class HomePresenter(
                     if (client != null) {
                         scope.launch {
                             catchErrorMessage {
-                                login(
-                                    authFlowFactory = authFlowFactory,
-                                    client = client,
-                                    updateTokenResponse = ::updateTokenResponse
+                                val newTokens = authFlowFactory.createAuthFlow(client).getAccessToken(
+                                    configureAuthUrl = {
+                                        parameters.append("prompt", "login")
+                                    }
                                 )
-                            }
-                        }
-                    }
-                }
-                is HomeUiEvent.Redirect -> {
-                    val client = createClient()
-
-                    if (client != null) {
-                        scope.launch {
-                            catchErrorMessage {
-                                redirect(
-                                    client = client,
-                                    state = event.state,
-                                    code = event.code,
-                                    updateTokenResponse = ::updateTokenResponse
-                                )
+                                updateTokenResponse(newTokens)
                             }
                         }
                     }

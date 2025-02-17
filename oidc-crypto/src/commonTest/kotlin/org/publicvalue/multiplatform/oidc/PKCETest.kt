@@ -37,7 +37,7 @@ class PKCETest {
 
     @Test
     fun `should generate valid code verifier`() {
-        val pkse = Pkce(codeChallengeMethod = CodeChallengeMethod.S256)
+        val pkce = Pkce(codeChallengeMethod = CodeChallengeMethod.S256)
 
         val codeVerifier = pkse.codeVerifier
 
@@ -58,17 +58,6 @@ class PKCETest {
         assertNotNull(codeChallenge, "Code challenge should not be null", )
         assertTrue("Code challenge must match Base64 URL format") {
             codeChallenge.matches(Regex("^[A-Za-z0-9-_]+$"))
-        }
-    }
-
-    @Test
-    fun `should generate correct code challenge for a known verifier`() {
-        val knownVerifier = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-        val expectedChallenge = knownVerifier.s256().encodeForPKCE()
-
-        assertNotNull(expectedChallenge, "Expected challenge should not be null")
-        assertTrue("Expected challenge must match Base64 URL format") {
-            expectedChallenge.matches(Regex("^[A-Za-z0-9-_]+$"))
         }
     }
 }

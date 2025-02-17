@@ -16,7 +16,6 @@ external object crypto {
 actual fun secureRandomBytes(size: Int): ByteArray {
     require(size >= 0) { "count cannot be negative" }
     val uint8Array = Uint8Array(size)
-//    fillRandomValues(uint8Array)
     crypto.getRandomValues(uint8Array)
     return ByteArray(size) { uint8Array[it].toByte() }
 }

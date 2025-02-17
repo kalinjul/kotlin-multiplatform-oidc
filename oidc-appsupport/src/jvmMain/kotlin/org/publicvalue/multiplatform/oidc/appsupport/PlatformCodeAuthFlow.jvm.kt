@@ -1,7 +1,6 @@
 package org.publicvalue.multiplatform.oidc.appsupport
 
-import io.ktor.http.Url
-import io.ktor.http.toURI
+import io.ktor.http.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext

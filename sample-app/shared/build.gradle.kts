@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.publicvalue.convention.addParcelizeAnnotation
 import org.publicvalue.convention.config.configureIosTargets
-import org.publicvalue.convention.config.configureWasm
+import org.publicvalue.convention.config.configureWasmTarget
 
 plugins {
     id("org.publicvalue.convention.android.library")
@@ -14,7 +14,7 @@ plugins {
 
 kotlin {
     configureIosTargets()
-    configureWasm()
+    configureWasmTarget()
     sourceSets {
         val commonMain by getting {
             dependencies {

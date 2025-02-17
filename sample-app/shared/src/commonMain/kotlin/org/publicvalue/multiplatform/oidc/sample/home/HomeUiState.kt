@@ -19,5 +19,4 @@ sealed interface HomeUiEvent: CircuitUiEvent {
     data object Login: HomeUiEvent
     data object Logout: HomeUiEvent
     data object Refresh: HomeUiEvent
-    data class Redirect(val state: String, val code: String): HomeUiEvent
 }

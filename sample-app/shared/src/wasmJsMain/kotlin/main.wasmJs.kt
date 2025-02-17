@@ -1,6 +1,7 @@
 import androidx.compose.runtime.Composable
 import com.slack.circuit.backstack.rememberSaveableBackStack
 import com.slack.circuit.foundation.rememberCircuitNavigator
+import kotlinx.browser.window
 import org.publicvalue.multiplatform.oidc.appsupport.WasmCodeAuthFlowFactory
 import org.publicvalue.multiplatform.oidc.sample.screens.HomeScreen
 import org.publicvalue.multiplatform.oidc.settings.WasmJsSettingsStore
@@ -17,6 +18,8 @@ fun MainView() {
         backstack = backstack,
         navigator = navigator,
         settingsStore = settingsStore,
-        authFlowFactory = WasmCodeAuthFlowFactory()
+        authFlowFactory = WasmCodeAuthFlowFactory(
+            redirectOrigin = window.location.origin
+        )
     )
 }
