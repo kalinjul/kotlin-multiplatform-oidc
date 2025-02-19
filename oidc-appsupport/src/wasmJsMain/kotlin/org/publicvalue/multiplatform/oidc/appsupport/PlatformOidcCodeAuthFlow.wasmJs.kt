@@ -17,7 +17,7 @@ import kotlin.coroutines.suspendCoroutine
 
 actual class PlatformCodeAuthFlow(
     client: OpenIdConnectClient,
-    val windowTarget: String = "DialogFenster",
+    val windowTarget: String = "",
     val windowFeatures: String = "width=1000,height=800,resizable=yes,scrollbars=yes",
     val redirectOrigin: String
 ) : CodeAuthFlow(client) {
@@ -35,12 +35,11 @@ actual class PlatformCodeAuthFlow(
                 if (event.origin != redirectOrigin)
                     continuation.resume(AuthCodeResponse.failure(TechnicalFailure("Security issue. Event was not from ${window.location.origin}", null)))
 
-                if (event.source != popup)
-                    continuation.resume(AuthCodeResponse.failure(TechnicalFailure("Security issue. Event was from unexpected window", null)))
+                if (event.source == popup) {
+                    val authCodeResult: AuthCodeResult = Json.decodeFromString(getEventData(event))
 
-                val authCodeResult: AuthCodeResult = Json.decodeFromString(getEventData(event))
-
-                continuation.resume(AuthCodeResponse.success(authCodeResult))
+                    continuation.resume(AuthCodeResponse.success(authCodeResult))
+                }
             }
         }
 
@@ -50,7 +49,7 @@ actual class PlatformCodeAuthFlow(
     }
 
     companion object {
-        fun fetchStateAndCodeAndRedirect() {
+        fun handleRedirect() {
             if (window.opener != null) {
                 postMessage(
                     code = Url(window.location.toString()).parameters["code"],

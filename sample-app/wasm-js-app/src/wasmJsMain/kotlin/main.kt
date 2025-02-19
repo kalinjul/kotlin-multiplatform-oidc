@@ -14,7 +14,7 @@ fun main() {
             }
             currentPath.startsWith("/redirect") -> {
                 LaunchedEffect(Unit) {
-                    PlatformCodeAuthFlow.fetchStateAndCodeAndRedirect()
+                    PlatformCodeAuthFlow.handleRedirect()
                 }
             }
         }
