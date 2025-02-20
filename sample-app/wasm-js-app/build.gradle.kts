@@ -1,6 +1,5 @@
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
-import org.publicvalue.convention.config.configureWasmTarget
 
 plugins {
     id("org.publicvalue.convention.kotlin.multiplatform")
@@ -37,9 +36,6 @@ kotlin {
                 implementation(compose.components.uiToolingPreview)
 
                 implementation(projects.shared)
-
-                implementation("app.softwork:routing-compose:0.4.0")
-
             }
         }
     }
