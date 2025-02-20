@@ -3,6 +3,7 @@ package org.publicvalue.multiplatform.oidc.appsupport
 import io.ktor.http.*
 import kotlinx.browser.window
 import kotlinx.serialization.json.Json
+import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
 import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
 import org.publicvalue.multiplatform.oidc.OpenIdConnectException.TechnicalFailure
 import org.publicvalue.multiplatform.oidc.flows.AuthCodeResponse
@@ -15,6 +16,7 @@ import org.w3c.dom.events.Event
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
+@ExperimentalOpenIdConnect
 actual class PlatformCodeAuthFlow(
     client: OpenIdConnectClient,
     val windowTarget: String = "",
@@ -22,6 +24,7 @@ actual class PlatformCodeAuthFlow(
     val redirectOrigin: String
 ) : CodeAuthFlow(client) {
 
+    @ExperimentalOpenIdConnect
     actual override suspend fun getAuthorizationCode(request: AuthCodeRequest): AuthCodeResponse = suspendCoroutine<AuthCodeResponse> { continuation ->
         var popup = window.open(request.url.toString(), windowTarget, windowFeatures)
 
@@ -49,6 +52,7 @@ actual class PlatformCodeAuthFlow(
     }
 
     companion object {
+        @ExperimentalOpenIdConnect
         fun handleRedirect() {
             if (window.opener != null) {
                 postMessage(
