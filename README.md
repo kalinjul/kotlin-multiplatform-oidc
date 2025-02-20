@@ -27,7 +27,7 @@ Library dependency versions:
 |------------------|----------------|--------------|
 | <=0.11.1         | 1.9.23         | 2.3.7        |
 | 0.11.2           | 2.0.20         | 2.3.7        |
-| 0.12.+           | 2.0.20         | 3.0.+        |
+| 0.12.0 - 0.13.+  | 2.0.20         | 3.0.+        |
 
 Note that while the library may work with other kotlin/ktor versions, proceed at your own risk.
 
@@ -35,8 +35,8 @@ Note that while the library may work with other kotlin/ktor versions, proceed at
 Add the dependency to your commonMain sourceSet (KMP) / Android dependencies (android only):
 ```kotlin
 implementation("io.github.kalinjul.kotlin.multiplatform:oidc-appsupport:<version>")
-implementation("io.github.kalinjul.kotlin.multiplatform:oidc-okhttp4:<version>") // optional, android only
 implementation("io.github.kalinjul.kotlin.multiplatform:oidc-ktor:<version>") // optional ktor support
+implementation("io.github.kalinjul.kotlin.multiplatform:oidc-okhttp4:<version>") // optional okhttp support (android only)
 ```
 
 Or, for your libs.versions.toml:
@@ -77,7 +77,7 @@ android {
     }
 }
 ```
-iOS does not require declaring the redirect scheme.
+iOS and wasm do not require declaring the redirect scheme, wasm can only use ```https``` with subpaths of your app url.
 
 ## OpenID Configuration (common code)
 Create an [OpenIdConnectClient](https://kalinjul.github.io/kotlin-multiplatform-oidc/kotlin-multiplatform-oidc/org.publicvalue.multiplatform.oidc/-open-id-connect-client/index.html):
@@ -102,6 +102,7 @@ If you provide a Discovery URI, you may skip the endpoint configuration and call
 ## Create a Code Auth Flow instance (platform specific)
 The Code Auth Flow method is implemented by [CodeAuthFlow](https://kalinjul.github.io/kotlin-multiplatform-oidc/kotlin-multiplatform-oidc/org.publicvalue.multiplatform.oidc.flows/-code-auth-flow/index.html). You'll need platform specific variants, so we'll use a factory to get an instance.
 
+### Android
 For Android, you should have a single global instance of [AndroidCodeAuthFlowFactory], preferably 
 using Dependency Injection. 
 You will than need to register your activity in your Activity's onCreate():
@@ -125,8 +126,37 @@ class MainActivity : ComponentActivity() {
 > will attach to the ComponentActivity's lifecycle.
 > If you don't use ComponentActivity, you'll need to implement your own Factory.
 
+### iOS
 For the iOS part, you can use [IosCodeAuthFlowFactory](https://kalinjul.github.io/kotlin-multiplatform-oidc/kotlin-multiplatform-oidc/org.publicvalue.multiplatform.oidc.appsupport/-ios-code-auth-flow-factory/index.html). 
 Both factories implement [CodeAuthFlowFactory](https://kalinjul.github.io/kotlin-multiplatform-oidc/kotlin-multiplatform-oidc/org.publicvalue.multiplatform.oidc.appsupport/-code-auth-flow-factory/index.html) and can be provided using Dependency Injection.
+
+### wasmJs
+In wasmJs, you can just instantiate the WasmCodeAuthFlowFactory at any time to start authentication.
+You may want to set window size parameters in the constructor.
+
+The app will open a new window for the login while the application waits for
+the redirect to happen. The redirect is handled by **a new instance of your app** that is opened
+inside the login window. Be sure to only call `PlatformCodeAuthFlow.handleRedirect()` in this instance.
+
+This can be achieved using a simple routing mechanism in your wasm application (which also defines 
+your redirect url):
+```kotlin
+fun main() {
+    CanvasBasedWindow(canvasElementId = "wasm-js-app") {
+        val currentPath = window.location.pathname
+        when {
+            currentPath.isBlank() || currentPath == "/" -> {
+                MainView()
+            }
+            currentPath.startsWith("/redirect") -> {
+                LaunchedEffect(Unit) {
+                    PlatformCodeAuthFlow.handleRedirect()
+                }
+            }
+        }
+    }
+}
+```
 
 For more information, have a look at the [KMP sample app](./sample-app).
 
