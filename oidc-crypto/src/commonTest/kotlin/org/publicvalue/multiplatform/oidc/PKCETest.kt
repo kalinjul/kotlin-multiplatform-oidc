@@ -39,7 +39,7 @@ class PKCETest {
     fun `should generate valid code verifier`() {
         val pkce = Pkce(codeChallengeMethod = CodeChallengeMethod.S256)
 
-        val codeVerifier = pkse.codeVerifier
+        val codeVerifier = pkce.codeVerifier
 
         assertTrue("Code verifier length must be between 43 and 128") {
             codeVerifier.length in 43..128
