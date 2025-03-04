@@ -1,17 +1,15 @@
 package org.publicvalue.multiplatform.oidc.sample.home
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.Navigator
-import io.ktor.http.HttpStatusCode
-import io.ktor.http.isSuccess
+import io.ktor.client.request.*
+import io.ktor.client.request.forms.*
+import io.ktor.http.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import org.publicvalue.multiplatform.oidc.DefaultOpenIdConnectClient.Companion.DefaultHttpClient
 import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
 import org.publicvalue.multiplatform.oidc.appsupport.CodeAuthFlowFactory
 import org.publicvalue.multiplatform.oidc.sample.PlatformConstants
@@ -105,9 +103,20 @@ class HomePresenter(
                     if (client != null) {
                         tokenResponse?.let {
                             scope.launch {
-                                if (!client.config.endpoints?.endSessionEndpoint.isNullOrEmpty()) {
+                                val isGoogle = client.config.discoveryUri.toString().contains("accounts.google.com")
+                                if (!client.config.endpoints?.endSessionEndpoint.isNullOrEmpty() || isGoogle) {
                                     catchErrorMessage {
-                                        val result = client.endSession(idToken = it.id_token ?: "")
+                                        val result = if(isGoogle) {
+                                            val endpoint = "https://accounts.google.com/o/oauth2/revoke"
+                                            val url = URLBuilder(endpoint)
+                                            val response = DefaultHttpClient.submitForm {
+                                                url(url.build())
+                                                parameter("token", it.access_token)
+                                            }
+                                            response.status
+                                        } else {
+                                            client.endSession(idToken = it.id_token ?: "")
+                                        }
                                         if (result.isSuccess() || result == HttpStatusCode.Found) {
                                             tokenResponse = null
                                             settingsStore.clearTokenData()

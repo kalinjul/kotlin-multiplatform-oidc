@@ -1,4 +1,5 @@
 import org.publicvalue.convention.config.configureIosTargets
+import org.publicvalue.convention.config.configureWasmTarget
 
 plugins {
     id("org.publicvalue.convention.android.library")
@@ -10,6 +11,7 @@ description = "Kotlin Multiplatform OIDC tokenstore library"
 
 kotlin {
     configureIosTargets()
+    configureWasmTarget()
     sourceSets {
         val commonMain by getting {
             dependencies {
