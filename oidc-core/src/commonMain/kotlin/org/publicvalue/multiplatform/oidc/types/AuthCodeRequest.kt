@@ -19,3 +19,7 @@ data class AuthCodeRequest(
 fun AuthCodeRequest.validateState(state: String): Boolean {
     return state == this.state
 }
+
+fun AuthCodeRequest.validateNonce(nonce: String): Boolean {
+    return nonce == this.nonce
+}
