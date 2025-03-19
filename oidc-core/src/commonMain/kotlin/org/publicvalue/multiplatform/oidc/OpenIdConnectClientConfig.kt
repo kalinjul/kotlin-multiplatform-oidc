@@ -80,6 +80,7 @@ class OpenIdConnectClientConfig(
             tokenEndpoint = tokenEndpoint ?: config.token_endpoint
             endSessionEndpoint = endSessionEndpoint ?: config.end_session_endpoint
             userInfoEndpoint = userInfoEndpoint ?: config.userinfo_endpoint
+            revocationEndpoint = revocationEndpoint ?: config.revocation_endpoint
         }
         this.scope = scope ?: config.scopes_supported?.joinToString(" ")
     }
@@ -98,7 +99,8 @@ data class Endpoints(
     var tokenEndpoint: String? = null,
     var authorizationEndpoint: String? = null,
     var userInfoEndpoint: String? = null,
-    var endSessionEndpoint: String? = null
+    var endSessionEndpoint: String? = null,
+    var revocationEndpoint: String? = null
 ) {
     /**
      * Set a baseUrl that is applied for all endpoints.
@@ -113,6 +115,7 @@ data class Endpoints(
         tokenEndpoint = baseUrl + endpoints.tokenEndpoint
         authorizationEndpoint = baseUrl + endpoints.authorizationEndpoint
         endSessionEndpoint = baseUrl + endpoints.endSessionEndpoint
+        revocationEndpoint = baseUrl + endpoints.revocationEndpoint
     }
 }
 
