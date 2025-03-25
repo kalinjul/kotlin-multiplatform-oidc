@@ -17,6 +17,7 @@ data class OpenIdConnectConfiguration(
     val userinfo_endpoint: String? = null,
     val end_session_endpoint: String? = null,
     val introspection_endpoint: String? = null,
+    val revocation_endpoint: String? = null,
 
     val issuer: String? = null,
     val jwks_uri: String? = null,

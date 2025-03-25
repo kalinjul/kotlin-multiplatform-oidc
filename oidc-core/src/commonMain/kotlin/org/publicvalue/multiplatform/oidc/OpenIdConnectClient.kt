@@ -86,6 +86,20 @@ interface OpenIdConnectClient {
     ): HttpStatusCode
 
     /**
+     * Revoke Refresh or Access token.
+     * [RFC7009: Token Revocation](https://datatracker.ietf.org/doc/html/rfc7009)
+     *
+     * @param token refresh token or access token
+     * @param configure configuration closure to configure the http request builder with (will _not_
+     * be used for discovery if necessary)
+     */
+    @Throws(OpenIdConnectException::class, CancellationException::class)
+    suspend fun revokeToken(
+        token: String,
+        configure: (HttpRequestBuilder.() -> Unit)? = null
+    ): HttpStatusCode
+
+    /**
      * Create and send an Access Token Request following
      * [RFC6749: OAuth](https://datatracker.ietf.org/doc/html/rfc6749#section-4.1.3) and
      * [RFC7636: PKCE](https://datatracker.ietf.org/doc/html/rfc7636#section-4.5)
