@@ -5,7 +5,9 @@ import io.ktor.http.URLBuilder
 import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
 import org.publicvalue.multiplatform.oidc.OpenIdConnectException
 import org.publicvalue.multiplatform.oidc.types.AuthCodeRequest
+import org.publicvalue.multiplatform.oidc.types.parseJwt
 import org.publicvalue.multiplatform.oidc.types.remote.AccessTokenResponse
+import org.publicvalue.multiplatform.oidc.types.validateNonce
 import org.publicvalue.multiplatform.oidc.types.validateState
 import org.publicvalue.multiplatform.oidc.wrapExceptions
 import kotlin.coroutines.cancellation.CancellationException
@@ -99,6 +101,10 @@ abstract class CodeAuthFlow(val client: OpenIdConnectClient) {
                     throw OpenIdConnectException.AuthenticationFailure("Invalid state")
                 }
                 val response = client.exchangeToken(request, result.code, configure)
+                val nonce = response.id_token?.parseJwt()?.payload?.nonce
+                if (!request.validateNonce(nonce ?: "")) {
+                    throw OpenIdConnectException.AuthenticationFailure("Invalid nonce")
+                }
                 return response
             } else {
                 throw OpenIdConnectException.AuthenticationFailure("No auth code", cause = null)
