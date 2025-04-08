@@ -39,28 +39,28 @@ jobs:
 
   create-swift-package:
     needs: [ build, test]
-    if: github.ref == 'refs/heads/develop'
+    if: github.ref == 'refs/heads/main'
     runs-on: macos-13
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/workflows/actions/createSwiftPackage
         with:
-          version: "develop"
+          version: "main"
 
   deploy-swift-package-snapshot:
     needs: [create-swift-package]
-    if: github.ref == 'refs/heads/develop'
+    if: github.ref == 'refs/heads/main'
     runs-on: macos-13
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/workflows/actions/deploySwiftPackage
         with:
-          branch: "develop"
+          branch: "main"
           token: ${{ secrets.PAT }}
 
   deploy-snapshot:
     needs: [ test ]
-    if: github.ref == 'refs/heads/develop'
+    if: github.ref == 'refs/heads/main'
     runs-on: macos-13
 
     steps:
