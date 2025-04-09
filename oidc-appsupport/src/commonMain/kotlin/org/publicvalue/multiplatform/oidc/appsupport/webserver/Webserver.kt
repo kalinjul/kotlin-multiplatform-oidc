@@ -1,6 +1,6 @@
 package org.publicvalue.multiplatform.oidc.appsupport.webserver
 
-import org.publicvalue.multiplatform.oidc.flows.AuthCodeResult
+import io.ktor.server.request.ApplicationRequest
 
 interface Webserver {
     /**
@@ -8,7 +8,7 @@ interface Webserver {
      *
      * @return RedirectResponse containing authCode + state.
      */
-    suspend fun startAndWaitForRedirect(port: Int, redirectPath: String): AuthCodeResult
+    suspend fun startAndWaitForRedirect(port: Int, redirectPath: String): ApplicationRequest?
 
     /**
      * Stop the webserver.
