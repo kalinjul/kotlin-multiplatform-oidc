@@ -9,5 +9,4 @@ import kotlin.native.ObjCName
 @ObjCName(swiftName = "TokenRequest", name = "TokenRequest", exact = true)
 data class TokenRequest(
     val request: HttpStatement,
-    val formParameters: Parameters
 )
