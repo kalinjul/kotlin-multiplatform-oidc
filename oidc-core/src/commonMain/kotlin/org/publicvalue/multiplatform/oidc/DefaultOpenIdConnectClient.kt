@@ -135,6 +135,24 @@ class DefaultOpenIdConnectClient(
     }
 
     @Throws(OpenIdConnectException::class, CancellationException::class)
+    override suspend fun revokeToken(token: String, configure: (HttpRequestBuilder.() -> Unit)?): HttpStatusCode = wrapExceptions {
+        val endpoint = config.endpoints?.revocationEndpoint?.trim()
+        if (!endpoint.isNullOrEmpty()) {
+            val url = URLBuilder(endpoint)
+            val response = httpClient.submitForm {
+                url(url.build())
+                parameter("token", token)
+                parameter("client_id", config.clientId ?: run { throw OpenIdConnectException.InvalidConfiguration("clientId is missing") })
+                config.clientSecret?.let { parameter("client_secret", it) }
+                configure?.invoke(this)
+            }
+            response.status
+        } else {
+            throw OpenIdConnectException.InvalidUrl("No revocationEndpoint set")
+        }
+    }
+
+    @Throws(OpenIdConnectException::class, CancellationException::class)
     override suspend fun exchangeToken(authCodeRequest: AuthCodeRequest, code: String, configure: (HttpRequestBuilder.() -> Unit)?): AccessTokenResponse = wrapExceptions {
         val tokenRequest = createAccessTokenRequest(authCodeRequest, code, configure)
         return executeTokenRequest(tokenRequest.request)
