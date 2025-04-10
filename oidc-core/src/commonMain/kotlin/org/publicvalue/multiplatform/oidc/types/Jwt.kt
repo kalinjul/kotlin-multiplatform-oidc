@@ -106,38 +106,37 @@ value class JwtClaims(
                 val map = json.decodeFromString<Map<String, JsonElement>>(string)
                     .map { entry ->
                         val value = entry.value
-                        entry.key to when {
-                            value is JsonArray -> value.map {
-                                if (it is JsonPrimitive) {
-                                    it.content
-                                } else {
-                                    throw OpenIdConnectException.UnsupportedFormat("Could not parse Array item: ${it}")
-                                }
-                            }
-
-                            value is JsonObject -> value
-                            value is JsonPrimitive -> {
-                                if (value.isString) {
-                                    value.content
-                                } else {
-                                    value.content.toLongOrNull()
-                                        ?: value.content.toDoubleOrNull()
-                                        ?: value.content.toBooleanStrictOrNull()
-                                        ?: value.content
-                                }
-                            }
-
-                            value is JsonNull -> null
-                            else -> {
-                                throw OpenIdConnectException.UnsupportedFormat("Could not parse claim: ${entry.key} with value ${entry.value}")
-                            }
-                        }
+                        entry.key to value.toKotlin(entry.key)
                     }
                     .toMap()
                 return JwtClaims(map)
             } catch (e: Exception) {
                 throw OpenIdConnectException.TechnicalFailure(e.message ?: "Could not parse JWT", e)
             }
+        }
+
+        private fun JsonElement.toKotlin(
+            key: String
+        ): Any? = when(this) {
+            is JsonArray -> this.mapIndexed { index, it ->
+                it.toKotlin("$key-$index")
+            }
+
+            is JsonObject -> this.map { (key, value) ->
+                key to value.toKotlin(key)
+            }.toMap()
+            is JsonPrimitive -> {
+                if (this.isString) {
+                    this.content
+                } else {
+                    this.content.toLongOrNull()
+                        ?: this.content.toDoubleOrNull()
+                        ?: this.content.toBooleanStrictOrNull()
+                        ?: this.content
+                }
+            }
+
+            is JsonNull -> null
         }
     }
 }

@@ -4,6 +4,7 @@ import assertk.assertThat
 import assertk.assertions.containsExactlyInAnyOrder
 import assertk.assertions.isEqualTo
 import assertk.assertions.isInstanceOf
+import assertk.assertions.isNotNull
 import org.publicvalue.multiplatform.oidc.types.Jwt
 import kotlin.test.Test
 
@@ -60,5 +61,21 @@ class JwtTest {
         assertThat(jwt.payload.additionalClaims.get("Email")).isEqualTo("bee@example.com")
         assertThat(jwt.payload.additionalClaims.get("http://schemas.microsoft.com/ws/2008/06/identity/claims/role")).isEqualTo("Manager")
         assertThat(jwt.payload.additionalClaims.get("family_name")).isEqualTo("Someone")
+    }
+
+    @Test
+    fun jsonObjectsInClaims() {
+        val idToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.ewogICAgInN1YiI6ICJhYWFhYWFhYS1iYmJiLWNjY2MtZGRkZC1lZWVlZWVlZWVlZWUiLAogICAgImNvZ25pdG86Z3JvdXBzIjogWwogICAgICAgICJ0ZXN0LWdyb3VwLWEiLAogICAgICAgICJ0ZXN0LWdyb3VwLWIiLAogICAgICAgICJ0ZXN0LWdyb3VwLWMiCiAgICBdLAogICAgImVtYWlsX3ZlcmlmaWVkIjogdHJ1ZSwKICAgICJjb2duaXRvOnByZWZlcnJlZF9yb2xlIjogImFybjphd3M6aWFtOjoxMTExMjIyMjMzMzM6cm9sZS9teS10ZXN0LXJvbGUiLAogICAgImlzcyI6ICJodHRwczovL2NvZ25pdG8taWRwLnVzLXdlc3QtMi5hbWF6b25hd3MuY29tL3VzLXdlc3QtMl9leGFtcGxlIiwKICAgICJjb2duaXRvOnVzZXJuYW1lIjogIm15LXRlc3QtdXNlciIsCiAgICAibWlkZGxlX25hbWUiOiAiSmFuZSIsCiAgICAibm9uY2UiOiAiYWJjZGVmZyIsCiAgICAib3JpZ2luX2p0aSI6ICJhYWFhYWFhYS1iYmJiLWNjY2MtZGRkZC1lZWVlZWVlZWVlZWUiLAogICAgImNvZ25pdG86cm9sZXMiOiBbCiAgICAgICAgImFybjphd3M6aWFtOjoxMTExMjIyMjMzMzM6cm9sZS9teS10ZXN0LXJvbGUiCiAgICBdLAogICAgImF1ZCI6ICJ4eHh4eHh4eHh4eHhleGFtcGxlIiwKICAgICJpZGVudGl0aWVzIjogWwogICAgICAgIHsKICAgICAgICAgICAgInVzZXJJZCI6ICJhbXpuMS5hY2NvdW50LkVYQU1QTEUiLAogICAgICAgICAgICAicHJvdmlkZXJOYW1lIjogIkxvZ2luV2l0aEFtYXpvbiIsCiAgICAgICAgICAgICJwcm92aWRlclR5cGUiOiAiTG9naW5XaXRoQW1hem9uIiwKICAgICAgICAgICAgImlzc3VlciI6IG51bGwsCiAgICAgICAgICAgICJwcmltYXJ5IjogInRydWUiLAogICAgICAgICAgICAiZGF0ZUNyZWF0ZWQiOiAiMTY0MjY5OTExNzI3MyIKICAgICAgICB9CiAgICBdLAogICAgImV2ZW50X2lkIjogIjY0ZjUxM2JlLTMyZGItNDJiMC1iNzhlLWIwMjEyN2I0ZjQ2MyIsCiAgICAidG9rZW5fdXNlIjogImlkIiwKICAgICJhdXRoX3RpbWUiOiAxNjc2MzEyNzc3LAogICAgImV4cCI6IDE2NzYzMTYzNzcsCiAgICAiaWF0IjogMTY3NjMxMjc3NywKICAgICJqdGkiOiAiYWFhYWFhYWEtYmJiYi1jY2NjLWRkZGQtZWVlZWVlZWVlZWVlIiwKICAgICJlbWFpbCI6ICJteS10ZXN0LXVzZXJAZXhhbXBsZS5jb20iCn0K.mjk1il9Nrr5JouTZ9kRcWb1R84bw30vdrYaw0CVsv9A"
+        val jwt = Jwt.parse(idToken)
+
+        assertThat(jwt.payload.additionalClaims.get("identities")).isNotNull()
+        assertThat(jwt.payload.additionalClaims.get("identities") is List<*>)
+        val identities = jwt.payload.additionalClaims.get("identities") as List<*>
+        assertThat(identities.size).isEqualTo(1)
+        assertThat(identities[0] is Map<*, *>)
+        val identitiesMap = identities[0] as Map<*, *>
+
+        assertThat(identitiesMap["userId"]).isEqualTo("amzn1.account.EXAMPLE")
+        assertThat(identitiesMap["providerName"]).isEqualTo("LoginWithAmazon")
     }
 }
