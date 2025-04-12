@@ -12,7 +12,6 @@ jobs:
   report:
     runs-on: ubuntu-latest
     steps:
-      - uses: dorny/test-reporter@v2
       - name: Report JVM Tests
         uses: dorny/test-reporter@v2.0.0
         if: success() || failure()    # run this step even if previous step failed
