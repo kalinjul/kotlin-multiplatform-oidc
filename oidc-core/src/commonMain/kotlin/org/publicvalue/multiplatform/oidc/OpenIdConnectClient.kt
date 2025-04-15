@@ -6,6 +6,7 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.URLBuilder
 import org.publicvalue.multiplatform.oidc.DefaultOpenIdConnectClient.Companion.DefaultHttpClient
 import org.publicvalue.multiplatform.oidc.types.AuthCodeRequest
+import org.publicvalue.multiplatform.oidc.types.EndSessionRequest
 import org.publicvalue.multiplatform.oidc.types.TokenRequest
 import org.publicvalue.multiplatform.oidc.types.remote.AccessTokenResponse
 import org.publicvalue.multiplatform.oidc.types.remote.OpenIdConnectConfiguration
@@ -58,6 +59,15 @@ interface OpenIdConnectClient {
      */
     @Throws(OpenIdConnectException::class)
     fun createAuthorizationCodeRequest(configure: (URLBuilder.() -> Unit)? = null): AuthCodeRequest
+
+    /**
+     * Creates an End Session Request which can then be executed by the
+     * [CodeAuthFlow][org.publicvalue.multiplatform.oidc.flows.CodeAuthFlow].
+     *
+     * @param idToken used for id_token_hint, recommended by openid spec, optional
+     */
+    @Throws(OpenIdConnectException::class)
+    fun createEndSessionRequest(idToken: String?, configure: (URLBuilder.() -> Unit)?): EndSessionRequest
 
     /**
      * Discover OpenID Connect Configuration using the discovery endpoint.

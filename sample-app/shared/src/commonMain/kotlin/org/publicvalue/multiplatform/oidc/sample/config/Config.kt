@@ -136,10 +136,10 @@ fun Config(
 ) {
     Column(modifier
         .fillMaxWidth()
+        .padding(bottom = 8.dp)
         .verticalScroll(rememberScrollState()),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-
         var discoveryUrl by remember(discoveryUrl == null) {
             mutableStateOf(discoveryUrl.orEmpty())
         }
@@ -220,5 +220,6 @@ fun Config(
             }
         }
         Text("Note: redirect_url is ${PlatformConstants.redirectUrl}")
+        Text("Note: post_logout_redirect_url is ${PlatformConstants.postLogoutRedirectUrl}")
     }
 }
