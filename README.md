@@ -95,6 +95,7 @@ val client = OpenIdConnectClient(discoveryUri = "<discovery url>") {
     scope = "openid profile"
     codeChallengeMethod = CodeChallengeMethod.S256
     redirectUri = "<redirectUri>"
+    postLogoutRedirectUri = "<postLogoutRedirectUri>"
 }
 ```
 If you provide a Discovery URI, you may skip the endpoint configuration and call [discover()](https://kalinjul.github.io/kotlin-multiplatform-oidc/kotlin-multiplatform-oidc/org.publicvalue.multiplatform.oidc/-open-id-connect-client/discover.html) on the client to retrieve the endpoint configuration.

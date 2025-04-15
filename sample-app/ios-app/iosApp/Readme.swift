@@ -17,13 +17,15 @@ struct Readme {
                     tokenEndpoint: "<tokenEndpoint>",
                     authorizationEndpoint: "<authorizationEndpoint>",
                     userInfoEndpoint: nil,
-                    endSessionEndpoint: "<endSessionEndpoint>"
+                    endSessionEndpoint: "<endSessionEndpoint>",
+                    revocationEndpoint: "<revocationEndpoint>"
                 ),
                 clientId: "<clientId>",
                 clientSecret: "<clientSecret>",
                 scope: "openid profile",
                 codeChallengeMethod: .s256,
-                redirectUri: "<redirectUri>"
+                redirectUri: "<redirectUri>",
+                postLogoutRedirectUri: "<postLogoutRedirectUri>"
             )
         )
     }
@@ -48,7 +50,8 @@ struct Readme {
                 clientSecret: "<clientSecret>",
                 scope: "openid profile",
                 codeChallengeMethod: .s256,
-                redirectUri: "<redirectUri>"
+                redirectUri: "<redirectUri>",
+                postLogoutRedirectUri: "<postLogoutRedirectUri>"
             )
             
         )
@@ -76,6 +79,11 @@ struct Readme {
             requestBuilder.headers.append(name: "X-CUSTOM-HEADER", value: "value")
             requestBuilder.url.parameters.append(name: "custom_parameter", value: "value")
         }
+        // endSession with Web flow (opens browser and handles post_logout_redirect_uri redirect)
+        let flow = CodeAuthFlow(client: client)
+        try await flow.endSession(idToken: "<idToken>", configureEndSessionUrl: { urlBuilder in
+        })
+        
     }
     
     // customize getAccessToken request:

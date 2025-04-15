@@ -42,6 +42,7 @@ object README {
             scope = "openid profile"
             codeChallengeMethod = CodeChallengeMethod.S256
             redirectUri = "<redirectUri>"
+            postLogoutRedirectUri = "<postLogoutRedirectUri>"
         }
     }
 

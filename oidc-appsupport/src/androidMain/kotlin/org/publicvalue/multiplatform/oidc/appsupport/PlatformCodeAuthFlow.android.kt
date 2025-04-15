@@ -47,7 +47,7 @@ actual class PlatformCodeAuthFlow(
         }
     }
 
-    override suspend fun endSession(request: EndSessionRequest): EndSessionResponse {
+    actual override suspend fun endSession(request: EndSessionRequest): EndSessionResponse {
         val result = startWebFlow(request.url, request.url.parameters.get("post_logout_redirect_uri").orEmpty())
 
         val responseUri = result.data?.data
