@@ -45,7 +45,7 @@ data class Jwt(
         fun parse(string: String): Jwt {
             val parts = string.split('.')
             if (parts.size > 3) {
-                throw OpenIdConnectException.UnsupportedFormat("Expected at most 3 JWT token parts")
+                throw OpenIdConnectException.UnsupportedFormat("Expected at most 3 JWT token parts (this may be an encrypted token which is unsupported)")
             } else if (parts.size < 2) {
                 throw OpenIdConnectException.UnsupportedFormat("Expected at least 2 JWT token parts")
             }
