@@ -52,9 +52,17 @@ class OpenIdConnectClientConfig(
      */
     var codeChallengeMethod: CodeChallengeMethod = CodeChallengeMethod.S256,
     /**
-     * https://datatracker.ietf.org/doc/html/rfc6749#section-3.1.2
+     * [rfc6749](https://datatracker.ietf.org/doc/html/rfc6749#section-3.1.2)
      */
     var redirectUri: String? = null,
+
+    /**
+     * Url that is used for redirecting back to the app after logout request.
+     * Is only used if endSession is called on an [EndSessionFlow][org.publicvalue.multiplatform.oidc.flows.EndSessionFlow].
+     *
+     * [OpenID Spec](https://openid.net/specs/openid-connect-rpinitiated-1_0.html)
+     */
+    var postLogoutRedirectUri: String? = null
 ) {
     /**
      * Configure the endpoints.

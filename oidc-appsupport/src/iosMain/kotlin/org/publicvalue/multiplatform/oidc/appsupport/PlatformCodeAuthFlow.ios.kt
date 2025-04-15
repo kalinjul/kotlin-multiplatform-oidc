@@ -33,9 +33,9 @@ import kotlin.experimental.ExperimentalObjCName
 @OptIn(ExperimentalObjCName::class)
 @ObjCName(swiftName = "CodeAuthFlow", name = "CodeAuthFlow", exact = true)
 actual class PlatformCodeAuthFlow(
-    client: OpenIdConnectClient,
+    override val client: OpenIdConnectClient,
     private val ephemeralBrowserSession: Boolean = false
-): CodeAuthFlow(client) {
+): CodeAuthFlow {
 
     // required for swift (no default argument support)
     constructor(client: OpenIdConnectClient) : this(client = client, ephemeralBrowserSession = false)

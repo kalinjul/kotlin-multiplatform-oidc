@@ -5,6 +5,7 @@ import kotlin.experimental.ExperimentalObjCName
 import kotlin.native.ObjCName
 
 typealias AuthCodeResponse = Result<AuthCodeResult>
+typealias EndSessionResponse = Result<Unit>
 
 /**
  * Result of an Auth Code Request
