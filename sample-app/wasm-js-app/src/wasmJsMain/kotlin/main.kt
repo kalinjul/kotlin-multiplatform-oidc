@@ -3,7 +3,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.window.CanvasBasedWindow
 import kotlinx.browser.window
 import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
-import org.publicvalue.multiplatform.oidc.appsupport.PlatformCodeAuthFlow
+import org.publicvalue.multiplatform.oidc.appsupport.WebPopupFlow
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalOpenIdConnect::class)
 fun main() {
@@ -13,9 +13,9 @@ fun main() {
             currentPath.isBlank() || currentPath == "/" -> {
                 MainView()
             }
-            currentPath.startsWith("/redirect") -> {
+            currentPath.startsWith("/redirect") || currentPath.startsWith("/logout") -> {
                 LaunchedEffect(Unit) {
-                    PlatformCodeAuthFlow.handleRedirect()
+                    WebPopupFlow.handleRedirect()
                 }
             }
         }
