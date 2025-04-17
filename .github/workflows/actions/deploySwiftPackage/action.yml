@@ -35,7 +35,7 @@ runs:
         # remove zip, this is distributed as release artifact for release builds
         if [ -n "${{ inputs.tag }}" ]; then git reset OpenIdConnectClient.zip; fi
         git status
-        git commit -m "New iOS package (${{ inputs.tag }})"
+        if [ -n "${{ inputs.tag }}" ]; then git commit -m "New iOS package (${{ inputs.tag }})"; else git commit -m "New iOS package (snapshot)"; fi
         git remote add origin https://${{ inputs.token }}@github.com/kalinjul/OpenIdConnectClient.git
         git fetch --depth=1
         git rebase -X theirs origin/${{ inputs.branch }}
