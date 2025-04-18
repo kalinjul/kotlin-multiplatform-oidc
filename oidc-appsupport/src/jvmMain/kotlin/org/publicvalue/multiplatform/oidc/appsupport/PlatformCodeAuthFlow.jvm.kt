@@ -1,52 +1,69 @@
 package org.publicvalue.multiplatform.oidc.appsupport
 
 import io.ktor.http.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.withContext
+import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
 import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
 import org.publicvalue.multiplatform.oidc.OpenIdConnectException
 import org.publicvalue.multiplatform.oidc.appsupport.webserver.SimpleKtorWebserver
 import org.publicvalue.multiplatform.oidc.appsupport.webserver.Webserver
 import org.publicvalue.multiplatform.oidc.flows.AuthCodeResponse
+import org.publicvalue.multiplatform.oidc.flows.AuthCodeResult
 import org.publicvalue.multiplatform.oidc.flows.CodeAuthFlow
+import org.publicvalue.multiplatform.oidc.flows.EndSessionFlow
+import org.publicvalue.multiplatform.oidc.flows.EndSessionResponse
 import org.publicvalue.multiplatform.oidc.types.AuthCodeRequest
+import org.publicvalue.multiplatform.oidc.types.EndSessionRequest
 import java.awt.Desktop
 import java.net.InetAddress
 import java.net.NetworkInterface
 import java.net.SocketException
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
+@ExperimentalOpenIdConnect
 actual class PlatformCodeAuthFlow(
-    client: OpenIdConnectClient,
-    private val webserverProvider: () -> Webserver = { SimpleKtorWebserver() },
-    private val openUrl: (Url) -> Unit = { it.openInBrowser() }
-) : CodeAuthFlow(client) {
+    override val client: OpenIdConnectClient,
+    webserverProvider: () -> Webserver = { SimpleKtorWebserver() },
+    openUrl: (Url) -> Unit = { it.openInBrowser() },
+) : CodeAuthFlow, EndSessionFlow {
+
     companion object {
         var PORT = 8080
     }
 
+    private val webFlow = WebServerFlow(
+        webserverProvider = webserverProvider,
+        openUrl = openUrl,
+    )
+
     actual override suspend fun getAuthorizationCode(request: AuthCodeRequest): AuthCodeResponse {
-
         val redirectUrl = request.config.redirectUri?.let { Url(it) }
-        if (redirectUrl?.port != PORT || !redirectUrl.isLocalhost()) {
-            throw OpenIdConnectException.AuthenticationFailure("JVM implementation can only handle redirect uris using localhost port 8080! Redirect uri was: $redirectUrl")
+        checkRedirectPort(redirectUrl)
+
+        val result = webFlow.startWebFlow(request.url, redirectUrl, PORT)
+
+        val code = result.parameters["code"]
+        val state = result.parameters["state"]
+        return AuthCodeResponse.success(AuthCodeResult(code, state))
+    }
+
+    actual override suspend fun endSession(request: EndSessionRequest): EndSessionResponse {
+        val redirectUrl = Url(request.url.parameters.get("post_logout_redirect_uri").orEmpty())
+        checkRedirectPort(redirectUrl)
+
+        webFlow.startWebFlow(request.url, redirectUrl, PORT)
+        // doesn't return at all if unsuccessful
+        return EndSessionResponse.success(Unit)
+    }
+
+    @OptIn(ExperimentalContracts::class)
+    private fun checkRedirectPort(redirectUrl: Url?) {
+        contract {
+            returns() implies (redirectUrl != null)
         }
-
-        val webserver = webserverProvider()
-
-        val response =
-            withContext(Dispatchers.IO) {
-                async {
-                    openUrl(request.url)
-                    val response = webserver.startAndWaitForRedirect(PORT, redirectPath = redirectUrl.encodedPath)
-                    webserver.stop()
-                    response
-                }.await()
-            }
-
-        return AuthCodeResponse.success(
-            response
-        )
+        if (redirectUrl?.port != PORT || !redirectUrl.isLocalhost()) {
+            throw OpenIdConnectException.AuthenticationFailure("JVM implementation can only handle redirect uris using localhost port ${PORT}! Redirect uri was: $redirectUrl")
+        }
     }
 }
 

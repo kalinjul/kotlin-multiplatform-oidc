@@ -1,14 +1,16 @@
 package org.publicvalue.multiplatform.oidc.appsupport.webserver
 
-import org.publicvalue.multiplatform.oidc.flows.AuthCodeResult
+import io.ktor.http.Url
+import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
 
+@ExperimentalOpenIdConnect
 interface Webserver {
     /**
      * Start a local Webserver on the given port, waiting for the redirectPath to be called.
      *
-     * @return RedirectResponse containing authCode + state.
+     * @return Url the redirect was called with, including query parameters.
      */
-    suspend fun startAndWaitForRedirect(port: Int, redirectPath: String): AuthCodeResult
+    suspend fun startAndWaitForRedirect(port: Int, redirectPath: String): Url
 
     /**
      * Stop the webserver.
