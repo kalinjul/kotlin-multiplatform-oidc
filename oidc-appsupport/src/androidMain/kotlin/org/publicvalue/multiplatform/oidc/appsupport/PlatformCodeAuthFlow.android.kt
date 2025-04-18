@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.activity.result.ActivityResult
-import io.ktor.http.Url
 import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
 import org.publicvalue.multiplatform.oidc.OpenIdConnectException
 import org.publicvalue.multiplatform.oidc.flows.AuthCodeResponse
@@ -19,15 +18,22 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
 actual class PlatformCodeAuthFlow(
-    private val context: Context,
-    private val contract: ActivityResultLauncherSuspend<Intent, ActivityResult>,
-    private val useWebView: Boolean = false,
-    private val webViewEpheremalSession: Boolean = false,
+    context: Context,
+    contract: ActivityResultLauncherSuspend<Intent, ActivityResult>,
+    useWebView: Boolean = false,
+    webViewEpheremalSession: Boolean = false,
     override val client: OpenIdConnectClient,
 ) : CodeAuthFlow, EndSessionFlow {
 
+    private val webFlow: WebActivityFlow = WebActivityFlow(
+        context,
+        contract,
+        useWebView,
+        webViewEpheremalSession
+    )
+
     actual override suspend fun getAuthorizationCode(request: AuthCodeRequest): AuthCodeResponse {
-        val result = startWebFlow(request.url, request.url.parameters.get("redirect_uri").orEmpty())
+        val result = webFlow.startWebFlow(request.url, request.url.parameters.get("redirect_uri").orEmpty())
 
         val responseUri = result.data?.data
         return if (result.resultCode == Activity.RESULT_OK) {
@@ -48,7 +54,7 @@ actual class PlatformCodeAuthFlow(
     }
 
     actual override suspend fun endSession(request: EndSessionRequest): EndSessionResponse {
-        val result = startWebFlow(request.url, request.url.parameters.get("post_logout_redirect_uri").orEmpty())
+        val result = webFlow.startWebFlow(request.url, request.url.parameters.get("post_logout_redirect_uri").orEmpty())
 
         val responseUri = result.data?.data
         return if (result.resultCode == Activity.RESULT_OK) {
@@ -84,27 +90,5 @@ actual class PlatformCodeAuthFlow(
             return Result.failure(OpenIdConnectException.AuthenticationFailure(message = "No Uri in callback from browser (was ${responseUri})."))
         }
         return null
-    }
-
-    private suspend fun startWebFlow(requestUrl: Url, redirectUrl: String): ActivityResult {
-        val intent = prepareIntent(requestUrl = requestUrl.toString(), redirectUrl = redirectUrl)
-        val result = contract.launchSuspend(intent)
-        return result
-    }
-
-    private fun prepareIntent(requestUrl: String, redirectUrl: String): Intent {
-        val intent = Intent(
-            context,
-            HandleRedirectActivity::class.java
-        )
-            .apply {
-                this.putExtra(EXTRA_KEY_URL, requestUrl)
-                if (useWebView) {
-                    this.putExtra(EXTRA_KEY_USEWEBVIEW, true)
-                    this.putExtra(EXTRA_KEY_REDIRECTURL, redirectUrl)
-                    this.putExtra(EXTRA_KEY_WEBVIEW_EPHEREMAL_SESSION, webViewEpheremalSession)
-                }
-            }
-        return intent
     }
 }

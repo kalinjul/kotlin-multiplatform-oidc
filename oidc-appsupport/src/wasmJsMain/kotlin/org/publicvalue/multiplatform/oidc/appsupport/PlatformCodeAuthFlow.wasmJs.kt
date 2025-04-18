@@ -35,7 +35,6 @@ actual class PlatformCodeAuthFlow(
 
     companion object {
         @ExperimentalOpenIdConnect
-        @Deprecated("Use WebPopupFlow.handleRedirect() insteadt", replaceWith = ReplaceWith("WebPopupFlow.handleRedirect()"))
         fun handleRedirect() {
             WebPopupFlow.handleRedirect()
         }

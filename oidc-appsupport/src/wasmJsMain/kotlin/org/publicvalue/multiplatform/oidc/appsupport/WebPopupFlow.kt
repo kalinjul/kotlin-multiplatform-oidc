@@ -12,7 +12,7 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 @ExperimentalOpenIdConnect
-class WebPopupFlow(
+internal class WebPopupFlow(
     private val windowTarget: String = "",
     private val windowFeatures: String = "width=1000,height=800,resizable=yes,scrollbars=yes",
     private val redirectOrigin: String,
@@ -46,7 +46,7 @@ class WebPopupFlow(
         }
     }
 
-    companion object {
+    internal companion object {
         @ExperimentalOpenIdConnect
         fun handleRedirect() {
             if (window.opener != null) {

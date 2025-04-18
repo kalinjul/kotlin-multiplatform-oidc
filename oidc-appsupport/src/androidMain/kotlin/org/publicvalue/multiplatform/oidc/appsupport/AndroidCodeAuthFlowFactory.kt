@@ -28,8 +28,8 @@ class AndroidCodeAuthFlowFactory(
     private val webViewEpheremalSession: Boolean = false
 ): CodeAuthFlowFactory {
 
-    lateinit var authRequestLauncher: ActivityResultLauncherSuspend<Intent, ActivityResult>
-    lateinit var context: Context
+    private lateinit var activityResultLauncher: ActivityResultLauncherSuspend<Intent, ActivityResult>
+    private lateinit var context: Context
 
     private val resultFlow: MutableStateFlow<ActivityResult?> = MutableStateFlow(null)
 
@@ -49,7 +49,7 @@ class AndroidCodeAuthFlowFactory(
                 override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
                     when (event) {
                         Lifecycle.Event.ON_CREATE -> {
-                            authRequestLauncher = activity.registerForActivityResultSuspend(resultFlow, ActivityResultContracts.StartActivityForResult())
+                            activityResultLauncher = activity.registerForActivityResultSuspend(resultFlow, ActivityResultContracts.StartActivityForResult())
                         }
 
                         Lifecycle.Event.ON_DESTROY -> {
@@ -69,7 +69,7 @@ class AndroidCodeAuthFlowFactory(
     override fun createAuthFlow(client: OpenIdConnectClient): PlatformCodeAuthFlow {
         return PlatformCodeAuthFlow(
             context = context,
-            contract = authRequestLauncher,
+            contract = activityResultLauncher,
             client = client,
             useWebView = useWebView,
             webViewEpheremalSession = webViewEpheremalSession

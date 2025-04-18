@@ -1,10 +1,6 @@
 package org.publicvalue.multiplatform.oidc.appsupport
 
-import io.ktor.http.Url
 import kotlinx.coroutines.CancellableContinuation
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.suspendCancellableCoroutine
 import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
 import org.publicvalue.multiplatform.oidc.OpenIdConnectException
 import org.publicvalue.multiplatform.oidc.flows.AuthCodeResponse
@@ -18,9 +14,6 @@ import org.publicvalue.multiplatform.oidc.wrapExceptions
 import platform.AuthenticationServices.ASPresentationAnchor
 import platform.AuthenticationServices.ASWebAuthenticationPresentationContextProvidingProtocol
 import platform.AuthenticationServices.ASWebAuthenticationSession
-import platform.AuthenticationServices.ASWebAuthenticationSessionCompletionHandler
-import platform.Foundation.NSError
-import platform.Foundation.NSURL
 import platform.darwin.NSObject
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -37,48 +30,18 @@ import kotlin.experimental.ExperimentalObjCName
 @ObjCName(swiftName = "CodeAuthFlow", name = "CodeAuthFlow", exact = true)
 actual class PlatformCodeAuthFlow(
     override val client: OpenIdConnectClient,
-    private val ephemeralBrowserSession: Boolean = false
+    ephemeralBrowserSession: Boolean = false
 ): CodeAuthFlow, EndSessionFlow {
+
+    private val webFlow = WebSessionFlow(
+        ephemeralBrowserSession
+    )
 
     // required for swift (no default argument support)
     constructor(client: OpenIdConnectClient) : this(client = client, ephemeralBrowserSession = false)
 
-    /**
-     * @return null if user cancelled the flow (closed the web view)
-     */
-    private suspend fun startWebFlow(requestUrl: Url, redirectUrl: String): Url? {
-        return suspendCancellableCoroutine { continuation ->
-            val nsurl = NSURL.URLWithString(requestUrl.toString())
-            if (nsurl != null) {
-                val session = ASWebAuthenticationSession(
-                    uRL = nsurl,
-                    callbackURLScheme = Url(redirectUrl).protocol.name,
-                    completionHandler = object : ASWebAuthenticationSessionCompletionHandler {
-                        override fun invoke(p1: NSURL?, p2: NSError?) {
-                            if (p1 != null) {
-                                val url = Url(p1.toString()) // use sane url instead of NS garbage
-                                continuation.resumeIfActive(url)
-                            } else {
-                                // browser closed, no redirect.
-                                continuation.resumeIfActive(null)
-                            }
-                        }
-                    }
-                )
-                session.prefersEphemeralWebBrowserSession = ephemeralBrowserSession
-                session.presentationContextProvider = PresentationContext()
-
-                MainScope().launch {
-                    session.start()
-                }
-            } else {
-                continuation.resumeWithExceptionIfActive(OpenIdConnectException.InvalidUrl(requestUrl.toString()))
-            }
-        }
-    }
-
     actual override suspend fun getAuthorizationCode(request: AuthCodeRequest): AuthCodeResponse = wrapExceptions {
-        val resultUrl = startWebFlow(request.url, request.url.parameters.get("redirect_uri").orEmpty())
+        val resultUrl = webFlow.startWebFlow(request.url, request.url.parameters.get("redirect_uri").orEmpty())
         return if (resultUrl != null) {
             val code = resultUrl.parameters["code"] ?: ""
             val state = resultUrl.parameters["state"] ?: ""
@@ -89,7 +52,7 @@ actual class PlatformCodeAuthFlow(
     }
 
     actual override suspend fun endSession(request: EndSessionRequest): EndSessionResponse = wrapExceptions {
-        val resultUrl = startWebFlow(request.url, request.url.parameters.get("post_logout_redirect_uri").orEmpty())
+        val resultUrl = webFlow.startWebFlow(request.url, request.url.parameters.get("post_logout_redirect_uri").orEmpty())
         return if (resultUrl != null) {
             EndSessionResponse.success(Unit)
         } else {
