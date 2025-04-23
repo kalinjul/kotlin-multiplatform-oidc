@@ -1,7 +1,6 @@
 package org.publicvalue.multiplatform.oauth.domain
 
-import io.ktor.server.request.ApplicationRequest
-import io.ktor.server.request.queryString
+import io.ktor.http.Url
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -12,7 +11,8 @@ import org.publicvalue.multiplatform.oauth.data.daos.IdpDao
 import org.publicvalue.multiplatform.oauth.data.db.Client
 import org.publicvalue.multiplatform.oauth.logging.Logger
 import org.publicvalue.multiplatform.oauth.util.DispatcherProvider
-import org.publicvalue.multiplatform.oauth.webserver.Webserver
+import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
+import org.publicvalue.multiplatform.oidc.appsupport.webserver.Webserver
 import org.publicvalue.multiplatform.oidc.types.AuthCodeRequest
 import org.publicvalue.multiplatform.oidc.types.validateState
 
@@ -27,6 +27,7 @@ sealed class AuthorizeResult {
     ): AuthorizeResult()
 }
 
+@OptIn(ExperimentalOpenIdConnect::class)
 @Inject
 class Authorize(
     private val idpDao: IdpDao,
@@ -54,20 +55,20 @@ class Authorize(
                 withContext(dispatchers.io()) {
                     async {
                         urlHandler.invoke(request.url)
-                        val response = webserver.startAndWaitForRedirect(Constants.WEBSERVER_PORT)
+                        val response = webserver.startAndWaitForRedirect(Constants.WEBSERVER_PORT, Url(Constants.REDIRECT_URL).encodedPath)
                         webserver.stop()
                         response
                     }.await()
                 }
 
-            val authCode = response?.queryParameters?.get("code")
-            val state = response?.queryParameters?.get("state")
+            val authCode = response.parameters.get("code")
+            val state = response.parameters.get("state")
             logger.d { "received code: $authCode" }
 
             emit(
                 AuthorizeResult.Response(
                     authCode = authCode ?: "",
-                    authCodeResponseQueryString = response?.queryString() ?: ""
+                    authCodeResponseQueryString = response.encodedQuery
                 )
             )
 
@@ -77,6 +78,3 @@ class Authorize(
         }
     }
 }
-
-fun ApplicationRequest.code() = queryParameters["code"]
-
