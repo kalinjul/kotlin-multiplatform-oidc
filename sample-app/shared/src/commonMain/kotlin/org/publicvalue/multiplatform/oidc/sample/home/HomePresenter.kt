@@ -116,7 +116,7 @@ class HomePresenter(
                                             }
                                             response.status
                                         } else {
-                                            if (event.useEndSessionFlow) {
+                                            if (event.useWebFlow) {
                                                 val flow = authFlowFactory.createEndSessionFlow(client)
                                                 val result = flow.endSession(it.id_token ?: "")
                                                 if (result.isFailure) {

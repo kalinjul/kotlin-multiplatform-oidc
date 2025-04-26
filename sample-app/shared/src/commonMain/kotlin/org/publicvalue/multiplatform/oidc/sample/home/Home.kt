@@ -78,7 +78,7 @@ fun Home(
     subject: String?,
     errorMessage: String?
 ) {
-    var useRedirect by remember { mutableStateOf(false) }
+    var useWebFlow by remember { mutableStateOf(false) }
 
     Column(
         modifier = modifier.fillMaxWidth().padding(horizontal = 16.dp).verticalScroll(rememberScrollState()),
@@ -130,7 +130,7 @@ fun Home(
             }
 
             Button(onClick = {
-                onLogoutClick(useRedirect)
+                onLogoutClick(useWebFlow)
             },
                 enabled = logoutEnabled) {
                 Text("Logout")
@@ -149,7 +149,7 @@ fun Home(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Switch(useRedirect, onCheckedChange = {useRedirect = it})
+            Switch(useWebFlow, onCheckedChange = {useWebFlow = it})
             Text("Use GET request with post_endsession_redirect_uri for logout")
         }
     }

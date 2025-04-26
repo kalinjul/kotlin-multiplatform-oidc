@@ -28,7 +28,8 @@ class AddClient(
                     prompt = null,
                     login_hint = null,
                     domain_hint = null,
-                    code_challenge_method = CodeChallengeMethod.S256
+                    code_challenge_method = CodeChallengeMethod.S256,
+                    use_webflow_logout = false
                 )
             )
         }

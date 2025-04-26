@@ -5,6 +5,7 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,6 +15,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
@@ -23,10 +26,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
+import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -94,8 +99,14 @@ internal fun ClientDetail(
         onScopeChange = {
             state.eventSink(ClientDetailUiEvent.ChangeClientProperty(Client::scope, it))
         },
+        onUseWebFlowLogoutChange = {
+            state.eventSink(ClientDetailUiEvent.ChangeClientProperty(Client::use_webflow_logout, it))
+        },
         onLogin = {
             state.eventSink(ClientDetailUiEvent.Login)
+        },
+        onLogout = {
+            state.eventSink(ClientDetailUiEvent.Logout)
         },
         errorMessage = state.errorMessage,
         resetErrorMessage = {
@@ -108,6 +119,10 @@ internal fun ClientDetail(
         tokenResponse = state.tokenResponse,
         errorTokenResponse = state.errorTokenResponse,
         tokenResponseStatusCode = state.tokenResponseStatusCode,
+        endSessionRequestUrl = state.endSessionRequestUrl,
+        endSessionStatusCode = state.endSessionStatusCode,
+        logoutEnabled = state.logoutEnabled,
+        loginEnabled = state.loginEnabled
     )
 }
 
@@ -121,7 +136,9 @@ internal fun ClientDetail(
     onClientSecretChange: (String) -> Unit,
     onScopeChange: (String) -> Unit,
     onCodeChallengeMethodClick: (CodeChallengeMethod) -> Unit,
+    onUseWebFlowLogoutChange: (Boolean) -> Unit,
     onLogin: () -> Unit,
+    onLogout: () -> Unit,
     errorMessage: String?,
     resetErrorMessage: () -> Unit,
     authcodeRequestUrl: String?,
@@ -131,6 +148,10 @@ internal fun ClientDetail(
     tokenResponse: AccessTokenResponse?,
     errorTokenResponse: ErrorResponse?,
     tokenResponseStatusCode: HttpStatusCode?,
+    endSessionRequestUrl: String?,
+    endSessionStatusCode: HttpStatusCode?,
+    loginEnabled: Boolean,
+    logoutEnabled: Boolean
 ) {
     Scaffold(
         modifier.fillMaxSize(),
@@ -155,7 +176,8 @@ internal fun ClientDetail(
                         onClientIdChange = onClientIdChange,
                         onClientSecretChange = onClientSecretChange,
                         onScopeChange = onScopeChange,
-                        onCodeChallengeMethodClick = onCodeChallengeMethodClick
+                        onCodeChallengeMethodClick = onCodeChallengeMethodClick,
+                        onUseWebFlowLogoutChange = onUseWebFlowLogoutChange
                     )
                 }
                 Column(Modifier.padding(16.dp).weight(1f)) {
@@ -168,7 +190,12 @@ internal fun ClientDetail(
                         tokenResponse = tokenResponse,
                         errorTokenResponse = errorTokenResponse,
                         tokenResponseStatusCode = tokenResponseStatusCode,
+                        endSessionRequestUrl = endSessionRequestUrl,
+                        endSessionStatusCode = endSessionStatusCode,
+                        loginEnabled = loginEnabled,
+                        logoutEnabled = logoutEnabled,
                         onLogin = onLogin,
+                        onLogout = onLogout,
                     )
                 }
             }
@@ -193,6 +220,7 @@ internal fun ClientDetail(
     onClientSecretChange: (String) -> Unit,
     onScopeChange: (String) -> Unit,
     onCodeChallengeMethodClick: (CodeChallengeMethod) -> Unit,
+    onUseWebFlowLogoutChange: (Boolean) -> Unit,
 ) {
     var name by remember(client?.name != null) {
         mutableStateOf(client?.name.orEmpty())
@@ -233,10 +261,15 @@ internal fun ClientDetail(
             onValueChange = { scope = it; onScopeChange(it)},
             label = { Text("Scope") }
         )
+        FormHeadline(text = "WebFlow Logout")
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Switch(client?.use_webflow_logout ?: false, onCheckedChange = onUseWebFlowLogoutChange)
+            Text(modifier = Modifier.padding(start = 16.dp), text = "Use WebFlow Logout")
+        }
         FormHeadline(text = "Code challenge method")
 
         CodeChallengeMethod.entries.forEach {
-            Row() {
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 RadioButton(client?.code_challenge_method == it, onClick = { onCodeChallengeMethodClick(it) })
                 Text(modifier = Modifier.padding(start = 16.dp), text = it.name)
             }
@@ -253,7 +286,10 @@ internal fun ClientDetail(
 //            RadioButton(false, onClick = null)
 //            Text(modifier = Modifier.padding(start = 16.dp), text = "off")
 //        }
-        Text("Note: redirect_url will always be ${Constants.REDIRECT_URL}")
+        ProvideTextStyle(typography.labelMedium) {
+            Text("Note: redirect_url is ${Constants.REDIRECT_URL}")
+            Text("Note: post_logout_redirect_uri is ${Constants.POST_LOGOUT_REDIRECT_URL}")
+        }
     }
 }
 
@@ -267,11 +303,21 @@ internal fun AuthFlow(
     tokenResponse: AccessTokenResponse?,
     errorTokenResponse: ErrorResponse?,
     tokenResponseStatusCode: HttpStatusCode?,
+    endSessionRequestUrl: String?,
+    endSessionStatusCode: HttpStatusCode?,
+    loginEnabled: Boolean,
+    logoutEnabled: Boolean,
     onLogin: () -> Unit,
+    onLogout: () -> Unit,
 ) {
-    Column(modifier = modifier) {
-        Button(onClick = { onLogin() }) {
-            Text("Login")
+    Column(modifier = modifier.verticalScroll(rememberScrollState())) {
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Button(onClick = { onLogin() }, enabled = loginEnabled) {
+                Text("Login")
+            }
+            Button(onClick = { onLogout() }, enabled = logoutEnabled) {
+                Text("Logout")
+            }
         }
 //        FormHeadline(text = "Discovery")
         if (authcodeRequestUrl != null) {
@@ -298,10 +344,27 @@ internal fun AuthFlow(
                 loading = tokenResponse == null && errorTokenResponse == null
             )
             if (tokenResponse != null) {
-                FormHeadline(text = "Access Token: ${tokenResponse.access_token}")
-                FormHeadline(text = "Refresh Token: ${tokenResponse.refresh_token}")
-                FormHeadline(text = "Id Token: ${tokenResponse.id_token?.substring(0,20)?.let { it + "..."}}")
+                ExpandableInfo(
+                    label = "Access Token",
+                    text = tokenResponse.access_token,
+                )
+                ExpandableInfo(
+                    label = "Refresh Token",
+                    text = tokenResponse.refresh_token.orEmpty(),
+                )
+                ExpandableInfo(
+                    label = "Id Token",
+                    text = tokenResponse.id_token.orEmpty(),
+                )
+//                FormHeadline(text = "Access Token: ")
+//                FormHeadline(text = "Refresh Token: ${tokenResponse.refresh_token}")
+//                FormHeadline(text = "Id Token: ${tokenResponse.id_token?.substring(0,20)?.let { it + "..."}}")
             }
+        }
+        if (endSessionRequestUrl != null) {
+            FormHeadline(text = "Logout Flow")
+            FormHeadline(text = "Request Url: $endSessionRequestUrl")
+            FormHeadline(text = "Response Status Code: $endSessionStatusCode")
         }
     }
 }

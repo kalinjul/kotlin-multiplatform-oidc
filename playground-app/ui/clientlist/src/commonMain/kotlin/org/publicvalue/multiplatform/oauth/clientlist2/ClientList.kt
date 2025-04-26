@@ -111,6 +111,9 @@ internal fun ClientList(
         onEndpointAuthorizationChange = {
             state.eventSink(ClientListUiEvent.ChangeIdpProperty(Identityprovider::endpointAuthorization, it))
         },
+        onEndpointEndsessionChange = {
+            state.eventSink(ClientListUiEvent.ChangeIdpProperty(Identityprovider::endpointEndSession, it))
+        }
     )
 }
 
@@ -127,6 +130,7 @@ internal fun ClientList(
     onRemoveClientClick: (Client) -> Unit,
     onEndpointTokenChange: (String) -> Unit,
     onEndpointAuthorizationChange: (String) -> Unit,
+    onEndpointEndsessionChange: (String) -> Unit,
     onNameChange: (String) -> Unit,
     onUseDiscoveryChange: (Boolean) -> Unit,
     onDiscoveryUrlChange: (String) -> Unit,
@@ -163,6 +167,7 @@ internal fun ClientList(
                         idp = idp,
                         onEndpointTokenChange = onEndpointTokenChange,
                         onEndpointAuthorizationChange = onEndpointAuthorizationChange,
+                        onEndpointEndsessionChange = onEndpointEndsessionChange,
                         onNameChange = onNameChange,
                         onUseDiscoveryChange = onUseDiscoveryChange,
                         onDiscoveryUrlChange = onDiscoveryUrlChange,
@@ -197,6 +202,7 @@ internal fun IdpDetail(
     idp: Identityprovider?,
     onEndpointTokenChange: (String) -> Unit,
     onEndpointAuthorizationChange: (String) -> Unit,
+    onEndpointEndsessionChange: (String) -> Unit,
     onNameChange: (String) -> Unit,
     onUseDiscoveryChange: (Boolean) -> Unit,
     onDiscoveryUrlChange: (String) -> Unit,
@@ -218,6 +224,9 @@ internal fun IdpDetail(
         }
         var endpointAuthorization by remember(idp?.endpointAuthorization == null) {
             mutableStateOf(idp?.endpointAuthorization.orEmpty())
+        }
+        var endpointEndSession by remember(idp?.endpointEndSession == null) {
+            mutableStateOf(idp?.endpointEndSession.orEmpty())
         }
 
         FormHeadline(text = "General")
@@ -253,11 +262,11 @@ internal fun IdpDetail(
 //            onValueChange = {},
 //            label = { Text("Token") }
 //        )
-//        SingleLineInput(
-//            value = "${idp?.endpointEndSession}",
-//            onValueChange = {},
-//            label = { Text("Token") }
-//        )
+        SingleLineInput(
+            value = "${idp?.endpointEndSession}",
+            onValueChange = { endpointEndSession = it; onEndpointEndsessionChange(it) },
+            label = { Text("EndSession") }
+        )
 //        SingleLineInput(
 //            value = "${idp?.endpointUserInfo}",
 //            onValueChange = {},

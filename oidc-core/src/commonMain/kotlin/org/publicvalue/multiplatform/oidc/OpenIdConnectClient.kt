@@ -67,7 +67,7 @@ interface OpenIdConnectClient {
      * @param idToken used for id_token_hint, recommended by openid spec, optional
      */
     @Throws(OpenIdConnectException::class)
-    fun createEndSessionRequest(idToken: String?, configure: (URLBuilder.() -> Unit)?): EndSessionRequest
+    fun createEndSessionRequest(idToken: String?, configure: (URLBuilder.() -> Unit)? = null): EndSessionRequest
 
     /**
      * Discover OpenID Connect Configuration using the discovery endpoint.
