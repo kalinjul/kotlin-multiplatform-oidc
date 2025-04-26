@@ -195,6 +195,14 @@ val tokens = flow.getAccessToken(configureAuthUrl = {
 })
 ```
 
+## End session using GET request and post_logout_redirect_uri
+If you have configured a ```postLogoutRedirectUri``` and want to perform a Logout using a Web Flow,
+you can use the endSession flow:
+```kotlin
+val flow = authFlowFactory.createEndSessionFlow(client)
+tokens.id_token?.let { flow.endSession(it) }
+```
+
 # JWT Parsing
 We provide simple JWT parsing (without any validation):
 ```kotlin

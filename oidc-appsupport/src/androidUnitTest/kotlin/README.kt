@@ -69,6 +69,12 @@ object README {
         tokens.id_token?.let { client.endSession(idToken = it) }
     }
 
+    // endSession using web flow
+    suspend fun `perform_endSession_getrequest`() {
+        val flow = authFlowFactory.createEndSessionFlow(client)
+        tokens.id_token?.let { flow.endSession(it) }
+    }
+
     // Custom headers/url parameters
     suspend fun `Custom_headers_url_parameters`() {
         client.endSession(idToken = idToken) {
