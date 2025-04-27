@@ -13,7 +13,7 @@ runs:
       run: ./gradlew -p sample-app assembleRelease
     - name: Build playground app
       shell: bash
-      run: ./gradlew -p playground-app assembleRelease
+      run: ./gradlew -p playground-app assemble
     - name: Build dokka
       shell: bash
       run: ./gradlew dokkaHtmlCollector

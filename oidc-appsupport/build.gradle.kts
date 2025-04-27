@@ -1,6 +1,7 @@
 import com.android.build.gradle.internal.tasks.factory.dependsOn
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.publicvalue.convention.config.configureAndroidTarget
 import org.publicvalue.convention.config.configureIosTargets
 import org.publicvalue.convention.config.configureWasmTarget
 import org.publicvalue.convention.config.exportKdoc
@@ -11,6 +12,7 @@ import kotlin.io.path.name
 plugins {
     id("org.publicvalue.convention.android.library")
     id("org.publicvalue.convention.kotlin.multiplatform")
+    id("org.publicvalue.convention.kotlin.multiplatform.mobile")
     id("org.publicvalue.convention.centralPublish")
     id("org.publicvalue.convention.multiplatformSwiftPackage")
 }
@@ -64,6 +66,7 @@ afterEvaluate {
 }
 
 kotlin {
+    jvm()
     configureIosTargets(baseName = "OpenIdConnectClient")
     configureWasmTarget(baseName = "OpenIdConnectClient")
     sourceSets {

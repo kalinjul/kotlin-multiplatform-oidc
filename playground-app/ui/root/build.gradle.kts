@@ -1,10 +1,10 @@
 plugins {
-    id("org.publicvalue.convention.android.library")
     id("org.publicvalue.convention.kotlin.multiplatform")
     id("org.publicvalue.convention.compose.multiplatform")
 }
 
 kotlin {
+    jvm()
     sourceSets {
         val commonMain by getting {
             dependencies {

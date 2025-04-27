@@ -24,7 +24,7 @@ class KotlinMultiplatformMobileConventionPlugin : Plugin<Project> {
                     this.configureAndroidTarget()
                 }
             }
-            configureKotlin()
+//            configureKotlin()
         }
     }
 }

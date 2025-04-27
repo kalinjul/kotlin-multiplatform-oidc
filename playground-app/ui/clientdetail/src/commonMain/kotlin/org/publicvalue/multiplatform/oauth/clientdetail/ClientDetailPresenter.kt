@@ -25,12 +25,12 @@ import org.publicvalue.multiplatform.oauth.data.daos.ClientDao
 import org.publicvalue.multiplatform.oauth.data.db.Client
 import org.publicvalue.multiplatform.oauth.data.types.CodeChallengeMethod
 import org.publicvalue.multiplatform.oauth.domain.Authorize
-import org.publicvalue.multiplatform.oauth.domain.AuthorizeResult
 import org.publicvalue.multiplatform.oauth.domain.EndSessionResult
 import org.publicvalue.multiplatform.oauth.domain.ExchangeToken
 import org.publicvalue.multiplatform.oauth.domain.ExchangeTokenResult
 import org.publicvalue.multiplatform.oauth.domain.LogoutPost
 import org.publicvalue.multiplatform.oauth.domain.LogoutWebFlow
+import org.publicvalue.multiplatform.oauth.domain.types.AuthorizeResult
 import org.publicvalue.multiplatform.oauth.logging.Logger
 import org.publicvalue.multiplatform.oauth.screens.ClientDetailScreen
 import org.publicvalue.multiplatform.oidc.types.AuthCodeRequest

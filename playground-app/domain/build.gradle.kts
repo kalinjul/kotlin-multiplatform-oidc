@@ -1,9 +1,11 @@
+import org.publicvalue.convention.addKspDependencyForAllTargets
+
 plugins {
-//    id("org.publicvalue.convention.android.library")
     id("org.publicvalue.convention.kotlin.multiplatform")
 }
 
 kotlin {
+    jvm()
     sourceSets {
         val commonMain by getting {
             dependencies {

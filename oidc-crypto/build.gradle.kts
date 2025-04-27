@@ -4,6 +4,7 @@ import org.publicvalue.convention.config.exportKdoc
 
 plugins {
     id("org.publicvalue.convention.kotlin.multiplatform")
+    id("org.publicvalue.convention.kotlin.multiplatform.mobile")
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.swiftklib)
     id("org.publicvalue.convention.centralPublish")
@@ -12,6 +13,7 @@ plugins {
 description = "Kotlin Multiplatform OIDC crypto library"
 
 kotlin {
+    jvm()
     configureIosTargets()
     configureWasmTarget()
     sourceSets {
