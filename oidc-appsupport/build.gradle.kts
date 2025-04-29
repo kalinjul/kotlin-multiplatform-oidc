@@ -53,9 +53,9 @@ val fixTask = tasks.create("fixFrameworkPlist") {
 
         plists.forEach {
             logger.warn("Apply XCode 15.3(+) workaround to plist file: $it")
-            exec {
+            providers.exec {
                 commandLine("/usr/libexec/PlistBuddy", "-c", "Set MinimumOSVersion 100.0", it.toFile().absolutePath)
-            }
+            }.result.get()
         }
     }
 
