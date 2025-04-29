@@ -22,7 +22,7 @@ import kotlin.contracts.contract
 
 @ExperimentalOpenIdConnect
 actual class PlatformCodeAuthFlow(
-    override val client: OpenIdConnectClient,
+    actual override val client: OpenIdConnectClient,
     webserverProvider: () -> Webserver = { SimpleKtorWebserver() },
     openUrl: (Url) -> Unit = { it.openInBrowser() },
 ) : CodeAuthFlow, EndSessionFlow {

@@ -15,7 +15,7 @@ actual class PlatformCodeAuthFlow(
     windowTarget: String = "",
     windowFeatures: String = "width=1000,height=800,resizable=yes,scrollbars=yes",
     redirectOrigin: String,
-    override val client: OpenIdConnectClient,
+    actual override val client: OpenIdConnectClient,
 ) : CodeAuthFlow, EndSessionFlow {
 
     private val webFlow = WebPopupFlow(windowTarget, windowFeatures, redirectOrigin)

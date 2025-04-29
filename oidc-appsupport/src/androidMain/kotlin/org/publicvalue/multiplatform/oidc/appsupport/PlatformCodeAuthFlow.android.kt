@@ -22,7 +22,7 @@ actual class PlatformCodeAuthFlow(
     contract: ActivityResultLauncherSuspend<Intent, ActivityResult>,
     useWebView: Boolean = false,
     webViewEpheremalSession: Boolean = false,
-    override val client: OpenIdConnectClient,
+    actual override val client: OpenIdConnectClient,
 ) : CodeAuthFlow, EndSessionFlow {
 
     private val webFlow: WebActivityFlow = WebActivityFlow(

@@ -29,7 +29,7 @@ import kotlin.experimental.ExperimentalObjCName
 @OptIn(ExperimentalObjCName::class)
 @ObjCName(swiftName = "CodeAuthFlow", name = "CodeAuthFlow", exact = true)
 actual class PlatformCodeAuthFlow(
-    override val client: OpenIdConnectClient,
+    actual override val client: OpenIdConnectClient,
     ephemeralBrowserSession: Boolean = false
 ): CodeAuthFlow, EndSessionFlow {
 
