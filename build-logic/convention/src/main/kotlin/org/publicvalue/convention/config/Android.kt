@@ -9,7 +9,7 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.the
 import java.io.File
 
-fun Project.configureKotlinAndroid(extension: CommonExtension<*, *, *, *, *>) {
+fun Project.configureKotlinAndroid(extension: CommonExtension<*, *, *, *, *,*>) {
     val libs = the<LibrariesForLibs>()
 
     if (extension is LibraryExtension) {
