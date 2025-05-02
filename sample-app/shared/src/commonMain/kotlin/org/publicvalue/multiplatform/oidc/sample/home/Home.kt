@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
@@ -12,6 +14,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -21,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import org.publicvalue.multiplatform.oidc.sample.domain.TokenData
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -52,7 +56,7 @@ fun Home(
             logoutEnabled = state.logoutEnabled,
             refreshEnabled = state.refreshEnabled,
             onLoginClick = { state.eventSink(HomeUiEvent.Login) },
-            onLogoutClick = { state.eventSink(HomeUiEvent.Logout) },
+            onLogoutClick = { state.eventSink(HomeUiEvent.Logout(it)) },
             onRefreshClick = { state.eventSink(HomeUiEvent.Refresh) },
             tokenData = state.tokenData,
             subject = state.subject,
@@ -68,16 +72,18 @@ fun Home(
     refreshEnabled: Boolean,
     logoutEnabled: Boolean,
     onLoginClick: () -> Unit,
-    onLogoutClick: () -> Unit,
+    onLogoutClick: (Boolean) -> Unit,
     onRefreshClick: () -> Unit,
     tokenData: TokenData?,
     subject: String?,
     errorMessage: String?
 ) {
+    var useWebFlow by remember { mutableStateOf(false) }
+
     Column(
-        modifier
-            .fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
+        modifier = modifier.fillMaxWidth().padding(horizontal = 16.dp).verticalScroll(rememberScrollState()),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
 
         Row {
@@ -124,7 +130,7 @@ fun Home(
             }
 
             Button(onClick = {
-                onLogoutClick()
+                onLogoutClick(useWebFlow)
             },
                 enabled = logoutEnabled) {
                 Text("Logout")
@@ -136,6 +142,15 @@ fun Home(
                 enabled = refreshEnabled) {
                 Text("Refresh")
             }
+        }
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Switch(useWebFlow, onCheckedChange = {useWebFlow = it})
+            Text("Use GET request with post_endsession_redirect_uri for logout")
         }
     }
 }

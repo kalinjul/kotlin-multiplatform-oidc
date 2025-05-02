@@ -42,6 +42,7 @@ object README {
             scope = "openid profile"
             codeChallengeMethod = CodeChallengeMethod.S256
             redirectUri = "<redirectUri>"
+            postLogoutRedirectUri = "<postLogoutRedirectUri>"
         }
     }
 
@@ -66,6 +67,12 @@ object README {
     suspend fun `perform_refresh_or_endSession`() {
         tokens.refresh_token?.let { client.refreshToken(refreshToken = it) }
         tokens.id_token?.let { client.endSession(idToken = it) }
+    }
+
+    // endSession using web flow
+    suspend fun `perform_endSession_getrequest`() {
+        val flow = authFlowFactory.createEndSessionFlow(client)
+        tokens.id_token?.let { flow.endSession(it) }
     }
 
     // Custom headers/url parameters

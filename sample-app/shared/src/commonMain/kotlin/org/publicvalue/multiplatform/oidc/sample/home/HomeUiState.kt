@@ -17,6 +17,6 @@ data class HomeUiState(
 sealed interface HomeUiEvent: CircuitUiEvent {
     data object NavigateToConfig: HomeUiEvent
     data object Login: HomeUiEvent
-    data object Logout: HomeUiEvent
+    data class Logout(val useWebFlow: Boolean): HomeUiEvent
     data object Refresh: HomeUiEvent
 }

@@ -23,8 +23,8 @@ import kotlin.native.ObjCName
  */
 @OptIn(ExperimentalObjCName::class)
 @ObjCName(swiftName = "AbstractCodeAuthFlow", name = "AbstractCodeAuthFlow", exact = true)
-abstract class CodeAuthFlow(val client: OpenIdConnectClient) {
-
+interface CodeAuthFlow {
+    val client: OpenIdConnectClient
 
     /**
      * For some reason the default parameter is not available in Platform implementations,

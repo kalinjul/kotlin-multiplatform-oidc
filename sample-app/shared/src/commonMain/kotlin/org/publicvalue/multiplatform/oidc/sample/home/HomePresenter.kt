@@ -47,6 +47,7 @@ class HomePresenter(
             return if (clientSettings != null && idpSettings != null) {
                 OpenIdConnectClient(idpSettings.discoveryUrl) {
                     redirectUri = PlatformConstants.redirectUrl.trim()
+                    postLogoutRedirectUri = PlatformConstants.postLogoutRedirectUrl.trim()
                     codeChallengeMethod = clientSettings.code_challenge_method
                     this.scope = clientSettings.scope?.trim()
                     this.clientId = clientSettings.client_id?.trim()
@@ -89,7 +90,7 @@ class HomePresenter(
                             catchErrorMessage {
                                 val newTokens = authFlowFactory.createAuthFlow(client).getAccessToken(
                                     configureAuthUrl = {
-                                        parameters.append("prompt", "login")
+//                                        parameters.append("prompt", "login")
                                     }
                                 )
                                 updateTokenResponse(newTokens)
@@ -97,7 +98,7 @@ class HomePresenter(
                         }
                     }
                 }
-                HomeUiEvent.Logout -> {
+                is HomeUiEvent.Logout -> {
                     resetErrorMessage()
                     val client = createClient()
                     if (client != null) {
@@ -115,11 +116,23 @@ class HomePresenter(
                                             }
                                             response.status
                                         } else {
-                                            client.endSession(idToken = it.id_token ?: "")
+                                            if (event.useWebFlow) {
+                                                val flow = authFlowFactory.createEndSessionFlow(client)
+                                                val result = flow.endSession(it.id_token ?: "")
+                                                if (result.isFailure) {
+                                                    setErrorMessage(result.exceptionOrNull()?.message ?: "Unknown error")
+                                                }
+                                                if (result.isSuccess) HttpStatusCode.OK else null
+                                            } else {
+                                                client.endSession(idToken = it.id_token ?: "")
+                                            }
                                         }
-                                        if (result.isSuccess() || result == HttpStatusCode.Found) {
+                                        if (result?.isSuccess() == true || result == HttpStatusCode.Found) {
                                             tokenResponse = null
+                                            subject = null
                                             settingsStore.clearTokenData()
+                                        } else {
+                                            setErrorMessage("Logout received $result")
                                         }
                                     }
                                 } else {

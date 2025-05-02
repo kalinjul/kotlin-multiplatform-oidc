@@ -1,12 +1,12 @@
 import org.publicvalue.convention.addParcelizeAnnotation
 
 plugins {
-    id("org.publicvalue.convention.android.library")
     id("org.publicvalue.convention.kotlin.multiplatform")
-    id("kotlin-parcelize")
+//    id("kotlin-parcelize")
 }
 
 kotlin {
+    jvm()
     sourceSets {
         val commonMain by getting {
             dependencies {
@@ -14,6 +14,6 @@ kotlin {
             }
         }
     }
-    addParcelizeAnnotation("org.publicvalue.multiplatform.oauth.screens.CommonParcelize")
+//    addParcelizeAnnotation("org.publicvalue.multiplatform.oauth.screens.CommonParcelize")
 }
 

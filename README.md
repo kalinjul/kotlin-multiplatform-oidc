@@ -95,6 +95,7 @@ val client = OpenIdConnectClient(discoveryUri = "<discovery url>") {
     scope = "openid profile"
     codeChallengeMethod = CodeChallengeMethod.S256
     redirectUri = "<redirectUri>"
+    postLogoutRedirectUri = "<postLogoutRedirectUri>"
 }
 ```
 If you provide a Discovery URI, you may skip the endpoint configuration and call [discover()](https://kalinjul.github.io/kotlin-multiplatform-oidc/kotlin-multiplatform-oidc/org.publicvalue.multiplatform.oidc/-open-id-connect-client/discover.html) on the client to retrieve the endpoint configuration.
@@ -192,6 +193,14 @@ val tokens = flow.getAccessToken(configureAuthUrl = {
     // customize token exchange http request
     header("additionalHeaderField", "value")
 })
+```
+
+## End session using GET request and post_logout_redirect_uri
+If you have configured a ```postLogoutRedirectUri``` and want to perform a Logout using a Web Flow,
+you can use the endSession flow:
+```kotlin
+val flow = authFlowFactory.createEndSessionFlow(client)
+tokens.id_token?.let { flow.endSession(it) }
 ```
 
 # JWT Parsing

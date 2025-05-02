@@ -27,7 +27,8 @@ class ClientDao(
             prompt = entity.prompt,
             login_hint = entity.login_hint,
             domain_hint = entity.domain_hint,
-            code_challenge_method = entity.code_challenge_method
+            code_challenge_method = entity.code_challenge_method,
+            use_webflow_logout = entity.use_webflow_logout
         )
         return db.idpsQueries.lastInsertRowId().executeAsOne()
     }
@@ -43,7 +44,8 @@ class ClientDao(
             prompt = entity.prompt,
             login_hint = entity.login_hint,
             domain_hint = entity.domain_hint,
-            code_challenge_method = entity.code_challenge_method
+            code_challenge_method = entity.code_challenge_method,
+            use_webflow_logout = entity.use_webflow_logout
         )
     }
 

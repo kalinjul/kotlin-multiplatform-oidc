@@ -1,4 +1,5 @@
 import org.publicvalue.multiplatform.oauth.data.types.CodeChallengeMethod;
+import kotlin.Boolean;
 
 CREATE TABLE IF NOT EXISTS `client` (
     `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
@@ -10,7 +11,8 @@ CREATE TABLE IF NOT EXISTS `client` (
     `prompt` TEXT,
     `login_hint` TEXT,
     `domain_hint` TEXT,
-    `code_challenge_method` TEXT AS CodeChallengeMethod NOT NULL
+    `code_challenge_method` TEXT AS CodeChallengeMethod NOT NULL,
+    `use_webflow_logout` INTEGER AS Boolean NOT NULL DEFAULT FALSE
 );
 
 
@@ -28,7 +30,8 @@ INSERT INTO client(
     `prompt`,
     `login_hint`,
     `domain_hint`,
-    `code_challenge_method`
+    `code_challenge_method`,
+    `use_webflow_logout`
 ) VALUES (
     nullif(:id, 0),
     :idpId,
@@ -39,7 +42,8 @@ INSERT INTO client(
     :prompt,
     :login_hint,
     :domain_hint,
-    :code_challenge_method
+    :code_challenge_method,
+    :use_webflow_logout
 );
 
 getAll:
@@ -53,7 +57,8 @@ SELECT
     `prompt`,
     `login_hint`,
     `domain_hint`,
-    `code_challenge_method`
+    `code_challenge_method`,
+    `use_webflow_logout`
 FROM client
 WHERE idpId = :idpId;
 
@@ -68,7 +73,8 @@ SELECT
     `prompt`,
     `login_hint`,
     `domain_hint`,
-    `code_challenge_method`
+    `code_challenge_method`,
+    `use_webflow_logout`
 FROM client
 WHERE id = :id;
 
@@ -83,7 +89,8 @@ UPDATE client SET
     `prompt` = :prompt,
     `login_hint` = :login_hint,
     `domain_hint` = :domain_hint,
-    `code_challenge_method` = :code_challenge_method
+    `code_challenge_method` = :code_challenge_method,
+    `use_webflow_logout` = :use_webflow_logout
 WHERE id = :id;
 
 delete:

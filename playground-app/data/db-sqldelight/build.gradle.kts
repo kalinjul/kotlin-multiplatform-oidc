@@ -4,6 +4,7 @@ plugins {
 }
 
 kotlin {
+    jvm()
     sourceSets {
         val commonMain by getting {
             dependencies {
@@ -29,6 +30,7 @@ sqldelight {
     databases {
         create("Database") {
             packageName.set("org.publicvalue.multiplatform.oauth.data")
+            schemaOutputDirectory.set(file("src/commonMain/sqldelight/databases"))
         }
     }
 }

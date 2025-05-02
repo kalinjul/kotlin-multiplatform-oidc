@@ -18,8 +18,8 @@ actual interface SqlDelightDatabasePlatformComponent {
             configuration.inMemory -> JdbcSqliteDriver.IN_MEMORY
             else -> "jdbc:sqlite:${getDatabaseFile().absolutePath}"
         },
+        schema = Database.Schema
     ).also { db ->
-        Database.Schema.create(db)
         db.execute(null, "PRAGMA foreign_keys=ON", 0)
     }
 }

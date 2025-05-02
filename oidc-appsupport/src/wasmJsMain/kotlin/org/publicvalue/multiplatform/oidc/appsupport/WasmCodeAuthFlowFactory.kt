@@ -3,6 +3,7 @@ package org.publicvalue.multiplatform.oidc.appsupport
 import kotlinx.browser.window
 import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
 import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
+import org.publicvalue.multiplatform.oidc.flows.EndSessionFlow
 
 @ExperimentalOpenIdConnect
 class WasmCodeAuthFlowFactory(
@@ -11,6 +12,10 @@ class WasmCodeAuthFlowFactory(
     private val redirectOrigin: String = window.location.origin
 ): CodeAuthFlowFactory {
     override fun createAuthFlow(client: OpenIdConnectClient): PlatformCodeAuthFlow {
-        return PlatformCodeAuthFlow(client, windowTarget, windowFeatures, redirectOrigin)
+        return PlatformCodeAuthFlow(windowTarget, windowFeatures, redirectOrigin, client)
+    }
+
+    override fun createEndSessionFlow(client: OpenIdConnectClient): EndSessionFlow {
+        return createAuthFlow(client)
     }
 }

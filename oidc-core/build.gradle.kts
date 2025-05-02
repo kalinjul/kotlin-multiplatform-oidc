@@ -4,6 +4,7 @@ import org.publicvalue.convention.config.exportKdoc
 
 plugins {
     id("org.publicvalue.convention.kotlin.multiplatform")
+    id("org.publicvalue.convention.kotlin.multiplatform.mobile")
     alias(libs.plugins.kotlin.serialization)
     id("org.publicvalue.convention.centralPublish")
 }
@@ -11,6 +12,7 @@ plugins {
 description = "Kotlin Multiplatform OIDC core library"
 
 kotlin {
+    jvm()
     configureIosTargets()
     configureWasmTarget()
     sourceSets {

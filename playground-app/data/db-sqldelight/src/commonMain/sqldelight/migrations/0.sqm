@@ -1,0 +1,1 @@
+ALTER TABLE client ADD COLUMN `use_webflow_logout` INTEGER AS Boolean NOT NULL DEFAULT FALSE;

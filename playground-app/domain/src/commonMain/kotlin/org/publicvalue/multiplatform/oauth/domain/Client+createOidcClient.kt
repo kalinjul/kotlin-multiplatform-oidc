@@ -10,11 +10,13 @@ fun Client.createOidcClient(idp: Identityprovider): OpenIdConnectClient {
         endpoints {
             tokenEndpoint = idp.endpointToken
             authorizationEndpoint = idp.endpointAuthorization
+            endSessionEndpoint = idp.endpointEndSession
         }
         clientId = this@createOidcClient.client_id
         clientSecret = this@createOidcClient.client_secret
         this.scope = this@createOidcClient.scope
         redirectUri = Constants.REDIRECT_URL
+        postLogoutRedirectUri = Constants.POST_LOGOUT_REDIRECT_URL
         codeChallengeMethod = this@createOidcClient.code_challenge_method.toLibrary()
     }
 }

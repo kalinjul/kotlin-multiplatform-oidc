@@ -7,12 +7,14 @@ import org.publicvalue.convention.config.configureWasmTarget
 plugins {
     id("org.publicvalue.convention.android.library")
     id("org.publicvalue.convention.kotlin.multiplatform")
+    id("org.publicvalue.convention.kotlin.multiplatform.mobile")
     id("org.publicvalue.convention.compose.multiplatform")
     id("kotlin-parcelize")
     alias(libs.plugins.kotlin.serialization)
 }
 
 kotlin {
+    jvm()
     configureIosTargets()
     configureWasmTarget()
     sourceSets {
@@ -38,15 +40,6 @@ kotlin {
                 api("io.github.kalinjul.kotlin.multiplatform:oidc-okhttp4")
                 api(libs.okhttp)
             }
-        }
-        val iosX64Main by getting
-        val iosArm64Main by getting
-        val iosSimulatorArm64Main by getting
-        val iosMain by getting {
-            dependsOn(commonMain)
-            iosX64Main.dependsOn(this)
-            iosArm64Main.dependsOn(this)
-            iosSimulatorArm64Main.dependsOn(this)
         }
 
         val commonTest by getting {

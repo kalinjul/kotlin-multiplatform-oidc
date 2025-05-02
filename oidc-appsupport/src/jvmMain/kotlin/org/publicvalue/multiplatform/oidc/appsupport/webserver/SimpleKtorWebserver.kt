@@ -2,16 +2,20 @@ package org.publicvalue.multiplatform.oidc.appsupport.webserver
 
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.Url
 import io.ktor.server.cio.CIO
 import io.ktor.server.cio.CIOApplicationEngine
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.request.ApplicationRequest
+import io.ktor.server.request.uri
 import io.ktor.server.response.respondText
 import io.ktor.server.routing.RoutingContext
 import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
+import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
 import org.publicvalue.multiplatform.oidc.flows.AuthCodeResult
 
+@ExperimentalOpenIdConnect
 class SimpleKtorWebserver(
     val createResponse: suspend RoutingContext.() -> Unit = {
         call.respondText(
@@ -34,7 +38,7 @@ class SimpleKtorWebserver(
 ): Webserver {
     private var server: CIOApplicationEngine? = null
 
-    override suspend fun startAndWaitForRedirect(port: Int, redirectPath: String): AuthCodeResult {
+    override suspend fun startAndWaitForRedirect(port: Int, redirectPath: String): Url {
         var call: ApplicationRequest? = null
         server?.stop()
         embeddedServer(CIO, port = port) {
@@ -49,9 +53,7 @@ class SimpleKtorWebserver(
             server = engine
             start(wait = true)
         }
-        val code = call?.queryParameters?.get("code")
-        val state = call?.queryParameters?.get("state")
-        return AuthCodeResult(code, state)
+        return Url(call?.uri ?: "")
     }
 
     override suspend fun stop() {

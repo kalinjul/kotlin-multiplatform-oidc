@@ -7,6 +7,7 @@ plugins {
 }
 
 kotlin {
+    jvm()
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
         moduleName = "wasm-js-app"

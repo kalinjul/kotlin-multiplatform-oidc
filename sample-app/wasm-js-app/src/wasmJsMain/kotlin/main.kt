@@ -13,7 +13,7 @@ fun main() {
             currentPath.isBlank() || currentPath == "/" -> {
                 MainView()
             }
-            currentPath.startsWith("/redirect") -> {
+            currentPath.startsWith("/redirect") || currentPath.startsWith("/logout") -> {
                 LaunchedEffect(Unit) {
                     PlatformCodeAuthFlow.handleRedirect()
                 }

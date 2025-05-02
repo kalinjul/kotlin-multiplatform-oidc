@@ -5,7 +5,6 @@ import io.ktor.client.call.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
-import io.ktor.client.request.url
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.serialization.JsonConvertException
@@ -14,12 +13,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import org.publicvalue.multiplatform.oidc.discovery.OpenIdConnectDiscover
 import org.publicvalue.multiplatform.oidc.flows.Pkce
 import org.publicvalue.multiplatform.oidc.types.AuthCodeRequest
 import org.publicvalue.multiplatform.oidc.types.CodeChallengeMethod
+import org.publicvalue.multiplatform.oidc.types.EndSessionRequest
 import org.publicvalue.multiplatform.oidc.types.TokenRequest
 import org.publicvalue.multiplatform.oidc.types.remote.AccessTokenResponse
 import org.publicvalue.multiplatform.oidc.types.remote.ErrorResponse
@@ -37,7 +36,7 @@ import kotlin.native.ObjCName
  *
  * @param config [Configuration][org.publicvalue.multiplatform.oidc.OpenIdConnectClientConfig] for this client
  */
-@OptIn(ExperimentalSerializationApi::class, ExperimentalObjCName::class)
+@OptIn(ExperimentalObjCName::class)
 @ObjCName(swiftName = "OpenIdConnectClient", name = "OpenIdConnectClient", exact = true)
 class DefaultOpenIdConnectClient(
     private val httpClient: HttpClient = DefaultHttpClient,
@@ -105,6 +104,17 @@ class DefaultOpenIdConnectClient(
         return AuthCodeRequest(
             url, config, pkce, state, nonce
         )
+    }
+
+    override fun createEndSessionRequest(idToken: String?, configure: (URLBuilder.() -> Unit)?): EndSessionRequest {
+        val authorizationEndpoint = config.endpoints?.endSessionEndpoint ?: run { throw OpenIdConnectException.InvalidConfiguration("No endSessionEndpoint set") }
+        val url = URLBuilder(authorizationEndpoint).apply {
+            idToken?.let { parameters.append("id_token_hint", it) }
+            config.postLogoutRedirectUri?.let { parameters.append("post_logout_redirect_uri", it) }
+            configure?.invoke(this)
+        }.build()
+
+        return EndSessionRequest(url)
     }
 
     @Throws(OpenIdConnectException::class, CancellationException::class)

@@ -3,12 +3,12 @@ package org.publicvalue.convention
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.configurationcache.extensions.capitalized
-import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.getByType
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.publicvalue.convention.config.configureKotlin
 
 class KotlinMultiplatformConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
@@ -16,12 +16,13 @@ class KotlinMultiplatformConventionPlugin : Plugin<Project> {
             // use mobile plugin and add jvm target
             with(pluginManager) {
                 apply("org.jetbrains.kotlin.multiplatform")
-                apply("org.publicvalue.convention.kotlin.multiplatform.mobile")
+//                apply("org.publicvalue.convention.kotlin.multiplatform.mobile")
             }
 
-            extensions.configure<KotlinMultiplatformExtension> {
-                jvm()
-            }
+//            extensions.configure<KotlinMultiplatformExtension> {
+//                jvm()
+//            }
+            configureKotlin()
         }
     }
 }

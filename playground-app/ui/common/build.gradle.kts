@@ -1,12 +1,10 @@
 plugins {
-    // this is required for dialog etc to work on android
-    // java.lang.NoClassDefFoundError: Failed resolution of: Landroidx/compose/ui/window/Dialog_skikoKt;
-    id("org.publicvalue.convention.android.library")
     id("org.publicvalue.convention.kotlin.multiplatform")
     id("org.publicvalue.convention.compose.multiplatform")
 }
 
 kotlin {
+    jvm()
     sourceSets {
         val commonMain by getting {
             dependencies {

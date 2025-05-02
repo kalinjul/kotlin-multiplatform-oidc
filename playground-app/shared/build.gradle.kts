@@ -1,17 +1,13 @@
 import org.publicvalue.convention.addKspDependencyForAllTargets
 
 plugins {
-    id("org.publicvalue.convention.android.library")
     id("org.publicvalue.convention.kotlin.multiplatform")
     id("org.publicvalue.convention.compose.multiplatform")
     alias(libs.plugins.ksp)
 }
 
-android {
-    sourceSets["main"].resources.srcDirs("src/androidMain/res", "src/commonMain/resources") // include resources in android
-}
-
 kotlin {
+    jvm()
     sourceSets {
         val commonMain by getting {
             dependencies {
@@ -24,7 +20,6 @@ kotlin {
                 implementation(libs.kotlin.inject.runtime)
 
                 api(projects.core)
-                api(projects.webserver)
                 api(projects.data.dbSqldelight)
                 api(projects.common.ui.compose)
                 api(projects.domain)
@@ -32,13 +27,6 @@ kotlin {
                 api(projects.ui.idplist)
                 api(projects.ui.clientlist)
                 api(projects.ui.clientdetail)
-            }
-        }
-        val androidMain by getting {
-            dependencies {
-                api(libs.androidx.activity.compose)
-                api(libs.androidx.core.ktx)
-                api(libs.androidx.appcompat)
             }
         }
 

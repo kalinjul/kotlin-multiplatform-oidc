@@ -23,6 +23,10 @@ data class ClientDetailUiState(
     val tokenResponse: AccessTokenResponse?,
     val errorTokenResponse: ErrorResponse?,
     val tokenResponseStatusCode: HttpStatusCode?,
+    val endSessionRequestUrl: String?,
+    val endSessionStatusCode: HttpStatusCode?,
+    val loginEnabled: Boolean,
+    val logoutEnabled: Boolean
 ) : CircuitUiState {
 }
 
@@ -33,5 +37,6 @@ sealed interface ClientDetailUiEvent : CircuitUiEvent {
     data class ChangeClientProperty<V: Comparable<V>>(val prop: KProperty1<Client, V?>, val value: V):
         ClientDetailUiEvent
     data object Login: ClientDetailUiEvent
+    data object Logout : ClientDetailUiEvent
 
 }
