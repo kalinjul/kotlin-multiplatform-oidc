@@ -5,8 +5,10 @@
 ![Kotlin Version](https://kotlin-version.aws.icerock.dev/kotlin-version?group=io.github.kalinjul.kotlin.multiplatform&name=oidc-appsupport)
 
 Kotlin Multiplatform Library for OpenId Connect / OAuth 2.0.
+
 The library is designed for kotlin multiplatform, Android-only _and_ iOS only Apps.
 For iOS only, use the [OpenIdConnectClient Swift Package](https://github.com/kalinjul/OpenIdConnectClient).
+
 This is a lightweight implementation that does not provide any client-side validation of signatures.
 
 Supported platforms:
