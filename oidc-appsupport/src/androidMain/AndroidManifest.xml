@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -17,20 +16,20 @@
     <application
         android:fullBackupContent="@xml/backup_rules"
         android:dataExtractionRules="@xml/data_extraction_rules">
-    <activity
-        android:name=".HandleRedirectActivity"
-        android:exported="true"
-        android:launchMode="singleTop"
-        >
-        <intent-filter>
-            <action android:name="android.intent.action.VIEW" />
+        <activity
+            android:name=".HandleRedirectActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            >
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
 
-            <category android:name="android.intent.category.DEFAULT" />
-            <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
 
-            <data android:scheme="${oidcRedirectScheme}" />
-        </intent-filter>
-    </activity>
+                <data android:scheme="${oidcRedirectScheme}" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
