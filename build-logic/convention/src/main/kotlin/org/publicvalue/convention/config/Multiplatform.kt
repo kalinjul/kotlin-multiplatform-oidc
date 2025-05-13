@@ -22,7 +22,7 @@ fun KotlinMultiplatformExtension.configureAndroidTarget() {
 @OptIn(ExperimentalWasmDsl::class)
 fun KotlinMultiplatformExtension.configureWasmTarget(baseName: String? = null) {
     wasmJs {
-        moduleName = baseName ?: project.path.substring(1).replace(":","-").replace("-","_")
+        outputModuleName.set(baseName ?: project.path.substring(1).replace(":","-").replace("-","_"))
         browser {
             commonWebpackConfig {
                 outputFileName = "$baseName.js"
