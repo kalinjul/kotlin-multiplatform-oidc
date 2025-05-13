@@ -31,6 +31,8 @@ kotlinxDatetime = "0.6.1"
 # https://github.com/Kotlin/kotlinx-atomicfu
 kotlinxAtomicfu = "0.27.0"
 
+kotlinxBrowser = "0.3"
+
 # https://github.com/slackhq/circuit/releases
 circuit = "0.25.0"
 sqldelight = "2.0.1"
@@ -67,6 +69,7 @@ kotlin-inject-runtime = { module = "me.tatarka.inject:kotlin-inject-runtime", ve
 
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
 kotlinx-atomicfu = { module = "org.jetbrains.kotlinx:atomicfu", version.ref = "kotlinxAtomicfu" }
+kotlinx-browser = { module = "org.jetbrains.kotlinx:kotlinx-browser", version.ref = "kotlinxBrowser" }
 
 sqldelight-android = { module = "app.cash.sqldelight:android-driver", version.ref = "sqldelight" }
 sqldelight-native = { module = "app.cash.sqldelight:native-driver", version.ref = "sqldelight" }

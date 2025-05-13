@@ -40,6 +40,7 @@ kotlin {
                 implementation(libs.kotlincrypto.hash.sha2)
 
                 implementation(libs.ktor.utils)
+                implementation(libs.kotlinx.browser)
             }
         }
     }
