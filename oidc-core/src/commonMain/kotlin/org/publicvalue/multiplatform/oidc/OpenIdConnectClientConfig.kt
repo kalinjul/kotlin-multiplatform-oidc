@@ -48,7 +48,7 @@ class OpenIdConnectClientConfig(
      * The Code Challenge Method to use for PKCE.
      *
      * Default is [S256][CodeChallengeMethod.S256]).
-     * Set to [S256][CodeChallengeMethod.off]) to disable PKCE.
+     * Set to [off][CodeChallengeMethod.off]) to disable PKCE.
      */
     var codeChallengeMethod: CodeChallengeMethod = CodeChallengeMethod.S256,
     /**
