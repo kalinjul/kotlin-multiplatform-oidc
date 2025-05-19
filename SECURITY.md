@@ -2,9 +2,10 @@
 
 ## Supported Versions
 
-| Version | Supported |
-|---------|-----------|
-| 0.9.x   | :x:       |
+| Version | Supported          |
+|---------|--------------------|
+| 0.9.x   | :x:                |
+| 0.14.x  | :heavy_check_mark: |
 
 ## Reporting a Vulnerability
 If you found a security vulnerability that you think should not end up in a public issue report,
