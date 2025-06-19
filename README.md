@@ -36,7 +36,8 @@ Library dependency versions:
 |------------------|----------------|--------------|
 | <=0.11.1         | 1.9.23         | 2.3.7        |
 | 0.11.2           | 2.0.20         | 2.3.7        |
-| 0.12.0 - 0.13.+  | 2.0.20         | 3.0.+        |
+| 0.12.x           | 2.0.20         | 3.0.+        |
+| 0.13.+           | 2.1.20         | 3.1.+        |
 
 Note that while the library may work with other kotlin/ktor versions, proceed at your own risk.
 

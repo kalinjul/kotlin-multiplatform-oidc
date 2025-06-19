@@ -10,7 +10,7 @@ fun Project.configureKotlin() {
     configureJava()
     extensions.configure<KotlinMultiplatformExtension> {
         compilerOptions {
-//            freeCompilerArgs.add("-Xexpect-actual-classes")
+            freeCompilerArgs.add("-Xexpect-actual-classes")
         }
     }
 }
