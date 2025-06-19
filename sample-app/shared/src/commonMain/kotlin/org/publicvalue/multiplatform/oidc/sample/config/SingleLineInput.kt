@@ -11,7 +11,11 @@ fun SingleLineInput(value: String, onValueChange: (String) -> Unit, label: @Comp
         modifier = Modifier.fillMaxWidth(),
         singleLine = true,
         value = value,
-        onValueChange = onValueChange,
+        onValueChange = {
+            if (!it.contains("\n")) {
+                onValueChange(it)
+            }
+        },
         label = label
     )
 }

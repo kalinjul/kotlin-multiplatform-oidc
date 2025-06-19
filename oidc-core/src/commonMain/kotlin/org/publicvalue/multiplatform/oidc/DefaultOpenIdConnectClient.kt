@@ -84,7 +84,7 @@ class DefaultOpenIdConnectClient(
     @Throws(OpenIdConnectException::class)
     override fun createAuthorizationCodeRequest(configure: (URLBuilder.() -> Unit)?): AuthCodeRequest {
         val pkce = Pkce(config.codeChallengeMethod)
-        val nonce = secureRandomBytes().encodeForPKCE()
+        val nonce = if (config.disableNonce) null else secureRandomBytes().encodeForPKCE()
         val state = secureRandomBytes().encodeForPKCE()
 
         val authorizationEndpoint = config.endpoints?.authorizationEndpoint ?: run { throw OpenIdConnectException.InvalidConfiguration("No authorizationEndpoint set") }
@@ -93,7 +93,7 @@ class DefaultOpenIdConnectClient(
             parameters.append("response_type", "code")
             parameters.append("response_mode", "query")
             config.scope?.let { parameters.append("scope", it) }
-            parameters.append("nonce", nonce)
+            nonce?.let { parameters.append("nonce", it) }
             config.codeChallengeMethod.queryString?.let { parameters.append("code_challenge_method", it) }
             if (config.codeChallengeMethod != CodeChallengeMethod.off) { parameters.append("code_challenge", pkce.codeChallenge) }
             config.redirectUri?.let { parameters.append("redirect_uri", it) }
