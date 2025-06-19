@@ -13,7 +13,7 @@ data class AuthCodeRequest(
     val config: OpenIdConnectClientConfig,
     val pkce: Pkce,
     val state: String,
-    val nonce: String
+    val nonce: String?
 )
 
 fun AuthCodeRequest.validateState(state: String): Boolean {
@@ -21,5 +21,5 @@ fun AuthCodeRequest.validateState(state: String): Boolean {
 }
 
 fun AuthCodeRequest.validateNonce(nonce: String): Boolean {
-    return nonce == this.nonce
+    return config.disableNonce || nonce == this.nonce
 }

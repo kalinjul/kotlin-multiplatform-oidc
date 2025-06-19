@@ -62,7 +62,13 @@ class OpenIdConnectClientConfig(
      *
      * [OpenID Spec](https://openid.net/specs/openid-connect-rpinitiated-1_0.html)
      */
-    var postLogoutRedirectUri: String? = null
+    var postLogoutRedirectUri: String? = null,
+
+    /**
+     * Disables sending nonce in the authentication request.
+     * This is not recommended as [nonce is used to mitigate replay attacks](https://openid.net/specs/openid-connect-core-1_0.html#NonceNotes).
+     */
+    var disableNonce: Boolean = false
 ) {
     /**
      * Configure the endpoints.
