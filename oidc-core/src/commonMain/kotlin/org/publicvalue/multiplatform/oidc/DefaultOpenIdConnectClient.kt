@@ -133,7 +133,7 @@ class DefaultOpenIdConnectClient(
         val endpoint = config.endpoints?.endSessionEndpoint?.trim()
         if (!endpoint.isNullOrEmpty()) {
             val url = URLBuilder(endpoint)
-            val response = httpClient.submitForm {
+            val response = httpClient.get {
                 url(url.build())
                 parameter("id_token_hint", idToken)
                 configure?.invoke(this)
