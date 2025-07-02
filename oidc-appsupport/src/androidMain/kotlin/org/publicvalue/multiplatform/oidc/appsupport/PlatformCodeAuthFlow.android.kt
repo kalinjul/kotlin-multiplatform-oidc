@@ -22,14 +22,16 @@ actual class PlatformCodeAuthFlow(
     contract: ActivityResultLauncherSuspend<Intent, ActivityResult>,
     useWebView: Boolean = false,
     webViewEpheremalSession: Boolean = false,
+    preferredBrowserPackage: String? = null,
     actual override val client: OpenIdConnectClient,
 ) : CodeAuthFlow, EndSessionFlow {
 
     private val webFlow: WebActivityFlow = WebActivityFlow(
-        context,
-        contract,
-        useWebView,
-        webViewEpheremalSession
+        context = context,
+        contract = contract,
+        useWebView = useWebView,
+        webViewEpheremalSession = webViewEpheremalSession,
+        preferredBrowserPackage = preferredBrowserPackage
     )
 
     actual override suspend fun getAuthorizationCode(request: AuthCodeRequest): AuthCodeResponse {

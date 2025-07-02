@@ -10,6 +10,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
+import org.publicvalue.multiplatform.oidc.appsupport.customtab.getCustomTabProviders
 import org.publicvalue.multiplatform.oidc.flows.EndSessionFlow
 
 /**
@@ -25,7 +26,9 @@ class AndroidCodeAuthFlowFactory(
     /** If true, uses an embedded WebView instead of Chrome CustomTab (not recommended) **/
     private val useWebView: Boolean = false,
     /** Clear cache and cookies in WebView **/
-    private val webViewEpheremalSession: Boolean = false
+    private val webViewEpheremalSession: Boolean = false,
+    /** preferred custom tab providers, list of package names in order of priority. Check [Browser][org.publicvalue.multiplatform.oidc.appsupport.customtab.Browser] for example values. **/
+    private val customTabProviderPriority: List<String> = listOf()
 ): CodeAuthFlowFactory {
 
     private lateinit var activityResultLauncher: ActivityResultLauncherSuspend<Intent, ActivityResult>
@@ -67,12 +70,17 @@ class AndroidCodeAuthFlowFactory(
     }
 
     override fun createAuthFlow(client: OpenIdConnectClient): PlatformCodeAuthFlow {
+        val customTabProviders = context.getCustomTabProviders().map { it.activityInfo.packageName }
+        val presentPreferredProviders = customTabProviderPriority.filter { customTabProviders.contains(it) }
+        val preferredBrowserPackage = presentPreferredProviders.firstOrNull()
+
         return PlatformCodeAuthFlow(
             context = context,
             contract = activityResultLauncher,
             client = client,
             useWebView = useWebView,
-            webViewEpheremalSession = webViewEpheremalSession
+            webViewEpheremalSession = webViewEpheremalSession,
+            preferredBrowserPackage = preferredBrowserPackage
         )
     }
 
