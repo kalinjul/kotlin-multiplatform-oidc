@@ -70,9 +70,11 @@ class AndroidCodeAuthFlowFactory(
     }
 
     override fun createAuthFlow(client: OpenIdConnectClient): PlatformCodeAuthFlow {
-        val customTabProviders = context.getCustomTabProviders().map { it.activityInfo.packageName }
-        val presentPreferredProviders = customTabProviderPriority.filter { customTabProviders.contains(it) }
-        val preferredBrowserPackage = presentPreferredProviders.firstOrNull()
+        val preferredBrowserPackage = if (customTabProviderPriority.isNotEmpty()) {
+            val customTabProviders = context.getCustomTabProviders().map { it.activityInfo.packageName }
+            val presentPreferredProviders = customTabProviderPriority.filter { customTabProviders.contains(it) }
+            presentPreferredProviders.firstOrNull()
+        } else null
 
         return PlatformCodeAuthFlow(
             context = context,

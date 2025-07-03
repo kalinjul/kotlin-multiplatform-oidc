@@ -4,15 +4,20 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
+import android.os.Build
 import androidx.core.net.toUri
 
 private val ACTION_CUSTOM_TABS_CONNECTION = "android.support.customtabs.action.CustomTabsService"
 
-fun Context.getCustomTabProviders(): List<ResolveInfo> {
+internal fun Context.getCustomTabProviders(): List<ResolveInfo> {
     val activityIntent = Intent(Intent.ACTION_VIEW, "http://www.example.com".toUri())
 
     // Get all apps that can handle VIEW intents.
-    val resolvedActivityList = packageManager.queryIntentActivities(activityIntent, PackageManager.MATCH_ALL)
+    val resolvedActivityList = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        packageManager.queryIntentActivities(activityIntent, PackageManager.MATCH_ALL)
+    } else {
+        packageManager.queryIntentActivities(activityIntent, 0)
+    }
     val serviceIntent = Intent()
     serviceIntent.setAction(ACTION_CUSTOM_TABS_CONNECTION)
     val customTabProviders = resolvedActivityList.filter {
