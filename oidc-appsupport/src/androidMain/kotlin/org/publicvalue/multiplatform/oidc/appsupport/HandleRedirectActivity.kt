@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.view.ViewGroup
 import android.webkit.CookieManager
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceRequest
@@ -12,6 +13,9 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.activity.ComponentActivity
 import androidx.browser.customtabs.CustomTabsIntent
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
 import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
 
 internal const val EXTRA_KEY_USEWEBVIEW = "usewebview"
@@ -67,6 +71,16 @@ class HandleRedirectActivity : ComponentActivity() {
         @ExperimentalOpenIdConnect
         var showWebView: Activity.(url: String, redirectUrl: String?, epheremalSession: Boolean) -> Unit = { url, redirectUrl, epheremalSession ->
             val webView = createWebView(this, redirectUrl)
+            ViewCompat.setOnApplyWindowInsetsListener(webView) { view, windowInsets ->
+                val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout())
+                view.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                    topMargin = insets.top
+                    leftMargin = insets.left
+                    bottomMargin = insets.bottom
+                    rightMargin = insets.right
+                }
+                WindowInsetsCompat.CONSUMED
+            }
             if (epheremalSession) {
                 CookieManager.getInstance().removeAllCookies(null)
                 webView.clearHistory()
@@ -92,7 +106,6 @@ class HandleRedirectActivity : ComponentActivity() {
     @OptIn(ExperimentalOpenIdConnect::class)
     override fun onResume() {
         super.onResume()
-
         val useWebView = intent.extras?.getBoolean(EXTRA_KEY_USEWEBVIEW)
         val webViewEpheremalSession = intent.extras?.getBoolean(EXTRA_KEY_WEBVIEW_EPHEREMAL_SESSION)
         val url = intent.extras?.getString(EXTRA_KEY_URL)
@@ -103,6 +116,8 @@ class HandleRedirectActivity : ComponentActivity() {
             // create new intent for result to mitigate intent redirection vulnerability
             setResult(RESULT_OK, Intent().setData(intent?.data))
             finish()
+        } else if (useWebView == true && url == null) {
+            // normal resume while webview already showing, continue showing webview
         } else if (url == null) {
             // called by custom tab but no intent.data
             setResult(RESULT_CANCELED)
