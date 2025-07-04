@@ -22,6 +22,7 @@ internal const val EXTRA_KEY_USEWEBVIEW = "usewebview"
 internal const val EXTRA_KEY_WEBVIEW_EPHEREMAL_SESSION = "webview_epheremal_session"
 internal const val EXTRA_KEY_REDIRECTURL = "redirecturl"
 internal const val EXTRA_KEY_URL = "url"
+internal const val EXTRA_KEY_PACKAGE_NAME = "package"
 
 class HandleRedirectActivity : ComponentActivity() {
 
@@ -128,19 +129,24 @@ class HandleRedirectActivity : ComponentActivity() {
                 // login requested by app
                 // do not navigate to the login page again in this activity instance
                 intent.removeExtra(EXTRA_KEY_URL)
+                // get preferred browser if set
+                val browserPackage = intent.extras?.getString(EXTRA_KEY_PACKAGE_NAME)
+                intent.removeExtra(EXTRA_KEY_PACKAGE_NAME)
                 if (useWebView == true) {
                     showWebView(url, redirectUrl, webViewEpheremalSession ?: false)
                 } else {
-                    launchCustomTabsIntent(url)
+                    launchCustomTabsIntent(url, browserPackage)
                 }
             }
         }
     }
 
-    private fun launchCustomTabsIntent(url: String?) {
+    private fun launchCustomTabsIntent(url: String?, browserPackage: String?) {
         val builder = CustomTabsIntent.Builder()
         builder.configureCustomTabsIntent()
         val intent = builder.build()
+
+        browserPackage?.let { intent.intent.setPackage(it) }
         intent.launchUrl(this, Uri.parse(url))
     }
 
