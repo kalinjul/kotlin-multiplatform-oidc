@@ -1,6 +1,5 @@
 package org.publicvalue.multiplatform.oidc.appsupport
 
-import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -46,7 +45,7 @@ class HandleRedirectActivity : ComponentActivity() {
 
 
         @ExperimentalOpenIdConnect
-        var createWebView: Activity.(redirectUrl: String?) -> WebView = { redirectUrl ->
+        var createWebView: ComponentActivity.(redirectUrl: String?) -> WebView = { redirectUrl ->
             WebView(this).apply {
                 configureWebView(this)
                 webChromeClient = WebChromeClient()
@@ -70,7 +69,7 @@ class HandleRedirectActivity : ComponentActivity() {
         }
 
         @ExperimentalOpenIdConnect
-        var showWebView: Activity.(url: String, redirectUrl: String?, epheremalSession: Boolean) -> Unit = { url, redirectUrl, epheremalSession ->
+        var showWebView: ComponentActivity.(url: String, redirectUrl: String?, epheremalSession: Boolean) -> Unit = { url, redirectUrl, epheremalSession ->
             val webView = createWebView(this, redirectUrl)
             ViewCompat.setOnApplyWindowInsetsListener(webView) { view, windowInsets ->
                 val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout())
