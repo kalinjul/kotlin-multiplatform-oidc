@@ -1,7 +1,6 @@
 # Kotlin Multiplatform OIDC
 [![Build](https://img.shields.io/github/actions/workflow/status/kalinjul/kotlin-multiplatform-oidc/main.yml?label=release)]((https://github.com/kalinjul/kotlin-multiplatform-oidc/actions/workflows/main.yml))
-[![Maven Central](https://img.shields.io/maven-central/v/io.github.kalinjul.kotlin.multiplatform/oidc-appsupport)](https://repo1.maven.org/maven2/io/github/kalinjul/kotlin/multiplatform/oidc-appsupport/)
-[![Snapshot](https://img.shields.io/nexus/s/io.github.kalinjul.kotlin.multiplatform/oidc-appsupport?server=https%3A%2F%2Fs01.oss.sonatype.org&label=latest%20snapshot)](https://s01.oss.sonatype.org/content/repositories/snapshots/io/github/kalinjul/kotlin/multiplatform/oidc-appsupport/)
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.kalinjul.kotlin.multiplatform/oidc-appsupport)](https://central.sonatype.com/repository/maven-snapshots/io/github/kalinjul/kotlin/multiplatform/oidc-appsupport/)
 ![Kotlin Version](https://kotlin-version.aws.icerock.dev/kotlin-version?group=io.github.kalinjul.kotlin.multiplatform&name=oidc-appsupport)
 
 Kotlin Multiplatform Library for OpenId Connect / OAuth 2.0.
@@ -60,8 +59,8 @@ oidc-ktor = { module = "io.github.kalinjul.kotlin.multiplatform:oidc-ktor", vers
 ```
 
 ## Using a snapshot version
-If you want try a snapshot version, just add maven("https://s01.oss.sonatype.org/content/repositories/snapshots/") to your repositories.
-See [available snapshots](https://s01.oss.sonatype.org/content/repositories/snapshots/io/github/kalinjul/kotlin/multiplatform/oidc-appsupport/).
+If you want try a snapshot version, just add maven("https://central.sonatype.com/repository/maven-snapshots/") to your repositories.
+There is currently no way to view available snapshots on sonatype central.
 
 ## Compiler options
 If you want to run tests, currently you need to pass additional linker flags (adjust the path to your Xcode installation): 
