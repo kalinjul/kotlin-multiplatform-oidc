@@ -10,7 +10,9 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
+import org.publicvalue.multiplatform.oidc.appsupport.customtab.CustomTabFlow
 import org.publicvalue.multiplatform.oidc.appsupport.customtab.getCustomTabProviders
+import org.publicvalue.multiplatform.oidc.appsupport.webview.WebViewFlow
 import org.publicvalue.multiplatform.oidc.flows.EndSessionFlow
 
 /**
@@ -76,13 +78,23 @@ class AndroidCodeAuthFlowFactory(
             presentPreferredProviders.firstOrNull()
         } else null
 
+        val webFlow = if (useWebView) {
+            WebViewFlow(
+                context = context,
+                contract = activityResultLauncher,
+                epheremalSession = webViewEpheremalSession
+            )
+        } else {
+            CustomTabFlow(
+                context = context,
+                contract = activityResultLauncher,
+                preferredBrowserPackage = preferredBrowserPackage
+            )
+        }
         return PlatformCodeAuthFlow(
             context = context,
-            contract = activityResultLauncher,
             client = client,
-            useWebView = useWebView,
-            webViewEpheremalSession = webViewEpheremalSession,
-            preferredBrowserPackage = preferredBrowserPackage
+            webFlow = webFlow
         )
     }
 

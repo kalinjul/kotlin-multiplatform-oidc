@@ -12,11 +12,11 @@ import platform.Foundation.NSURL
 
 internal class WebSessionFlow(
     private val ephemeralBrowserSession: Boolean,
-) {
+): WebAuthenticationFlow {
     /**
      * @return null if user cancelled the flow (closed the web view)
      */
-    internal suspend fun startWebFlow(requestUrl: Url, redirectUrl: String): Url? {
+    override suspend fun startWebFlow(requestUrl: Url, redirectUrl: String): WebAuthenticationFlowResult {
         return suspendCancellableCoroutine { continuation ->
             val nsurl = NSURL.URLWithString(requestUrl.toString())
             if (nsurl != null) {
@@ -27,10 +27,10 @@ internal class WebSessionFlow(
                         override fun invoke(p1: NSURL?, p2: NSError?) {
                             if (p1 != null) {
                                 val url = Url(p1.toString()) // use sane url instead of NS garbage
-                                continuation.resumeIfActive(url)
+                                continuation.resumeIfActive(WebAuthenticationFlowResult.Success(url))
                             } else {
                                 // browser closed, no redirect.
-                                continuation.resumeIfActive(null)
+                                continuation.resumeIfActive(WebAuthenticationFlowResult.Cancelled)
                             }
                         }
                     }
