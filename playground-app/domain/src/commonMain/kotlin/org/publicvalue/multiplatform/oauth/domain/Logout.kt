@@ -47,7 +47,7 @@ class LogoutWebFlow(
         withContext(dispatchers.io()) {
             async {
                 urlHandler.invoke(request.url)
-                val response = webserver.startAndWaitForRedirect(Constants.WEBSERVER_PORT, Url(Constants.POST_LOGOUT_REDIRECT_URL).encodedPath)
+                val response = webserver.startAndWaitForRedirect(Url(Constants.POST_LOGOUT_REDIRECT_URL).encodedPath)
                 webserver.stop()
                 response
             }.await()

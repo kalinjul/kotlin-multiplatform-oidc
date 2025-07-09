@@ -1,6 +1,7 @@
 package org.publicvalue.multiplatform.oauth.domain.inject
 
 import me.tatarka.inject.annotations.Provides
+import org.publicvalue.multiplatform.oauth.domain.Constants
 import org.publicvalue.multiplatform.oauth.inject.ApplicationScope
 import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
 import org.publicvalue.multiplatform.oidc.appsupport.webserver.SimpleKtorWebserver
@@ -12,6 +13,6 @@ interface WebserverComponent {
     @ApplicationScope
     @Provides
     fun provideWebserver(): Webserver {
-        return SimpleKtorWebserver()
+        return SimpleKtorWebserver(Constants.WEBSERVER_PORT)
     }
 }

@@ -27,31 +27,38 @@ actual class PlatformCodeAuthFlow(
     openUrl: (Url) -> Unit = { it.openInBrowser() },
 ) : CodeAuthFlow, EndSessionFlow {
 
-    companion object {
-        var PORT = 8080
-    }
-
     private val webFlow = WebServerFlow(
         webserverProvider = webserverProvider,
         openUrl = openUrl,
     )
 
     actual override suspend fun getAuthorizationCode(request: AuthCodeRequest): AuthCodeResponse {
-        val redirectUrl = request.config.redirectUri?.let { Url(it) }
-        checkRedirectPort(redirectUrl)
+        val redirectUrl = request.url.parameters.get("redirect_uri").orEmpty()
+        val result = webFlow.startWebFlow(request.url, redirectUrl)
+        checkRedirectPort(Url(redirectUrl))
 
-        val result = webFlow.startWebFlow(request.url, redirectUrl, PORT)
-
-        val code = result.parameters["code"]
-        val state = result.parameters["state"]
-        return AuthCodeResponse.success(AuthCodeResult(code, state))
+        return if (result is WebAuthenticationFlowResult.Success) {
+            when (val error = getErrorResult<AuthCodeResult>(result.responseUri)) {
+                null -> {
+                    val state = result.responseUri.parameters.get("state")
+                    val code = result.responseUri.parameters.get("code")
+                    Result.success(AuthCodeResult(code, state))
+                }
+                else -> {
+                    return error
+                }
+            }
+        } else {
+            // doesn't return at all if unsuccessful, so this will not happen
+            Result.failure(OpenIdConnectException.AuthenticationCancelled())
+        }
     }
 
     actual override suspend fun endSession(request: EndSessionRequest): EndSessionResponse {
-        val redirectUrl = Url(request.url.parameters.get("post_logout_redirect_uri").orEmpty())
-        checkRedirectPort(redirectUrl)
+        val redirectUrl = request.url.parameters.get("post_logout_redirect_uri").orEmpty()
+        checkRedirectPort(Url(redirectUrl))
 
-        webFlow.startWebFlow(request.url, redirectUrl, PORT)
+        webFlow.startWebFlow(request.url, redirectUrl)
         // doesn't return at all if unsuccessful
         return EndSessionResponse.success(Unit)
     }
@@ -61,8 +68,8 @@ actual class PlatformCodeAuthFlow(
         contract {
             returns() implies (redirectUrl != null)
         }
-        if (redirectUrl?.port != PORT || !redirectUrl.isLocalhost()) {
-            throw OpenIdConnectException.AuthenticationFailure("JVM implementation can only handle redirect uris using localhost port ${PORT}! Redirect uri was: $redirectUrl")
+        if (redirectUrl?.isLocalhost() == false) {
+            throw OpenIdConnectException.AuthenticationFailure("JVM implementation can only handle redirect uris using localhost! Redirect uri was: $redirectUrl")
         }
     }
 }

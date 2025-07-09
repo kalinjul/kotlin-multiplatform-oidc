@@ -43,7 +43,8 @@ let client = OpenIdConnectClient(
         scope: "openid profile",
         codeChallengeMethod: .s256,
         redirectUri: "<redirectUri>",
-        postLogoutRedirectUri: "<postLogoutRedirectUri>"
+        postLogoutRedirectUri: "<postLogoutRedirectUri>",
+        disableNonce: false
     )
 )
 ```
