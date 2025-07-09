@@ -1,9 +1,10 @@
 package org.publicvalue.multiplatform.oidc.types.remote
 
-import kotlinx.datetime.Clock
 import kotlinx.serialization.Serializable
 import kotlin.experimental.ExperimentalObjCName
 import kotlin.native.ObjCName
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 /**
  * Access Token Response expected from token endpoint.
@@ -11,10 +12,10 @@ import kotlin.native.ObjCName
  * [https://openid.net/specs/openid-connect-core-1_0.html#TokenResponse](https://openid.net/specs/openid-connect-core-1_0.html#TokenResponse)
  * [https://datatracker.ietf.org/doc/html/rfc6749#section-5.1](https://datatracker.ietf.org/doc/html/rfc6749#section-5.1)
  */
-@OptIn(ExperimentalObjCName::class)
+@OptIn(ExperimentalObjCName::class, ExperimentalTime::class)
 @Serializable
 @ObjCName(swiftName = "AccessTokenResponse", name = "AccessTokenResponse", exact = true)
-data class AccessTokenResponse(
+data class AccessTokenResponse  constructor(
     /**
      * **Required**
      *
@@ -70,5 +71,5 @@ data class AccessTokenResponse(
     val scope: String? = null,
 
     /** Computed locally **/
-    val received_at: Long = Clock.System.now().epochSeconds
+    val received_at: Long = Clock.System.now().epochSeconds //.System.now().epochSeconds
 )
