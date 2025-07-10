@@ -10,7 +10,7 @@ interface Webserver {
      *
      * @return Url the redirect was called with, including query parameters.
      */
-    suspend fun startAndWaitForRedirect(port: Int, redirectPath: String): Url
+    suspend fun startAndWaitForRedirect(redirectPath: String): Url
 
     /**
      * Stop the webserver.
