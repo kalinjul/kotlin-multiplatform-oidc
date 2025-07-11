@@ -1,28 +1,30 @@
 package org.publicvalue.multiplatform.oauth.strings
 
-import org.publicvalue.multiplatform.oauth.inject.ActivityScope
-import kotlinx.datetime.Clock
 import kotlinx.datetime.DayOfWeek
-import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toJavaInstant
 import kotlinx.datetime.toJavaLocalDate
 import kotlinx.datetime.toJavaLocalDateTime
 import kotlinx.datetime.toJavaLocalTime
 import kotlinx.datetime.toJavaZoneId
 import kotlinx.datetime.toLocalDateTime
 import me.tatarka.inject.annotations.Inject
+import org.publicvalue.multiplatform.oauth.inject.ActivityScope
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.time.temporal.Temporal
 import java.time.temporal.TemporalAdjusters
 import java.util.Locale
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
+import kotlin.time.toJavaInstant
 import java.time.LocalDateTime as JavaLocalDateTime
 
 @ActivityScope
 @Inject
+@OptIn(ExperimentalTime::class)
 actual class DateFormatter(
     private val locale: Locale = Locale.getDefault(),
     internal val timeZone: TimeZone = TimeZone.currentSystemDefault(),
@@ -95,11 +97,11 @@ actual class DateFormatter(
 }
 
 private fun DayOfWeek.toJavaDayOfWeek(): java.time.DayOfWeek = when (this) {
-    java.time.DayOfWeek.MONDAY -> DayOfWeek.MONDAY
-    java.time.DayOfWeek.TUESDAY -> DayOfWeek.TUESDAY
-    java.time.DayOfWeek.WEDNESDAY -> DayOfWeek.WEDNESDAY
-    java.time.DayOfWeek.THURSDAY -> DayOfWeek.THURSDAY
-    java.time.DayOfWeek.FRIDAY -> DayOfWeek.FRIDAY
-    java.time.DayOfWeek.SATURDAY -> DayOfWeek.SATURDAY
-    java.time.DayOfWeek.SUNDAY -> DayOfWeek.SUNDAY
+    DayOfWeek.MONDAY -> java.time.DayOfWeek.MONDAY
+    DayOfWeek.TUESDAY -> java.time.DayOfWeek.TUESDAY
+    DayOfWeek.WEDNESDAY -> java.time.DayOfWeek.WEDNESDAY
+    DayOfWeek.THURSDAY -> java.time.DayOfWeek.THURSDAY
+    DayOfWeek.FRIDAY -> java.time.DayOfWeek.FRIDAY
+    DayOfWeek.SATURDAY -> java.time.DayOfWeek.SATURDAY
+    DayOfWeek.SUNDAY -> java.time.DayOfWeek.SUNDAY
 }

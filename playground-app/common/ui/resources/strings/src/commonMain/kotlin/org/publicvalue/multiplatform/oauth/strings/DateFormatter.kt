@@ -1,11 +1,13 @@
 package org.publicvalue.multiplatform.oauth.strings
 
-import kotlinx.datetime.Clock
 import kotlinx.datetime.DayOfWeek
-import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
+@OptIn(ExperimentalTime::class)
 expect class DateFormatter {
     fun formatShortDate(instant: Instant): String
     fun formatShortDate(date: LocalDate): String

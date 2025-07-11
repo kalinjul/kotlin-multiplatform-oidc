@@ -16,6 +16,7 @@ kotlin {
                 api(projects.common.screens)
 //
                 implementation(compose.material3)
+                implementation(libs.material.icons.core)
                 @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
                 implementation(compose.components.resources)
             }
