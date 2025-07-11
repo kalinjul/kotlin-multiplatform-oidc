@@ -243,23 +243,24 @@ class DefaultOpenIdConnectClient(
                 val accessTokenResponse: AccessTokenResponse = response.call.body()
                 accessTokenResponse
             } catch (e: NoTransformationFoundException) {
-                throw response.toOpenIdConnectException()
+                throw response.toOpenIdConnectException(e)
             } catch (e: JsonConvertException) {
-                throw response.toOpenIdConnectException()
+                throw response.toOpenIdConnectException(e)
             }
         } else {
             throw response.toOpenIdConnectException()
         }
     }
 
-    private suspend fun HttpResponse.toOpenIdConnectException(): OpenIdConnectException.UnsuccessfulTokenRequest {
+    private suspend fun HttpResponse.toOpenIdConnectException(cause: Throwable? = null): OpenIdConnectException.UnsuccessfulTokenRequest {
         val errorResponse = call.errorBody()
         val body = call.body<String>().decodeURLQueryComponent(plusIsSpace = true)
         return OpenIdConnectException.UnsuccessfulTokenRequest(
             message = "Exchange token failed: ${status.value} ${errorResponse?.error_description ?: errorResponse?.error}",
             statusCode = status,
             body = body,
-            errorResponse = errorResponse
+            errorResponse = errorResponse,
+            cause = cause
         )
     }
 }
