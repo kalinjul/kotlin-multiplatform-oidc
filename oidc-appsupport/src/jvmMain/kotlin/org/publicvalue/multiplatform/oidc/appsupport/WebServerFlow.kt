@@ -16,8 +16,9 @@ internal class WebServerFlow(
         val webserver = webserverProvider()
         val response = withContext(Dispatchers.IO) {
             async {
+                webserver.start(port, redirectPath = redirectUrl.encodedPath)
                 openUrl(requestUrl)
-                val response = webserver.startAndWaitForRedirect(port, redirectPath = redirectUrl.encodedPath)
+                val response = webserver.waitForRedirect()
                 webserver.stop()
                 response
             }.await()

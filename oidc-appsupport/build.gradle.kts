@@ -93,6 +93,14 @@ kotlin {
             dependencies {
                 implementation(libs.ktor.server.core)
                 implementation(libs.ktor.server.cio)
+                implementation(libs.ktor.server.netty)
+                implementation(libs.ktor.client.core)
+                implementation(libs.ktor.client.okhttp)
+                implementation(libs.ktor.client.contentnegotiation)
+                implementation(libs.ktor.serialization.kotlinx.json)
+                implementation(libs.jose4j)
+                implementation(libs.bouncycastle.provider)
+                implementation(libs.bouncycastle.pkix)
             }
         }
 
