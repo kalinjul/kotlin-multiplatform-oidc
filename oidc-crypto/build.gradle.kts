@@ -1,6 +1,7 @@
 import org.publicvalue.convention.config.configureIosTargets
 import org.publicvalue.convention.config.configureWasmTarget
 import org.publicvalue.convention.config.exportKdoc
+import org.apache.tools.ant.taskdefs.condition.Os
 
 plugins {
     id("org.publicvalue.convention.kotlin.multiplatform")
@@ -62,10 +63,12 @@ kotlin {
     exportKdoc()
 }
 
-swiftklib {
-    create("KCrypto") {
-        this.minIos = 15
-        path = file("native/KCrypto")
-        packageName("org.publicvalue.multiplatform.oidc.util")
+if (Os.isFamily(Os.FAMILY_MAC)) {
+    swiftklib {
+        create("KCrypto") {
+            this.minIos = 15
+            path = file("native/KCrypto")
+            packageName("org.publicvalue.multiplatform.oidc.util")
+        }
     }
 }
