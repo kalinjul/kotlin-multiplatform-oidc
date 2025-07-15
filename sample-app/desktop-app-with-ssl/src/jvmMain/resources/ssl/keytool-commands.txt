@@ -1,0 +1,127 @@
+# SSL Certificate Generation Commands
+
+## Generate Self-Signed Certificate for Localhost
+
+# PKCS#12 format (recommended)
+keytool -genkeypair \
+    -alias localhost \
+    -keyalg RSA \
+    -keysize 2048 \
+    -validity 365 \
+    -keystore localhost.p12 \
+    -storetype PKCS12 \
+    -storepass localhost \
+    -keypass localhost \
+    -dname "CN=localhost, OU=Development, O=OIDC SSL Demo, L=Local, ST=Local, C=US" \
+    -ext SAN=dns:localhost,ip:127.0.0.1
+
+## Generate CA Certificate
+
+# Generate CA private key and certificate
+keytool -genkeypair \
+    -alias custom-ca \
+    -keyalg RSA \
+    -keysize 2048 \
+    -validity 3650 \
+    -keystore ca-keystore.p12 \
+    -storetype PKCS12 \
+    -storepass capassword \
+    -keypass capassword \
+    -dname "CN=Custom CA, OU=Certificate Authority, O=OIDC SSL Demo, L=Local, ST=Local, C=US" \
+    -ext BasicConstraints:critical=ca:true
+
+# Export CA certificate
+keytool -export \
+    -alias custom-ca \
+    -keystore ca-keystore.p12 \
+    -storetype PKCS12 \
+    -storepass capassword \
+    -file custom-ca.crt
+
+## Create Trust Store
+
+# Create empty trust store
+keytool -genkeypair \
+    -alias temp \
+    -keyalg RSA \
+    -keystore truststore.jks \
+    -storepass truststore \
+    -keypass truststore \
+    -dname "CN=temp" \
+    && keytool -delete -alias temp -keystore truststore.jks -storepass truststore
+
+# Import CA certificate into trust store
+keytool -import \
+    -alias custom-ca \
+    -file custom-ca.crt \
+    -keystore truststore.jks \
+    -storepass truststore \
+    -noprompt
+
+## Generate Client Certificate (for mutual TLS)
+
+# Generate client private key and certificate
+keytool -genkeypair \
+    -alias client-cert \
+    -keyalg RSA \
+    -keysize 2048 \
+    -validity 365 \
+    -keystore client-cert.p12 \
+    -storetype PKCS12 \
+    -storepass clientpass \
+    -keypass clientpass \
+    -dname "CN=OIDC Client, OU=Client Certificate, O=OIDC SSL Demo, L=Local, ST=Local, C=US"
+
+## Certificate Information and Verification
+
+# List certificates in keystore
+keytool -list -keystore localhost.p12 -storetype PKCS12 -storepass localhost
+
+# Show detailed certificate information  
+keytool -list -v -keystore localhost.p12 -storetype PKCS12 -storepass localhost -alias localhost
+
+# Verify certificate chain
+keytool -printcert -file custom-ca.crt
+
+## Convert Certificate Formats
+
+# Convert PKCS#12 to JKS
+keytool -importkeystore \
+    -srckeystore localhost.p12 \
+    -srcstoretype PKCS12 \
+    -srcstorepass localhost \
+    -destkeystore localhost.jks \
+    -deststoretype JKS \
+    -deststorepass localhost
+
+# Export certificate to PEM format
+keytool -export \
+    -alias localhost \
+    -keystore localhost.p12 \
+    -storetype PKCS12 \
+    -storepass localhost \
+    -rfc \
+    -file localhost.pem
+
+## Testing Commands
+
+# Test SSL connection with custom trust store
+java -Djavax.net.ssl.trustStore=truststore.jks \
+     -Djavax.net.ssl.trustStorePassword=truststore \
+     -jar your-application.jar
+
+# Test SSL connection with disabled validation (development only)
+java -Dcom.sun.net.ssl.checkRevocation=false \
+     -Dtrust_all_cert=true \
+     -jar your-application.jar
+
+## Cleanup Commands
+
+# Delete certificate from keystore
+keytool -delete -alias localhost -keystore localhost.p12 -storepass localhost
+
+# Change keystore password
+keytool -storepasswd -keystore localhost.p12 -storepass localhost -new newpassword
+
+# Change certificate password
+keytool -keypasswd -alias localhost -keystore localhost.p12 -storepass localhost -keypass localhost -new newkeypass
