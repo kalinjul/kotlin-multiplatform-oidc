@@ -1,0 +1,223 @@
+services:
+  postgres-https:
+    image: postgres:15-alpine
+    container_name: oidc-postgres-https
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: keycloak-password
+      # Enable SSL for PostgreSQL
+      POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256"
+    volumes:
+      - postgres_https_data:/var/lib/postgresql/data
+      - ./certs/postgres:/etc/ssl/certs:ro
+    ports:
+      - "7000:5432"
+    networks:
+      - oidc-network
+    command: >
+      postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U keycloak -d keycloak"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  postgres-http:
+    image: postgres:15-alpine
+    container_name: oidc-postgres-http
+    environment:
+      POSTGRES_DB: keycloak_http
+      POSTGRES_USER: keycloak_http
+      POSTGRES_PASSWORD: keycloak-http-password
+      # Enable SSL for PostgreSQL
+      POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256"
+    volumes:
+      - postgres_http_data:/var/lib/postgresql/data
+    ports:
+      - "7005:5432"
+    networks:
+      - oidc-network
+    command: >
+      postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U keycloak_http -d keycloak_http"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  keycloak:
+    build:
+      context: ./keycloak
+      dockerfile: Dockerfile
+    container_name: oidc-keycloak
+    environment:
+      # Database configuration
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres-https:5432/${POSTGRES_DB:-keycloak}
+      KC_DB_USERNAME: ${POSTGRES_USER:-keycloak}
+      KC_DB_PASSWORD: ${POSTGRES_PASSWORD:-keycloak-password}
+      
+      # Keycloak admin user
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN:-admin}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin}
+      
+      # SSL/TLS Configuration (enabled by default)
+      KC_HTTPS_CERTIFICATE_FILE: ${KEYCLOAK_CERT_FILE:-/opt/keycloak/conf/ssl/keycloak.crt}
+      KC_HTTPS_CERTIFICATE_KEY_FILE: ${KEYCLOAK_KEY_FILE:-/opt/keycloak/conf/ssl/keycloak.key}
+      KC_HTTPS_TRUST_STORE_FILE: ${KEYCLOAK_TRUSTSTORE_FILE:-/opt/keycloak/conf/ssl/truststore.jks}
+      KC_HTTPS_TRUST_STORE_PASSWORD: ${KEYCLOAK_TRUSTSTORE_PASSWORD:-truststore-password}
+      KC_HTTPS_KEY_STORE_FILE: ${KEYCLOAK_KEYSTORE_FILE:-/opt/keycloak/conf/ssl/keystore.jks}
+      KC_HTTPS_KEY_STORE_PASSWORD: ${KEYCLOAK_KEYSTORE_PASSWORD:-keystore-password}
+      
+      # Security settings
+      KC_HOSTNAME_STRICT: "false"
+      KC_HOSTNAME_STRICT_HTTPS: "false"
+      KC_HTTP_ENABLED: "false"
+      KC_HOSTNAME: ${KEYCLOAK_HOSTNAME:-localhost}
+      KC_HOSTNAME_PORT: "7001"
+      
+      # Development settings - can be removed for production
+      KC_LOG_LEVEL: ${KEYCLOAK_LOG_LEVEL:-INFO}
+      KC_PROXY: edge
+      
+      # Import configuration
+      KC_IMPORT_DIR: /opt/keycloak/data/import
+      KC_IMPORT_STRATEGY: OVERWRITE_EXISTING
+      
+    volumes:
+      - ./certs/keycloak:/opt/keycloak/conf/ssl:ro
+      - ./keycloak/realm-config.json:/opt/keycloak/data/import/realm-config.json:ro
+      # - ./keycloak/ssl-config:/opt/keycloak/conf/ssl-config:ro
+      # - ./keycloak/themes:/opt/keycloak/themes:ro
+      - keycloak_https_data:/opt/keycloak/data
+    ports:
+      - "7001:8443"   # HTTPS port for Keycloak
+      - "7002:9000"   # Management port
+    networks:
+      - oidc-network
+    depends_on:
+      postgres-https:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f https://localhost:8443/health --insecure || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    command: >
+      start
+      --optimized
+      --https-port=8443
+      --http-enabled=false
+      --hostname=localhost
+      --hostname-port=7001
+      --proxy=edge
+      --import-realm
+
+  # Alternative: HTTP-only Keycloak (use profile http-mode)
+  keycloak-http:
+    build:
+      context: ./keycloak
+      dockerfile: Dockerfile
+    container_name: oidc-keycloak-http
+    environment:
+      # Database configuration
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres-http:5432/keycloak_http
+      KC_DB_USERNAME: keycloak_http
+      KC_DB_PASSWORD: keycloak-http-password
+      
+      # Keycloak admin user
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN:-admin}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin}
+      
+      # HTTP-only configuration
+      KC_HTTP_ENABLED: "true"
+      KC_HOSTNAME: ${KEYCLOAK_HOSTNAME:-localhost}
+      KC_HOSTNAME_PORT: "7080"
+      KC_HOSTNAME_STRICT: "false"
+      KC_HOSTNAME_STRICT_HTTPS: "false"
+      
+      # Development settings
+      KC_LOG_LEVEL: ${KEYCLOAK_LOG_LEVEL:-INFO}
+      KC_PROXY: edge
+      
+      # Import configuration
+      KC_IMPORT_DIR: /opt/keycloak/data/import
+      KC_IMPORT_STRATEGY: OVERWRITE_EXISTING
+      
+    volumes:
+      - ./keycloak/realm-config.json:/opt/keycloak/data/import/realm-config.json:ro
+      - keycloak_http_data:/opt/keycloak/data
+    ports:
+      - "7080:8080"   # HTTP port for Keycloak
+      - "7003:9000"   # Management port (different from HTTPS Keycloak)
+    networks:
+      - oidc-network
+    depends_on:
+      postgres-http:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/realms/master/.well-known/openid_configuration || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    command: >
+      start
+      --optimized
+      --http-enabled=true
+      --http-port=8080
+      --hostname=localhost
+      --hostname-port=7080
+      --proxy=edge
+      --import-realm
+    # Removed profiles to run by default alongside HTTPS Keycloak
+
+  # Optional: NGINX as reverse proxy for additional SSL termination scenarios
+  nginx:
+    image: nginx:alpine
+    container_name: oidc-nginx
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./certs/nginx:/etc/nginx/ssl:ro
+    ports:
+      - "7003:443"
+      - "7004:80"
+    networks:
+      - oidc-network
+    depends_on:
+      - keycloak
+    profiles:
+      - nginx-proxy
+
+  # Certificate authority helper service for easy cert management
+  cert-manager:
+    build:
+      context: ./cert-manager
+      dockerfile: Dockerfile
+    container_name: oidc-cert-manager
+    volumes:
+      - ./certs:/certs
+    profiles:
+      - cert-generation
+    command: ["/generate-all-certs.sh"]
+
+volumes:
+  postgres_https_data:
+    driver: local
+  postgres_http_data:
+    driver: local
+  keycloak_https_data:
+    driver: local
+  keycloak_http_data:
+    driver: local
+
+networks:
+  oidc-network:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.21.0.0/16
