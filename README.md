@@ -16,7 +16,7 @@ Supported platforms:
 |---------|--------------|----------------------------------------------|
 | Android | Stable       | Chrome Custom Tabs                           |
 | iOS     | Stable       | ASWebAuthenticationSession                   |
-| Desktop | Experimental | Embedded Webserver + Browser                 |
+| Desktop | Experimental | Embedded Webserver + Browser (HTTP/HTTPS)   |
 | WasmJS  | Experimental | Popup Window communicating via postMessage() |
 
 Features:
@@ -25,7 +25,8 @@ Features:
 - Support for [PKCE](https://datatracker.ietf.org/doc/html/rfc7636)
 - Simple JWT parsing (```Jwt.parse()```)
 - OkHttp + Ktor integration
-- Uses Custom Uri Scheme (my-app://), no support for https redirect uris.
+- SSL/TLS support for JVM targets (HTTP client configuration + HTTPS redirect server)
+- Support for both custom URI schemes and HTTPS redirect URIs
 
 You can find the full Api documentation [here](https://kalinjul.github.io/kotlin-multiplatform-oidc/).
 
@@ -212,3 +213,62 @@ val okHttpClient = OkHttpClient.Builder()
     .authenticator(authenticator)
     .build()
 ```
+
+# SSL/TLS Support (JVM only) (experimental)
+The library provides comprehensive SSL/TLS support for JVM targets, including both HTTP client configuration and HTTPS redirect server capabilities:
+
+## HTTP Client SSL Configuration
+Configure SSL/TLS settings for connections to your identity provider:
+
+```kotlin
+import org.publicvalue.multiplatform.oidc.OpenIdConnectClientConfig
+import org.publicvalue.multiplatform.oidc.ssl.createSslEnabledOpenIdConnectClient
+import org.publicvalue.multiplatform.oidc.ssl.ssl
+import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
+
+@OptIn(ExperimentalOpenIdConnect::class)
+val config = OpenIdConnectClientConfig("https://example.com/.well-known/openid-configuration").apply {
+    clientId = "your-client-id"
+    clientSecret = "your-client-secret"
+    
+    ssl {
+        trustStore("/path/to/truststore.jks", "truststore-password")
+        keyStore("/path/to/client-cert.p12", "client-password") // for mutual TLS
+        disableCertificateValidation() // development only
+        disableHostnameVerification() // development only
+    }
+}
+
+val client = createSslEnabledOpenIdConnectClient(config)
+```
+
+## HTTPS Redirect Server
+Enable HTTPS for the local OAuth redirect server:
+
+```kotlin
+import org.publicvalue.multiplatform.oidc.appsupport.JvmCodeAuthFlowFactory
+import org.publicvalue.multiplatform.oidc.appsupport.webserver.SslWebserver
+import org.publicvalue.multiplatform.oidc.appsupport.ssl.CertificateSourceFactory
+
+@OptIn(ExperimentalOpenIdConnect::class)
+val factory = JvmCodeAuthFlowFactory(
+    port = 8443,
+    webserverProvider = {
+        SslWebserver(
+            enableHttps = true,
+            certificateSource = CertificateSourceFactory.autoDetect()
+        )
+    }
+)
+```
+
+## Certificate Sources
+The library supports multiple certificate sources:
+- **Self-signed certificates**: `CertificateSourceFactory.selfSigned()`
+- **File-based certificates**: `CertificateSourceFactory.fromFile(file, password)`
+- **Resource certificates**: `CertificateSourceFactory.fromResources()`
+- **Auto-detection**: `CertificateSourceFactory.autoDetect()`
+
+For detailed SSL configuration examples, see [SSL_EXAMPLES.md](SSL_EXAMPLES.md).
+
+For a complete SSL demo with Docker-based identity provider setup, see the [desktop-app-with-ssl sample](sample-app/desktop-app-with-ssl/).
