@@ -13,10 +13,10 @@ import io.ktor.server.routing.RoutingContext
 import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
 import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
-import org.publicvalue.multiplatform.oidc.flows.AuthCodeResult
 
 @ExperimentalOpenIdConnect
 class SimpleKtorWebserver(
+    val port: Int = 8080,
     val createResponse: suspend RoutingContext.() -> Unit = {
         call.respondText(
             status = HttpStatusCode.OK,
@@ -38,7 +38,7 @@ class SimpleKtorWebserver(
 ): Webserver {
     private var server: CIOApplicationEngine? = null
 
-    override suspend fun startAndWaitForRedirect(port: Int, redirectPath: String): Url {
+    override suspend fun startAndWaitForRedirect(redirectPath: String): Url {
         var call: ApplicationRequest? = null
         server?.stop()
         embeddedServer(CIO, port = port) {
@@ -51,12 +51,14 @@ class SimpleKtorWebserver(
             }
         }.apply {
             server = engine
+            println("Starting webserver at port $port, waiting for call on $redirectPath")
             start(wait = true)
         }
         return Url(call?.uri ?: "")
     }
 
     override suspend fun stop() {
+        println("Stopping webserver")
         server?.stop()
     }
 }

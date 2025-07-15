@@ -45,7 +45,7 @@ actual class Authorize(
                 withContext(dispatchers.io()) {
                     async {
                         urlHandler.invoke(request.url)
-                        val response = webserver.startAndWaitForRedirect(Constants.WEBSERVER_PORT, Url(Constants.REDIRECT_URL).encodedPath)
+                        val response = webserver.startAndWaitForRedirect(Url(Constants.REDIRECT_URL).encodedPath)
                         webserver.stop()
                         response
                     }.await()

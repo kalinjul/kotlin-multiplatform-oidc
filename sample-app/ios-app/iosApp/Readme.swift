@@ -25,7 +25,8 @@ struct Readme {
                 scope: "openid profile",
                 codeChallengeMethod: .s256,
                 redirectUri: "<redirectUri>",
-                postLogoutRedirectUri: "<postLogoutRedirectUri>"
+                postLogoutRedirectUri: "<postLogoutRedirectUri>",
+                disableNonce: false
             )
         )
     }
@@ -51,7 +52,8 @@ struct Readme {
                 scope: "openid profile",
                 codeChallengeMethod: .s256,
                 redirectUri: "<redirectUri>",
-                postLogoutRedirectUri: "<postLogoutRedirectUri>"
+                postLogoutRedirectUri: "<postLogoutRedirectUri>",
+                disableNonce: false
             )
             
         )

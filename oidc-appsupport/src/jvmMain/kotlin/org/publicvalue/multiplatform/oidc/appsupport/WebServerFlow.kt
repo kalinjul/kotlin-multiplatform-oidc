@@ -11,17 +11,17 @@ import org.publicvalue.multiplatform.oidc.appsupport.webserver.Webserver
 internal class WebServerFlow(
     private val webserverProvider: () -> Webserver,
     private val openUrl: (Url) -> Unit,
-) {
-    internal suspend fun startWebFlow(requestUrl: Url, redirectUrl: Url, port: Int): Url {
+): WebAuthenticationFlow {
+    override suspend fun startWebFlow(requestUrl: Url, redirectUrl: String): WebAuthenticationFlowResult {
         val webserver = webserverProvider()
         val response = withContext(Dispatchers.IO) {
             async {
                 openUrl(requestUrl)
-                val response = webserver.startAndWaitForRedirect(port, redirectPath = redirectUrl.encodedPath)
+                val response = webserver.startAndWaitForRedirect(redirectPath = Url(redirectUrl).encodedPath)
                 webserver.stop()
                 response
             }.await()
         }
-        return response
+        return WebAuthenticationFlowResult.Success(response)
     }
 }
