@@ -17,7 +17,6 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
 import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
-import org.publicvalue.multiplatform.oidc.appsupport.customtab.getCustomTabProviders
 
 internal const val EXTRA_KEY_USEWEBVIEW = "usewebview"
 internal const val EXTRA_KEY_EPHEMERAL_SESSION = "ephemeral_session"
@@ -157,13 +156,9 @@ class HandleRedirectActivity : ComponentActivity() {
         val builder = CustomTabsIntent.Builder()
         builder.configureCustomTabsIntent()
 
-        // Get preferred browser or first available browser for custom tabs
-        val browserPackage = preferredBrowserPackage
-            ?: getCustomTabProviders().firstOrNull()?.activityInfo?.packageName
-
-        if (browserPackage != null) {
+        if (preferredBrowserPackage != null) {
             // Enable ephemeral browsing if supported
-            if (CustomTabsClient.isEphemeralBrowsingSupported(this, browserPackage)) {
+            if (CustomTabsClient.isEphemeralBrowsingSupported(this, preferredBrowserPackage)) {
                 builder.setEphemeralBrowsingEnabled(ephemeralSession ?: false)
             }
         } else {
@@ -175,7 +170,7 @@ class HandleRedirectActivity : ComponentActivity() {
 
         val intent = builder.build()
 
-        preferredBrowserPackage?.let { intent.intent.setPackage(it) }
+        preferredBrowserPackage.let { intent.intent.setPackage(it) }
         intent.launchUrl(this, url.toUri())
     }
 
