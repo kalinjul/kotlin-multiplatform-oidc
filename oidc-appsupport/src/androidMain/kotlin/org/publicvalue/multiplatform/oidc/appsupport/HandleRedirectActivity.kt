@@ -161,7 +161,6 @@ class HandleRedirectActivity : ComponentActivity() {
         val browserPackage = preferredBrowserPackage
             ?: getCustomTabProviders().firstOrNull()?.activityInfo?.packageName
 
-        CookieManager.getInstance().removeAllCookies(null)
         if (browserPackage != null) {
             // Enable ephemeral browsing if supported
             if (CustomTabsClient.isEphemeralBrowsingSupported(this, browserPackage)) {
