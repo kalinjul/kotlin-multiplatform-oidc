@@ -1,3 +1,4 @@
+import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 import org.publicvalue.convention.config.configureIosTargets
 import org.publicvalue.convention.config.configureWasmTarget
 import org.publicvalue.convention.config.exportKdoc
@@ -62,10 +63,12 @@ kotlin {
     exportKdoc()
 }
 
-swiftklib {
-    create("KCrypto") {
-        this.minIos = 15
-        path = file("native/KCrypto")
-        packageName("org.publicvalue.multiplatform.oidc.util")
+if (DefaultNativePlatform.getCurrentOperatingSystem().isMacOsX) {
+    swiftklib {
+        create("KCrypto") {
+            this.minIos = 15
+            path = file("native/KCrypto")
+            packageName("org.publicvalue.multiplatform.oidc.util")
+        }
     }
 }
