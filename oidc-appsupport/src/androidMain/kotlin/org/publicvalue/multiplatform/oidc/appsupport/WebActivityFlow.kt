@@ -9,7 +9,7 @@ internal class WebActivityFlow(
     private val context: Context,
     private val contract: ActivityResultLauncherSuspend<Intent, ActivityResult>,
     private val useWebView: Boolean,
-    private val webViewEpheremalSession: Boolean,
+    private val ephemeralSession: Boolean,
     private val preferredBrowserPackage: String?,
 ) {
     internal suspend fun startWebFlow(requestUrl: Url, redirectUrl: String): ActivityResult {
@@ -26,10 +26,10 @@ internal class WebActivityFlow(
             .apply {
                 this.putExtra(EXTRA_KEY_URL, requestUrl)
                 this.putExtra(EXTRA_KEY_PACKAGE_NAME, preferredBrowserPackage)
+                this.putExtra(EXTRA_KEY_EPHEMERAL_SESSION, ephemeralSession)
                 if (useWebView) {
                     this.putExtra(EXTRA_KEY_USEWEBVIEW, true)
                     this.putExtra(EXTRA_KEY_REDIRECTURL, redirectUrl)
-                    this.putExtra(EXTRA_KEY_WEBVIEW_EPHEREMAL_SESSION, webViewEpheremalSession)
                 }
             }
         return intent

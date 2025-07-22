@@ -21,7 +21,7 @@ actual class PlatformCodeAuthFlow(
     context: Context,
     contract: ActivityResultLauncherSuspend<Intent, ActivityResult>,
     useWebView: Boolean = false,
-    webViewEpheremalSession: Boolean = false,
+    ephemeralSession: Boolean = false,
     preferredBrowserPackage: String? = null,
     actual override val client: OpenIdConnectClient,
 ) : CodeAuthFlow, EndSessionFlow {
@@ -30,7 +30,7 @@ actual class PlatformCodeAuthFlow(
         context = context,
         contract = contract,
         useWebView = useWebView,
-        webViewEpheremalSession = webViewEpheremalSession,
+        ephemeralSession = ephemeralSession,
         preferredBrowserPackage = preferredBrowserPackage
     )
 

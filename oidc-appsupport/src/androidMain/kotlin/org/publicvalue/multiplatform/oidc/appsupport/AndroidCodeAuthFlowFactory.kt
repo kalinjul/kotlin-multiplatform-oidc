@@ -25,8 +25,8 @@ import org.publicvalue.multiplatform.oidc.flows.EndSessionFlow
 class AndroidCodeAuthFlowFactory(
     /** If true, uses an embedded WebView instead of Chrome CustomTab (not recommended) **/
     private val useWebView: Boolean = false,
-    /** Clear cache and cookies in WebView **/
-    private val webViewEpheremalSession: Boolean = false,
+    /** Clear cache and cookies in WebView or Chrome CustomTab. **/
+    private val ephemeralSession: Boolean = false,
     /** preferred custom tab providers, list of package names in order of priority. Check [Browser][org.publicvalue.multiplatform.oidc.appsupport.customtab.Browser] for example values. **/
     private val customTabProviderPriority: List<String> = listOf()
 ): CodeAuthFlowFactory {
@@ -81,7 +81,7 @@ class AndroidCodeAuthFlowFactory(
             contract = activityResultLauncher,
             client = client,
             useWebView = useWebView,
-            webViewEpheremalSession = webViewEpheremalSession,
+            ephemeralSession = ephemeralSession,
             preferredBrowserPackage = preferredBrowserPackage
         )
     }
