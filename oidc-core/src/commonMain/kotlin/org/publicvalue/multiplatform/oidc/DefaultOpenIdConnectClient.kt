@@ -133,9 +133,12 @@ class DefaultOpenIdConnectClient(
         val endpoint = config.endpoints?.endSessionEndpoint?.trim()
         if (!endpoint.isNullOrEmpty()) {
             val url = URLBuilder(endpoint)
-            val response = httpClient.submitForm {
+            val response = httpClient.submitForm(
+                formParameters = parameters {
+                    append("id_token_hint", idToken)
+                }
+            ) {
                 url(url.build())
-                parameter("id_token_hint", idToken)
                 configure?.invoke(this)
             }
             response.status
@@ -149,11 +152,14 @@ class DefaultOpenIdConnectClient(
         val endpoint = config.endpoints?.revocationEndpoint?.trim()
         if (!endpoint.isNullOrEmpty()) {
             val url = URLBuilder(endpoint)
-            val response = httpClient.submitForm {
+            val response = httpClient.submitForm(
+                formParameters = parameters {
+                    append("token", token)
+                    append("client_id", config.clientId ?: run { throw OpenIdConnectException.InvalidConfiguration("clientId is missing") })
+                    config.clientSecret?.let { append("client_secret", it) }
+                }
+            ) {
                 url(url.build())
-                parameter("token", token)
-                parameter("client_id", config.clientId ?: run { throw OpenIdConnectException.InvalidConfiguration("clientId is missing") })
-                config.clientSecret?.let { parameter("client_secret", it) }
                 configure?.invoke(this)
             }
             response.status
