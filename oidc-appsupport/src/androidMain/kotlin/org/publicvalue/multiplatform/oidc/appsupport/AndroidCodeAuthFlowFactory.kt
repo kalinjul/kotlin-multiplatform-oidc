@@ -35,7 +35,7 @@ class AndroidCodeAuthFlowFactory(
     /**
      * If `true`, the authorization session will be ephemeral:
      * cookies, cache, and other session data will be cleared before starting
-     * the flow in both WebView and Custom Tabs.
+     * the flow in both WebView and Custom Tabs (if supported).
      */
     private val ephemeralSession: Boolean = false,
     /** preferred custom tab providers, list of package names in order of priority. Check [Browser][org.publicvalue.multiplatform.oidc.appsupport.customtab.Browser] for example values. **/
