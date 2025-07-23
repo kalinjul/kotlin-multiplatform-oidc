@@ -68,7 +68,14 @@ class OpenIdConnectClientConfig(
      * Disables sending nonce in the authentication request.
      * This is not recommended as [nonce is used to mitigate replay attacks](https://openid.net/specs/openid-connect-core-1_0.html#NonceNotes).
      */
-    var disableNonce: Boolean = false
+    var disableNonce: Boolean = false,
+    
+    /**
+     * Platform-specific configuration object.
+     * Use platform-specific extension functions to configure this.
+     * For JVM: Use ssl { } DSL to configure SSL/TLS settings.
+     */
+    var platformSpecificConfig: Any? = null
 ) {
     /**
      * Configure the endpoints.

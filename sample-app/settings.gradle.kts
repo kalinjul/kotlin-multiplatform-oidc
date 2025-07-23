@@ -69,5 +69,6 @@ rootProject.name = "sample-app"
 include(":shared")
 include(":android-app")
 include(":desktop-app")
+include(":desktop-app-with-ssl")
 include(":wasm-js-app")
 include(":settings")

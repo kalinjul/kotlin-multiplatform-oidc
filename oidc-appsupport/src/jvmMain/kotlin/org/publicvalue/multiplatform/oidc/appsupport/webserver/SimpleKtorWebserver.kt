@@ -12,6 +12,8 @@ import io.ktor.server.response.respondText
 import io.ktor.server.routing.RoutingContext
 import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.withTimeout
 import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
 import org.publicvalue.multiplatform.oidc.flows.AuthCodeResult
 
@@ -37,23 +39,44 @@ class SimpleKtorWebserver(
     }
 ): Webserver {
     private var server: CIOApplicationEngine? = null
+    private var redirectReceived: CompletableDeferred<ApplicationRequest>? = null
 
     override suspend fun startAndWaitForRedirect(port: Int, redirectPath: String): Url {
-        var call: ApplicationRequest? = null
+        start(port, redirectPath)
+        return waitForRedirect()
+    }
+
+    override suspend fun start(port: Int, redirectPath: String) {
         server?.stop()
+        
+        // Create deferred for redirect capture
+        redirectReceived = CompletableDeferred<ApplicationRequest>()
+        
         embeddedServer(CIO, port = port) {
             routing {
                 get(redirectPath) {
                     createResponse()
-                    call = this.call.request
-                    server?.stop()
+                    
+                    // Complete the class-level deferred with the request
+                    redirectReceived?.complete(this.call.request)
                 }
             }
         }.apply {
             server = engine
-            start(wait = true)
+            start(wait = false)
         }
-        return Url(call?.uri ?: "")
+    }
+
+    override suspend fun waitForRedirect(): Url {
+        // Wait for redirect with timeout (5 minutes)
+        val call = withTimeout(300_000) {
+            redirectReceived!!.await()
+        }
+        
+        // Cleanup
+        server?.stop()
+        
+        return Url(call.uri)
     }
 
     override suspend fun stop() {

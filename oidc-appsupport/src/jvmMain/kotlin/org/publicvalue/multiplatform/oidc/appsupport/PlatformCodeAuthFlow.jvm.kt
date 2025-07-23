@@ -5,6 +5,7 @@ import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
 import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
 import org.publicvalue.multiplatform.oidc.OpenIdConnectException
 import org.publicvalue.multiplatform.oidc.appsupport.webserver.SimpleKtorWebserver
+import org.publicvalue.multiplatform.oidc.appsupport.webserver.SslWebserver
 import org.publicvalue.multiplatform.oidc.appsupport.webserver.Webserver
 import org.publicvalue.multiplatform.oidc.flows.AuthCodeResponse
 import org.publicvalue.multiplatform.oidc.flows.AuthCodeResult
@@ -23,13 +24,10 @@ import kotlin.contracts.contract
 @ExperimentalOpenIdConnect
 actual class PlatformCodeAuthFlow(
     actual override val client: OpenIdConnectClient,
-    webserverProvider: () -> Webserver = { SimpleKtorWebserver() },
+    private val webserverProvider: () -> Webserver = { SimpleKtorWebserver() },
     openUrl: (Url) -> Unit = { it.openInBrowser() },
+    private val port: Int
 ) : CodeAuthFlow, EndSessionFlow {
-
-    companion object {
-        var PORT = 8080
-    }
 
     private val webFlow = WebServerFlow(
         webserverProvider = webserverProvider,
@@ -40,7 +38,7 @@ actual class PlatformCodeAuthFlow(
         val redirectUrl = request.config.redirectUri?.let { Url(it) }
         checkRedirectPort(redirectUrl)
 
-        val result = webFlow.startWebFlow(request.url, redirectUrl, PORT)
+        val result = webFlow.startWebFlow(request.url, redirectUrl, port)
 
         val code = result.parameters["code"]
         val state = result.parameters["state"]
@@ -51,8 +49,7 @@ actual class PlatformCodeAuthFlow(
         val redirectUrl = Url(request.url.parameters.get("post_logout_redirect_uri").orEmpty())
         checkRedirectPort(redirectUrl)
 
-        webFlow.startWebFlow(request.url, redirectUrl, PORT)
-        // doesn't return at all if unsuccessful
+        webFlow.startWebFlow(request.url, redirectUrl, port)
         return EndSessionResponse.success(Unit)
     }
 
@@ -61,8 +58,48 @@ actual class PlatformCodeAuthFlow(
         contract {
             returns() implies (redirectUrl != null)
         }
-        if (redirectUrl?.port != PORT || !redirectUrl.isLocalhost()) {
-            throw OpenIdConnectException.AuthenticationFailure("JVM implementation can only handle redirect uris using localhost port ${PORT}! Redirect uri was: $redirectUrl")
+        
+        if (redirectUrl == null) {
+            throw OpenIdConnectException.AuthenticationFailure("Redirect URL cannot be null")
+        }
+        
+        // Check if the port matches
+        if (redirectUrl.port != port) {
+            throw OpenIdConnectException.AuthenticationFailure(
+                "JVM implementation can only handle redirect uris using port $port! Redirect uri was: $redirectUrl"
+            )
+        }
+        
+        // Check if it's localhost
+        if (!redirectUrl.isLocalhost()) {
+            throw OpenIdConnectException.AuthenticationFailure(
+                "JVM implementation can only handle redirect uris using localhost! Redirect uri was: $redirectUrl"
+            )
+        }
+        
+        // Check protocol compatibility with webserver
+        val expectedProtocol = getExpectedProtocol()
+        if (redirectUrl.protocol.name.lowercase() != expectedProtocol) {
+            throw OpenIdConnectException.AuthenticationFailure(
+                "Redirect URL protocol '${redirectUrl.protocol.name}' does not match webserver protocol '$expectedProtocol'. " +
+                "Redirect uri was: $redirectUrl"
+            )
+        }
+    }
+    
+    /**
+     * Get the expected protocol based on the webserver configuration
+     */
+    private fun getExpectedProtocol(): String {
+        return try {
+            val webserver = webserverProvider()
+            when (webserver) {
+                is SslWebserver -> if (webserver.isHttpsEnabled) "https" else "http"
+                else -> "http" // Default to HTTP for other webserver types
+            }
+        } catch (e: Exception) {
+            // If we can't determine the webserver type, default to HTTP
+            "http"
         }
     }
 }
