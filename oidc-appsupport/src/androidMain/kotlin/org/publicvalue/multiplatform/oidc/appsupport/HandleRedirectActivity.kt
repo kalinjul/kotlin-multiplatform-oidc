@@ -1,7 +1,6 @@
 package org.publicvalue.multiplatform.oidc.appsupport
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.ViewGroup
 import android.webkit.CookieManager
@@ -11,14 +10,16 @@ import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.activity.ComponentActivity
+import androidx.browser.customtabs.CustomTabsClient
 import androidx.browser.customtabs.CustomTabsIntent
+import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
 import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
 
 internal const val EXTRA_KEY_USEWEBVIEW = "usewebview"
-internal const val EXTRA_KEY_WEBVIEW_EPHEREMAL_SESSION = "webview_epheremal_session"
+internal const val EXTRA_KEY_EPHEMERAL_SESSION = "ephemeral_session"
 internal const val EXTRA_KEY_REDIRECTURL = "redirecturl"
 internal const val EXTRA_KEY_URL = "url"
 internal const val EXTRA_KEY_PACKAGE_NAME = "package"
@@ -107,7 +108,7 @@ class HandleRedirectActivity : ComponentActivity() {
     override fun onResume() {
         super.onResume()
         val useWebView = intent.extras?.getBoolean(EXTRA_KEY_USEWEBVIEW)
-        val webViewEpheremalSession = intent.extras?.getBoolean(EXTRA_KEY_WEBVIEW_EPHEREMAL_SESSION)
+        val ephemeralSession = intent.extras?.getBoolean(EXTRA_KEY_EPHEMERAL_SESSION)
         val url = intent.extras?.getString(EXTRA_KEY_URL)
         val redirectUrl = intent.extras?.getString(EXTRA_KEY_REDIRECTURL)
 
@@ -129,24 +130,48 @@ class HandleRedirectActivity : ComponentActivity() {
                 // do not navigate to the login page again in this activity instance
                 intent.removeExtra(EXTRA_KEY_URL)
                 // get preferred browser if set
-                val browserPackage = intent.extras?.getString(EXTRA_KEY_PACKAGE_NAME)
+                val preferredBrowserPackage = intent.extras?.getString(EXTRA_KEY_PACKAGE_NAME)
                 intent.removeExtra(EXTRA_KEY_PACKAGE_NAME)
                 if (useWebView == true) {
-                    showWebView(url, redirectUrl, webViewEpheremalSession ?: false)
+                    showWebView(url, redirectUrl, ephemeralSession ?: false)
                 } else {
-                    launchCustomTabsIntent(url, browserPackage)
+                    launchCustomTabsIntent(
+                        url,
+                        redirectUrl,
+                        preferredBrowserPackage,
+                        ephemeralSession
+                    )
                 }
             }
         }
     }
 
-    private fun launchCustomTabsIntent(url: String?, browserPackage: String?) {
+    @OptIn(ExperimentalOpenIdConnect::class)
+    private fun launchCustomTabsIntent(
+        url: String,
+        redirectUrl: String?,
+        preferredBrowserPackage: String?,
+        ephemeralSession: Boolean?
+    ) {
         val builder = CustomTabsIntent.Builder()
         builder.configureCustomTabsIntent()
+
+        if (preferredBrowserPackage != null) {
+            // Enable ephemeral browsing if supported
+            if (CustomTabsClient.isEphemeralBrowsingSupported(this, preferredBrowserPackage)) {
+                builder.setEphemeralBrowsingEnabled(ephemeralSession ?: false)
+            }
+        } else {
+            // If custom tabs are not available, fallback to WebView
+            showWebView(url, redirectUrl, ephemeralSession ?: false)
+            return
+        }
+
+
         val intent = builder.build()
 
-        browserPackage?.let { intent.intent.setPackage(it) }
-        intent.launchUrl(this, Uri.parse(url))
+        preferredBrowserPackage.let { intent.intent.setPackage(it) }
+        intent.launchUrl(this, url.toUri())
     }
 
     override fun onNewIntent(intent: Intent) {

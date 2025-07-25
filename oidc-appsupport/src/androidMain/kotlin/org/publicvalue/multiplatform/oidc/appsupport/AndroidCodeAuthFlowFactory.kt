@@ -23,10 +23,21 @@ import org.publicvalue.multiplatform.oidc.flows.EndSessionFlow
  */
 @Suppress("unused")
 class AndroidCodeAuthFlowFactory(
-    /** If true, uses an embedded WebView instead of Chrome CustomTab (not recommended) **/
+    /**
+     * If `true`, an embedded WebView is used for the authorization flow.
+     * This is generally **not recommended** due to security and UX concerns.
+     *
+     * If `false` (default), Chrome Custom Tabs are preferred (if available),
+     * falling back to a WebView only if no suitable browser is found.
+     */
     private val useWebView: Boolean = false,
-    /** Clear cache and cookies in WebView **/
-    private val webViewEpheremalSession: Boolean = false,
+
+    /**
+     * If `true`, the authorization session will be ephemeral:
+     * cookies, cache, and other session data will be cleared before starting
+     * the flow in both WebView and Custom Tabs (if supported).
+     */
+    private val ephemeralSession: Boolean = false,
     /** preferred custom tab providers, list of package names in order of priority. Check [Browser][org.publicvalue.multiplatform.oidc.appsupport.customtab.Browser] for example values. **/
     private val customTabProviderPriority: List<String> = listOf()
 ): CodeAuthFlowFactory {
@@ -70,18 +81,19 @@ class AndroidCodeAuthFlowFactory(
     }
 
     override fun createAuthFlow(client: OpenIdConnectClient): PlatformCodeAuthFlow {
+        val customTabProviders = context.getCustomTabProviders().map { it.activityInfo.packageName }
         val preferredBrowserPackage = if (customTabProviderPriority.isNotEmpty()) {
-            val customTabProviders = context.getCustomTabProviders().map { it.activityInfo.packageName }
-            val presentPreferredProviders = customTabProviderPriority.filter { customTabProviders.contains(it) }
+            val presentPreferredProviders =
+                customTabProviderPriority.filter { customTabProviders.contains(it) }
             presentPreferredProviders.firstOrNull()
-        } else null
+        } else customTabProviders.firstOrNull()
 
         return PlatformCodeAuthFlow(
             context = context,
             contract = activityResultLauncher,
             client = client,
             useWebView = useWebView,
-            webViewEpheremalSession = webViewEpheremalSession,
+            ephemeralSession = ephemeralSession,
             preferredBrowserPackage = preferredBrowserPackage
         )
     }
