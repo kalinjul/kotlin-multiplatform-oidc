@@ -19,7 +19,6 @@ internal class WebPopupFlow(
 ) {
     internal suspend fun startWebFlow(requestUrl: Url): Url {
         return suspendCoroutine<Url> { continuation ->
-            println("${WebPopupFlow::class.simpleName} - New Flow")
 
             lateinit var popup: Window
             lateinit var messageHandler: (Event) -> Unit
@@ -33,11 +32,10 @@ internal class WebPopupFlow(
                     if (event.source == popup) {
                         val urlString: String = Json.decodeFromString(getEventData(event))
                         val url = Url(urlString)
-                        continuation.resume(url)
-
                         window.removeEventListener("message", messageHandler)
+                        continuation.resume(url)
                     } else {
-                        // Log a warning and stay registered
+                        // Log an advisory but stay registered for the true callback
                         println("${WebPopupFlow::class.simpleName} skipping message from unknown source: ${event.source}")
                     }
                 }
