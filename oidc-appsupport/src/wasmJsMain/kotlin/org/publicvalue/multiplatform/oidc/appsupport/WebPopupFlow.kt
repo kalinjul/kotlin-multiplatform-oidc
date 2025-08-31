@@ -5,8 +5,8 @@ import kotlinx.browser.window
 import kotlinx.serialization.json.Json
 import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
 import org.publicvalue.multiplatform.oidc.OpenIdConnectException.TechnicalFailure
-import org.w3c.dom.AddEventListenerOptions
 import org.w3c.dom.MessageEvent
+import org.w3c.dom.Window
 import org.w3c.dom.events.Event
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -19,13 +19,12 @@ internal class WebPopupFlow(
 ) {
     internal suspend fun startWebFlow(requestUrl: Url): Url {
         return suspendCoroutine<Url> { continuation ->
-            val popup = window.open(requestUrl.toString(), windowTarget, windowFeatures)
+            println("${WebPopupFlow::class.simpleName} - New Flow")
 
-            if (popup == null) {
-                throw TechnicalFailure("No popup opened", null)
-            }
+            lateinit var popup: Window
+            lateinit var messageHandler: (Event) -> Unit
 
-            val messageHandler: (Event) -> Unit = { event ->
+            messageHandler = { event ->
                 if (event is MessageEvent) {
 
                     if (event.origin != redirectOrigin)
@@ -35,14 +34,19 @@ internal class WebPopupFlow(
                         val urlString: String = Json.decodeFromString(getEventData(event))
                         val url = Url(urlString)
                         continuation.resume(url)
+
+                        window.removeEventListener("message", messageHandler)
+                    } else {
+                        // Log a warning and stay registered
+                        println("${WebPopupFlow::class.simpleName} skipping message from unknown source: ${event.source}")
                     }
                 }
             }
 
-            window.addEventListener("message", messageHandler, AddEventListenerOptions(
-                    once = true
-                )
-            )
+            window.addEventListener("message", messageHandler)
+
+            popup = window.open(requestUrl.toString(), windowTarget, windowFeatures)
+                ?: throw TechnicalFailure("Could not open popup", null)
         }
     }
 
