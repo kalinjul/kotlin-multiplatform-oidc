@@ -1,6 +1,6 @@
 package org.publicvalue.multiplatform.oidc.appsupport
 
-import io.ktor.http.Url
+import io.ktor.http.*
 import kotlinx.browser.window
 import kotlinx.serialization.json.Json
 import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
@@ -16,9 +16,9 @@ internal class WebPopupFlow(
     private val windowTarget: String = "",
     private val windowFeatures: String = "width=1000,height=800,resizable=yes,scrollbars=yes",
     private val redirectOrigin: String,
-) {
-    internal suspend fun startWebFlow(requestUrl: Url): Url {
-        return suspendCoroutine<Url> { continuation ->
+): WebAuthenticationFlow {
+    override suspend fun startWebFlow(requestUrl: Url, redirectUrl: String): WebAuthenticationFlowResult {
+        return suspendCoroutine<WebAuthenticationFlowResult> { continuation ->
 
             lateinit var popup: Window
             lateinit var messageHandler: (Event) -> Unit
@@ -33,7 +33,7 @@ internal class WebPopupFlow(
                         val urlString: String = Json.decodeFromString(getEventData(event))
                         val url = Url(urlString)
                         window.removeEventListener("message", messageHandler)
-                        continuation.resume(url)
+                        continuation.resume(WebAuthenticationFlowResult.Success(url))
                     } else {
                         // Log an advisory but stay registered for the true callback
                         println("${WebPopupFlow::class.simpleName} skipping message from unknown source: ${event.source}")

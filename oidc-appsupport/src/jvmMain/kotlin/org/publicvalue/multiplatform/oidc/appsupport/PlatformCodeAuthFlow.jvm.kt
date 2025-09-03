@@ -21,16 +21,10 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
 @ExperimentalOpenIdConnect
-actual class PlatformCodeAuthFlow(
+actual class PlatformCodeAuthFlow internal constructor(
     actual override val client: OpenIdConnectClient,
-    webserverProvider: () -> Webserver = { SimpleKtorWebserver() },
-    openUrl: (Url) -> Unit = { it.openInBrowser() },
+    private val webFlow: WebAuthenticationFlow
 ) : CodeAuthFlow, EndSessionFlow {
-
-    private val webFlow = WebServerFlow(
-        webserverProvider = webserverProvider,
-        openUrl = openUrl,
-    )
 
     actual override suspend fun getAuthorizationCode(request: AuthCodeRequest): AuthCodeResponse {
         val redirectUrl = request.url.parameters.get("redirect_uri").orEmpty()

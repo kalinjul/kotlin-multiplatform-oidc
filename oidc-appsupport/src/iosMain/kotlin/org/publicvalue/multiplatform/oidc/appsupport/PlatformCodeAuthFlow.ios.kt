@@ -28,17 +28,11 @@ import kotlin.experimental.ExperimentalObjCName
  */
 @OptIn(ExperimentalObjCName::class)
 @ObjCName(swiftName = "CodeAuthFlow", name = "CodeAuthFlow", exact = true)
-actual class PlatformCodeAuthFlow(
+actual class PlatformCodeAuthFlow internal constructor(
     actual override val client: OpenIdConnectClient,
-    ephemeralBrowserSession: Boolean = false
+    ephemeralBrowserSession: Boolean = false,
+    private val webFlow: WebAuthenticationFlow,
 ): CodeAuthFlow, EndSessionFlow {
-
-    private val webFlow = WebSessionFlow(
-        ephemeralBrowserSession = ephemeralBrowserSession
-    )
-
-    // required for swift (no default argument support)
-    constructor(client: OpenIdConnectClient) : this(client = client, ephemeralBrowserSession = false)
 
     actual override suspend fun getAuthorizationCode(request: AuthCodeRequest): AuthCodeResponse = wrapExceptions {
         val result = webFlow.startWebFlow(request.url, request.url.parameters.get("redirect_uri").orEmpty())

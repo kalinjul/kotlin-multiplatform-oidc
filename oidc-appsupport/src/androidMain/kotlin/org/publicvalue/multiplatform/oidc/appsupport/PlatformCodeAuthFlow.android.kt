@@ -15,6 +15,7 @@ actual class PlatformCodeAuthFlow internal constructor(
     actual override val client: OpenIdConnectClient,
 ) : CodeAuthFlow, EndSessionFlow {
 
+    // TODO extract common code
     actual override suspend fun getAuthorizationCode(request: AuthCodeRequest): AuthCodeResponse {
         val result = webFlow.startWebFlow(request.url, request.url.parameters.get("redirect_uri").orEmpty())
 

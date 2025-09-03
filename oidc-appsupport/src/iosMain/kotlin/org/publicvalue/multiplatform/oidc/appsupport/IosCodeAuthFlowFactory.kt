@@ -11,7 +11,12 @@ class IosCodeAuthFlowFactory(
     private val ephemeralBrowserSession: Boolean = false
 ): CodeAuthFlowFactory {
     override fun createAuthFlow(client: OpenIdConnectClient): PlatformCodeAuthFlow {
-        return PlatformCodeAuthFlow(client, ephemeralBrowserSession)
+        return PlatformCodeAuthFlow(
+            client = client,
+            webFlow = WebSessionFlow(
+                ephemeralBrowserSession = ephemeralBrowserSession
+            )
+        )
     }
 
     override fun createEndSessionFlow(client: OpenIdConnectClient): EndSessionFlow {
