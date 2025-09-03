@@ -1,5 +1,6 @@
 package org.publicvalue.multiplatform.oidc.appsupport
 
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.os.Bundle
 import android.view.ViewGroup
@@ -171,7 +172,12 @@ class HandleRedirectActivity : ComponentActivity() {
         val intent = builder.build()
 
         preferredBrowserPackage.let { intent.intent.setPackage(it) }
-        intent.launchUrl(this, url.toUri())
+        try {
+            intent.launchUrl(this, url.toUri())
+        } catch (_: ActivityNotFoundException) {
+            // If there is no browser activity available, fallback to WebView
+            showWebView(url, redirectUrl, ephemeralSession ?: false)
+        }
     }
 
     override fun onNewIntent(intent: Intent) {
