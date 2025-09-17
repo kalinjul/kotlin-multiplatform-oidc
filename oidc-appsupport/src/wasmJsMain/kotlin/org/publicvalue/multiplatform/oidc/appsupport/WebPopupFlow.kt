@@ -66,6 +66,7 @@ internal class WebPopupFlow(
 private fun getEventData(event: MessageEvent): String = js("JSON.stringify(event.data)")
 
 private fun getOpenerOrigin(): String = js("window.opener.location.origin")
+
 private fun postMessage(url: String, targetOrigin: String) {
     js("window.opener.postMessage(url, targetOrigin)")
 }
