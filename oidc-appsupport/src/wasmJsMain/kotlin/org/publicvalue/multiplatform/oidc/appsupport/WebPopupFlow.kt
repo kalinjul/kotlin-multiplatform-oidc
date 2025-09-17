@@ -65,12 +65,20 @@ internal class WebPopupFlow(
 
 private fun getEventData(event: MessageEvent): String = js("JSON.stringify(event.data)")
 
-private fun getOpenerOrigin(): String = js("window.opener.location.origin")
+private fun getOpenerOrigin(): String = (window.opener as Window?)!!.location.origin
 
 private fun postMessage(url: String, targetOrigin: String) {
-    js("window.opener.postMessage(url, targetOrigin)")
+    val opener = window.opener as Window?
+    opener?.postMessage(url.toJsString(), targetOrigin)
+        ?: throw TechnicalFailure("Could not post message to opener: opener is null", null)
 }
 
 private fun closeTheWindow(delay: Int = 100) {
-    js("setTimeout(() => window.close(), delay)")
+    window.setTimeout(
+        handler = {
+            window.close()
+            null
+        },
+        timeout = delay
+    )
 }
