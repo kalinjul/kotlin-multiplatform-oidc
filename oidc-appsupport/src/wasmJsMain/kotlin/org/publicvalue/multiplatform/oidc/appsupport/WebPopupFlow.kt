@@ -51,26 +51,25 @@ internal class WebPopupFlow(
     internal companion object {
         @ExperimentalOpenIdConnect
         fun handleRedirect() {
-            if (window.opener != null) {
-                postMessage(
-                    url = window.location.toString(),
-                    targetOrigin = getOpenerOrigin()
+            val opener = window.opener as Window?
+            if (opener != null) {
+                opener.postMessage(
+                    message = window.location.toString().toJsString(),
+                    targetOrigin = opener.location.origin
                 )
 
-                closeTheWindow(delay = 0)
+                window.setTimeout(
+                    handler = {
+                        window.close()
+                        null
+                    },
+                    timeout = 0
+                )
+            } else {
+                println("No window opener, not a popup flow.")
             }
         }
     }
 }
 
 private fun getEventData(event: MessageEvent): String = js("JSON.stringify(event.data)")
-
-private fun getOpenerOrigin(): String = js("window.opener.location.origin")
-
-private fun postMessage(url: String, targetOrigin: String) {
-    js("window.opener.postMessage(url, targetOrigin)")
-}
-
-private fun closeTheWindow(delay: Int = 100) {
-    js("setTimeout(() => window.close(), delay)")
-}
