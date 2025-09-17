@@ -28,6 +28,8 @@ kotlin {
             dependencies {
                 implementation(libs.androidx.security.crypto)
                 implementation(libs.androidx.security.crypto.ktx)
+
+                implementation(libs.androidx.datastore)
             }
         }
 

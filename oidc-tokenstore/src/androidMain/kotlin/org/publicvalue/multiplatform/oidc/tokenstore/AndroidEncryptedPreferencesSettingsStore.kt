@@ -7,6 +7,10 @@ import androidx.security.crypto.MasterKey
 import com.russhwolf.settings.SharedPreferencesSettings
 import com.russhwolf.settings.get
 
+@Deprecated(
+    "EncryptedSharedPreferences is deprecated",
+    replaceWith = ReplaceWith("AndroidDataStoreSettingsStore")
+)
 class AndroidEncryptedPreferencesSettingsStore(
     context: Context
 ) : SettingsStore {
