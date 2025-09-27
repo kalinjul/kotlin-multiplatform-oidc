@@ -36,26 +36,25 @@ class AndroidDataStoreSettingsStore(
     )
 
     // Get or generate the secret key
-    private val secretKey: SecretKey
-        get() {
-            val keyStore = KeyStore.getInstance(ANDROID_KEY_STORE).apply { load(null) }
-            return if (keyStore.containsAlias(KEY_ALIAS)) {
-                (keyStore.getEntry(KEY_ALIAS, null) as KeyStore.SecretKeyEntry).secretKey
-            } else {
-                val keyGenerator = KeyGenerator.getInstance("AES", ANDROID_KEY_STORE)
-                keyGenerator.init(
-                    KeyGenParameterSpec.Builder(
-                        KEY_ALIAS,
-                        KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
-                    )
-                        .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
-                        .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
-                        .setKeySize(256)
-                        .build()
+    private val secretKey: SecretKey by lazy {
+        val keyStore = KeyStore.getInstance(ANDROID_KEY_STORE).apply { load(null) }
+        if (keyStore.containsAlias(KEY_ALIAS)) {
+            (keyStore.getEntry(KEY_ALIAS, null) as KeyStore.SecretKeyEntry).secretKey
+        } else {
+            val keyGenerator = KeyGenerator.getInstance("AES", ANDROID_KEY_STORE)
+            keyGenerator.init(
+                KeyGenParameterSpec.Builder(
+                    KEY_ALIAS,
+                    KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
                 )
-                keyGenerator.generateKey()
-            }
+                    .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
+                    .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
+                    .setKeySize(256)
+                    .build()
+            )
+            keyGenerator.generateKey()
         }
+    }
 
     private fun encrypt(value: String): String {
         val cipher = Cipher.getInstance(TRANSFORMATION)
