@@ -18,6 +18,7 @@ kotlin-inject = "0.8.0"
 androidxActivity = "1.10.1"
 # https://developer.android.com/jetpack/androidx/releases/appcompat
 androidxAppCompat = "1.7.1"
+androidxDataStore = "1.1.7"
 
 coreKtx = "1.16.0"
 #https://developer.android.com/jetpack/androidx/releases/arch-core
@@ -57,6 +58,7 @@ material-icons = "1.7.3"
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidxActivity" }
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "androidxAppCompat" }
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
+androidx-datastore = { module = "androidx.datastore:datastore-preferences", version.ref = "androidxDataStore" }
 androidx-browser = { module = "androidx.browser:browser", version = "1.9.0-rc01" }
 androidx-security-crypto-ktx = { module = "androidx.security:security-crypto-ktx", version.ref = "securityCryptoKtx" }
 androidx-security-crypto = { module = "androidx.security:security-crypto", version.ref = "securityCryptoKtx" }
