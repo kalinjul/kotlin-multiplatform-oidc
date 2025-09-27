@@ -28,34 +28,45 @@ import kotlin.experimental.ExperimentalObjCName
  */
 @OptIn(ExperimentalObjCName::class)
 @ObjCName(swiftName = "CodeAuthFlow", name = "CodeAuthFlow", exact = true)
-actual class PlatformCodeAuthFlow(
+actual class PlatformCodeAuthFlow internal constructor(
     actual override val client: OpenIdConnectClient,
-    ephemeralBrowserSession: Boolean = false
+    ephemeralBrowserSession: Boolean = false,
+    private val webFlow: WebAuthenticationFlow,
 ): CodeAuthFlow, EndSessionFlow {
 
-    private val webFlow = WebSessionFlow(
-        ephemeralBrowserSession
-    )
-
-    // required for swift (no default argument support)
-    constructor(client: OpenIdConnectClient) : this(client = client, ephemeralBrowserSession = false)
-
     actual override suspend fun getAuthorizationCode(request: AuthCodeRequest): AuthCodeResponse = wrapExceptions {
-        val resultUrl = webFlow.startWebFlow(request.url, request.url.parameters.get("redirect_uri").orEmpty())
-        return if (resultUrl != null) {
-            val code = resultUrl.parameters["code"] ?: ""
-            val state = resultUrl.parameters["state"] ?: ""
-            AuthCodeResponse.success(AuthCodeResult(code = code, state = state))
+        val result = webFlow.startWebFlow(request.url, request.url.parameters.get("redirect_uri").orEmpty())
+        return if (result is WebAuthenticationFlowResult.Success) {
+            when (val error = getErrorResult<AuthCodeResult>(result.responseUri)) {
+                null -> {
+                    val state = result.responseUri?.parameters?.get("state")
+                    val code = result.responseUri?.parameters?.get("code")
+                    Result.success(AuthCodeResult(code, state))
+                }
+                else -> {
+                    return error
+                }
+            }
         } else {
-            AuthCodeResponse.failure(OpenIdConnectException.AuthenticationCancelled("Authentication cancelled"))
+            // browser closed, no redirect
+            Result.failure(OpenIdConnectException.AuthenticationCancelled())
         }
     }
 
     actual override suspend fun endSession(request: EndSessionRequest): EndSessionResponse = wrapExceptions {
-        val resultUrl = webFlow.startWebFlow(request.url, request.url.parameters.get("post_logout_redirect_uri").orEmpty())
-        return if (resultUrl != null) {
-            EndSessionResponse.success(Unit)
+        val result = webFlow.startWebFlow(request.url, request.url.parameters.get("post_logout_redirect_uri").orEmpty())
+
+        return if (result is WebAuthenticationFlowResult.Success) {
+            when (val error = getErrorResult<Unit>(result.responseUri)) {
+                null -> {
+                    return EndSessionResponse.success(Unit)
+                }
+                else -> {
+                    return error
+                }
+            }
         } else {
+            // browser closed, no redirect
             EndSessionResponse.failure(OpenIdConnectException.AuthenticationCancelled("Logout cancelled"))
         }
     }
