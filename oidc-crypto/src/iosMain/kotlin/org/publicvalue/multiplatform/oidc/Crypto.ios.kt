@@ -2,17 +2,12 @@ package org.publicvalue.multiplatform.oidc
 
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.addressOf
-import kotlinx.cinterop.allocArrayOf
 import kotlinx.cinterop.convert
-import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.usePinned
 import platform.CoreCrypto.CC_SHA256
-import platform.Foundation.NSData
-import platform.Foundation.create
 import platform.Security.SecRandomCopyBytes
 import platform.Security.errSecSuccess
 import platform.Security.kSecRandomDefault
-import platform.posix.memcpy
 
 @OptIn(ExperimentalForeignApi::class)
 actual fun secureRandomBytes(size: Int): ByteArray {
