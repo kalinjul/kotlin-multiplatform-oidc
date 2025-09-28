@@ -7,7 +7,6 @@ plugins {
     id("org.publicvalue.convention.kotlin.multiplatform")
     id("org.publicvalue.convention.kotlin.multiplatform.mobile")
     alias(libs.plugins.kotlin.serialization)
-    alias(libs.plugins.swiftklib)
     id("org.publicvalue.convention.centralPublish")
 }
 
@@ -46,29 +45,5 @@ kotlin {
         }
     }
 
-    listOf(
-        iosX64(),
-        iosArm64(),
-        iosSimulatorArm64(),
-    ).forEach {
-        it.compilations {
-            val main by getting {
-                cinterops {
-                    create("KCrypto")
-                }
-            }
-        }
-    }
-
     exportKdoc()
-}
-
-if (DefaultNativePlatform.getCurrentOperatingSystem().isMacOsX) {
-    swiftklib {
-        create("KCrypto") {
-            this.minIos = 15
-            path = file("native/KCrypto")
-            packageName("org.publicvalue.multiplatform.oidc.util")
-        }
-    }
 }
