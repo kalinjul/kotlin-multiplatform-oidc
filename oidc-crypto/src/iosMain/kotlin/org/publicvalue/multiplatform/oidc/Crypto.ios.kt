@@ -2,17 +2,12 @@ package org.publicvalue.multiplatform.oidc
 
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.addressOf
-import kotlinx.cinterop.allocArrayOf
 import kotlinx.cinterop.convert
-import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.usePinned
-import org.publicvalue.multiplatform.oidc.util.KCrypto
-import platform.Foundation.NSData
-import platform.Foundation.create
+import platform.CoreCrypto.CC_SHA256
 import platform.Security.SecRandomCopyBytes
 import platform.Security.errSecSuccess
 import platform.Security.kSecRandomDefault
-import platform.posix.memcpy
 
 @OptIn(ExperimentalForeignApi::class)
 actual fun secureRandomBytes(size: Int): ByteArray {
@@ -31,20 +26,16 @@ actual fun secureRandomBytes(size: Int): ByteArray {
 
 @OptIn(ExperimentalForeignApi::class)
 actual fun String.s256(): ByteArray {
-    val result = KCrypto.sha256(this)
-    return result.toByteArray()
-}
+    val inputBytes = this.encodeToByteArray()
+    val output = UByteArray(32)// 32 bytes for the SHA-256
 
-@OptIn(ExperimentalForeignApi::class)
-fun NSData.toByteArray(): ByteArray {
-    return ByteArray(length.toInt()).apply {
-        usePinned {
-            memcpy(it.addressOf(0), bytes, length)
+    inputBytes.usePinned { inputPin ->
+        output.usePinned { outputPin ->
+            CC_SHA256(
+                inputPin.addressOf(0), inputBytes.size.toUInt(), outputPin.addressOf(0)
+            )
         }
     }
-}
 
-@OptIn(ExperimentalForeignApi::class, kotlinx.cinterop.BetaInteropApi::class)
-fun ByteArray.toNSData(): NSData = memScoped {
-    NSData.create(bytes = allocArrayOf(this@toNSData), length = this@toNSData.size.toULong())
+    return ByteArray(output.size) { output[it].toByte() }
 }
