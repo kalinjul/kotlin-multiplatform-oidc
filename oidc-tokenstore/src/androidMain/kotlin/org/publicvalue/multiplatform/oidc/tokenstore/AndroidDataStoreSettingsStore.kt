@@ -24,7 +24,7 @@ class AndroidDataStoreSettingsStore(
 
     companion object {
         private const val ANDROID_KEY_STORE = "AndroidKeyStore"
-        private const val KEY_ALIAS = "DataStoreEncryptionKey"
+        private const val KEY_ALIAS = "OidcDataStoreEncryptionKey"
         private const val TRANSFORMATION = "AES/GCM/NoPadding"
         private const val IV_SIZE = 12
         private const val TAG_SIZE = 128
