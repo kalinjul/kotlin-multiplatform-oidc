@@ -60,7 +60,7 @@ oidc-ktor = { module = "io.github.kalinjul.kotlin.multiplatform:oidc-ktor", vers
 ```
 
 ## Using a snapshot version
-If you want try a snapshot version, just add maven("https://central.sonatype.com/repository/maven-snapshots/") to your repositories.
+If you want try a snapshot version, just add ```maven("https://central.sonatype.com/repository/maven-snapshots/")``` to your repositories.
 There is currently no way to view available snapshots on sonatype central.
 
 ## Compiler options

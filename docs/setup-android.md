@@ -15,7 +15,7 @@ android {
 ```
 
 ## AuthFlowFactory
-You should have a single global instance of [AndroidCodeAuthFlowFactory], preferably
+You should have a single global instance of [AndroidCodeAuthFlowFactory](https://kalinjul.github.io/kotlin-multiplatform-oidc/kotlin-multiplatform-oidc/org.publicvalue.multiplatform.oidc.appsupport/-android-code-auth-flow-factory/index.html), preferably
 using Dependency Injection.
 You will than need to register your activity in your Activity's onCreate():
 
