@@ -7,6 +7,7 @@ import org.publicvalue.multiplatform.oidc.appsupport.PlatformCodeAuthFlow
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalOpenIdConnect::class)
 fun main() {
+    @Suppress("DEPRECATION_ERROR")
     CanvasBasedWindow(canvasElementId = "wasm-js-app") {
         val currentPath = window.location.pathname
         when {

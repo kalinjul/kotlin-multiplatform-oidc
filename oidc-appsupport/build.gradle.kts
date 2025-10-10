@@ -24,7 +24,7 @@ multiplatformSwiftPackage {
 }
 
 // workaround for https://forums.developer.apple.com/forums/thread/748177, remove once apple fixed it
-val fixTask = tasks.create("fixFrameworkPlist") {
+val fixTask = tasks.register("fixFrameworkPlist") {
     val fixTask = this
     group = "multiplatform-swift-package"
     afterEvaluate {

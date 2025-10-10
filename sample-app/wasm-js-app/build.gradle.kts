@@ -10,7 +10,7 @@ kotlin {
     jvm()
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
-        moduleName = "wasm-js-app"
+        outputModuleName = "wasm-js-app"
         browser {
             commonWebpackConfig {
                 outputFileName = "wasm-js-app.js"
