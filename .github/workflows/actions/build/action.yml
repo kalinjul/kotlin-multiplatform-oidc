@@ -10,7 +10,7 @@ runs:
       run: ./gradlew assembleRelease
     - name: Build sample apps
       shell: bash
-      run: ./gradlew -p sample-app assembleRelease
+      run: ./gradlew -p sample-app assembleRelease wasmJsJar
     - name: Build playground app
       shell: bash
       run: ./gradlew -p playground-app assemble

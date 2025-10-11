@@ -17,19 +17,23 @@ internal class WebPopupFlow(
     private val windowFeatures: String = "width=1000,height=800,resizable=yes,scrollbars=yes",
     private val redirectOrigin: String,
 ): WebAuthenticationFlow {
+
+    private class WindowHolder(var window: Window?)
+
     override suspend fun startWebFlow(requestUrl: Url, redirectUrl: String): WebAuthenticationFlowResult {
         return suspendCoroutine<WebAuthenticationFlowResult> { continuation ->
 
-            lateinit var popup: Window
+            val popupHolder = WindowHolder(null)
             lateinit var messageHandler: (Event) -> Unit
 
             messageHandler = { event ->
                 if (event is MessageEvent) {
 
-                    if (event.origin != redirectOrigin)
-                        throw TechnicalFailure("Security issue. Event was not from ${window.location.origin}", null)
+                    if (event.origin != redirectOrigin) {
+                        throw TechnicalFailure("Security issue. Event was not from $redirectOrigin", null)
+                    }
 
-                    if (event.source == popup) {
+                    if (event.source == popupHolder.window) {
                         val urlString: String = Json.decodeFromString(getEventData(event))
                         val url = Url(urlString)
                         window.removeEventListener("message", messageHandler)
@@ -43,7 +47,7 @@ internal class WebPopupFlow(
 
             window.addEventListener("message", messageHandler)
 
-            popup = window.open(requestUrl.toString(), windowTarget, windowFeatures)
+            popupHolder.window = window.open(requestUrl.toString(), windowTarget, windowFeatures)
                 ?: throw TechnicalFailure("Could not open popup", null)
         }
     }
@@ -57,7 +61,7 @@ internal class WebPopupFlow(
                     targetOrigin = getOpenerOrigin()
                 )
 
-                closeTheWindow(delay = 0)
+                closeWindow(delay = 0)
             }
         }
     }
@@ -71,6 +75,6 @@ private fun postMessage(url: String, targetOrigin: String) {
     js("window.opener.postMessage(url, targetOrigin)")
 }
 
-private fun closeTheWindow(delay: Int = 100) {
-    js("setTimeout(() => window.close(), delay)")
+private fun closeWindow(delay: Int = 100) {
+    window.setTimeout(handler = { window.close(); null }, timeout = delay)
 }

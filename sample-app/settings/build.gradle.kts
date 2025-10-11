@@ -20,6 +20,12 @@ kotlin {
                 api(libs.kotlinx.serialization.json)
             }
         }
+
+        wasmJsMain {
+            dependencies {
+                implementation(libs.kotlinx.browser)
+            }
+        }
     }
 }
 
