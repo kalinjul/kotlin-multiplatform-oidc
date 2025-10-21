@@ -5,53 +5,54 @@ minSdk = "21"
 
 jvmTarget = "17"
 # https://developer.android.com/build/releases/gradle-plugin#compatibility
-agp = "8.10.1"
+# https://kotlinlang.org/docs/multiplatform-compatibility-guide.html
+agp = "8.11.1"
 
 #https://github.com/JetBrains/compose-multiplatform
-compose-multiplatform = "1.8.2"
-kotlin = "2.1.21"
+compose-multiplatform = "1.9.0-rc01"
+kotlin = "2.2.20"
 # https://github.com/google/ksp
-ksp = "2.1.21-2.0.1"
+ksp = "2.2.20-2.0.3"
 kotlin-inject = "0.8.0"
 
 # https://developer.android.com/jetpack/androidx/releases/activity
-androidxActivity = "1.10.1"
+androidxActivity = "1.11.0"
 # https://developer.android.com/jetpack/androidx/releases/appcompat
 androidxAppCompat = "1.7.1"
 androidxDataStore = "1.1.7"
 
-coreKtx = "1.16.0"
+coreKtx = "1.17.0"
 #https://developer.android.com/jetpack/androidx/releases/arch-core
 coreTesting = "2.2.0"
 
 kotlinxCoroutines = "1.10.2"
-kotlinxSerialization = "1.8.1"
+kotlinxSerialization = "1.9.0"
 
 # https://github.com/Kotlin/kotlinx-datetime
 kotlinxDatetime = "0.7.1"
 # https://github.com/Kotlin/kotlinx-atomicfu
-kotlinxAtomicfu = "0.28.0"
+kotlinxAtomicfu = "0.29.0"
 
-kotlinxBrowser = "0.3"
+kotlinxBrowser = "0.5.0"
 
 # https://github.com/slackhq/circuit/releases
-circuit = "0.28.1"
+circuit = "0.30.0"
 sqldelight = "2.1.0"
 
-okhttp = "4.12.0"
-ktor = "3.2.1"
+okhttp = "5.2.1"
+ktor = "3.3.1"
 
-nexus-publish-plugin = "1.3.0"
+nexus-publish-plugin = "2.0.0"
 multiplatform-swiftpackage = "2.2.4"
 swiftklib = "0.6.4"
 dokka = "1.9.10"
 # https://developer.android.com/jetpack/androidx/releases/security
-securityCryptoKtx = "1.1.0-beta01"
+securityCryptoKtx = "1.1.0"
 
 assertk = "0.28.1"
 russhwolf = "1.3.0"
 
-kotlincrypto-hash = "0.7.0"
+kotlincrypto-hash = "0.8.0"
 material-icons = "1.7.3"
 
 [libraries]
@@ -59,7 +60,7 @@ androidx-activity-compose = { module = "androidx.activity:activity-compose", ver
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "androidxAppCompat" }
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
 androidx-datastore = { module = "androidx.datastore:datastore-preferences", version.ref = "androidxDataStore" }
-androidx-browser = { module = "androidx.browser:browser", version = "1.9.0-rc01" }
+androidx-browser = { module = "androidx.browser:browser", version = "1.9.0" }
 androidx-security-crypto-ktx = { module = "androidx.security:security-crypto-ktx", version.ref = "securityCryptoKtx" }
 androidx-security-crypto = { module = "androidx.security:security-crypto", version.ref = "securityCryptoKtx" }
 material-icons-core = { module = "org.jetbrains.compose.material:material-icons-core", version.ref = "material-icons" }

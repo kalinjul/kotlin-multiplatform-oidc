@@ -14,8 +14,6 @@ kotlin {
                 implementation(compose.runtime)
                 implementation(compose.foundation)
                 implementation(compose.material3)
-                @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
-                implementation(compose.components.resources) // resources will only work in THIS module! Only one module seems to be supported for now.
 
                 implementation(libs.kotlin.inject.runtime)
 
