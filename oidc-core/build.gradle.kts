@@ -13,6 +13,10 @@ description = "Kotlin Multiplatform OIDC core library"
 
 kotlin {
     jvm()
+    js(IR) {
+        browser()
+        binaries.library()
+    }
     configureIosTargets()
     configureWasmTarget()
     sourceSets {

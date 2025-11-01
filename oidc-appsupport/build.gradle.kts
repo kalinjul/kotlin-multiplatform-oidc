@@ -25,6 +25,10 @@ multiplatformSwiftPackage {
 
 kotlin {
     jvm()
+    js(IR) {
+        browser()
+        binaries.library()
+    }
     configureIosTargets(baseName = "OpenIdConnectClient")
     configureWasmTarget(baseName = "OpenIdConnectClient")
     sourceSets {
@@ -55,7 +59,7 @@ kotlin {
             }
         }
 
-        val wasmJsMain by getting {
+        val webMain by getting {
             dependencies {
                 implementation(libs.kotlinx.browser)
             }

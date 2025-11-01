@@ -12,6 +12,10 @@ description = "Kotlin Multiplatform OIDC support library for ktor clients"
 
 kotlin {
     jvm()
+    js(IR) {
+        browser()
+        binaries.library()
+    }
     configureIosTargets()
     configureWasmTarget()
     sourceSets {

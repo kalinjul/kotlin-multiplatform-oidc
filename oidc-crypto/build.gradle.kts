@@ -14,6 +14,10 @@ description = "Kotlin Multiplatform OIDC crypto library"
 
 kotlin {
     jvm()
+    js(IR) {
+        browser()
+        binaries.library()
+    }
     configureIosTargets()
     configureWasmTarget()
     sourceSets {
@@ -34,7 +38,7 @@ kotlin {
             }
         }
 
-        val wasmJsMain by getting {
+        val webMain by getting {
             dependencies {
                 implementation(project.dependencies.platform(libs.kotlincrypto.hash.bom))
                 implementation(libs.kotlincrypto.hash.sha2)
