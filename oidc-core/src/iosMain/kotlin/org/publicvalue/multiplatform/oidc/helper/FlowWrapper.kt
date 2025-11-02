@@ -9,8 +9,10 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 // see https://proandroiddev.com/writing-swift-friendly-kotlin-multiplatform-apis-part-ix-flow-d4b6ada59395
-class FlowWrapper<out T> internal constructor(private val scope: CoroutineScope,
-                                              private val flow: Flow<T>){
+public class FlowWrapper<out T> internal constructor(
+    private val scope: CoroutineScope,
+    private val flow: Flow<T>
+) {
     private var job: Job? = null
     private var isCancelled = false
 
@@ -18,7 +20,7 @@ class FlowWrapper<out T> internal constructor(private val scope: CoroutineScope,
      *  Cancels the flow
      */
     @Suppress("unused")
-    fun cancel() {
+    public fun cancel() {
         isCancelled = true
         job?.cancel()
     }
@@ -30,15 +32,15 @@ class FlowWrapper<out T> internal constructor(private val scope: CoroutineScope,
      * nullable Throwable if it completes abnormally
      */
     @Suppress("unused")
-    fun collect(
+    public fun collect(
         onEach: (T) -> Unit,
         onCompletion: (Throwable?) -> Unit
     ) {
         if (isCancelled) return
         job = scope.launch {
-            flow.onEach (onEach).onCompletion { cause: Throwable? -> onCompletion(cause) }.collect {}
+            flow.onEach(onEach).onCompletion { cause: Throwable? -> onCompletion(cause) }.collect {}
         }
     }
 }
 
-fun <T> Flow<T>.wrap(scope: CoroutineScope = MainScope()) = FlowWrapper(scope, this)
+public fun <T> Flow<T>.wrap(scope: CoroutineScope = MainScope()): FlowWrapper<T> = FlowWrapper(scope, this)

@@ -1,4 +1,4 @@
-package org.publicvalue.multiplatform.oidc.appsupport;
+package org.publicvalue.multiplatform.oidc.appsupport
 
 import io.ktor.http.Url
 import kotlinx.coroutines.Dispatchers
@@ -11,7 +11,7 @@ import org.publicvalue.multiplatform.oidc.appsupport.webserver.Webserver
 internal class WebServerFlow(
     private val webserverProvider: () -> Webserver,
     private val openUrl: (Url) -> Unit,
-): WebAuthenticationFlow {
+) : WebAuthenticationFlow {
     override suspend fun startWebFlow(requestUrl: Url, redirectUrl: String): WebAuthenticationFlowResult {
         val webserver = webserverProvider()
         val response = withContext(Dispatchers.IO) {

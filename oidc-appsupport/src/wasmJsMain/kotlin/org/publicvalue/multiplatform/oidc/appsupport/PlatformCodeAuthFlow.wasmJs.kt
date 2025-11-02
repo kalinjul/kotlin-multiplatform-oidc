@@ -12,7 +12,7 @@ import org.publicvalue.multiplatform.oidc.types.AuthCodeRequest
 import org.publicvalue.multiplatform.oidc.types.EndSessionRequest
 
 @ExperimentalOpenIdConnect
-actual class PlatformCodeAuthFlow(
+public actual class PlatformCodeAuthFlow(
     windowTarget: String = "",
     windowFeatures: String = "width=1000,height=800,resizable=yes,scrollbars=yes",
     redirectOrigin: String,
@@ -48,11 +48,10 @@ actual class PlatformCodeAuthFlow(
         return Result.success(Unit)
     }
 
-    companion object {
+    public companion object {
         @ExperimentalOpenIdConnect
-        fun handleRedirect() {
+        public fun handleRedirect() {
             WebPopupFlow.handleRedirect()
         }
     }
 }
-

@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>ForbiddenPublicDataClass:PlatformCodeAuthFlow.jvm.kt$UrlOpenException : Exception</ID>
+    <ID>ReturnCount:PlatformCodeAuthFlow.kt$@OptIn(ExperimentalContracts::class) internal fun &lt;T> getErrorResult(responseUri: Url?): Result&lt;T>?</ID>
+    <ID>SwallowedException:PlatformCodeAuthFlow.jvm.kt$e: Exception</ID>
+    <ID>SwallowedException:PlatformCodeAuthFlow.jvm.kt$e: SocketException</ID>
+    <ID>UnusedParameter:WebPopupFlow.kt$event: MessageEvent</ID>
+    <ID>UnusedParameter:WebPopupFlow.kt$targetOrigin: String</ID>
+    <ID>UnusedParameter:WebPopupFlow.kt$url: String</ID>
+    <ID>UnusedPrivateProperty:PlatformCodeAuthFlow.ios.kt$PlatformCodeAuthFlow$ephemeralBrowserSession: Boolean = false</ID>
+    <ID>Wrapping:PlatformCodeAuthFlow.ios.kt$PresentationContext$NSObject(), ASWebAuthenticationPresentationContextProvidingProtocol</ID>
+  </CurrentIssues>
+</SmellBaseline>

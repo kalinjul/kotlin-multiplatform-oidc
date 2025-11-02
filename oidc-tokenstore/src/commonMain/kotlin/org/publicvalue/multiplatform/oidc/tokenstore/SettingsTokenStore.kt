@@ -1,5 +1,6 @@
 package org.publicvalue.multiplatform.oidc.tokenstore
 
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
@@ -7,7 +8,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
 
-enum class SettingsKey {
+public enum class SettingsKey {
     ACCESSTOKEN, REFRESHTOKEN, IDTOKEN
 }
 
@@ -16,9 +17,9 @@ enum class SettingsKey {
  * iOS implementation: [KeychainTokenStore]
  */
 @ExperimentalOpenIdConnect
-open class SettingsTokenStore(
+public open class SettingsTokenStore(
     private val settings: SettingsStore
-): TokenStore() {
+) : TokenStore() {
 
     private val mutex = Mutex(false)
 
@@ -30,29 +31,32 @@ open class SettingsTokenStore(
     private var refreshTokenLoaded = false
     private var idTokenLoaded = false
 
-    override val accessTokenFlow get() = flow {
-        if (!accessTokenLoaded) {
-            accessTokenLoaded = true
-            currentAccessToken.value = getAccessToken()
+    override val accessTokenFlow: Flow<String?>
+        get() = flow {
+            if (!accessTokenLoaded) {
+                accessTokenLoaded = true
+                currentAccessToken.value = getAccessToken()
+            }
+            emitAll(currentAccessToken)
         }
-        emitAll(currentAccessToken)
-    }
 
-    override val refreshTokenFlow get() = flow {
-        if (!refreshTokenLoaded) {
-            refreshTokenLoaded = true
-            currentRefreshToken.value = getRefreshToken()
+    override val refreshTokenFlow: Flow<String?>
+        get() = flow {
+            if (!refreshTokenLoaded) {
+                refreshTokenLoaded = true
+                currentRefreshToken.value = getRefreshToken()
+            }
+            emitAll(currentRefreshToken)
         }
-        emitAll(currentRefreshToken)
-    }
 
-    override val idTokenFlow get() = flow {
-        if (!idTokenLoaded) {
-            idTokenLoaded = true
-            currentIdToken.value = getIdToken()
+    override val idTokenFlow: Flow<String?>
+        get() = flow {
+            if (!idTokenLoaded) {
+                idTokenLoaded = true
+                currentIdToken.value = getIdToken()
+            }
+            emitAll(currentIdToken)
         }
-        emitAll(currentIdToken)
-    }
 
     override suspend fun getAccessToken(): String? {
         return runOrNull {
@@ -129,7 +133,7 @@ open class SettingsTokenStore(
 }
 
 // catch anything to avoid crashes on ios
-inline fun <T> runOrNull(block: () -> T?): T? = try {
+private inline fun <T> runOrNull(block: () -> T?): T? = try {
     block()
 } catch (t: Throwable) {
     println(t.message)

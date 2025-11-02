@@ -6,6 +6,6 @@ import kotlin.native.ObjCName
 
 @OptIn(ExperimentalObjCName::class)
 @ObjCName(swiftName = "EndSessionRequest", name = "EndSessionRequest", exact = true)
-data class EndSessionRequest(
-    val url: Url
+public data class EndSessionRequest(
+    public val url: Url
 )

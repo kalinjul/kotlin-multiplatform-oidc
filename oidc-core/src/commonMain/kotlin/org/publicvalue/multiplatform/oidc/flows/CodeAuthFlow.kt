@@ -23,8 +23,8 @@ import kotlin.native.ObjCName
  */
 @OptIn(ExperimentalObjCName::class)
 @ObjCName(swiftName = "AbstractCodeAuthFlow", name = "AbstractCodeAuthFlow", exact = true)
-interface CodeAuthFlow {
-    val client: OpenIdConnectClient
+public interface CodeAuthFlow {
+    public val client: OpenIdConnectClient
 
     /**
      * For some reason the default parameter is not available in Platform implementations,
@@ -32,7 +32,7 @@ interface CodeAuthFlow {
      */
     @Suppress("unused")
     @Throws(CancellationException::class, OpenIdConnectException::class)
-    suspend fun getAccessToken(): AccessTokenResponse = getAccessToken(null, null)
+    public suspend fun getAccessToken(): AccessTokenResponse = getAccessToken(null, null)
 
     /**
      * Start the authorization flow to request an access token.
@@ -46,7 +46,12 @@ interface CodeAuthFlow {
         message = "Use getAccessToken(configureAuthUrl, configureTokenExchange) instead",
         replaceWith = ReplaceWith("getAccessToken(configureAuthUrl = null, configureTokenExchange = configure)")
     )
-    suspend fun getAccessToken(configure: (HttpRequestBuilder.() -> Unit)? = null): AccessTokenResponse = getAccessToken(null, configure)
+    public suspend fun getAccessToken(
+        configure: (HttpRequestBuilder.() -> Unit)? = null
+    ): AccessTokenResponse = getAccessToken(
+        null,
+        configure
+    )
 
     /**
      * Start the authorization flow to request an access token.
@@ -57,7 +62,7 @@ interface CodeAuthFlow {
      */
     @Suppress("unused")
     @Throws(CancellationException::class, OpenIdConnectException::class)
-    suspend fun getAccessToken(
+    public suspend fun getAccessToken(
         configureAuthUrl: (URLBuilder.() -> Unit)? = null,
         configureTokenExchange: (HttpRequestBuilder.() -> Unit)? = null
     ): AccessTokenResponse = wrapExceptions {
@@ -68,12 +73,18 @@ interface CodeAuthFlow {
         return getAccessToken(request, configureTokenExchange)
     }
 
-    private suspend fun getAccessToken(request: AuthCodeRequest, configure: (HttpRequestBuilder.() -> Unit)?): AccessTokenResponse {
+    private suspend fun getAccessToken(
+        request: AuthCodeRequest,
+        configure: (HttpRequestBuilder.() -> Unit)?
+    ): AccessTokenResponse {
         val codeResponse = getAuthorizationCode(request)
         return codeResponse.fold(
             onSuccess = {
                 exchangeToken(
-                    client = client, request = request, result = it, configure = configure
+                    client = client,
+                    request = request,
+                    result = it,
+                    configure = configure
                 )
             },
             onFailure = {
@@ -88,7 +99,7 @@ interface CodeAuthFlow {
      * @return the Authorization Code.
      */
     @Throws(CancellationException::class, OpenIdConnectException::class)
-    abstract suspend fun getAuthorizationCode(request: AuthCodeRequest): AuthCodeResponse
+    public suspend fun getAuthorizationCode(request: AuthCodeRequest): AuthCodeResponse
 
     private suspend fun exchangeToken(
         client: OpenIdConnectClient,
@@ -96,18 +107,18 @@ interface CodeAuthFlow {
         result: AuthCodeResult,
         configure: (HttpRequestBuilder.() -> Unit)?
     ): AccessTokenResponse {
-            if (result.code != null) {
-                if (!request.validateState(result.state ?: "")) {
-                    throw OpenIdConnectException.AuthenticationFailure("Invalid state")
-                }
-                val response = client.exchangeToken(request, result.code, configure)
-                val nonce = response.id_token?.parseJwt()?.payload?.nonce
-                if (!request.validateNonce(nonce ?: "")) {
-                    throw OpenIdConnectException.AuthenticationFailure("Invalid nonce")
-                }
-                return response
-            } else {
-                throw OpenIdConnectException.AuthenticationFailure("No auth code", cause = null)
+        if (result.code != null) {
+            if (!request.validateState(result.state ?: "")) {
+                throw OpenIdConnectException.AuthenticationFailure("Invalid state")
             }
+            val response = client.exchangeToken(request, result.code, configure)
+            val nonce = response.idToken?.parseJwt()?.payload?.nonce
+            if (!request.validateNonce(nonce ?: "")) {
+                throw OpenIdConnectException.AuthenticationFailure("Invalid nonce")
+            }
+            return response
+        } else {
+            throw OpenIdConnectException.AuthenticationFailure("No auth code", cause = null)
+        }
     }
 }

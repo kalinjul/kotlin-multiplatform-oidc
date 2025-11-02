@@ -12,7 +12,7 @@ import org.publicvalue.multiplatform.oidc.types.EndSessionRequest
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
-expect class PlatformCodeAuthFlow: CodeAuthFlow, EndSessionFlow {
+internal expect class PlatformCodeAuthFlow : CodeAuthFlow, EndSessionFlow {
     // in kotlin 2.0, we need to implement methods in expect classes
     override suspend fun getAuthorizationCode(request: AuthCodeRequest): AuthCodeResponse
     override suspend fun endSession(request: EndSessionRequest): EndSessionResponse
@@ -34,7 +34,11 @@ internal fun <T> getErrorResult(responseUri: Url?): Result<T>? {
             )
         }
     } else {
-        return Result.failure(OpenIdConnectException.AuthenticationFailure(message = "No Uri in callback from browser (was ${responseUri})."))
+        return Result.failure(
+            OpenIdConnectException.AuthenticationFailure(
+                message = "No Uri in callback from browser (was $responseUri)."
+            )
+        )
     }
     return null
 }

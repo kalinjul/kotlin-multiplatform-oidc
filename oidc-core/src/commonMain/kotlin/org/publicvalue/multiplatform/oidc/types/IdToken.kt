@@ -8,7 +8,7 @@ import kotlin.native.ObjCName
  */
 @OptIn(ExperimentalObjCName::class)
 @ObjCName("IdToken", "IdToken", exact = true)
-data class IdToken(
+public data class IdToken(
     /** Required: Issuer (must match the discovery document) **/
     val iss: String?,
     /** Required: Subject identifier **/
@@ -20,7 +20,7 @@ data class IdToken(
     /** Required: Issued at **/
     val iat: Long?,
     /** Optional time of user auth **/
-    val auth_time: Long?,
+    val authTime: Long?,
     /** Optional, if present, must match request nonce **/
     val nonce: String?,
     /** Optional: Authentication Context Class Reference **/
@@ -34,7 +34,7 @@ data class IdToken(
     val alg: String?,
     val kid: String?,
     /** Optional: Access Token hash **/
-    val at_hash: String?,
+    val atHash: String?,
 
     val additionalClaims: Map<String, Any?>
 )

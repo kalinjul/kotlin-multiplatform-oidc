@@ -8,18 +8,18 @@ import kotlin.native.ObjCName
 
 @OptIn(ExperimentalObjCName::class)
 @ObjCName(swiftName = "AuthCodeRequest", name = "AuthCodeRequest", exact = true)
-data class AuthCodeRequest(
-    val url: Url,
-    val config: OpenIdConnectClientConfig,
-    val pkce: Pkce,
-    val state: String,
-    val nonce: String?
+public data class AuthCodeRequest(
+    public val url: Url,
+    public val config: OpenIdConnectClientConfig,
+    public val pkce: Pkce,
+    public val state: String,
+    public val nonce: String?
 )
 
-fun AuthCodeRequest.validateState(state: String): Boolean {
+public fun AuthCodeRequest.validateState(state: String): Boolean {
     return state == this.state
 }
 
-fun AuthCodeRequest.validateNonce(nonce: String): Boolean {
+public fun AuthCodeRequest.validateNonce(nonce: String): Boolean {
     return config.disableNonce || nonce == this.nonce
 }

@@ -1,10 +1,8 @@
 package org.publicvalue.multiplatform.oidc.ktor
 
 import io.ktor.client.HttpClient
-import io.ktor.client.plugins.auth.Auth
 import io.ktor.client.plugins.auth.authProvider
 import io.ktor.client.plugins.auth.providers.BearerAuthProvider
-import io.ktor.client.plugins.plugin
 
 /**
  * Force the Auth plugin to invoke the `loadTokens` block again on the next client request.
@@ -13,6 +11,6 @@ import io.ktor.client.plugins.plugin
 */
 
 @Suppress("unused")
-fun HttpClient.clearTokens() {
+public fun HttpClient.clearTokens() {
     authProvider<BearerAuthProvider>()?.clearToken()
 }

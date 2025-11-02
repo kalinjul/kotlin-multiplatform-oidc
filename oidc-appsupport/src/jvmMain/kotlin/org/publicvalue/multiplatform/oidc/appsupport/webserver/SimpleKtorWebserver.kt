@@ -35,7 +35,7 @@ class SimpleKtorWebserver(
             contentType = ContentType.parse("text/html")
         )
     }
-): Webserver {
+) : Webserver {
     private var server: CIOApplicationEngine? = null
 
     override suspend fun startAndWaitForRedirect(redirectPath: String): Url {

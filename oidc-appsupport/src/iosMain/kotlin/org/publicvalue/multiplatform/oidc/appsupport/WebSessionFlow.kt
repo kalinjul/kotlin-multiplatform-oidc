@@ -12,7 +12,7 @@ import platform.Foundation.NSURL
 
 internal class WebSessionFlow(
     private val ephemeralBrowserSession: Boolean,
-): WebAuthenticationFlow {
+) : WebAuthenticationFlow {
     /**
      * @return null if user cancelled the flow (closed the web view)
      */

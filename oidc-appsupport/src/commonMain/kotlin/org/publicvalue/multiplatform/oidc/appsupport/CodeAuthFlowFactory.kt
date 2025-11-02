@@ -8,7 +8,7 @@ import kotlin.native.HiddenFromObjC
 
 @OptIn(ExperimentalObjCRefinement::class)
 @HiddenFromObjC
-interface CodeAuthFlowFactory {
-    fun createAuthFlow(client: OpenIdConnectClient): CodeAuthFlow
-    fun createEndSessionFlow(client: OpenIdConnectClient): EndSessionFlow
+public interface CodeAuthFlowFactory {
+    public fun createAuthFlow(client: OpenIdConnectClient): CodeAuthFlow
+    public fun createEndSessionFlow(client: OpenIdConnectClient): EndSessionFlow
 }

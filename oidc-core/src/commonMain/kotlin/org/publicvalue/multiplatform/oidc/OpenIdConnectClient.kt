@@ -25,7 +25,7 @@ import kotlin.native.ObjCName
  * Setting an endpoint manually will override a discovered endpoint.
  * @param block configuration closure. See [OpenIdConnectClientConfig]
  */
-fun OpenIdConnectClient(
+public fun OpenIdConnectClient(
     discoveryUri: String? = null,
     block: OpenIdConnectClientConfig.() -> Unit
 ): OpenIdConnectClient {
@@ -40,25 +40,25 @@ fun OpenIdConnectClient(
     message = "Use DefaultOpenIdConnectClient constructor instead",
     replaceWith = ReplaceWith("DefaultOpenIdConnectClient(httpClient, config)")
 )
-fun OpenIdConnectClient(
+public fun OpenIdConnectClient(
     httpClient: HttpClient = DefaultHttpClient,
     config: OpenIdConnectClientConfig,
-) : OpenIdConnectClient {
+): OpenIdConnectClient {
     return DefaultOpenIdConnectClient(httpClient = httpClient, config = config)
 }
 
 @OptIn(ExperimentalObjCName::class)
 @ObjCName(swiftName = "OpenIdConnectClientProtocol", name = "OpenIdConnectClientProtocol", exact = true)
-interface OpenIdConnectClient {
-    val config: OpenIdConnectClientConfig
-    val discoverDocument: OpenIdConnectConfiguration?
+public interface OpenIdConnectClient {
+    public val config: OpenIdConnectClientConfig
+    public val discoverDocument: OpenIdConnectConfiguration?
 
     /**
      * Creates an Authorization Code Request which can then be executed by the
      * [CodeAuthFlow][org.publicvalue.multiplatform.oidc.flows.CodeAuthFlow].
      */
     @Throws(OpenIdConnectException::class)
-    fun createAuthorizationCodeRequest(configure: (URLBuilder.() -> Unit)? = null): AuthCodeRequest
+    public fun createAuthorizationCodeRequest(configure: (URLBuilder.() -> Unit)? = null): AuthCodeRequest
 
     /**
      * Creates an End Session Request which can then be executed by the
@@ -67,7 +67,7 @@ interface OpenIdConnectClient {
      * @param idToken used for id_token_hint, recommended by openid spec, optional
      */
     @Throws(OpenIdConnectException::class)
-    fun createEndSessionRequest(idToken: String?, configure: (URLBuilder.() -> Unit)? = null): EndSessionRequest
+    public fun createEndSessionRequest(idToken: String?, configure: (URLBuilder.() -> Unit)? = null): EndSessionRequest
 
     /**
      * Discover OpenID Connect Configuration using the discovery endpoint.
@@ -78,7 +78,7 @@ interface OpenIdConnectClient {
      * @param configure configuration closure to configure the http request builder with
      */
     @Throws(OpenIdConnectException::class, CancellationException::class)
-    suspend fun discover(configure: (HttpRequestBuilder.() -> Unit)? = null)
+    public suspend fun discover(configure: (HttpRequestBuilder.() -> Unit)? = null)
 
     /**
      * RP-initiated logout.
@@ -90,7 +90,7 @@ interface OpenIdConnectClient {
      * be used for discovery if necessary)
      */
     @Throws(OpenIdConnectException::class, CancellationException::class)
-    suspend fun endSession(
+    public suspend fun endSession(
         idToken: String,
         configure: (HttpRequestBuilder.() -> Unit)? = null
     ): HttpStatusCode
@@ -104,7 +104,7 @@ interface OpenIdConnectClient {
      * be used for discovery if necessary)
      */
     @Throws(OpenIdConnectException::class, CancellationException::class)
-    suspend fun revokeToken(
+    public suspend fun revokeToken(
         token: String,
         configure: (HttpRequestBuilder.() -> Unit)? = null
     ): HttpStatusCode
@@ -122,7 +122,7 @@ interface OpenIdConnectClient {
      * @return [AccessTokenResponse]
      */
     @Throws(OpenIdConnectException::class, CancellationException::class)
-    suspend fun exchangeToken(
+    public suspend fun exchangeToken(
         authCodeRequest: AuthCodeRequest,
         code: String,
         configure: (HttpRequestBuilder.() -> Unit)? = null
@@ -140,7 +140,7 @@ interface OpenIdConnectClient {
      */
     @Throws(OpenIdConnectException::class, CancellationException::class)
     @Suppress("Unused")
-    suspend fun refreshToken(
+    public suspend fun refreshToken(
         refreshToken: String,
         configure: (HttpRequestBuilder.() -> Unit)? = null
     ): AccessTokenResponse
@@ -157,7 +157,7 @@ interface OpenIdConnectClient {
      */
     @Throws(OpenIdConnectException::class, CancellationException::class)
     @Suppress("MemberVisibilityCanBePrivate")
-    suspend fun createAccessTokenRequest(
+    public suspend fun createAccessTokenRequest(
         authCodeRequest: AuthCodeRequest,
         code: String,
         configure: (HttpRequestBuilder.() -> Unit)? = null
@@ -175,7 +175,7 @@ interface OpenIdConnectClient {
      */
     @Throws(OpenIdConnectException::class, CancellationException::class)
     @Suppress("MemberVisibilityCanBePrivate")
-    suspend fun createRefreshTokenRequest(
+    public suspend fun createRefreshTokenRequest(
         refreshToken: String,
         configure: (HttpRequestBuilder.() -> Unit)? = null
     ): TokenRequest

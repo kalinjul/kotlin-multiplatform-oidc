@@ -10,4 +10,4 @@ import kotlin.experimental.ExperimentalObjCName
 /**
  * Uses the keychain to save and retrieve tokens.
  */
-class IosKeychainTokenStore: SettingsTokenStore(settings = IosKeychainSettingsStore())
+public class IosKeychainTokenStore : SettingsTokenStore(settings = IosKeychainSettingsStore())

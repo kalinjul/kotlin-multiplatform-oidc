@@ -10,7 +10,7 @@ import org.publicvalue.multiplatform.oidc.flows.EndSessionResponse
 import org.publicvalue.multiplatform.oidc.types.AuthCodeRequest
 import org.publicvalue.multiplatform.oidc.types.EndSessionRequest
 
-actual class PlatformCodeAuthFlow internal constructor(
+internal actual class PlatformCodeAuthFlow internal constructor(
     private val webFlow: WebAuthenticationFlow,
     actual override val client: OpenIdConnectClient,
 ) : CodeAuthFlow, EndSessionFlow {

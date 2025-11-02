@@ -28,24 +28,28 @@ private val json by lazy {
 
 @OptIn(ExperimentalObjCName::class)
 @ObjCName("Jwt", "Jwt", exact = true)
-data class Jwt(
-    val header: JwtHeader,
-    val payload: IdToken,
-    val signature: String?
+public data class Jwt(
+    public val header: JwtHeader,
+    public val payload: IdToken,
+    public val signature: String?
 ) {
-    companion object {
+    public companion object {
 
         /**
-         * JWTs are either encoded using JWS Compact Serialization (signed, 3 parts) or JWE Compact Serialization (encrypted, 5 parts).
+         * JWTs are either encoded using JWS Compact Serialization (signed, 3 parts)
+         * or JWE Compact Serialization (encrypted, 5 parts).
          * We only support JWS Compact Serialization.
          */
         @OptIn(ExperimentalObjCRefinement::class)
         @Throws(OpenIdConnectException::class)
         @HiddenFromObjC
-        fun parse(string: String): Jwt {
+        public fun parse(string: String): Jwt {
             val parts = string.split('.')
+            @Suppress("MagicNumber")
             if (parts.size > 3) {
-                throw OpenIdConnectException.UnsupportedFormat("Expected at most 3 JWT token parts (this may be an encrypted token which is unsupported)")
+                throw OpenIdConnectException.UnsupportedFormat(
+                    "Expected at most 3 JWT token parts (this may be an encrypted token which is unsupported)"
+                )
             } else if (parts.size < 2) {
                 throw OpenIdConnectException.UnsupportedFormat("Expected at least 2 JWT token parts")
             }
@@ -71,23 +75,23 @@ data class Jwt(
 @OptIn(ExperimentalObjCName::class)
 @Serializable
 @ObjCName("JwtHeader", "JwtHeader", exact = true)
-data class JwtHeader(
+public data class JwtHeader(
     /** Required: Algorithm. Possible values: https://datatracker.ietf.org/doc/html/rfc7518#section-3.1 **/
-    val alg: String,
-    val jku: String?,
-    val jwk: String?,
-    val kid: String?,
-    val x5u: String?,
-    val x5c: String?,
-    val x5t: String?,
+    public val alg: String,
+    public val jku: String?,
+    public val jwk: String?,
+    public val kid: String?,
+    public val x5u: String?,
+    public val x5c: String?,
+    public val x5t: String?,
     @SerialName("x5t#S256")
-    val x5tS256: String?,
-    val typ: String?,
-    val cty: String?,
-    val crit: String?
+    public val x5tS256: String?,
+    public val typ: String?,
+    public val cty: String?,
+    public val crit: String?
 ) {
-    companion object {
-        fun parse(string: String): JwtHeader {
+    public companion object {
+        public fun parse(string: String): JwtHeader {
             return json.decodeFromString<JwtHeader>(string)
         }
     }
@@ -96,12 +100,12 @@ data class JwtHeader(
 @OptIn(ExperimentalObjCName::class)
 @JvmInline
 @ObjCName("JwtClaims", "JwtClaims", exact = true)
-value class JwtClaims(
-    val claims: Map<String, Any?>
+public value class JwtClaims(
+    public val claims: Map<String, Any?>
 ) {
-    companion object {
+    public companion object {
         @Throws(OpenIdConnectException::class)
-        fun parse(string: String): JwtClaims {
+        public fun parse(string: String): JwtClaims {
             try {
                 val map = json.decodeFromString<Map<String, JsonElement>>(string)
                     .map { entry ->
@@ -117,9 +121,9 @@ value class JwtClaims(
 
         private fun JsonElement.toKotlin(
             key: String
-        ): Any? = when(this) {
-            is JsonArray -> this.mapIndexed { index, it ->
-                it.toKotlin("$key-$index")
+        ): Any? = when (this) {
+            is JsonArray -> this.mapIndexed { index, jsonElement ->
+                jsonElement.toKotlin("$key-$index")
             }
 
             is JsonObject -> this.map { (key, value) ->
@@ -148,14 +152,14 @@ private fun JwtClaims.toOpenIdConnectToken(): IdToken =
         aud = claims["aud"]?.parseListOrString(),
         exp = claims["exp"] as Long?,
         iat = claims["iat"] as Long?,
-        auth_time = claims["auth_time"] as Long?,
+        authTime = claims["auth_time"] as Long?,
         nonce = claims["nonce"] as String?,
         acr = claims["acr"] as String?,
         amr = claims["amr"]?.parseListOrString(),
         azp = claims["azp"] as String?,
         alg = claims["alg"] as String?,
         kid = claims["kid"] as String?,
-        at_hash = claims["at_hash"] as String?,
+        atHash = claims["at_hash"] as String?,
         additionalClaims = claims
     )
 
@@ -169,4 +173,4 @@ private fun Any.parseListOrString() =
 
 // this is visible from swift as JwtKt.parse()
 @Throws(OpenIdConnectException::class)
-fun String.parseJwt() = Jwt.parse(this)
+public fun String.parseJwt(): Jwt = Jwt.parse(this)

@@ -5,7 +5,7 @@ import kotlin.native.HiddenFromObjC
 
 @OptIn(ExperimentalObjCRefinement::class)
 @HiddenFromObjC
-class InMemorySettingsStore: SettingsStore {
+class InMemorySettingsStore : SettingsStore {
 
     private val memory = hashMapOf<String, String>()
 

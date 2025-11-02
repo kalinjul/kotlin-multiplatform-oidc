@@ -7,7 +7,7 @@ import kotlin.native.ObjCName
 
 @OptIn(ExperimentalObjCName::class)
 @ObjCName(swiftName = "TokenRequest", name = "TokenRequest", exact = true)
-data class TokenRequest(
-    val request: HttpStatement,
-    val formParameters: Parameters
+public data class TokenRequest(
+    public val request: HttpStatement,
+    public val formParameters: Parameters
 )

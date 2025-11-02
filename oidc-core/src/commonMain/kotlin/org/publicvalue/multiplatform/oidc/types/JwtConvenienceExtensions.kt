@@ -1,4 +1,3 @@
-@file:Suppress("Unused")
 package org.publicvalue.multiplatform.oidc.types
 
 import org.publicvalue.multiplatform.oidc.OpenIdConnectException
@@ -9,11 +8,11 @@ import kotlin.native.ObjCName
 
 @OptIn(ExperimentalObjCName::class)
 @ObjCName("JwtParser", "JwtParser", exact = true)
-object JwtParser {
+public object JwtParser {
     /**
      * Objective-C convenience function
      * @see Jwt.parse
      */
     @Throws(OpenIdConnectException::class)
-    fun parse(from: String) = Jwt.parse(from)
+    public fun parse(from: String): Jwt = Jwt.parse(from)
 }
