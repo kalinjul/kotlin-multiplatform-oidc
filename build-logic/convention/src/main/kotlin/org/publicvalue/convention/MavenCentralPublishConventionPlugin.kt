@@ -14,7 +14,8 @@ import org.gradle.plugins.signing.SigningExtension
 import org.jetbrains.compose.internal.utils.getLocalProperty
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
-class MavenCentralPublishConventionPlugin : Plugin<Project> {
+@Suppress("unused")
+internal class MavenCentralPublishConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
             with(pluginManager) {
@@ -24,6 +25,7 @@ class MavenCentralPublishConventionPlugin : Plugin<Project> {
             }
 
             extensions.configure<KotlinMultiplatformExtension> {
+                explicitApi()
                 if (pluginManager.hasPlugin("com.android.library")) {
                     androidTarget {
                         publishLibraryVariants("release")

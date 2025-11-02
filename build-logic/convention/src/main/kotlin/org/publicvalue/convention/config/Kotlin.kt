@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 fun Project.configureKotlin() {
     configureJava()
     extensions.configure<KotlinMultiplatformExtension> {
+        explicitApi()
         compilerOptions {
             freeCompilerArgs.add("-Xexpect-actual-classes")
         }

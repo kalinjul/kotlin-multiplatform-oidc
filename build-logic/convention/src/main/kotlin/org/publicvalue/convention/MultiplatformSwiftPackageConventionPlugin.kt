@@ -9,7 +9,8 @@ import java.io.File
 /**
  * No JVM target, only android + ios
  */
-class MultiplatformSwiftPackageConventionPlugin : Plugin<Project> {
+@Suppress("unused")
+internal class MultiplatformSwiftPackageConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
             with(pluginManager) {

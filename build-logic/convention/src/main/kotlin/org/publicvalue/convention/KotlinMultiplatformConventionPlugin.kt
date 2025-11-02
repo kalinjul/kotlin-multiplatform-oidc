@@ -9,7 +9,8 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.publicvalue.convention.config.configureKotlin
 
-class KotlinMultiplatformConventionPlugin : Plugin<Project> {
+@Suppress("unused")
+internal class KotlinMultiplatformConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
             // use mobile plugin and add jvm target

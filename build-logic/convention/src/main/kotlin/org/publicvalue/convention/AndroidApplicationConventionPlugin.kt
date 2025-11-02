@@ -6,7 +6,8 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
 import org.publicvalue.convention.config.configureKotlinAndroid
 
-class AndroidApplicationConventionPlugin : Plugin<Project> {
+@Suppress("unused")
+internal class AndroidApplicationConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
             with(pluginManager) {
