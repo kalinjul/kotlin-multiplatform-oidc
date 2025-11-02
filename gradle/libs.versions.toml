@@ -55,6 +55,10 @@ russhwolf = "1.3.0"
 kotlincrypto-hash = "0.8.0"
 material-icons = "1.7.3"
 
+#Tooling
+# https://github.com/detekt/detekt/releases
+detekt = "1.23.8"
+
 [libraries]
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidxActivity" }
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "androidxAppCompat" }
@@ -121,6 +125,10 @@ russhwolf-multiplatformsettings = { module = "com.russhwolf:multiplatform-settin
 kotlincrypto-hash-bom = { module = "org.kotlincrypto.hash:bom", version.ref = "kotlincrypto-hash" }
 kotlincrypto-hash-sha2 = { module = "org.kotlincrypto.hash:sha2", version.ref = "kotlincrypto-hash" }
 
+detekt-gradle = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt" }
+detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
+detekt-rules-libraries = { module = "io.gitlab.arturbosch.detekt:detekt-rules-libraries", version.ref = "detekt" }
+
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
@@ -133,3 +141,5 @@ kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", versi
 nexusPublish = { id = "io.github.gradle-nexus.publish-plugin", version.ref = "nexus-publish-plugin" }
 multiplatform-swiftpackage = { id = "io.github.luca992.multiplatform-swiftpackage", version.ref = "multiplatform-swiftpackage" }
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+custom-detekt = { id = "org.publicvalue.convention.detekt" }
