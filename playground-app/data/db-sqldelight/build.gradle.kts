@@ -1,9 +1,12 @@
+import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
+
 plugins {
     id("org.publicvalue.convention.kotlin.multiplatform")
     alias(libs.plugins.sqldelight)
 }
 
 kotlin {
+    explicitApi = ExplicitApiMode.Disabled
     jvm()
     sourceSets {
         val commonMain by getting {
