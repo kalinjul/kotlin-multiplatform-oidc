@@ -10,14 +10,15 @@ import org.publicvalue.multiplatform.oidc.flows.EndSessionResponse
 import org.publicvalue.multiplatform.oidc.types.AuthCodeRequest
 import org.publicvalue.multiplatform.oidc.types.EndSessionRequest
 
-internal actual class PlatformCodeAuthFlow internal constructor(
+public actual class PlatformCodeAuthFlow internal constructor(
     private val webFlow: WebAuthenticationFlow,
     actual override val client: OpenIdConnectClient,
 ) : CodeAuthFlow, EndSessionFlow {
 
     // TODO extract common code
     actual override suspend fun getAuthorizationCode(request: AuthCodeRequest): AuthCodeResponse {
-        val result = webFlow.startWebFlow(request.url, request.url.parameters.get("redirect_uri").orEmpty())
+        val result =
+            webFlow.startWebFlow(request.url, request.url.parameters.get("redirect_uri").orEmpty())
 
         return if (result is WebAuthenticationFlowResult.Success) {
             when (val error = getErrorResult<AuthCodeResult>(result.responseUri)) {
@@ -26,6 +27,7 @@ internal actual class PlatformCodeAuthFlow internal constructor(
                     val code = result.responseUri.parameters.get("code")
                     Result.success(AuthCodeResult(code, state))
                 }
+
                 else -> {
                     return error
                 }
@@ -37,13 +39,17 @@ internal actual class PlatformCodeAuthFlow internal constructor(
     }
 
     actual override suspend fun endSession(request: EndSessionRequest): EndSessionResponse {
-        val result = webFlow.startWebFlow(request.url, request.url.parameters.get("post_logout_redirect_uri").orEmpty())
+        val result = webFlow.startWebFlow(
+            request.url,
+            request.url.parameters.get("post_logout_redirect_uri").orEmpty()
+        )
 
         return if (result is WebAuthenticationFlowResult.Success) {
             when (val error = getErrorResult<Unit>(result.responseUri)) {
                 null -> {
                     return EndSessionResponse.success(Unit)
                 }
+
                 else -> {
                     return error
                 }

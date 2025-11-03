@@ -117,8 +117,8 @@ val tokens = flow.getAccessToken()
 
 Perform refresh or endSession:
 ```kotlin
-tokens.refresh_token?.let { client.refreshToken(refreshToken = it) }
-tokens.id_token?.let { client.endSession(idToken = it) }
+tokens.refreshToken?.let { client.refreshToken(refreshToken = it) }
+tokens.idToken?.let { client.endSession(idToken = it) }
 ```
 
 # Token Store (experimental)
@@ -183,14 +183,14 @@ If you have configured a ```postLogoutRedirectUri``` and want to perform a Logou
 you can use the endSession flow:
 ```kotlin
 val flow = authFlowFactory.createEndSessionFlow(client)
-tokens.id_token?.let { flow.endSession(it) }
+tokens.idToken?.let { flow.endSession(it) }
 ```
 That way, browser cookies should be cleared so the next time a client wants to login, it get's prompted for username and password again.
 
 # JWT Parsing
 We provide simple JWT parsing (without any validation):
 ```kotlin
-val jwt = tokens.id_token?.let { Jwt.parse(it) }
+val jwt = tokens.idToken?.let { Jwt.parse(it) }
 println(jwt?.payload?.aud) // print audience
 println(jwt?.payload?.iss) // print issuer
 println(jwt?.payload?.additionalClaims?.get("email")) // get claim

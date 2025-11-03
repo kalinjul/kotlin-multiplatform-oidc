@@ -10,7 +10,6 @@ import io.ktor.client.plugins.auth.providers.BearerAuthProvider
  * @see https://youtrack.jetbrains.com/issue/KTOR-4759/Auth-BearerAuthProvider-caches-result-of-loadToken-until-process-death
 */
 
-@Suppress("unused")
 public fun HttpClient.clearTokens() {
     authProvider<BearerAuthProvider>()?.clearToken()
 }

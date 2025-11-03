@@ -24,7 +24,7 @@ internal class DetektPlugin : Plugin<Project> {
                         "src/iosMain",
                         "src/jvmMain",
                         "src/wasmJsMain",
-                        "scr/androidMain"
+                        "src/androidMain"
                     )
                 }
 

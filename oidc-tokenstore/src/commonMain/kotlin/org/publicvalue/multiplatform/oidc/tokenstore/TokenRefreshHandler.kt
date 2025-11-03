@@ -18,7 +18,6 @@ import kotlin.native.ObjCName
 @ExperimentalOpenIdConnect
 @OptIn(ExperimentalObjCName::class, ExperimentalObjCRefinement::class)
 @ObjCName("TokenRefreshHandler", "TokenRefreshHandler", exact = true)
-@Suppress("unused")
 public class TokenRefreshHandler(
     private val tokenStore: TokenStore,
 ) {
@@ -54,15 +53,15 @@ public class TokenRefreshHandler(
             } else {
                 val refreshToken = tokenStore.getRefreshToken()
                 var newTokens = refreshCall(refreshToken ?: "")
-                if (newTokens.refresh_token == null) {
-                    newTokens = newTokens.copy(refresh_token = refreshToken)
+                if (newTokens.refreshToken == null) {
+                    newTokens = newTokens.copy(refreshToken = refreshToken)
                 }
                 tokenStore.saveTokens(newTokens)
 
                 OauthTokens(
-                    accessToken = newTokens.access_token,
-                    refreshToken = newTokens.refresh_token,
-                    idToken = newTokens.id_token
+                    accessToken = newTokens.accessToken,
+                    refreshToken = newTokens.refreshToken,
+                    idToken = newTokens.idToken
                 )
             }
         }

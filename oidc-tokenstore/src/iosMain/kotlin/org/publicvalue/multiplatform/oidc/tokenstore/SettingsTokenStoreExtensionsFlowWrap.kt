@@ -7,15 +7,12 @@ import kotlin.experimental.ExperimentalObjCName
 
 @OptIn(ExperimentalOpenIdConnect::class, ExperimentalObjCName::class)
 @ObjCName("accessToken")
-@Suppress("unused")
 public val TokenStore.accessTokenFlowWrap: FlowWrapper<String?> get() = this.accessTokenFlow.wrap()
 
 @OptIn(ExperimentalOpenIdConnect::class, ExperimentalObjCName::class)
 @ObjCName("refreshToken")
-@Suppress("unused")
 public val TokenStore.refreshTokenFlowWrap: FlowWrapper<String?> get() = this.refreshTokenFlow.wrap()
 
 @OptIn(ExperimentalOpenIdConnect::class, ExperimentalObjCName::class)
 @ObjCName("idToken")
-@Suppress("unused")
 public val TokenStore.idTokenFlowWrap: FlowWrapper<String?> get() = this.idTokenFlow.wrap()

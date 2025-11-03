@@ -139,7 +139,6 @@ public interface OpenIdConnectClient {
      * @return [AccessTokenResponse]
      */
     @Throws(OpenIdConnectException::class, CancellationException::class)
-    @Suppress("Unused")
     public suspend fun refreshToken(
         refreshToken: String,
         configure: (HttpRequestBuilder.() -> Unit)? = null

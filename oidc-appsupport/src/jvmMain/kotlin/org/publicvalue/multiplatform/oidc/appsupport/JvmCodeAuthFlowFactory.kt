@@ -7,7 +7,6 @@ import org.publicvalue.multiplatform.oidc.appsupport.webserver.SimpleKtorWebserv
 import org.publicvalue.multiplatform.oidc.appsupport.webserver.Webserver
 import org.publicvalue.multiplatform.oidc.flows.EndSessionFlow
 
-@Suppress("unused")
 @ExperimentalOpenIdConnect
 public class JvmCodeAuthFlowFactory(
     private val webserverProvider: () -> Webserver = { SimpleKtorWebserver() },

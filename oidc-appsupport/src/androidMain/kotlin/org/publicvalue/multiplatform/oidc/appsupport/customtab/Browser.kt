@@ -1,19 +1,17 @@
 package org.publicvalue.multiplatform.oidc.appsupport.customtab
 
-@Suppress("unused")
-object Browser {
-    const val CHROME = "com.android.chrome"
-    const val CHROME_BETA = "com.chrome.beta"
-    const val FIREFOX = "org.mozilla.firefox"
-    const val FIREFOX_BETA = "org.mozilla.firefox_beta"
-    const val FIREFOX_KLAR = "org.mozilla.klar"
-    const val SAMSUNG = "com.sec.android.app.sbrowser"
-    const val BRAVE = "com.brave.browser"
-    const val DUCKDUCKGO = "com.duckduckgo.mobile.android"
-    const val ECOSIA = "com.ecosia.android"
-    const val EDGE = "com.microsoft.emmx"
-    const val VIVALDI = "com.vivaldi.browser"
-    const val YANDEX = "com.yandex.browser"
-    const val TOR = "org.torproject.torbrowser"
+public object Browser {
+    public const val CHROME: String = "com.android.chrome"
+    public const val CHROME_BETA: String = "com.chrome.beta"
+    public const val FIREFOX: String = "org.mozilla.firefox"
+    public const val FIREFOX_BETA: String = "org.mozilla.firefox_beta"
+    public const val FIREFOX_KLAR: String = "org.mozilla.klar"
+    public const val SAMSUNG: String = "com.sec.android.app.sbrowser"
+    public const val BRAVE: String = "com.brave.browser"
+    public const val DUCKDUCKGO: String = "com.duckduckgo.mobile.android"
+    public const val ECOSIA: String = "com.ecosia.android"
+    public const val EDGE: String = "com.microsoft.emmx"
+    public const val VIVALDI: String = "com.vivaldi.browser"
+    public const val YANDEX: String = "com.yandex.browser"
+    public const val TOR: String = "org.torproject.torbrowser"
 }
-

@@ -124,7 +124,6 @@ public data class Endpoints(
      *      tokenEndpoint = "token"
      * }
      */
-    @Suppress("unused")
     public fun baseUrl(baseUrl: String, block: Endpoints.() -> Unit) {
         val endpoints = Endpoints()
         endpoints.block()

@@ -37,9 +37,9 @@ public abstract class TokenStore {
 @ExperimentalOpenIdConnect
 public suspend fun TokenStore.saveTokens(tokens: AccessTokenResponse) {
     saveTokens(
-        accessToken = tokens.access_token,
-        refreshToken = tokens.refresh_token,
-        idToken = tokens.id_token
+        accessToken = tokens.accessToken,
+        refreshToken = tokens.refreshToken,
+        idToken = tokens.idToken
     )
 }
 

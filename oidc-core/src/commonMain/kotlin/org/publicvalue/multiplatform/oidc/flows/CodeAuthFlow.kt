@@ -30,7 +30,6 @@ public interface CodeAuthFlow {
      * For some reason the default parameter is not available in Platform implementations,
      * so this provides an empty parameter method instead.
      */
-    @Suppress("unused")
     @Throws(CancellationException::class, OpenIdConnectException::class)
     public suspend fun getAccessToken(): AccessTokenResponse = getAccessToken(null, null)
 
@@ -40,7 +39,6 @@ public interface CodeAuthFlow {
      * @param configure configuration closure to configure the http request builder with (will _not_
      * be used for discovery if necessary)
      */
-    @Suppress("unused")
     @Throws(CancellationException::class, OpenIdConnectException::class)
     @Deprecated(
         message = "Use getAccessToken(configureAuthUrl, configureTokenExchange) instead",
@@ -60,7 +58,6 @@ public interface CodeAuthFlow {
      * @param configureTokenExchange configuration closure to configure the http request builder with (will _not_
      * be used for discovery if necessary)
      */
-    @Suppress("unused")
     @Throws(CancellationException::class, OpenIdConnectException::class)
     public suspend fun getAccessToken(
         configureAuthUrl: (URLBuilder.() -> Unit)? = null,

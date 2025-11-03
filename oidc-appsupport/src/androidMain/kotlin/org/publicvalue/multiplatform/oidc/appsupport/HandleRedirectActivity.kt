@@ -25,7 +25,7 @@ internal const val EXTRA_KEY_REDIRECTURL = "redirecturl"
 internal const val EXTRA_KEY_URL = "url"
 internal const val EXTRA_KEY_PACKAGE_NAME = "package"
 
-class HandleRedirectActivity : ComponentActivity() {
+internal class HandleRedirectActivity : ComponentActivity() {
 
     companion object {
         /** Set to use your own web settings when using WebView **/
@@ -45,7 +45,6 @@ class HandleRedirectActivity : ComponentActivity() {
         @ExperimentalOpenIdConnect
         var configureWebView: (WebView) -> Unit = defaultConfigureWebView
 
-
         @ExperimentalOpenIdConnect
         var createWebView: ComponentActivity.(redirectUrl: String?) -> WebView = { redirectUrl ->
             WebView(this).apply {
@@ -57,7 +56,9 @@ class HandleRedirectActivity : ComponentActivity() {
                         request: WebResourceRequest?
                     ): Boolean {
                         val requestedUrl = request?.url
-                        return if (requestedUrl != null && redirectUrl != null && requestedUrl.toString().startsWith(redirectUrl)) {
+                        return if (requestedUrl != null && redirectUrl != null &&
+                            requestedUrl.toString().startsWith(redirectUrl)
+                        ) {
                             intent.data = request.url
                             setResult(RESULT_OK, intent)
                             finish()
@@ -71,10 +72,16 @@ class HandleRedirectActivity : ComponentActivity() {
         }
 
         @ExperimentalOpenIdConnect
-        var showWebView: ComponentActivity.(url: String, redirectUrl: String?, epheremalSession: Boolean) -> Unit = { url, redirectUrl, epheremalSession ->
+        var showWebView: ComponentActivity.(
+            url: String,
+            redirectUrl: String?,
+            epheremalSession: Boolean
+        ) -> Unit = { url, redirectUrl, epheremalSession ->
             val webView = createWebView(this, redirectUrl)
             ViewCompat.setOnApplyWindowInsetsListener(webView) { view, windowInsets ->
-                val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout())
+                val insets = windowInsets.getInsets(
+                    WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
+                )
                 view.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                     topMargin = insets.top
                     leftMargin = insets.left
@@ -167,7 +174,6 @@ class HandleRedirectActivity : ComponentActivity() {
             showWebView(url, redirectUrl, ephemeralSession ?: false)
             return
         }
-
 
         val intent = builder.build()
 

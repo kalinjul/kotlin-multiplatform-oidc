@@ -6,7 +6,7 @@ import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
 import org.publicvalue.multiplatform.oidc.flows.EndSessionFlow
 
 @ExperimentalOpenIdConnect
-class WasmCodeAuthFlowFactory(
+public class WasmCodeAuthFlowFactory(
     private val windowTarget: String = "",
     private val windowFeatures: String = "width=1000,height=800,resizable=yes,scrollbars=yes",
     private val redirectOrigin: String = window.location.origin

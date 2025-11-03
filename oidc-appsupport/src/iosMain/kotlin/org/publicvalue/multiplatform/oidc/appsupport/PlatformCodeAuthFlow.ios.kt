@@ -43,8 +43,8 @@ public actual class PlatformCodeAuthFlow internal constructor(
             return if (result is WebAuthenticationFlowResult.Success) {
                 when (val error = getErrorResult<AuthCodeResult>(result.responseUri)) {
                     null -> {
-                        val state = result.responseUri.parameters["state"]
-                        val code = result.responseUri.parameters["code"]
+                        val state = result.responseUri?.parameters["state"]
+                        val code = result.responseUri?.parameters["code"]
                         Result.success(AuthCodeResult(code, state))
                     }
 

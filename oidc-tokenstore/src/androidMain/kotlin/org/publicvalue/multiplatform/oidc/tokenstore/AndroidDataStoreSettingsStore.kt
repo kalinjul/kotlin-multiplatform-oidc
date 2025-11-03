@@ -18,11 +18,11 @@ import javax.crypto.SecretKey
 import javax.crypto.spec.GCMParameterSpec
 
 @RequiresApi(Build.VERSION_CODES.M)
-class AndroidDataStoreSettingsStore(
+public class AndroidDataStoreSettingsStore(
     private val context: Context
 ) : SettingsStore {
 
-    companion object {
+    private companion object {
         private const val ANDROID_KEY_STORE = "AndroidKeyStore"
         private const val KEY_ALIAS = "OidcDataStoreEncryptionKey"
         private const val TRANSFORMATION = "AES/GCM/NoPadding"
@@ -36,6 +36,7 @@ class AndroidDataStoreSettingsStore(
     )
 
     // Get or generate the secret key
+    @Suppress("MagicNumber")
     private val secretKey: SecretKey by lazy {
         val keyStore = KeyStore.getInstance(ANDROID_KEY_STORE).apply { load(null) }
         if (keyStore.containsAlias(KEY_ALIAS)) {

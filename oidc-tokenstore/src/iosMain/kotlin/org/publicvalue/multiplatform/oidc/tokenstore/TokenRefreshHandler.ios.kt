@@ -13,7 +13,6 @@ import kotlin.coroutines.cancellation.CancellationException
  */
 @OptIn(ExperimentalOpenIdConnect::class)
 @Throws(OpenIdConnectException::class, CancellationException::class)
-@Suppress("unused")
 public suspend fun TokenRefreshHandler.refreshAndSaveToken(
     refresher: TokenRefresher,
     oldAccessToken: String

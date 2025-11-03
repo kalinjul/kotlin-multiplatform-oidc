@@ -19,7 +19,6 @@ public class FlowWrapper<out T> internal constructor(
     /**
      *  Cancels the flow
      */
-    @Suppress("unused")
     public fun cancel() {
         isCancelled = true
         job?.cancel()
@@ -31,7 +30,6 @@ public class FlowWrapper<out T> internal constructor(
      * @param onCompletion callback called when flow completes. It will be provided with a non
      * nullable Throwable if it completes abnormally
      */
-    @Suppress("unused")
     public fun collect(
         onEach: (T) -> Unit,
         onCompletion: (Throwable?) -> Unit

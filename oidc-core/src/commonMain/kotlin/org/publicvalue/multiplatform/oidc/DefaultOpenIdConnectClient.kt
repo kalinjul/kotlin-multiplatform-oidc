@@ -230,7 +230,6 @@ public class DefaultOpenIdConnectClient(
     }
 
     @Throws(OpenIdConnectException::class, CancellationException::class)
-    @Suppress("Unused")
     override suspend fun refreshToken(
         refreshToken: String,
         configure: (HttpRequestBuilder.() -> Unit)?
@@ -327,11 +326,14 @@ public class DefaultOpenIdConnectClient(
                 val accessTokenResponse: AccessTokenResponse = response.call.body()
                 accessTokenResponse
             } catch (e: NoTransformationFoundException) {
+                println("xui 1")
                 throw response.toOpenIdConnectException(e)
             } catch (e: JsonConvertException) {
+                println("xui 2")
                 throw response.toOpenIdConnectException(e)
             }
         } else {
+            println("xui 3")
             throw response.toOpenIdConnectException()
         }
     }

@@ -15,11 +15,11 @@ import org.publicvalue.multiplatform.oidc.tokenstore.removeTokens
  */
 @ExperimentalOpenIdConnect
 @Suppress("unused")
-open class DefaultOpenIdConnectAuthenticator(
-    open val tokenStore: TokenStore,
-    open val refreshHandler: TokenRefreshHandler,
-    open val client: OpenIdConnectClient
-): OpenIdConnectAuthenticator() {
+public open class DefaultOpenIdConnectAuthenticator(
+    public open val tokenStore: TokenStore,
+    public open val refreshHandler: TokenRefreshHandler,
+    public open val client: OpenIdConnectClient
+) : OpenIdConnectAuthenticator() {
     override suspend fun getAccessToken(): String? {
         return tokenStore.getAccessToken()
     }

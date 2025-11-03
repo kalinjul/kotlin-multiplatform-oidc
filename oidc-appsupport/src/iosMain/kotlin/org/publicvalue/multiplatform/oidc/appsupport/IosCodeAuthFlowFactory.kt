@@ -6,7 +6,6 @@ import kotlin.experimental.ExperimentalObjCRefinement
 
 @OptIn(ExperimentalObjCRefinement::class)
 @HiddenFromObjC
-@Suppress("unused")
 public class IosCodeAuthFlowFactory(
     private val ephemeralBrowserSession: Boolean = false
 ) : CodeAuthFlowFactory {

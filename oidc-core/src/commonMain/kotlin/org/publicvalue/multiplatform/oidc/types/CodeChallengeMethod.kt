@@ -19,7 +19,6 @@ public enum class CodeChallengeMethod(
     /**
      *  code_challenge = code_verifier
      */
-    @Suppress("unused")
     PLAIN("plain"),
 
     /**

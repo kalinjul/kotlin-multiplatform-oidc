@@ -5,10 +5,9 @@ import android.os.Build
 import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
 
 @ExperimentalOpenIdConnect
-@Suppress("unused")
-class AndroidSettingsTokenStore(
+public class AndroidSettingsTokenStore(
     context: Context
-): SettingsTokenStore(
+) : SettingsTokenStore(
     settings = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
         AndroidDataStoreSettingsStore(context)
     } else {
