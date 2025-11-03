@@ -17,7 +17,7 @@ private val IDP_SETTINGS_KEY = "idp_settings_key"
 private val CLIENT_SETTINGS_KEY = "client_settings_key"
 private val TOKEN_DATA_KEY = "token_data_key"
 
-class OidcSettingsStore(
+internal class OidcSettingsStore(
     private val settingsStore: SettingsStore
 ) {
     private val idpSettings = MutableStateFlow<IdpSettings?>(null)

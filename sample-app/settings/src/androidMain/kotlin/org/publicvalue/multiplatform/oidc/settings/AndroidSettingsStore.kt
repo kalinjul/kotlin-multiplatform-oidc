@@ -4,11 +4,11 @@ import android.content.Context
 import com.russhwolf.settings.SharedPreferencesSettings
 import com.russhwolf.settings.get
 
-class AndroidSettingsStore(
+public class AndroidSettingsStore(
     context: Context
 ) : SettingsStore {
 
-    val settings = SharedPreferencesSettings(context.getSharedPreferences(context.packageName, Context.MODE_PRIVATE))
+    private val settings = SharedPreferencesSettings(context.getSharedPreferences(context.packageName, Context.MODE_PRIVATE))
     override suspend fun get(key: String): String? {
         return settings[key]
     }

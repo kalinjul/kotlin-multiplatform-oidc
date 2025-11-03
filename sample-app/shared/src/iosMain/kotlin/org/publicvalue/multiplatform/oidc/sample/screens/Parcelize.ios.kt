@@ -1,3 +1,3 @@
 package org.publicvalue.multiplatform.oidc.sample.screens
 
-actual interface CommonParcelable
+public actual interface CommonParcelable

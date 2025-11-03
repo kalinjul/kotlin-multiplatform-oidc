@@ -61,18 +61,18 @@ struct Readme {
     
     // Request access token using code auth flow:
     func _2() async {
-        let flow = CodeAuthFlow(client: client)
-        do {
-            let tokens = try await flow.getAccessToken()
-        } catch {
-            print(error)
-        }
+        // let flow = CodeAuthFlow(client: client)
+        // do {
+        //     let tokens = try await flow.getAccessToken()
+        // } catch {
+        //     print(error)
+        // }
     }
     
     // Perform refresh or endSession:
     func _3() async throws {
-        try await client.refreshToken(refreshToken: tokens.refresh_token!)
-        try await client.endSession(idToken: tokens.id_token!)
+        try await client.refreshToken(refreshToken: tokens.refreshToken!)
+        try await client.endSession(idToken: tokens.idToken!)
     }
     
     // customize endSession request:
@@ -82,28 +82,28 @@ struct Readme {
             requestBuilder.url.parameters.append(name: "custom_parameter", value: "value")
         }
         // endSession with Web flow (opens browser and handles post_logout_redirect_uri redirect)
-        let flow = CodeAuthFlow(client: client)
-        try await flow.endSession(idToken: "<idToken>", configureEndSessionUrl: { urlBuilder in
-        })
+        // let flow = CodeAuthFlow(client: client)
+        // try await flow.endSession(idToken: "<idToken>", configureEndSessionUrl: { urlBuilder in
+        // })
         
     }
     
     // customize getAccessToken request:
     func _3b() async throws {
-        let flow = CodeAuthFlow(client: client)
-        try await flow.getAccessToken(
-            configureAuthUrl: { urlBuilder in
-                urlBuilder.parameters.append(name: "prompt", value: "login")
-            },
-            configureTokenExchange: { requestBuilder in
-                requestBuilder.headers.append(name: "additionalHeaderField", value: "value")
-            }
-        )
+        // let flow = CodeAuthFlow(client: client)
+        // try await flow.getAccessToken(
+        //     configureAuthUrl: { urlBuilder in
+        //         urlBuilder.parameters.append(name: "prompt", value: "login")
+        //     },
+        //     configureTokenExchange: { requestBuilder in
+        //         requestBuilder.headers.append(name: "additionalHeaderField", value: "value")
+        //     }
+        // )
     }
     
     // We provide simple JWT parsing:
     func _4() {
-        let jwt = tokens.id_token.map { try! JwtParser.shared.parse(from: $0) }
+        let jwt = tokens.idToken.map { try! JwtParser.shared.parse(from: $0) }
         print(jwt?.payload.aud) // print audience
         print(jwt?.payload.iss) // print issuer
         print(jwt?.payload.additionalClaims["email"]) // get claim

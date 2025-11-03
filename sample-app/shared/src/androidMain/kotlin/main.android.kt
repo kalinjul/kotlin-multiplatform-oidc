@@ -7,7 +7,7 @@ import org.publicvalue.multiplatform.oidc.sample.screens.HomeScreen
 import org.publicvalue.multiplatform.oidc.settings.AndroidSettingsStore
 
 @Composable
-fun MainView(
+public fun MainView(
     authFlowFactory: AndroidCodeAuthFlowFactory
 ) {
     val context = LocalContext.current

@@ -31,7 +31,7 @@ import org.publicvalue.multiplatform.oidc.types.CodeChallengeMethod
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Config(
+internal fun Config(
     state: ConfigUiState,
     modifier: Modifier = Modifier
 ) {
@@ -114,7 +114,7 @@ fun Config(
 }
 
 @Composable
-fun Config(
+internal fun Config(
     modifier: Modifier = Modifier,
     discoveryUrl: String?,
     authEndpoint: String?,

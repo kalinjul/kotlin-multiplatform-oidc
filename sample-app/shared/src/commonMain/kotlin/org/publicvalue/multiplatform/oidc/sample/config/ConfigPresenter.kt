@@ -16,7 +16,7 @@ import org.publicvalue.multiplatform.oidc.sample.domain.ClientSettings
 import org.publicvalue.multiplatform.oidc.sample.domain.IdpSettings
 import kotlin.String
 
-class ConfigPresenter(
+internal class ConfigPresenter(
     val navigator: Navigator
 ): ErrorPresenter<ConfigUiState> {
 
@@ -105,12 +105,12 @@ class ConfigPresenter(
                                     idpSettings.discoveryUrl?.let {
                                         val config = d.downloadConfiguration(it)
                                         val newSettings = idpSettings.copy(
-                                            endpointToken = config.token_endpoint,
-                                            endpointAuthorization = config.authorization_endpoint,
-                                            endpointDeviceAuthorization = config.device_authorization_endpoint,
-                                            endpointEndSession = config.end_session_endpoint,
-                                            endpointIntrospection = config.introspection_endpoint,
-                                            endpointUserInfo = config.userinfo_endpoint
+                                            endpointToken = config.tokenEndpoint,
+                                            endpointAuthorization = config.authorizationEndpoint,
+                                            endpointDeviceAuthorization = config.deviceAuthorizationEndpoint,
+                                            endpointEndSession = config.endSessionEndpoint,
+                                            endpointIntrospection = config.introspectionEndpoint,
+                                            endpointUserInfo = config.userinfoEndpoint
                                         )
                                         settingsStore.setIdpSettings(newSettings)
                                     }

@@ -29,7 +29,7 @@ import org.publicvalue.multiplatform.oidc.sample.domain.TokenData
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Home(
+internal fun Home(
     state: HomeUiState,
     modifier: Modifier = Modifier
 ) {
@@ -66,7 +66,7 @@ fun Home(
 }
 
 @Composable
-fun Home(
+internal fun Home(
     modifier: Modifier = Modifier,
     loginEnabled: Boolean,
     refreshEnabled: Boolean,

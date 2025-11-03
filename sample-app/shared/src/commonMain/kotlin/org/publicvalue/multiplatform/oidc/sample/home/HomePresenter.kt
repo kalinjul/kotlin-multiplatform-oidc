@@ -20,7 +20,7 @@ import org.publicvalue.multiplatform.oidc.sample.screens.ConfigScreen
 import org.publicvalue.multiplatform.oidc.types.Jwt
 import org.publicvalue.multiplatform.oidc.types.remote.AccessTokenResponse
 
-class HomePresenter(
+internal class HomePresenter(
     val authFlowFactory: CodeAuthFlowFactory,
     val navigator: Navigator
 ): ErrorPresenter<HomeUiState> {
@@ -65,16 +65,16 @@ class HomePresenter(
 
         suspend fun updateTokenResponse(newTokens: AccessTokenResponse) {
             tokenResponse = newTokens
-            val jwt = newTokens.id_token?.let { Jwt.parse(it) }
+            val jwt = newTokens.idToken?.let { Jwt.parse(it) }
             println("parsed jwt: $jwt")
             subject = jwt?.payload?.sub
             settingsStore.setTokenData(
                 org.publicvalue.multiplatform.oidc.sample.domain.TokenData(
-                    accessToken = newTokens.access_token,
-                    refreshToken = newTokens.refresh_token,
-                    idToken = newTokens.id_token,
-                    expiresIn = newTokens.expires_in ?: 0,
-                    issuedAt = newTokens.received_at
+                    accessToken = newTokens.accessToken,
+                    refreshToken = newTokens.refreshToken,
+                    idToken = newTokens.idToken,
+                    expiresIn = newTokens.expiresIn ?: 0,
+                    issuedAt = newTokens.receivedAt
                 )
             )
         }
@@ -112,19 +112,19 @@ class HomePresenter(
                                             val url = URLBuilder(endpoint)
                                             val response = DefaultHttpClient.submitForm {
                                                 url(url.build())
-                                                parameter("token", it.access_token)
+                                                parameter("token", it.accessToken)
                                             }
                                             response.status
                                         } else {
                                             if (event.useWebFlow) {
                                                 val flow = authFlowFactory.createEndSessionFlow(client)
-                                                val result = flow.endSession(it.id_token ?: "")
+                                                val result = flow.endSession(it.idToken ?: "")
                                                 if (result.isFailure) {
                                                     setErrorMessage(result.exceptionOrNull()?.message ?: "Unknown error")
                                                 }
                                                 if (result.isSuccess) HttpStatusCode.OK else null
                                             } else {
-                                                client.endSession(idToken = it.id_token ?: "")
+                                                client.endSession(idToken = it.idToken ?: "")
                                             }
                                         }
                                         if (result?.isSuccess() == true || result == HttpStatusCode.Found) {
@@ -152,7 +152,7 @@ class HomePresenter(
                         scope.launch {
                             catchErrorMessage {
                                 tokenResponse?.let {
-                                    val newTokens = client.refreshToken(refreshToken = it.refresh_token ?: "")
+                                    val newTokens = client.refreshToken(refreshToken = it.refreshToken ?: "")
                                     updateTokenResponse(newTokens)
                                 }
                             }

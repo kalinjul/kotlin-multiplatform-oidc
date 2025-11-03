@@ -8,7 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun FormHeadline(
+internal fun FormHeadline(
     modifier:Modifier = Modifier,
     text: String
 ) {

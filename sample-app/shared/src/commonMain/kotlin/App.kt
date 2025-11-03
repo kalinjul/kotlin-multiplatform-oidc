@@ -9,7 +9,7 @@ import org.publicvalue.multiplatform.oidc.sample.circuit.UiFactories.Companion.p
 import org.publicvalue.multiplatform.oidc.sample.circuit.UiFactories.Companion.uiFactories
 
 @Composable
-fun App(
+internal fun App(
     backstack: SaveableBackStack,
     navigator: Navigator,
     settingsStore: SettingsStore,

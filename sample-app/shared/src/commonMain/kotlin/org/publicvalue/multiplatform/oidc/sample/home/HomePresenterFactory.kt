@@ -10,7 +10,7 @@ import org.publicvalue.multiplatform.oidc.appsupport.CodeAuthFlowFactory
 import org.publicvalue.multiplatform.oidc.sample.screens.HomeScreen
 
 
-class HomePresenterFactory(val authFlowFactory: CodeAuthFlowFactory): Presenter.Factory {
+internal class HomePresenterFactory(val authFlowFactory: CodeAuthFlowFactory): Presenter.Factory {
     override fun create(
         screen: Screen,
         navigator: Navigator,
@@ -23,7 +23,7 @@ class HomePresenterFactory(val authFlowFactory: CodeAuthFlowFactory): Presenter.
     }
 }
 
-object HomeUiFactory: Ui.Factory {
+internal object HomeUiFactory: Ui.Factory {
     override fun create(screen: Screen, context: CircuitContext): Ui<*>? = when (screen) {
         is HomeScreen -> {
             ui<HomeUiState> { state, modifier ->

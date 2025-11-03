@@ -7,7 +7,7 @@ import org.publicvalue.multiplatform.oidc.sample.home.HomePresenterFactory
 import org.publicvalue.multiplatform.oidc.sample.home.HomeUiFactory
 
 
-class UiFactories {
+internal class UiFactories {
 
     companion object {
         val uiFactories = listOf(

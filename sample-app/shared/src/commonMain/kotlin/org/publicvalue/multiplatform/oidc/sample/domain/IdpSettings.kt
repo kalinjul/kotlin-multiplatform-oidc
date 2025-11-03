@@ -3,7 +3,7 @@ package org.publicvalue.multiplatform.oidc.sample.domain
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class IdpSettings(
+internal data class IdpSettings(
     val discoveryUrl: String? = null,
     val endpointToken: String? = null,
     val endpointAuthorization: String? = null,

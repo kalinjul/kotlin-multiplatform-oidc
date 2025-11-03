@@ -28,7 +28,7 @@ import org.publicvalue.multiplatform.oidc.settings.SettingsStore
 //}
 
 @Composable
-fun Root(
+internal fun Root(
     circuit: Circuit,
     navigator: Navigator,
     backstack: SaveableBackStack,

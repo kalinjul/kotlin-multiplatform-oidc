@@ -6,7 +6,7 @@ import org.publicvalue.multiplatform.oidc.tokenstore.TokenRefreshHandler
 import org.publicvalue.multiplatform.oidc.tokenstore.TokenStore
 
 @OptIn(ExperimentalOpenIdConnect::class)
-object ReadmeAndroid {
+internal object ReadmeAndroid {
 
     val client = OpenIdConnectClient {  }
     val tokenStore: TokenStore = TODO()

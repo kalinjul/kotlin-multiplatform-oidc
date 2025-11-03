@@ -8,13 +8,13 @@ import org.publicvalue.multiplatform.oidc.sample.domain.IdpSettings
 import org.publicvalue.multiplatform.oidc.types.CodeChallengeMethod
 import kotlin.reflect.KProperty1
 
-data class ConfigUiState(
+internal data class ConfigUiState(
     val clientSettings: ClientSettings,
     val idpSettings: IdpSettings,
     val eventSink: (ConfigUiEvent) -> Unit
 ): CircuitUiState
 
-sealed interface ConfigUiEvent: CircuitUiEvent {
+internal sealed interface ConfigUiEvent: CircuitUiEvent {
     data object NavigateBack: ConfigUiEvent
 
     data class ChangeDiscoveryUrl(val discoveryUrl: String): ConfigUiEvent

@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 import org.publicvalue.multiplatform.oidc.types.CodeChallengeMethod
 
 @Serializable
-data class ClientSettings(
+internal data class ClientSettings(
     val name: String? = null,
     val client_id: String? = null,
     val client_secret: String? = null,

@@ -4,8 +4,10 @@ import com.slack.circuit.foundation.rememberCircuitNavigator
 import org.publicvalue.multiplatform.oidc.appsupport.IosCodeAuthFlowFactory
 import org.publicvalue.multiplatform.oidc.sample.screens.HomeScreen
 import org.publicvalue.multiplatform.oidc.settings.IosSettingsStore
+import platform.UIKit.UIViewController
 
-fun MainViewController() = ComposeUIViewController {
+@Suppress("FunctionName")
+public fun MainViewController(): UIViewController = ComposeUIViewController {
 
     val factory = IosCodeAuthFlowFactory()
 
