@@ -4,8 +4,6 @@ description: Analyze
 runs:
   using: "composite"
   steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
     - uses: ./.github/workflows/actions/prepare
     - name: Library code Analysis
       shell: bash
