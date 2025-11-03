@@ -1,5 +1,7 @@
 package org.publicvalue.multiplatform.oidc.appsupport
 
+import io.ktor.http.Url
+import io.ktor.http.toURI
 import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
 import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
 import org.publicvalue.multiplatform.oidc.OpenIdConnectException
