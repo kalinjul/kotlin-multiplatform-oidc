@@ -326,14 +326,11 @@ public class DefaultOpenIdConnectClient(
                 val accessTokenResponse: AccessTokenResponse = response.call.body()
                 accessTokenResponse
             } catch (e: NoTransformationFoundException) {
-                println("xui 1")
                 throw response.toOpenIdConnectException(e)
             } catch (e: JsonConvertException) {
-                println("xui 2")
                 throw response.toOpenIdConnectException(e)
             }
         } else {
-            println("xui 3")
             throw response.toOpenIdConnectException()
         }
     }
