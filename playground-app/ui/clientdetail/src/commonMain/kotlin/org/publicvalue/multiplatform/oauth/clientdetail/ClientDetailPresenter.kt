@@ -167,7 +167,7 @@ class ClientDetailPresenter(
                     client?.let { client ->
                         if (client.use_webflow_logout) {
                             scope.launch {
-                                logoutWebFlow(client, idToken = tokenResponse?.id_token.orEmpty())
+                                logoutWebFlow(client, idToken = tokenResponse?.idToken.orEmpty())
                                     .collect {
                                         when (it) {
                                             is EndSessionResult.Request -> {
@@ -183,7 +183,7 @@ class ClientDetailPresenter(
                             }
                         } else {
                             scope.launch {
-                                logoutPost(client, idToken = tokenResponse?.id_token.orEmpty())
+                                logoutPost(client, idToken = tokenResponse?.idToken.orEmpty())
                                     .collect {
                                         when (it) {
                                             is EndSessionResult.Request -> {

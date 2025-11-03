@@ -16,8 +16,8 @@ import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
 
 @ExperimentalOpenIdConnect
 public class SimpleKtorWebserver(
-    val port: Int = 8080,
-    val createResponse: suspend RoutingContext.() -> Unit = {
+    public val port: Int = 8080,
+    public val createResponse: suspend RoutingContext.() -> Unit = {
         call.respondText(
             status = HttpStatusCode.OK,
             text = """
