@@ -55,6 +55,7 @@ internal class WebPopupFlow(
     }
 
     internal companion object {
+        @OptIn(ExperimentalWasmJsInterop::class)
         @ExperimentalOpenIdConnect
         fun handleRedirect() {
             if (window.opener != null) {
@@ -77,6 +78,7 @@ private fun postMessage(url: String, targetOrigin: String) {
     js("window.opener.postMessage(url, targetOrigin)")
 }
 
+@OptIn(ExperimentalWasmJsInterop::class)
 private fun closeWindow(delay: Int = 100) {
     window.setTimeout(handler = {
         window.close()
