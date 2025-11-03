@@ -10,6 +10,7 @@ plugins {
     alias(libs.plugins.multiplatform.swiftpackage) apply false
     alias(libs.plugins.dokka)
     alias(libs.plugins.nexusPublish)
+    alias(libs.plugins.custom.detekt)
 }
 
 subprojects {
