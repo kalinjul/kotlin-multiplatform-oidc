@@ -24,7 +24,7 @@ fun Client.createOidcClient(idp: Identityprovider): OpenIdConnectClient {
 private fun CodeChallengeMethod.toLibrary(): org.publicvalue.multiplatform.oidc.types.CodeChallengeMethod {
     return when (this) {
         CodeChallengeMethod.S256 -> org.publicvalue.multiplatform.oidc.types.CodeChallengeMethod.S256
-        CodeChallengeMethod.plain -> org.publicvalue.multiplatform.oidc.types.CodeChallengeMethod.plain
-        CodeChallengeMethod.off -> org.publicvalue.multiplatform.oidc.types.CodeChallengeMethod.off
+        CodeChallengeMethod.plain -> org.publicvalue.multiplatform.oidc.types.CodeChallengeMethod.PLAIN
+        CodeChallengeMethod.off -> org.publicvalue.multiplatform.oidc.types.CodeChallengeMethod.OFF
     }
 }
