@@ -8,7 +8,6 @@ import platform.UIKit.UIViewController
 
 @Suppress("FunctionName")
 public fun MainViewController(): UIViewController = ComposeUIViewController {
-
     val factory = IosCodeAuthFlowFactory()
 
     val backstack = rememberSaveableBackStack(listOf(HomeScreen))

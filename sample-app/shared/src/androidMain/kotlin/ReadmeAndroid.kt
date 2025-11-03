@@ -6,15 +6,16 @@ import org.publicvalue.multiplatform.oidc.tokenstore.TokenRefreshHandler
 import org.publicvalue.multiplatform.oidc.tokenstore.TokenStore
 
 @OptIn(ExperimentalOpenIdConnect::class)
+@Suppress("unused")
 internal object ReadmeAndroid {
 
-    val client = OpenIdConnectClient {  }
+    val client = OpenIdConnectClient { }
     val tokenStore: TokenStore = TODO()
     val token: String = TODO()
     val refreshHandler: TokenRefreshHandler = TODO()
 
     // okhttp
-    suspend fun `okhttp`() {
+    fun okhttp() {
         val authenticator = OpenIdConnectAuthenticator {
             getAccessToken { tokenStore.getAccessToken() }
             refreshTokens { oldAccessToken -> refreshHandler.refreshAndSaveToken(client, oldAccessToken) }

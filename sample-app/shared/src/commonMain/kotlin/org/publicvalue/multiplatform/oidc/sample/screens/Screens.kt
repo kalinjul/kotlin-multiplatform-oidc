@@ -4,6 +4,7 @@ import com.slack.circuit.runtime.screen.Screen
 
 @CommonParcelize
 internal object HomeScreen : SampleAppScreen(name = "Home()")
+
 @CommonParcelize
 internal object ConfigScreen : SampleAppScreen(name = "Config()")
 

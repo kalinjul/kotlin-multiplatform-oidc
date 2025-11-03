@@ -9,7 +9,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -35,11 +34,6 @@ internal fun Config(
     state: ConfigUiState,
     modifier: Modifier = Modifier
 ) {
-    var greetingText by remember { mutableStateOf("Hello, World!") }
-    var showImage by remember { mutableStateOf(false) }
-
-//    val settingsStore = LocalSettingsStore.current
-
     Scaffold(
         topBar = {
             TopAppBar(
@@ -60,10 +54,10 @@ internal fun Config(
             authEndpoint = state.idpSettings.endpointAuthorization,
             tokenEndpoint = state.idpSettings.endpointToken,
             endSessionEndpoint = state.idpSettings.endpointEndSession,
-            clientId = state.clientSettings.client_id,
-            clientSecret = state.clientSettings.client_secret,
+            clientId = state.clientSettings.clientId,
+            clientSecret = state.clientSettings.clientSecret,
             scope = state.clientSettings.scope,
-            challengeMethod = state.clientSettings.code_challenge_method,
+            challengeMethod = state.clientSettings.codeChallengeMethod,
             onChangeAuthEndpoint = {
                 state.eventSink(
                     ConfigUiEvent.ChangeEndpointAuthorization(it)
@@ -134,10 +128,11 @@ internal fun Config(
     onChangeChallengeMethod: (CodeChallengeMethod) -> Unit,
     onClickDiscover: () -> Unit
 ) {
-    Column(modifier
-        .fillMaxWidth()
-        .padding(bottom = 8.dp)
-        .verticalScroll(rememberScrollState()),
+    Column(
+        modifier
+            .fillMaxWidth()
+            .padding(bottom = 8.dp)
+            .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         var discoveryUrl by remember(discoveryUrl == null) {
@@ -168,7 +163,10 @@ internal fun Config(
         FormHeadline(text = "IDP")
         SingleLineInput(
             value = discoveryUrl,
-            onValueChange = { discoveryUrl = it; onChangeDiscoveryUrl(it) },
+            onValueChange = {
+                discoveryUrl = it
+                onChangeDiscoveryUrl(it)
+            },
             label = { Text("Discovery URL") }
         )
         TextButton(onClick = { onClickDiscover() }) {
@@ -177,35 +175,53 @@ internal fun Config(
         FormHeadline(text = "Endpoints")
         SingleLineInput(
             value = authEndpoint,
-            onValueChange = { authEndpoint = it; onChangeAuthEndpoint(it)},
+            onValueChange = {
+                authEndpoint = it
+                onChangeAuthEndpoint(it)
+            },
             label = { Text("Authorization") }
         )
         SingleLineInput(
             value = tokenEndpoint,
-            onValueChange = { tokenEndpoint = it; onChangeTokenEndpoint(it)},
+            onValueChange = {
+                tokenEndpoint = it
+                onChangeTokenEndpoint(it)
+            },
             label = { Text("Token") }
         )
         SingleLineInput(
             value = endSessionEndpoint,
-            onValueChange = { endSessionEndpoint = it; onChangeEndSessionEndpoint(it)},
+            onValueChange = {
+                endSessionEndpoint = it
+                onChangeEndSessionEndpoint(it)
+            },
             label = { Text("End Session") }
         )
 
         FormHeadline(text = "Client")
         SingleLineInput(
             value = clientId,
-            onValueChange = { clientId = it; onChangeClientId(it)},
+            onValueChange = {
+                clientId = it
+                onChangeClientId(it)
+            },
             label = { Text("Client ID") }
         )
         SingleLineInput(
             value = clientSecret,
-            onValueChange = { clientSecret = it; onChangeClientSecret(it)},
+            onValueChange = {
+                clientSecret = it
+                onChangeClientSecret(it)
+            },
             label = { Text("Client secret") }
         )
         FormHeadline(text = "Auth code flow request parameters")
         SingleLineInput(
             value = scope,
-            onValueChange = { scope = it; onChangeScope(it)},
+            onValueChange = {
+                scope = it
+                onChangeScope(it)
+            },
             label = { Text("Scope") }
         )
         FormHeadline(text = "Code challenge method")

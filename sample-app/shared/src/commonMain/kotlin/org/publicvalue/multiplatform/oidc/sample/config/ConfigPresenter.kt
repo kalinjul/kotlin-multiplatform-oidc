@@ -18,7 +18,7 @@ import kotlin.String
 
 internal class ConfigPresenter(
     val navigator: Navigator
-): ErrorPresenter<ConfigUiState> {
+) : ErrorPresenter<ConfigUiState> {
 
     override var errorMessage = MutableStateFlow<String?>(null)
 
@@ -31,24 +31,27 @@ internal class ConfigPresenter(
         val idpSettings by settingsStore.observeIdpSettings().collectAsRetainedState()
 
         fun eventSink(event: ConfigUiEvent) {
-            when(event) {
+            when (event) {
                 ConfigUiEvent.NavigateBack -> {
-                     navigator.pop()
+                    navigator.pop()
                 }
+
                 is ConfigUiEvent.ChangeClientId -> {
                     val clientSettings = clientSettings ?: ClientSettings.Empty
 
                     scope.launch {
-                        settingsStore.setClientSettings(clientSettings.copy(client_id = event.clientId))
+                        settingsStore.setClientSettings(clientSettings.copy(clientId = event.clientId))
                     }
                 }
+
                 is ConfigUiEvent.ChangeClientSecret -> {
                     val clientSettings = clientSettings ?: ClientSettings.Empty
 
                     scope.launch {
-                        settingsStore.setClientSettings(clientSettings.copy(client_secret = event.clientSecret))
+                        settingsStore.setClientSettings(clientSettings.copy(clientSecret = event.clientSecret))
                     }
                 }
+
                 is ConfigUiEvent.ChangeScope -> {
                     val clientSettings = clientSettings ?: ClientSettings.Empty
 
@@ -56,13 +59,17 @@ internal class ConfigPresenter(
                         settingsStore.setClientSettings(clientSettings.copy(scope = event.scope))
                     }
                 }
+
                 is ConfigUiEvent.ChangeCodeChallengeMethod -> {
                     val clientSettings = clientSettings ?: ClientSettings.Empty
 
                     scope.launch {
-                        settingsStore.setClientSettings(clientSettings.copy(code_challenge_method = event.codeChallengeMethod))
+                        settingsStore.setClientSettings(
+                            clientSettings.copy(codeChallengeMethod = event.codeChallengeMethod)
+                        )
                     }
                 }
+
                 is ConfigUiEvent.ChangeDiscoveryUrl -> {
                     val idpSettings = idpSettings ?: IdpSettings.Empty
 
@@ -70,13 +77,17 @@ internal class ConfigPresenter(
                         settingsStore.setIdpSettings(idpSettings.copy(discoveryUrl = event.discoveryUrl))
                     }
                 }
+
                 is ConfigUiEvent.ChangeEndpointAuthorization -> {
                     val idpSettings = idpSettings ?: IdpSettings.Empty
 
                     scope.launch {
-                        settingsStore.setIdpSettings(idpSettings.copy(endpointAuthorization = event.endpointAuthorization))
+                        settingsStore.setIdpSettings(
+                            idpSettings.copy(endpointAuthorization = event.endpointAuthorization)
+                        )
                     }
                 }
+
                 is ConfigUiEvent.ChangeEndpointEndSession -> {
                     val idpSettings = idpSettings ?: IdpSettings.Empty
 
@@ -84,6 +95,7 @@ internal class ConfigPresenter(
                         settingsStore.setIdpSettings(idpSettings.copy(endpointEndSession = event.endpointEndSession))
                     }
                 }
+
                 is ConfigUiEvent.ChangeEndpointToken -> {
                     val idpSettings = idpSettings ?: IdpSettings.Empty
 
@@ -91,10 +103,13 @@ internal class ConfigPresenter(
                         settingsStore.setIdpSettings(idpSettings.copy(endpointToken = event.endpointToken))
                     }
                 }
+
                 ConfigUiEvent.Discover -> {
                     scope.launch {
                         catchErrorMessage {
-                            if (!idpSettings?.discoveryUrl.isNullOrEmpty() && idpSettings?.discoveryUrl?.let { Url(it) } != null) {
+                            if (!idpSettings?.discoveryUrl.isNullOrEmpty() &&
+                                idpSettings?.discoveryUrl?.let { Url(it) } != null
+                            ) {
                                 settingsStore.setIdpSettings(
                                     IdpSettings(
                                         discoveryUrl = idpSettings?.discoveryUrl

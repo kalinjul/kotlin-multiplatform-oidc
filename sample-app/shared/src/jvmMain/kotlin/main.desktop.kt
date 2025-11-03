@@ -9,7 +9,6 @@ import org.publicvalue.multiplatform.oidc.settings.JvmSettingsStore
 @OptIn(ExperimentalOpenIdConnect::class)
 @Composable
 public fun MainView() {
-
     val backstack = rememberSaveableBackStack(listOf(HomeScreen))
     val navigator = rememberCircuitNavigator(backstack) {
     }

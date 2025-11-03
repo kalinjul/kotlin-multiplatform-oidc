@@ -6,7 +6,6 @@ import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 
 internal fun main() = application {
-
     val state = rememberWindowState(
         placement = WindowPlacement.Floating,
         size = DpSize(width = 800.dp, height = 800.dp)
@@ -17,7 +16,6 @@ internal fun main() = application {
         state = state,
         onCloseRequest = ::exitApplication
     ) {
-
         MainView()
     }
 }

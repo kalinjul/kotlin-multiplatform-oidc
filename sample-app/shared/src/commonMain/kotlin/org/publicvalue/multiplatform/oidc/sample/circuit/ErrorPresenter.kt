@@ -4,7 +4,7 @@ import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
 import kotlinx.coroutines.flow.MutableStateFlow
 
-internal interface ErrorPresenter<UiState : CircuitUiState>: Presenter<UiState> {
+internal interface ErrorPresenter<UiState : CircuitUiState> : Presenter<UiState> {
     var errorMessage: MutableStateFlow<String?>
 
     fun resetErrorMessage() {
@@ -16,12 +16,10 @@ internal interface ErrorPresenter<UiState : CircuitUiState>: Presenter<UiState> 
     }
 }
 
-internal suspend fun <T: ErrorPresenter<UiState>, UiState> T.catchErrorMessage(block: suspend T.() -> Unit) {
+internal suspend fun <T : ErrorPresenter<UiState>, UiState> T.catchErrorMessage(block: suspend T.() -> Unit) {
     try {
         block()
     } catch (t: Throwable) {
-        println("printing trace")
-        t.printStackTrace()
         errorMessage.value = t.message
     }
 }

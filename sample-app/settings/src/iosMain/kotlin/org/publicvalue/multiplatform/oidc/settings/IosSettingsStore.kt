@@ -36,5 +36,4 @@ public class IosSettingsStore : SettingsStore {
     override suspend fun clear() {
         keyChainSettings.clear()
     }
-
 }

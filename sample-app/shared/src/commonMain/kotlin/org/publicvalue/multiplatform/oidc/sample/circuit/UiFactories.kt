@@ -6,16 +6,16 @@ import org.publicvalue.multiplatform.oidc.sample.config.ConfigUiFactory
 import org.publicvalue.multiplatform.oidc.sample.home.HomePresenterFactory
 import org.publicvalue.multiplatform.oidc.sample.home.HomeUiFactory
 
-
-internal class UiFactories {
+internal class UiFactories internal constructor() {
 
     companion object {
-        val uiFactories = listOf(
-            HomeUiFactory, ConfigUiFactory
+        val factories = listOf(
+            HomeUiFactory,
+            ConfigUiFactory
         )
         fun presenterFactories(authFlowFactory: CodeAuthFlowFactory) = listOf(
-            HomePresenterFactory(authFlowFactory), ConfigPresenterFactory
+            HomePresenterFactory(authFlowFactory),
+            ConfigPresenterFactory
         )
     }
 }
-

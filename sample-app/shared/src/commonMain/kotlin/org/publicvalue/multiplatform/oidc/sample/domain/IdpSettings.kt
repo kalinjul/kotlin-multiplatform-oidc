@@ -20,4 +20,3 @@ internal data class IdpSettings(
         return endpointToken != null && endpointAuthorization != null
     }
 }
-

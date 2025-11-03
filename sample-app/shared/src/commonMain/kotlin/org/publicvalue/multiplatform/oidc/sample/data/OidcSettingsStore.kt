@@ -13,9 +13,9 @@ import org.publicvalue.multiplatform.oidc.sample.domain.IdpSettings
 import org.publicvalue.multiplatform.oidc.sample.domain.TokenData
 import org.publicvalue.multiplatform.oidc.settings.SettingsStore
 
-private val IDP_SETTINGS_KEY = "idp_settings_key"
-private val CLIENT_SETTINGS_KEY = "client_settings_key"
-private val TOKEN_DATA_KEY = "token_data_key"
+private const val IDP_SETTINGS_KEY = "idp_settings_key"
+private const val CLIENT_SETTINGS_KEY = "client_settings_key"
+private const val TOKEN_DATA_KEY = "token_data_key"
 
 internal class OidcSettingsStore(
     private val settingsStore: SettingsStore
@@ -29,7 +29,7 @@ internal class OidcSettingsStore(
     fun observeTokenData() = tokenData.asStateFlow()
 
     private val scope by lazy { CoroutineScope(Dispatchers.Default + SupervisorJob()) }
-    
+
     init {
         scope.launch {
             settingsStore.get(IDP_SETTINGS_KEY)?.let {

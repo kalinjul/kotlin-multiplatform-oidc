@@ -1,12 +1,19 @@
 package org.publicvalue.multiplatform.oidc.sample.home
 
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.Navigator
-import io.ktor.client.request.*
-import io.ktor.client.request.forms.*
-import io.ktor.http.*
+import io.ktor.client.request.forms.submitForm
+import io.ktor.client.request.parameter
+import io.ktor.client.request.url
+import io.ktor.http.HttpStatusCode
+import io.ktor.http.URLBuilder
+import io.ktor.http.isSuccess
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.publicvalue.multiplatform.oidc.DefaultOpenIdConnectClient.Companion.DefaultHttpClient
@@ -23,7 +30,7 @@ import org.publicvalue.multiplatform.oidc.types.remote.AccessTokenResponse
 internal class HomePresenter(
     val authFlowFactory: CodeAuthFlowFactory,
     val navigator: Navigator
-): ErrorPresenter<HomeUiState> {
+) : ErrorPresenter<HomeUiState> {
 
     override var errorMessage = MutableStateFlow<String?>(null)
 
@@ -48,10 +55,10 @@ internal class HomePresenter(
                 OpenIdConnectClient(idpSettings.discoveryUrl) {
                     redirectUri = PlatformConstants.redirectUrl.trim()
                     postLogoutRedirectUri = PlatformConstants.postLogoutRedirectUrl.trim()
-                    codeChallengeMethod = clientSettings.code_challenge_method
+                    codeChallengeMethod = clientSettings.codeChallengeMethod
                     this.scope = clientSettings.scope?.trim()
-                    this.clientId = clientSettings.client_id?.trim()
-                    this.clientSecret = clientSettings.client_secret?.trim()
+                    this.clientId = clientSettings.clientId?.trim()
+                    this.clientSecret = clientSettings.clientSecret?.trim()
                     this.endpoints {
                         authorizationEndpoint = idpSettings.endpointAuthorization?.trim()
                         tokenEndpoint = idpSettings.endpointToken?.trim()
@@ -80,7 +87,7 @@ internal class HomePresenter(
         }
 
         fun eventSink(event: HomeUiEvent) {
-            when(event) {
+            when (event) {
                 HomeUiEvent.Login -> {
                     resetErrorMessage()
                     val client = createClient()
@@ -107,7 +114,7 @@ internal class HomePresenter(
                                 val isGoogle = client.config.discoveryUri.toString().contains("accounts.google.com")
                                 if (!client.config.endpoints?.endSessionEndpoint.isNullOrEmpty() || isGoogle) {
                                     catchErrorMessage {
-                                        val result = if(isGoogle) {
+                                        val result = if (isGoogle) {
                                             val endpoint = "https://accounts.google.com/o/oauth2/revoke"
                                             val url = URLBuilder(endpoint)
                                             val response = DefaultHttpClient.submitForm {
@@ -120,7 +127,9 @@ internal class HomePresenter(
                                                 val flow = authFlowFactory.createEndSessionFlow(client)
                                                 val result = flow.endSession(it.idToken ?: "")
                                                 if (result.isFailure) {
-                                                    setErrorMessage(result.exceptionOrNull()?.message ?: "Unknown error")
+                                                    setErrorMessage(
+                                                        result.exceptionOrNull()?.message ?: "Unknown error"
+                                                    )
                                                 }
                                                 if (result.isSuccess) HttpStatusCode.OK else null
                                             } else {

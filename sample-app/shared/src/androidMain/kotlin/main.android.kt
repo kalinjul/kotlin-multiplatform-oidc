@@ -15,7 +15,6 @@ public fun MainView(
     val backstack = rememberSaveableBackStack(initialScreens = listOf(HomeScreen))
 
     val navigator = rememberCircuitNavigator(backstack) {
-
     }
 
     val settingsStore = AndroidSettingsStore(

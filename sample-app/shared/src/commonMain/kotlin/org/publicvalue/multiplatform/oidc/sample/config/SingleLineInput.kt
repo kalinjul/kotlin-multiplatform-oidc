@@ -19,4 +19,3 @@ internal fun SingleLineInput(value: String, onValueChange: (String) -> Unit, lab
         label = label
     )
 }
-

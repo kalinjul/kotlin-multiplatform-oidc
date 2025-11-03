@@ -5,7 +5,7 @@ import com.russhwolf.settings.get
 import kotlinx.browser.localStorage
 import org.w3c.dom.Storage
 
-public class WasmJsSettingsStore: SettingsStore {
+public class WasmJsSettingsStore : SettingsStore {
 
     private val prefs: StorageSettings
 
@@ -13,8 +13,7 @@ public class WasmJsSettingsStore: SettingsStore {
         prefs = StorageSettings(storage)
     }
 
-    public constructor(): this(localStorage)
-
+    public constructor() : this(localStorage)
 
     override suspend fun get(key: String): String? {
         return prefs[key]
@@ -31,5 +30,4 @@ public class WasmJsSettingsStore: SettingsStore {
     override suspend fun clear() {
         prefs.clear()
     }
-
 }

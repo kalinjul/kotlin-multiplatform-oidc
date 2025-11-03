@@ -22,10 +22,9 @@ import org.publicvalue.multiplatform.oidc.sample.data.LocalSettingsStore
 import org.publicvalue.multiplatform.oidc.sample.data.OidcSettingsStore
 import org.publicvalue.multiplatform.oidc.settings.SettingsStore
 
-
-//val DMANavigator: Navigator = remember(navigator) {
+// val DMANavigator: Navigator = remember(navigator) {
 //    OAuthPlaygroundNavigator(navigator, backstack, onOpenUrl, logger)
-//}
+// }
 
 @Composable
 internal fun Root(
@@ -39,26 +38,26 @@ internal fun Root(
         bottomBar = {
         },
         contentWindowInsets = ScaffoldDefaults.contentWindowInsets
-        .exclude(WindowInsets.statusBars)
-    //            .exclude(WindowInsets.navigationBars),
-        ) { paddingValues ->
-            Surface(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-            ) {
-                Row {
-                    CompositionLocalProvider(LocalSettingsStore provides oidcSettingsStore) {
-                        NavigableCircuitContent(
-                            circuit = circuit,
-                            navigator = navigator,
-                            backStack = backstack,
-                            modifier = Modifier
-                                .weight(1f)
-                                .fillMaxHeight(),
-                        )
-                    }
+            .exclude(WindowInsets.statusBars)
+        //            .exclude(WindowInsets.navigationBars),
+    ) { paddingValues ->
+        Surface(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
+            Row {
+                CompositionLocalProvider(LocalSettingsStore provides oidcSettingsStore) {
+                    NavigableCircuitContent(
+                        circuit = circuit,
+                        navigator = navigator,
+                        backStack = backstack,
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxHeight(),
+                    )
                 }
             }
         }
+    }
 }

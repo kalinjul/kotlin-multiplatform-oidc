@@ -8,7 +8,9 @@ public class AndroidSettingsStore(
     context: Context
 ) : SettingsStore {
 
-    private val settings = SharedPreferencesSettings(context.getSharedPreferences(context.packageName, Context.MODE_PRIVATE))
+    private val settings = SharedPreferencesSettings(
+        context.getSharedPreferences(context.packageName, Context.MODE_PRIVATE)
+    )
     override suspend fun get(key: String): String? {
         return settings[key]
     }
@@ -24,5 +26,4 @@ public class AndroidSettingsStore(
     override suspend fun clear() {
         settings.clear()
     }
-
 }

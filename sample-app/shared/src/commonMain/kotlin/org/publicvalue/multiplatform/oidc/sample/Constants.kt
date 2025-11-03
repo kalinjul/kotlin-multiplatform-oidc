@@ -5,4 +5,4 @@ internal interface Constants {
     val postLogoutRedirectUrl: String
 }
 
-internal expect object PlatformConstants: Constants
+internal expect object PlatformConstants : Constants
