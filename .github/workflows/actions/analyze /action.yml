@@ -1,0 +1,10 @@
+name: Code analyze
+description: Analyze
+
+runs:
+  using: "composite"
+  steps:
+    - uses: ./.github/workflows/actions/prepare
+    - name: Library code Analysis
+      shell: bash
+      run: ./gradlew detekt

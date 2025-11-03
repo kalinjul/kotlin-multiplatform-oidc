@@ -18,6 +18,11 @@ permissions:
   checks: write # required for test-reporter
 
 jobs:
+  analyze:
+    runs-on: macos-13
+    steps:
+      - uses: ./.github/workflows/actions/analyze
+
   build:
     runs-on: macos-13
     steps:
