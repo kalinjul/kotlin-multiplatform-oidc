@@ -25,6 +25,7 @@ jobs:
       - uses: ./.github/workflows/actions/analyze
 
   build:
+    needs: [analyze]
     runs-on: macos-13
     steps:
       - uses: actions/checkout@v4
