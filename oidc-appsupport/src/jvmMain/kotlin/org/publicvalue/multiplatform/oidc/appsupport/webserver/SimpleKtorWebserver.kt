@@ -15,7 +15,7 @@ import io.ktor.server.routing.routing
 import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
 
 @ExperimentalOpenIdConnect
-internal class SimpleKtorWebserver(
+public class SimpleKtorWebserver(
     val port: Int = 8080,
     val createResponse: suspend RoutingContext.() -> Unit = {
         call.respondText(

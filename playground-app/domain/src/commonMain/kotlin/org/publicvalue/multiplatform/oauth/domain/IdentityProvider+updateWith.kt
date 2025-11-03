@@ -5,10 +5,10 @@ import org.publicvalue.multiplatform.oidc.types.remote.OpenIdConnectConfiguratio
 
 fun Identityprovider.updateWith(config: OpenIdConnectConfiguration): Identityprovider =
     copy(
-        endpointToken = config.token_endpoint,
-        endpointAuthorization = config.authorization_endpoint,
-        endpointDeviceAuthorization = config.device_authorization_endpoint,
-        endpointIntrospection = config.introspection_endpoint,
-        endpointUserInfo = config.userinfo_endpoint,
-        endpointEndSession = config.end_session_endpoint
+        endpointToken = config.tokenEndpoint,
+        endpointAuthorization = config.authorizationEndpoint,
+        endpointDeviceAuthorization = config.deviceAuthorizationEndpoint,
+        endpointIntrospection = config.introspectionEndpoint,
+        endpointUserInfo = config.userinfoEndpoint,
+        endpointEndSession = config.endSessionEndpoint
     )
