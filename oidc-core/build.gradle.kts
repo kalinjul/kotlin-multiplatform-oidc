@@ -16,37 +16,29 @@ kotlin {
     configureIosTargets()
     configureWasmTarget()
     sourceSets {
-        val commonMain by getting {
-            dependencies {
-                implementation(libs.kotlinx.coroutines.core)
+        commonMain.dependencies {
+            implementation(libs.kotlinx.coroutines.core)
 
-                api(libs.ktor.client.core)
-                implementation(libs.kotlinx.serialization.json)
-                implementation(libs.ktor.client.contentnegotiation)
-                implementation(libs.ktor.serialization.kotlinx.json)
+            api(libs.ktor.client.core)
+            implementation(libs.kotlinx.serialization.json)
+            implementation(libs.ktor.client.contentnegotiation)
+            implementation(libs.ktor.serialization.kotlinx.json)
 
-                implementation(projects.oidcCrypto)
-            }
+            implementation(projects.oidcCrypto)
         }
 
-        val jvmMain by getting {
-            dependencies {
-                implementation(libs.ktor.client.okhttp)
-            }
+        jvmMain.dependencies {
+            implementation(libs.ktor.client.okhttp)
         }
 
-        val iosMain by getting {
-            dependencies {
-                implementation(libs.ktor.client.darwin)
-            }
+        iosMain.dependencies {
+            implementation(libs.ktor.client.darwin)
         }
 
-        val commonTest by getting {
-            dependencies {
-                implementation(kotlin("test"))
-                implementation(libs.assertk)
-                implementation(libs.kotlinx.coroutines.test)
-            }
+        commonTest.dependencies {
+            implementation(kotlin("test"))
+            implementation(libs.assertk)
+            implementation(libs.kotlinx.coroutines.test)
         }
     }
 

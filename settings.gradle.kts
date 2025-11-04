@@ -64,23 +64,23 @@ include(
 )
 
 // uncomment this line, if you want to testing
-//includeBuild("sample-app")
-//includeBuild("playground-app")
+// includeBuild("sample-app")
+// includeBuild("playground-app")
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 // https://docs.gradle.org/8.3/userguide/configuration_cache.html#config_cache:stable
 // enableFeaturePreview("STABLE_CONFIGURATION_CACHE")
 
 gradle.projectsLoaded {
-    
+
     if (System.getenv("CI") == "true") {
         return@projectsLoaded
     }
 
-    val hookFile = File(rootDir,".git/hooks/pre-push")
+    val hookFile = File(rootDir, ".git/hooks/pre-push")
     if (!hookFile.exists()) {
         println("🪝 Installing pre-push hook...")
-        val prePushTasks = File(rootDir,"build-logic/scripts/pre-push")
+        val prePushTasks = File(rootDir, "build-logic/scripts/pre-push")
         prePushTasks.copyTo(hookFile, overwrite = true)
         hookFile.setExecutable(true)
         println("✅ Pre-push hook installed")

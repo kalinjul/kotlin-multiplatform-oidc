@@ -15,17 +15,14 @@ kotlin {
     configureIosTargets()
     configureWasmTarget()
     sourceSets {
-        val commonMain by getting {
-            dependencies {
-                api(projects.oidcCore)
-                implementation(projects.oidcTokenstore)
-                implementation(libs.ktor.client.auth)
-            }
+        commonMain.dependencies {
+            api(projects.oidcCore)
+            implementation(projects.oidcTokenstore)
+            implementation(libs.ktor.client.auth)
         }
-        val commonTest by getting {
-            dependencies {
-                implementation(kotlin("test"))
-            }
+
+        commonTest.dependencies {
+            implementation(kotlin("test"))
         }
     }
 }

@@ -15,31 +15,25 @@ kotlin {
     configureIosTargets()
     configureWasmTarget()
     sourceSets {
-        val commonMain by getting {
-            dependencies {
-                api(projects.oidcCore)
-                implementation(libs.russhwolf.multiplatformsettings)
+        commonMain.dependencies {
+            api(projects.oidcCore)
+            implementation(libs.russhwolf.multiplatformsettings)
 
-                api(libs.kotlinx.serialization.json)
-            }
+            api(libs.kotlinx.serialization.json)
         }
 
-        val androidMain by getting {
-            dependencies {
-                implementation(libs.androidx.security.crypto)
-                implementation(libs.androidx.security.crypto.ktx)
+        androidMain.dependencies {
+            implementation(libs.androidx.security.crypto)
+            implementation(libs.androidx.security.crypto.ktx)
 
-                implementation(libs.androidx.datastore)
-            }
+            implementation(libs.androidx.datastore)
         }
 
-        val commonTest by getting {
-            dependencies {
-                implementation(kotlin("test"))
-                implementation(libs.assertk)
-                implementation(libs.kotlinx.coroutines.test)
-                implementation(projects.oidcAppsupport) // for readme
-            }
+        commonTest.dependencies {
+            implementation(kotlin("test"))
+            implementation(libs.assertk)
+            implementation(libs.kotlinx.coroutines.test)
+            implementation(projects.oidcAppsupport) // for readme
         }
     }
 }

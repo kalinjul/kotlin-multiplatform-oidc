@@ -9,7 +9,10 @@ import org.gradle.kotlin.dsl.dependencies
 @Suppress("unused")
 internal class DetektPlugin : Plugin<Project> {
     override fun apply(target: Project) {
+        val settingsPath = target.rootProject.file("settings.gradle.kts").absolutePath
+        val projectBuildGradlePath = target.rootProject.file("build.gradle.kts").absolutePath
         target.subprojects {
+            val targetBuildGradlePath = file("build.gradle.kts").absolutePath
             afterEvaluate {
                 plugins.apply(libs.plugins.detekt.get().pluginId)
 
@@ -24,7 +27,12 @@ internal class DetektPlugin : Plugin<Project> {
                         "src/iosMain",
                         "src/jvmMain",
                         "src/wasmJsMain",
-                        "src/androidMain"
+                        "src/androidMain",
+                        "src/nativeMain",
+                        "src/jsMain",
+                        targetBuildGradlePath,
+                        projectBuildGradlePath,
+                        settingsPath
                     )
                 }
 
