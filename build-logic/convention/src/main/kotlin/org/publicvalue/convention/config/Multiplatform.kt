@@ -35,6 +35,11 @@ fun KotlinMultiplatformExtension.configureWasmTarget(baseName: String? = null) {
                     }
                 }
             }
+            testTask {
+                useKarma {
+                    useChromeHeadless()
+                }
+            }
         }
     }
 }
