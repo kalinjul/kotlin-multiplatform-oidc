@@ -72,6 +72,11 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 // enableFeaturePreview("STABLE_CONFIGURATION_CACHE")
 
 gradle.projectsLoaded {
+    
+    if (System.getenv("CI") == "true") {
+        return@projectsLoaded
+    }
+
     val hookFile = File(rootDir,".git/hooks/pre-push")
     if (!hookFile.exists()) {
         println("🪝 Installing pre-push hook...")
