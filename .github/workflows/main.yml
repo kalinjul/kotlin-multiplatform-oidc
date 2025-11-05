@@ -66,7 +66,7 @@ jobs:
           token: ${{ secrets.PAT }}
 
   deploy-snapshot:
-    needs: [ test ]
+    needs: [ build ]
     if: github.ref == 'refs/heads/main'
     runs-on: macos-13
 
