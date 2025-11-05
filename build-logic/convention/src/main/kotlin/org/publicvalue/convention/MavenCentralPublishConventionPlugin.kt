@@ -14,7 +14,7 @@ import org.gradle.plugins.signing.SigningExtension
 import org.jetbrains.compose.internal.utils.getLocalProperty
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
-@Suppress("unused")
+@Suppress("unused", "LongMethod")
 internal class MavenCentralPublishConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
@@ -32,7 +32,6 @@ internal class MavenCentralPublishConventionPlugin : Plugin<Project> {
                     }
                 }
             }
-
 
             val javadocJar = tasks.register("javadocJar", Jar::class.java) {
                 archiveClassifier.set("javadoc")
@@ -74,7 +73,9 @@ internal class MavenCentralPublishConventionPlugin : Plugin<Project> {
                             }
                             scm {
                                 connection.set("scm:git:github.com/kalinjul/kotlin-multiplatform-oidc.git")
-                                developerConnection.set("scm:git:ssh://github.com/kalinjul/kotlin-multiplatform-oidc.git")
+                                developerConnection.set(
+                                    "scm:git:ssh://github.com/kalinjul/kotlin-multiplatform-oidc.git"
+                                )
                                 url.set("https://github.com/kalinjul/kotlin-multiplatform-oidc/tree/main")
                             }
                         }
@@ -91,7 +92,6 @@ internal class MavenCentralPublishConventionPlugin : Plugin<Project> {
                 val publishing = extensions.getByType<PublishingExtension>()
                 sign(publishing.publications)
             }
-
 
             //region Fix Gradle warning about signing tasks using publishing task outputs without explicit dependencies
             // https://github.com/gradle/gradle/issues/26091

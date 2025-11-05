@@ -27,8 +27,13 @@ internal class KotlinMultiplatformConventionPlugin : Plugin<Project> {
     }
 }
 
-fun Project.addKspDependencyForAllTargets(dependencyNotation: Any) = addKspDependencyForAllTargets("", dependencyNotation)
-fun Project.addKspTestDependencyForAllTargets(dependencyNotation: Any) = addKspDependencyForAllTargets("Test", dependencyNotation)
+fun Project.addKspDependencyForAllTargets(dependencyNotation: Any) = addKspDependencyForAllTargets(
+    "",
+    dependencyNotation
+)
+fun Project.addKspTestDependencyForAllTargets(
+    dependencyNotation: Any
+) = addKspDependencyForAllTargets("Test", dependencyNotation)
 
 private fun Project.addKspDependencyForAllTargets(
     configurationNameSuffix: String,
@@ -58,7 +63,7 @@ fun KotlinMultiplatformExtension.addParcelizeAnnotation(annotationClass: String)
         compilerOptions {
             freeCompilerArgs.addAll(
                 "-P",
-                "plugin:org.jetbrains.kotlin.parcelize:additionalAnnotation=${annotationClass}"
+                "plugin:org.jetbrains.kotlin.parcelize:additionalAnnotation=$annotationClass"
             )
         }
     }

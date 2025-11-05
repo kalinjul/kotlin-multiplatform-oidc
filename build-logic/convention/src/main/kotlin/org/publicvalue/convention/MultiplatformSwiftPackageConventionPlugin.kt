@@ -21,7 +21,7 @@ internal class MultiplatformSwiftPackageConventionPlugin : Plugin<Project> {
                 swiftToolsVersion("5.6")
                 targetPlatforms {
                     iOS { v("15") }
-                    macOS {v("15") }
+                    macOS { v("15") }
                     tvOS { v("15") }
                 }
                 outputDirectory(File(project.projectDir, "build/swiftpackage"))
@@ -32,7 +32,9 @@ internal class MultiplatformSwiftPackageConventionPlugin : Plugin<Project> {
                         if (project.version == "develop") {
                             remote("https://github.com/kalinjul/OpenIdConnectClient/raw/${project.version}")
                         } else {
-                            remote("https://github.com/kalinjul/OpenIdConnectClient/releases/download/${project.version}")
+                            remote(
+                                "https://github.com/kalinjul/OpenIdConnectClient/releases/download/${project.version}"
+                            )
                         }
                     }
                 }

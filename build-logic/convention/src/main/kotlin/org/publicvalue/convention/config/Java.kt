@@ -1,11 +1,10 @@
 package org.publicvalue.convention.config
 
-import org.publicvalue.convention.libs
-import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.kotlin.dsl.configure
+import org.publicvalue.convention.libs
 
 fun Project.configureJava() {
     java {

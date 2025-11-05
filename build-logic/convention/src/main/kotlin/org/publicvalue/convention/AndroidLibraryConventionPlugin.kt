@@ -1,10 +1,10 @@
 package org.publicvalue.convention
 
 import com.android.build.gradle.LibraryExtension
-import org.publicvalue.convention.config.configureKotlinAndroid
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
+import org.publicvalue.convention.config.configureKotlinAndroid
 
 @Suppress("unused")
 internal class AndroidLibraryConventionPlugin : Plugin<Project> {

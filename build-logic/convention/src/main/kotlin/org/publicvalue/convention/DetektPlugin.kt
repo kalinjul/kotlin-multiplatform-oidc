@@ -11,6 +11,7 @@ internal class DetektPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         val settingsPath = target.rootProject.file("settings.gradle.kts").absolutePath
         val projectBuildGradlePath = target.rootProject.file("build.gradle.kts").absolutePath
+        val buildLogic = target.rootProject.file("build-logic/convention/src").absolutePath
         target.subprojects {
             val targetBuildGradlePath = file("build.gradle.kts").absolutePath
             afterEvaluate {
@@ -32,7 +33,8 @@ internal class DetektPlugin : Plugin<Project> {
                         "src/jsMain",
                         targetBuildGradlePath,
                         projectBuildGradlePath,
-                        settingsPath
+                        settingsPath,
+                        buildLogic
                     )
                 }
 
@@ -42,6 +44,5 @@ internal class DetektPlugin : Plugin<Project> {
                 }
             }
         }
-
     }
 }
