@@ -21,7 +21,7 @@ kotlin {
             }
         }
 
-        wasmJsMain {
+        webMain {
             dependencies {
                 implementation(libs.kotlinx.browser)
             }

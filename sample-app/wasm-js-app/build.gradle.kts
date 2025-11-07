@@ -27,7 +27,7 @@ kotlin {
     }
 
     sourceSets {
-        val wasmJsMain by getting  {
+        val webMain by getting  {
             dependencies {
                 implementation(compose.runtime)
                 implementation(compose.foundation)

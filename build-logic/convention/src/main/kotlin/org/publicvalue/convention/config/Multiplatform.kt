@@ -31,7 +31,7 @@ fun KotlinMultiplatformExtension.configureWasmTarget(baseName: String? = null) {
                         // Serve sources to debug inside browser
                         add(project.projectDir.path)
                         add(project.projectDir.path + "/commonMain/")
-                        add(project.projectDir.path + "/wasmJsMain/")
+                        add(project.projectDir.path + "/webMain/")
                     }
                 }
             }

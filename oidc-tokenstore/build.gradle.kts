@@ -12,6 +12,10 @@ description = "Kotlin Multiplatform OIDC tokenstore library"
 
 kotlin {
     jvm()
+    js(IR) {
+        browser()
+        binaries.library()
+    }
     configureIosTargets()
     configureWasmTarget()
     sourceSets {

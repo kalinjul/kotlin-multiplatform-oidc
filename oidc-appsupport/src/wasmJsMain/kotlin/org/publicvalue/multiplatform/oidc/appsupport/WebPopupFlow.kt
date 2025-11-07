@@ -1,3 +1,5 @@
+@file:OptIn(kotlin.js.ExperimentalWasmJsInterop::class)
+
 package org.publicvalue.multiplatform.oidc.appsupport
 
 import io.ktor.http.*
@@ -12,56 +14,56 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 @ExperimentalOpenIdConnect
-internal class WebPopupFlow(
-    private val windowTarget: String = "",
-    private val windowFeatures: String = "width=1000,height=800,resizable=yes,scrollbars=yes",
+internal actual class WebPopupFlow actual constructor(
+    private val windowTarget: String,
+    private val windowFeatures: String,
     private val redirectOrigin: String,
-): WebAuthenticationFlow {
+) : WebAuthenticationFlow {
 
     private class WindowHolder(var window: Window?)
 
-    override suspend fun startWebFlow(requestUrl: Url, redirectUrl: String): WebAuthenticationFlowResult {
-        return suspendCoroutine<WebAuthenticationFlowResult> { continuation ->
+    actual override suspend fun startWebFlow(
+        requestUrl: Url,
+        redirectUrl: String
+    ): WebAuthenticationFlowResult = suspendCoroutine { continuation ->
 
-            val popupHolder = WindowHolder(null)
-            lateinit var messageHandler: (Event) -> Unit
+        val popupHolder = WindowHolder(null)
+        lateinit var messageHandler: (Event) -> Unit
 
-            messageHandler = { event ->
-                if (event is MessageEvent) {
+        messageHandler = { event ->
+            if (event is MessageEvent) {
 
-                    if (event.origin != redirectOrigin) {
-                        throw TechnicalFailure("Security issue. Event was not from $redirectOrigin", null)
-                    }
+                if (event.origin != redirectOrigin) {
+                    throw TechnicalFailure("Security issue. Event was not from $redirectOrigin", null)
+                }
 
-                    if (event.source == popupHolder.window) {
-                        val urlString: String = Json.decodeFromString(getEventData(event))
-                        val url = Url(urlString)
-                        window.removeEventListener("message", messageHandler)
-                        continuation.resume(WebAuthenticationFlowResult.Success(url))
-                    } else {
-                        // Log an advisory but stay registered for the true callback
-                        println("${WebPopupFlow::class.simpleName} skipping message from unknown source: ${event.source}")
-                    }
+                if (event.source == popupHolder.window) {
+                    val urlString: String = Json.decodeFromString(getEventData(event))
+                    val url = Url(urlString)
+                    window.removeEventListener("message", messageHandler)
+                    continuation.resume(WebAuthenticationFlowResult.Success(url))
+                } else {
+                    // Log an advisory but stay registered for the true callback
+                    println("${WebPopupFlow::class.simpleName} skipping message from unknown source: ${event.source}")
                 }
             }
-
-            window.addEventListener("message", messageHandler)
-
-            popupHolder.window = window.open(requestUrl.toString(), windowTarget, windowFeatures)
-                ?: throw TechnicalFailure("Could not open popup", null)
         }
+
+        window.addEventListener("message", messageHandler)
+
+        popupHolder.window = window.open(requestUrl.toString(), windowTarget, windowFeatures)
+            ?: throw TechnicalFailure("Could not open popup", null)
     }
 
-    internal companion object {
+    actual companion object {
         @ExperimentalOpenIdConnect
-        fun handleRedirect() {
+        actual fun handleRedirect() {
             if (window.opener != null) {
                 postMessage(
                     url = window.location.toString(),
                     targetOrigin = getOpenerOrigin()
                 )
-
-                closeWindow(delay = 0)
+                closeWindow(0)
             }
         }
     }
