@@ -9,7 +9,8 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.publicvalue.convention.config.configureKotlin
 
-class KotlinMultiplatformConventionPlugin : Plugin<Project> {
+@Suppress("unused")
+internal class KotlinMultiplatformConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
             // use mobile plugin and add jvm target
@@ -26,8 +27,13 @@ class KotlinMultiplatformConventionPlugin : Plugin<Project> {
     }
 }
 
-fun Project.addKspDependencyForAllTargets(dependencyNotation: Any) = addKspDependencyForAllTargets("", dependencyNotation)
-fun Project.addKspTestDependencyForAllTargets(dependencyNotation: Any) = addKspDependencyForAllTargets("Test", dependencyNotation)
+fun Project.addKspDependencyForAllTargets(dependencyNotation: Any) = addKspDependencyForAllTargets(
+    "",
+    dependencyNotation
+)
+fun Project.addKspTestDependencyForAllTargets(
+    dependencyNotation: Any
+) = addKspDependencyForAllTargets("Test", dependencyNotation)
 
 private fun Project.addKspDependencyForAllTargets(
     configurationNameSuffix: String,
@@ -57,7 +63,7 @@ fun KotlinMultiplatformExtension.addParcelizeAnnotation(annotationClass: String)
         compilerOptions {
             freeCompilerArgs.addAll(
                 "-P",
-                "plugin:org.jetbrains.kotlin.parcelize:additionalAnnotation=${annotationClass}"
+                "plugin:org.jetbrains.kotlin.parcelize:additionalAnnotation=$annotationClass"
             )
         }
     }

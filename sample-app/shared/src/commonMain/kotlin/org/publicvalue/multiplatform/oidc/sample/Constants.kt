@@ -1,8 +1,8 @@
 package org.publicvalue.multiplatform.oidc.sample
 
-interface Constants {
+internal interface Constants {
     val redirectUrl: String
     val postLogoutRedirectUrl: String
 }
 
-expect object PlatformConstants: Constants
+internal expect object PlatformConstants : Constants

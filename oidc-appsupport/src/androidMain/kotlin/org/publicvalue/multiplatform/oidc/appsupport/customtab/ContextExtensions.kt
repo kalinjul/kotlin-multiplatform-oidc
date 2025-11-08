@@ -7,7 +7,7 @@ import android.content.pm.ResolveInfo
 import android.os.Build
 import androidx.core.net.toUri
 
-private val ACTION_CUSTOM_TABS_CONNECTION = "android.support.customtabs.action.CustomTabsService"
+private const val ACTION_CUSTOM_TABS_CONNECTION = "android.support.customtabs.action.CustomTabsService"
 
 internal fun Context.getCustomTabProviders(): List<ResolveInfo> {
     val activityIntent = Intent(Intent.ACTION_VIEW, "http://www.example.com".toUri())

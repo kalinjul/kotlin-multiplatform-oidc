@@ -6,8 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import org.publicvalue.multiplatform.oidc.appsupport.AndroidCodeAuthFlowFactory
 
-
-class MainActivity : ComponentActivity() {
+internal class MainActivity : ComponentActivity() {
 
     // There should only be one instance of this factory.
     // The flow should also be created and started from an

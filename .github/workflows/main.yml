@@ -18,15 +18,14 @@ permissions:
   checks: write # required for test-reporter
 
 jobs:
-  build:
+  analyze:
     runs-on: macos-15
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/workflows/actions/build
-      - uses: ./.github/workflows/actions/doc
+      - uses: ./.github/workflows/actions/analyze
 
   test:
-    needs: [ build ]
+    needs: [ analyze ]
     runs-on: macos-15
     permissions:
       id-token: write
@@ -37,10 +36,18 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ./.github/workflows/actions/test
 
-  create-swift-package:
-    needs: [ build, test]
-    if: github.ref == 'refs/heads/main'
+  build:
+    needs: [ test ]
     runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/workflows/actions/build
+      - uses: ./.github/workflows/actions/doc
+
+  create-swift-package:
+    needs: [ build, test ]
+    if: github.ref == 'refs/heads/main'
+    runs-on: macos-13
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/workflows/actions/createSwiftPackage
@@ -48,7 +55,7 @@ jobs:
           version: "main"
 
   deploy-swift-package-snapshot:
-    needs: [create-swift-package]
+    needs: [ create-swift-package ]
     if: github.ref == 'refs/heads/main'
     runs-on: macos-15
     steps:
@@ -59,7 +66,7 @@ jobs:
           token: ${{ secrets.PAT }}
 
   deploy-snapshot:
-    needs: [ test ]
+    needs: [ build ]
     if: github.ref == 'refs/heads/main'
     runs-on: macos-15
 

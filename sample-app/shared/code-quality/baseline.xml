@@ -1,0 +1,29 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>CyclomaticComplexMethod:ConfigPresenter.kt$ConfigPresenter$@Composable override fun present(): ConfigUiState</ID>
+    <ID>CyclomaticComplexMethod:HomePresenter.kt$HomePresenter$@Composable override fun present(): HomeUiState</ID>
+    <ID>Filename:Constants.android.kt$org.publicvalue.multiplatform.oidc.sample.Constants.android.kt</ID>
+    <ID>Filename:Constants.ios.kt$org.publicvalue.multiplatform.oidc.sample.Constants.ios.kt</ID>
+    <ID>Filename:Constants.jvm.kt$org.publicvalue.multiplatform.oidc.sample.Constants.jvm.kt</ID>
+    <ID>Filename:Constants.wasmJs.kt$org.publicvalue.multiplatform.oidc.sample.Constants.wasmJs.kt</ID>
+    <ID>Filename:Parcelize.android.kt$org.publicvalue.multiplatform.oidc.sample.screens.Parcelize.android.kt</ID>
+    <ID>Filename:Parcelize.ios.kt$org.publicvalue.multiplatform.oidc.sample.screens.Parcelize.ios.kt</ID>
+    <ID>Filename:Parcelize.jvm.kt$org.publicvalue.multiplatform.oidc.sample.screens.Parcelize.jvm.kt</ID>
+    <ID>Filename:Parcelize.wasmJs.kt$org.publicvalue.multiplatform.oidc.sample.screens.Parcelize.wasmJs.kt</ID>
+    <ID>Filename:main.android.kt$.main.android.kt</ID>
+    <ID>Filename:main.desktop.kt$.main.desktop.kt</ID>
+    <ID>Filename:main.ios.kt$.main.ios.kt</ID>
+    <ID>Filename:main.wasmJs.kt$.main.wasmJs.kt</ID>
+    <ID>LongMethod:Config.kt$@Composable internal fun Config( modifier: Modifier = Modifier, discoveryUrl: String?, authEndpoint: String?, tokenEndpoint: String?, endSessionEndpoint: String?, clientId: String?, clientSecret: String?, scope: String?, challengeMethod: CodeChallengeMethod?, onChangeDiscoveryUrl: (String) -&gt; Unit, onChangeAuthEndpoint: (String) -&gt; Unit, onChangeTokenEndpoint: (String) -&gt; Unit, onChangeEndSessionEndpoint: (String) -&gt; Unit, onChangeClientId: (String) -&gt; Unit, onChangeClientSecret: (String) -&gt; Unit, onChangeScope: (String) -&gt; Unit, onChangeChallengeMethod: (CodeChallengeMethod) -&gt; Unit, onClickDiscover: () -&gt; Unit )</ID>
+    <ID>LongMethod:Config.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable internal fun Config( state: ConfigUiState, modifier: Modifier = Modifier )</ID>
+    <ID>LongMethod:ConfigPresenter.kt$ConfigPresenter$fun eventSink(event: ConfigUiEvent)</ID>
+    <ID>LongMethod:Home.kt$@Composable internal fun Home( modifier: Modifier = Modifier, loginEnabled: Boolean, refreshEnabled: Boolean, logoutEnabled: Boolean, onLoginClick: () -&gt; Unit, onLogoutClick: (Boolean) -&gt; Unit, onRefreshClick: () -&gt; Unit, tokenData: TokenData?, subject: String?, errorMessage: String? )</ID>
+    <ID>LongMethod:HomePresenter.kt$HomePresenter$fun eventSink(event: HomeUiEvent)</ID>
+    <ID>LongParameterList:Config.kt$( modifier: Modifier = Modifier, discoveryUrl: String?, authEndpoint: String?, tokenEndpoint: String?, endSessionEndpoint: String?, clientId: String?, clientSecret: String?, scope: String?, challengeMethod: CodeChallengeMethod?, onChangeDiscoveryUrl: (String) -&gt; Unit, onChangeAuthEndpoint: (String) -&gt; Unit, onChangeTokenEndpoint: (String) -&gt; Unit, onChangeEndSessionEndpoint: (String) -&gt; Unit, onChangeClientId: (String) -&gt; Unit, onChangeClientSecret: (String) -&gt; Unit, onChangeScope: (String) -&gt; Unit, onChangeChallengeMethod: (CodeChallengeMethod) -&gt; Unit, onClickDiscover: () -&gt; Unit )</ID>
+    <ID>LongParameterList:Home.kt$( modifier: Modifier = Modifier, loginEnabled: Boolean, refreshEnabled: Boolean, logoutEnabled: Boolean, onLoginClick: () -&gt; Unit, onLogoutClick: (Boolean) -&gt; Unit, onRefreshClick: () -&gt; Unit, tokenData: TokenData?, subject: String?, errorMessage: String? )</ID>
+    <ID>TooGenericExceptionCaught:ErrorPresenter.kt$t: Throwable</ID>
+    <ID>UnusedParameter:Config.kt$modifier: Modifier = Modifier</ID>
+  </CurrentIssues>
+</SmellBaseline>

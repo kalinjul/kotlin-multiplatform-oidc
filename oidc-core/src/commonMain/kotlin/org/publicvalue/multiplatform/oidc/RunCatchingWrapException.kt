@@ -1,6 +1,6 @@
 package org.publicvalue.multiplatform.oidc
 
-inline fun <R> wrapExceptions(block: () -> R): R {
+public inline fun <R> wrapExceptions(block: () -> R): R {
     return try {
         block()
     } catch (e: OpenIdConnectException) {

@@ -12,8 +12,8 @@ import kotlin.coroutines.cancellation.CancellationException
  * Uses the [postLogoutRedirectUri][org.publicvalue.multiplatform.oidc.OpenIdConnectClientConfig.postLogoutRedirectUri]
  * to request redirection after logout to return to the app.
  */
-interface EndSessionFlow {
-    val client: OpenIdConnectClient
+public interface EndSessionFlow {
+    public val client: OpenIdConnectClient
 
     /**
      * End session using a GET-Request in a WebView.
@@ -23,10 +23,10 @@ interface EndSessionFlow {
      * @param configureEndSessionUrl configuration closure to configure the http request builder with
      */
     @Throws(CancellationException::class, OpenIdConnectException::class)
-    suspend fun endSession(
+    public suspend fun endSession(
         idToken: String?,
         configureEndSessionUrl: (URLBuilder.() -> Unit)? = null,
-    ) = wrapExceptions {
+    ): EndSessionResponse = wrapExceptions {
         if (!client.config.discoveryUri.isNullOrEmpty()) {
             client.discover()
         }
@@ -35,5 +35,5 @@ interface EndSessionFlow {
     }
 
     @Throws(CancellationException::class, OpenIdConnectException::class)
-    suspend fun endSession(request: EndSessionRequest): EndSessionResponse
+    public suspend fun endSession(request: EndSessionRequest): EndSessionResponse
 }

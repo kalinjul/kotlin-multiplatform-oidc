@@ -8,13 +8,13 @@ import org.publicvalue.multiplatform.oidc.tokenstore.TokenStore
 
 // ok http readme section
 @OptIn(ExperimentalOpenIdConnect::class)
+@Suppress("unused")
 object Readme {
     val tokenStore: TokenStore = null!!
     val refreshHandler: TokenRefreshHandler = null!!
     val client: OpenIdConnectClient = null!!
 
-    fun `configureOkHttpAuth`() {
-
+    fun configureOkHttpAuth() {
         @OptIn(ExperimentalOpenIdConnect::class)
         val authenticator = OpenIdConnectAuthenticator {
             getAccessToken { tokenStore.getAccessToken() }

@@ -10,7 +10,7 @@ import kotlin.test.Test
 @OptIn(ExperimentalOpenIdConnect::class)
 class TokenStoreTest {
 
-    private val tokenStore:TokenStore = SettingsTokenStore(settings = InMemorySettingsStore())
+    private val tokenStore: TokenStore = SettingsTokenStore(settings = InMemorySettingsStore())
 
     @Test
     fun saveRestore() = runTest {
@@ -30,5 +30,4 @@ class TokenStoreTest {
         assertThat(tokenStore.getRefreshToken()).isEqualTo("2")
         assertThat(tokenStore.getIdToken()).isEqualTo("3")
     }
-
 }

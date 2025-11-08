@@ -1,14 +1,18 @@
 @file:Suppress("Unused")
+
 package org.publicvalue.multiplatform.oidc
 
 import io.ktor.client.HttpClientConfig
 import io.ktor.client.plugins.api.createClientPlugin
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.statement.HttpResponse
+import io.ktor.http.HttpStatusCode
 import org.publicvalue.multiplatform.oidc.types.AuthCodeRequest
+import org.publicvalue.multiplatform.oidc.types.TokenRequest
+import org.publicvalue.multiplatform.oidc.types.remote.AccessTokenResponse
 import kotlin.coroutines.cancellation.CancellationException
 
-// swift convenience overloads with default parameters for suspend functions
+// swift convenience overloads with default parameters for public suspend functions
 // defined on DefaultOpenIdConnectClient because we cannot export extensions for interfaces yet
 
 /**
@@ -17,7 +21,7 @@ import kotlin.coroutines.cancellation.CancellationException
  * @suppress
  */
 @Throws(OpenIdConnectException::class, CancellationException::class)
-suspend fun DefaultOpenIdConnectClient.discover() =
+public suspend fun DefaultOpenIdConnectClient.discover(): Unit =
     discover(null)
 
 /**
@@ -26,7 +30,10 @@ suspend fun DefaultOpenIdConnectClient.discover() =
  * @suppress
  */
 @Throws(OpenIdConnectException::class, CancellationException::class)
-suspend fun DefaultOpenIdConnectClient.exchangeToken(authCodeRequest: AuthCodeRequest, code: String) =
+public suspend fun DefaultOpenIdConnectClient.exchangeToken(
+    authCodeRequest: AuthCodeRequest,
+    code: String
+): AccessTokenResponse =
     exchangeToken(authCodeRequest, code, null)
 
 /**
@@ -35,7 +42,7 @@ suspend fun DefaultOpenIdConnectClient.exchangeToken(authCodeRequest: AuthCodeRe
  * @suppress
  */
 @Throws(OpenIdConnectException::class, CancellationException::class)
-suspend fun DefaultOpenIdConnectClient.endSession(idToken: String) =
+public suspend fun DefaultOpenIdConnectClient.endSession(idToken: String): HttpStatusCode =
     endSession(idToken, null)
 
 /**
@@ -44,7 +51,10 @@ suspend fun DefaultOpenIdConnectClient.endSession(idToken: String) =
  * @suppress
  */
 @Throws(OpenIdConnectException::class, CancellationException::class)
-suspend fun DefaultOpenIdConnectClient.createAccessTokenRequest(authCodeRequest: AuthCodeRequest, code: String) =
+public suspend fun DefaultOpenIdConnectClient.createAccessTokenRequest(
+    authCodeRequest: AuthCodeRequest,
+    code: String
+): TokenRequest =
     createAccessTokenRequest(authCodeRequest, code, null)
 
 /**
@@ -53,7 +63,7 @@ suspend fun DefaultOpenIdConnectClient.createAccessTokenRequest(authCodeRequest:
  * @suppress
  */
 @Throws(OpenIdConnectException::class, CancellationException::class)
-suspend fun DefaultOpenIdConnectClient.createRefreshTokenRequest(refreshToken: String) =
+public suspend fun DefaultOpenIdConnectClient.createRefreshTokenRequest(refreshToken: String): TokenRequest =
     createRefreshTokenRequest(refreshToken, null)
 
 /**
@@ -62,19 +72,22 @@ suspend fun DefaultOpenIdConnectClient.createRefreshTokenRequest(refreshToken: S
  * @suppress
  */
 @Throws(OpenIdConnectException::class, CancellationException::class)
-suspend fun DefaultOpenIdConnectClient.refreshToken(refreshToken: String) =
+public suspend fun DefaultOpenIdConnectClient.refreshToken(refreshToken: String): AccessTokenResponse =
     refreshToken(refreshToken, null)
 
 /**
  * Create and install a custom client plugin.
  * @suppress
  */
-fun HttpClientConfig<*>.installClientPlugin(name: String,
-                                            onRequest: (HttpRequestBuilder, Any) -> Unit = {_,_ ->},
-                                            onResponse: (HttpResponse) -> Unit = {},
-                                            onClose: () -> Unit = {},
+public fun HttpClientConfig<*>.installClientPlugin(
+    name: String,
+    onRequest: (HttpRequestBuilder, Any) -> Unit = { _, _ -> },
+    onResponse: (HttpResponse) -> Unit = {},
+    onClose: () -> Unit = {},
 ) {
-    val plugin = createClientPlugin(name, body = {
+    val plugin = createClientPlugin(
+        name,
+        body = {
             onRequest { request, content ->
                 onRequest(request, content)
             }

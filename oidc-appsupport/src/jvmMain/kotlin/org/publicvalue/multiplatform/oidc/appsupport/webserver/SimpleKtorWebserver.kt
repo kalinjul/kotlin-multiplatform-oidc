@@ -15,9 +15,9 @@ import io.ktor.server.routing.routing
 import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
 
 @ExperimentalOpenIdConnect
-class SimpleKtorWebserver(
-    val port: Int = 8080,
-    val createResponse: suspend RoutingContext.() -> Unit = {
+public class SimpleKtorWebserver(
+    public val port: Int = 8080,
+    public val createResponse: suspend RoutingContext.() -> Unit = {
         call.respondText(
             status = HttpStatusCode.OK,
             text = """
@@ -35,7 +35,7 @@ class SimpleKtorWebserver(
             contentType = ContentType.parse("text/html")
         )
     }
-): Webserver {
+) : Webserver {
     private var server: CIOApplicationEngine? = null
 
     override suspend fun startAndWaitForRedirect(redirectPath: String): Url {

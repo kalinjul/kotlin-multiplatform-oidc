@@ -1,11 +1,10 @@
 package org.publicvalue.multiplatform.oidc.appsupport
 
-import io.ktor.http.*
+import io.ktor.http.Url
+import io.ktor.http.toURI
 import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
 import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
 import org.publicvalue.multiplatform.oidc.OpenIdConnectException
-import org.publicvalue.multiplatform.oidc.appsupport.webserver.SimpleKtorWebserver
-import org.publicvalue.multiplatform.oidc.appsupport.webserver.Webserver
 import org.publicvalue.multiplatform.oidc.flows.AuthCodeResponse
 import org.publicvalue.multiplatform.oidc.flows.AuthCodeResult
 import org.publicvalue.multiplatform.oidc.flows.CodeAuthFlow
@@ -21,7 +20,7 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
 @ExperimentalOpenIdConnect
-actual class PlatformCodeAuthFlow internal constructor(
+public actual class PlatformCodeAuthFlow internal constructor(
     actual override val client: OpenIdConnectClient,
     private val webFlow: WebAuthenticationFlow
 ) : CodeAuthFlow, EndSessionFlow {
@@ -63,12 +62,14 @@ actual class PlatformCodeAuthFlow internal constructor(
             returns() implies (redirectUrl != null)
         }
         if (redirectUrl?.isLocalhost() == false) {
-            throw OpenIdConnectException.AuthenticationFailure("JVM implementation can only handle redirect uris using localhost! Redirect uri was: $redirectUrl")
+            throw OpenIdConnectException.AuthenticationFailure(
+                "JVM implementation can only handle redirect uris using localhost! Redirect uri was: $redirectUrl"
+            )
         }
     }
 }
 
-fun Url.isLocalhost(): Boolean {
+public fun Url.isLocalhost(): Boolean {
     return try {
         val address = InetAddress.getByName(host)
         if (address.isAnyLocalAddress || address.isLoopbackAddress) {
@@ -84,13 +85,12 @@ fun Url.isLocalhost(): Boolean {
     }
 }
 
-fun Url.openInBrowser() {
+public fun Url.openInBrowser() {
     val desktop = if (Desktop.isDesktopSupported()) Desktop.getDesktop() else null
     if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
         try {
             desktop.browse(toURI())
         } catch (e: Exception) {
-            e.printStackTrace()
             throw UrlOpenException(e.message, cause = e)
         }
     } else {
@@ -98,6 +98,7 @@ fun Url.openInBrowser() {
     }
 }
 
-data class UrlOpenException(
-    override val message: String?, override val cause: Throwable? = null
-): Exception(message, cause)
+public data class UrlOpenException(
+    override val message: String?,
+    override val cause: Throwable? = null
+) : Exception(message, cause)

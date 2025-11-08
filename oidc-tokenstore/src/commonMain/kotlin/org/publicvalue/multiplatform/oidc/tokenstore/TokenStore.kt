@@ -17,35 +17,35 @@ import kotlin.native.ObjCName
 @OptIn(ExperimentalObjCName::class)
 @ObjCName("TokenStoreProtocol", "TokenStoreProtocol", exact = true)
 // not an interface to support extension methods in swift
-abstract class TokenStore {
-    abstract suspend fun getAccessToken(): String?
-    abstract suspend fun getRefreshToken(): String?
-    abstract suspend fun getIdToken(): String?
+public abstract class TokenStore {
+    public abstract suspend fun getAccessToken(): String?
+    public abstract suspend fun getRefreshToken(): String?
+    public abstract suspend fun getIdToken(): String?
 
-    abstract val accessTokenFlow: Flow<String?>
-    abstract val refreshTokenFlow: Flow<String?>
-    abstract val idTokenFlow: Flow<String?>
+    public abstract val accessTokenFlow: Flow<String?>
+    public abstract val refreshTokenFlow: Flow<String?>
+    public abstract val idTokenFlow: Flow<String?>
 
-    abstract suspend fun removeAccessToken()
-    abstract suspend fun removeRefreshToken()
-    abstract suspend fun removeIdToken()
+    public abstract suspend fun removeAccessToken()
+    public abstract suspend fun removeRefreshToken()
+    public abstract suspend fun removeIdToken()
 
-    abstract suspend fun saveTokens(accessToken: String, refreshToken: String?, idToken: String?)
+    public abstract suspend fun saveTokens(accessToken: String, refreshToken: String?, idToken: String?)
 }
 
 // extension method so no need to overwrite in swift subclasses
 @ExperimentalOpenIdConnect
-suspend fun TokenStore.saveTokens(tokens: AccessTokenResponse) {
+public suspend fun TokenStore.saveTokens(tokens: AccessTokenResponse) {
     saveTokens(
-        accessToken = tokens.access_token,
-        refreshToken = tokens.refresh_token,
-        idToken = tokens.id_token
+        accessToken = tokens.accessToken,
+        refreshToken = tokens.refreshToken,
+        idToken = tokens.idToken
     )
 }
 
 // extension method so no need to overwrite in swift subclasses
 @ExperimentalOpenIdConnect
-suspend fun TokenStore.removeTokens() {
+public suspend fun TokenStore.removeTokens() {
     removeAccessToken()
     removeIdToken()
     removeRefreshToken()
@@ -53,7 +53,7 @@ suspend fun TokenStore.removeTokens() {
 
 // extension method so no need to overwrite in swift subclasses
 @ExperimentalOpenIdConnect
-suspend fun TokenStore.getTokens(): OauthTokens? {
+public suspend fun TokenStore.getTokens(): OauthTokens? {
     val accessToken = getAccessToken()
     val refreshToken = getRefreshToken()
     val idToken = getIdToken()
@@ -70,7 +70,7 @@ suspend fun TokenStore.getTokens(): OauthTokens? {
 }
 
 @ExperimentalOpenIdConnect
-val TokenStore.tokensFlow: Flow<OauthTokens?>
+public val TokenStore.tokensFlow: Flow<OauthTokens?>
     get() = combine(accessTokenFlow, refreshTokenFlow, idTokenFlow) { accessToken, refreshToken, idToken ->
         if (accessToken != null) {
             OauthTokens(

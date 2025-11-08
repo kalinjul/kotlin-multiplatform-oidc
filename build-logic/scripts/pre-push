@@ -1,0 +1,11 @@
+#!/bin/sh
+echo "Running detekt before commit..."
+./gradlew detekt
+RESULT=$?
+if [ $RESULT -ne 0 ]; then
+  echo "❌ Code quality checks failed. Commit aborted."
+  echo "$RESULT"
+  exit 1
+fi
+echo "✅ Code quality checks passed."
+exit 0

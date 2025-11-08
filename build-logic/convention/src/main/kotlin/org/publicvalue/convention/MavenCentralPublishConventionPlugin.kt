@@ -14,7 +14,8 @@ import org.gradle.plugins.signing.SigningExtension
 import org.jetbrains.compose.internal.utils.getLocalProperty
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
-class MavenCentralPublishConventionPlugin : Plugin<Project> {
+@Suppress("unused", "LongMethod")
+internal class MavenCentralPublishConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
             with(pluginManager) {
@@ -24,13 +25,13 @@ class MavenCentralPublishConventionPlugin : Plugin<Project> {
             }
 
             extensions.configure<KotlinMultiplatformExtension> {
+                explicitApi()
                 if (pluginManager.hasPlugin("com.android.library")) {
                     androidTarget {
                         publishLibraryVariants("release")
                     }
                 }
             }
-
 
             val javadocJar = tasks.register("javadocJar", Jar::class.java) {
                 archiveClassifier.set("javadoc")
@@ -72,7 +73,9 @@ class MavenCentralPublishConventionPlugin : Plugin<Project> {
                             }
                             scm {
                                 connection.set("scm:git:github.com/kalinjul/kotlin-multiplatform-oidc.git")
-                                developerConnection.set("scm:git:ssh://github.com/kalinjul/kotlin-multiplatform-oidc.git")
+                                developerConnection.set(
+                                    "scm:git:ssh://github.com/kalinjul/kotlin-multiplatform-oidc.git"
+                                )
                                 url.set("https://github.com/kalinjul/kotlin-multiplatform-oidc/tree/main")
                             }
                         }
@@ -89,7 +92,6 @@ class MavenCentralPublishConventionPlugin : Plugin<Project> {
                 val publishing = extensions.getByType<PublishingExtension>()
                 sign(publishing.publications)
             }
-
 
             //region Fix Gradle warning about signing tasks using publishing task outputs without explicit dependencies
             // https://github.com/gradle/gradle/issues/26091

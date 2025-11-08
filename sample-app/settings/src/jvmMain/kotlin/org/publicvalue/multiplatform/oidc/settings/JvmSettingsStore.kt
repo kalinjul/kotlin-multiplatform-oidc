@@ -4,9 +4,9 @@ import com.russhwolf.settings.PreferencesSettings
 import com.russhwolf.settings.get
 import java.util.prefs.Preferences
 
-class JvmSettingsStore: SettingsStore {
+public class JvmSettingsStore : SettingsStore {
 
-    val prefs = PreferencesSettings(Preferences.userRoot())
+    private val prefs = PreferencesSettings(Preferences.userRoot())
 
     override suspend fun get(key: String): String? {
         return prefs[key]
@@ -23,5 +23,4 @@ class JvmSettingsStore: SettingsStore {
     override suspend fun clear() {
         prefs.clear()
     }
-
 }

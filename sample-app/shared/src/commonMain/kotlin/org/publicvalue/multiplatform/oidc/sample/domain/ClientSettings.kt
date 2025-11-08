@@ -1,15 +1,19 @@
 package org.publicvalue.multiplatform.oidc.sample.domain
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.publicvalue.multiplatform.oidc.types.CodeChallengeMethod
 
 @Serializable
-data class ClientSettings(
+internal data class ClientSettings(
     val name: String? = null,
-    val client_id: String? = null,
-    val client_secret: String? = null,
+    @SerialName("client_id")
+    val clientId: String? = null,
+    @SerialName("client_secret")
+    val clientSecret: String? = null,
     val scope: String? = null,
-    val code_challenge_method: CodeChallengeMethod = CodeChallengeMethod.S256,
+    @SerialName("code_challenge_method")
+    val codeChallengeMethod: CodeChallengeMethod = CodeChallengeMethod.S256,
 ) {
     companion object {
         val Empty = ClientSettings(
@@ -18,6 +22,6 @@ data class ClientSettings(
     }
 
     fun isValid(): Boolean {
-        return client_id != null && scope != null
+        return clientId != null && scope != null
     }
 }

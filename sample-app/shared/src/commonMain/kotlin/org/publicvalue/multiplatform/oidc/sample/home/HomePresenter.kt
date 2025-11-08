@@ -1,12 +1,19 @@
 package org.publicvalue.multiplatform.oidc.sample.home
 
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.Navigator
-import io.ktor.client.request.*
-import io.ktor.client.request.forms.*
-import io.ktor.http.*
+import io.ktor.client.request.forms.submitForm
+import io.ktor.client.request.parameter
+import io.ktor.client.request.url
+import io.ktor.http.HttpStatusCode
+import io.ktor.http.URLBuilder
+import io.ktor.http.isSuccess
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.publicvalue.multiplatform.oidc.DefaultOpenIdConnectClient.Companion.DefaultHttpClient
@@ -20,10 +27,10 @@ import org.publicvalue.multiplatform.oidc.sample.screens.ConfigScreen
 import org.publicvalue.multiplatform.oidc.types.Jwt
 import org.publicvalue.multiplatform.oidc.types.remote.AccessTokenResponse
 
-class HomePresenter(
+internal class HomePresenter(
     val authFlowFactory: CodeAuthFlowFactory,
     val navigator: Navigator
-): ErrorPresenter<HomeUiState> {
+) : ErrorPresenter<HomeUiState> {
 
     override var errorMessage = MutableStateFlow<String?>(null)
 
@@ -48,10 +55,10 @@ class HomePresenter(
                 OpenIdConnectClient(idpSettings.discoveryUrl) {
                     redirectUri = PlatformConstants.redirectUrl.trim()
                     postLogoutRedirectUri = PlatformConstants.postLogoutRedirectUrl.trim()
-                    codeChallengeMethod = clientSettings.code_challenge_method
+                    codeChallengeMethod = clientSettings.codeChallengeMethod
                     this.scope = clientSettings.scope?.trim()
-                    this.clientId = clientSettings.client_id?.trim()
-                    this.clientSecret = clientSettings.client_secret?.trim()
+                    this.clientId = clientSettings.clientId?.trim()
+                    this.clientSecret = clientSettings.clientSecret?.trim()
                     this.endpoints {
                         authorizationEndpoint = idpSettings.endpointAuthorization?.trim()
                         tokenEndpoint = idpSettings.endpointToken?.trim()
@@ -65,22 +72,22 @@ class HomePresenter(
 
         suspend fun updateTokenResponse(newTokens: AccessTokenResponse) {
             tokenResponse = newTokens
-            val jwt = newTokens.id_token?.let { Jwt.parse(it) }
+            val jwt = newTokens.idToken?.let { Jwt.parse(it) }
             println("parsed jwt: $jwt")
             subject = jwt?.payload?.sub
             settingsStore.setTokenData(
                 org.publicvalue.multiplatform.oidc.sample.domain.TokenData(
-                    accessToken = newTokens.access_token,
-                    refreshToken = newTokens.refresh_token,
-                    idToken = newTokens.id_token,
-                    expiresIn = newTokens.expires_in ?: 0,
-                    issuedAt = newTokens.received_at
+                    accessToken = newTokens.accessToken,
+                    refreshToken = newTokens.refreshToken,
+                    idToken = newTokens.idToken,
+                    expiresIn = newTokens.expiresIn ?: 0,
+                    issuedAt = newTokens.receivedAt
                 )
             )
         }
 
         fun eventSink(event: HomeUiEvent) {
-            when(event) {
+            when (event) {
                 HomeUiEvent.Login -> {
                     resetErrorMessage()
                     val client = createClient()
@@ -107,24 +114,26 @@ class HomePresenter(
                                 val isGoogle = client.config.discoveryUri.toString().contains("accounts.google.com")
                                 if (!client.config.endpoints?.endSessionEndpoint.isNullOrEmpty() || isGoogle) {
                                     catchErrorMessage {
-                                        val result = if(isGoogle) {
+                                        val result = if (isGoogle) {
                                             val endpoint = "https://accounts.google.com/o/oauth2/revoke"
                                             val url = URLBuilder(endpoint)
                                             val response = DefaultHttpClient.submitForm {
                                                 url(url.build())
-                                                parameter("token", it.access_token)
+                                                parameter("token", it.accessToken)
                                             }
                                             response.status
                                         } else {
                                             if (event.useWebFlow) {
                                                 val flow = authFlowFactory.createEndSessionFlow(client)
-                                                val result = flow.endSession(it.id_token ?: "")
+                                                val result = flow.endSession(it.idToken ?: "")
                                                 if (result.isFailure) {
-                                                    setErrorMessage(result.exceptionOrNull()?.message ?: "Unknown error")
+                                                    setErrorMessage(
+                                                        result.exceptionOrNull()?.message ?: "Unknown error"
+                                                    )
                                                 }
                                                 if (result.isSuccess) HttpStatusCode.OK else null
                                             } else {
-                                                client.endSession(idToken = it.id_token ?: "")
+                                                client.endSession(idToken = it.idToken ?: "")
                                             }
                                         }
                                         if (result?.isSuccess() == true || result == HttpStatusCode.Found) {
@@ -152,7 +161,7 @@ class HomePresenter(
                         scope.launch {
                             catchErrorMessage {
                                 tokenResponse?.let {
-                                    val newTokens = client.refreshToken(refreshToken = it.refresh_token ?: "")
+                                    val newTokens = client.refreshToken(refreshToken = it.refreshToken ?: "")
                                     updateTokenResponse(newTokens)
                                 }
                             }

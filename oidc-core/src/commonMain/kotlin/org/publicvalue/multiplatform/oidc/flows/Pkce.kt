@@ -12,12 +12,12 @@ import kotlin.native.ObjCName
  */
 @OptIn(ExperimentalObjCName::class)
 @ObjCName(swiftName = "PKCE", name = "PKCE", exact = true)
-class Pkce(
+public class Pkce(
     codeChallengeMethod: CodeChallengeMethod,
     /** For token request **/
-    val codeVerifier: String = verifier(),
+    public val codeVerifier: String = verifier(),
     /** For authorization **/
-    val codeChallenge: String = challenge(codeVerifier, codeChallengeMethod),
+    public val codeChallenge: String = challenge(codeVerifier, codeChallengeMethod),
 ) {
     private companion object {
         fun verifier(): String {
@@ -30,4 +30,3 @@ class Pkce(
         }
     }
 }
-

@@ -8,12 +8,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun FormHeadline(
-    modifier:Modifier = Modifier,
+internal fun FormHeadline(
+    modifier: Modifier = Modifier,
     text: String
 ) {
     Text(
         modifier = modifier.padding(vertical = 16.dp),
-        style = typography.titleSmall, text = text
+        style = typography.titleSmall,
+        text = text
     )
 }

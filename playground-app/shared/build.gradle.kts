@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
 import org.publicvalue.convention.addKspDependencyForAllTargets
 
 plugins {
@@ -7,6 +8,7 @@ plugins {
 }
 
 kotlin {
+    explicitApi = ExplicitApiMode.Disabled
     jvm()
     sourceSets {
         val commonMain by getting {

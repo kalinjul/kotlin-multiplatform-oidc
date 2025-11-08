@@ -1,6 +1,6 @@
 package org.publicvalue.multiplatform.oidc.appsupport
 
-import io.ktor.http.*
+import io.ktor.http.Url
 import kotlinx.browser.window
 import kotlinx.serialization.json.Json
 import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
@@ -16,7 +16,7 @@ internal class WebPopupFlow(
     private val windowTarget: String = "",
     private val windowFeatures: String = "width=1000,height=800,resizable=yes,scrollbars=yes",
     private val redirectOrigin: String,
-): WebAuthenticationFlow {
+) : WebAuthenticationFlow {
 
     private class WindowHolder(var window: Window?)
 
@@ -28,7 +28,6 @@ internal class WebPopupFlow(
 
             messageHandler = { event ->
                 if (event is MessageEvent) {
-
                     if (event.origin != redirectOrigin) {
                         throw TechnicalFailure("Security issue. Event was not from $redirectOrigin", null)
                     }
@@ -40,7 +39,10 @@ internal class WebPopupFlow(
                         continuation.resume(WebAuthenticationFlowResult.Success(url))
                     } else {
                         // Log an advisory but stay registered for the true callback
-                        println("${WebPopupFlow::class.simpleName} skipping message from unknown source: ${event.source}")
+                        println(
+                            "${WebPopupFlow::class.simpleName} skipping message " +
+                                "from unknown source: ${event.source}"
+                        )
                     }
                 }
             }
@@ -53,6 +55,7 @@ internal class WebPopupFlow(
     }
 
     internal companion object {
+        @OptIn(ExperimentalWasmJsInterop::class)
         @ExperimentalOpenIdConnect
         fun handleRedirect() {
             if (window.opener != null) {
@@ -75,6 +78,10 @@ private fun postMessage(url: String, targetOrigin: String) {
     js("window.opener.postMessage(url, targetOrigin)")
 }
 
+@OptIn(ExperimentalWasmJsInterop::class)
 private fun closeWindow(delay: Int = 100) {
-    window.setTimeout(handler = { window.close(); null }, timeout = delay)
+    window.setTimeout(handler = {
+        window.close()
+        null
+    }, timeout = delay)
 }

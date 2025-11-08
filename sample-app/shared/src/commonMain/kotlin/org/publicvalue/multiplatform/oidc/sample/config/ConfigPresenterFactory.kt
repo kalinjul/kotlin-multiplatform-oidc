@@ -8,8 +8,7 @@ import com.slack.circuit.runtime.ui.Ui
 import com.slack.circuit.runtime.ui.ui
 import org.publicvalue.multiplatform.oidc.sample.screens.ConfigScreen
 
-
-object ConfigPresenterFactory: Presenter.Factory {
+internal object ConfigPresenterFactory : Presenter.Factory {
     override fun create(
         screen: Screen,
         navigator: Navigator,
@@ -22,7 +21,7 @@ object ConfigPresenterFactory: Presenter.Factory {
     }
 }
 
-object ConfigUiFactory: Ui.Factory {
+internal object ConfigUiFactory : Ui.Factory {
     override fun create(screen: Screen, context: CircuitContext): Ui<*>? = when (screen) {
         is ConfigScreen -> {
             ui<ConfigUiState> { state, modifier ->

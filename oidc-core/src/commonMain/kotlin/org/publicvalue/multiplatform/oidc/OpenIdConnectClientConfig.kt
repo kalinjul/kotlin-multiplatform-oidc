@@ -10,7 +10,7 @@ import kotlin.native.ObjCName
  *
  * @return [OpenIdConnectClientConfig]
  */
-fun OpenIdConnectClientConfig(block: OpenIdConnectClientConfig.() -> Unit): OpenIdConnectClientConfig {
+public fun OpenIdConnectClientConfig(block: OpenIdConnectClientConfig.() -> Unit): OpenIdConnectClientConfig {
     val config = OpenIdConnectClientConfig()
     config.block()
     return config
@@ -24,51 +24,53 @@ fun OpenIdConnectClientConfig(block: OpenIdConnectClientConfig.() -> Unit): Open
 @OptIn(ExperimentalObjCName::class)
 @EndpointMarker
 @ObjCName(swiftName = "OpenIdConnectClientConfig", name = "OpenIdConnectClientConfig", exact = true)
-class OpenIdConnectClientConfig(
+@Suppress("LongParameterList")
+public class OpenIdConnectClientConfig(
     /**
      * If set, no further endpoints have to be configured.
      * You can override discovered endpoints in [endpoints]
      */
-    val discoveryUri: String? = null,
-    var endpoints: Endpoints? = null,
+    public val discoveryUri: String? = null,
+    public var endpoints: Endpoints? = null,
     /**
      * REQUIRED
      *
      * [RFC6749](https://datatracker.ietf.org/doc/html/rfc6749#section-2.2)
      */
-    var clientId: String? = null,
-    var clientSecret: String? = null,
+    public var clientId: String? = null,
+    public var clientSecret: String? = null,
     /**
      * OPTIONAL
      *
      * [RFC6749](https://datatracker.ietf.org/doc/html/rfc6749#section-3.3)
      */
-    var scope: String? = null,
+    public var scope: String? = null,
     /**
      * The Code Challenge Method to use for PKCE.
      *
      * Default is [S256][CodeChallengeMethod.S256]).
      * Set to [off][CodeChallengeMethod.off]) to disable PKCE.
      */
-    var codeChallengeMethod: CodeChallengeMethod = CodeChallengeMethod.S256,
+    public var codeChallengeMethod: CodeChallengeMethod = CodeChallengeMethod.S256,
     /**
      * [rfc6749](https://datatracker.ietf.org/doc/html/rfc6749#section-3.1.2)
      */
-    var redirectUri: String? = null,
+    public var redirectUri: String? = null,
 
     /**
      * Url that is used for redirecting back to the app after logout request.
-     * Is only used if endSession is called on an [EndSessionFlow][org.publicvalue.multiplatform.oidc.flows.EndSessionFlow].
+     * Is only used if endSession is called on
+     * an [EndSessionFlow][org.publicvalue.multiplatform.oidc.flows.EndSessionFlow].
      *
      * [OpenID Spec](https://openid.net/specs/openid-connect-rpinitiated-1_0.html)
      */
-    var postLogoutRedirectUri: String? = null,
+    public var postLogoutRedirectUri: String? = null,
 
     /**
      * Disables sending nonce in the authentication request.
      * This is not recommended as [nonce is used to mitigate replay attacks](https://openid.net/specs/openid-connect-core-1_0.html#NonceNotes).
      */
-    var disableNonce: Boolean = false
+    public var disableNonce: Boolean = false
 ) {
     /**
      * Configure the endpoints.
@@ -78,7 +80,7 @@ class OpenIdConnectClientConfig(
      *
      * [endSessionEndpoint][Endpoints.endSessionEndpoint] is required if you wish to logout.
      */
-    fun endpoints(
+    public fun endpoints(
         block: Endpoints.() -> Unit
     ) {
         this.endpoints = (endpoints ?: Endpoints()).apply(block)
@@ -88,15 +90,15 @@ class OpenIdConnectClientConfig(
      * Update this client config with discovery document.
      * Will NOT override already set properties in config.
      */
-    fun updateWithDiscovery(config: OpenIdConnectConfiguration) {
+    public fun updateWithDiscovery(config: OpenIdConnectConfiguration) {
         endpoints {
-            authorizationEndpoint = authorizationEndpoint ?: config.authorization_endpoint
-            tokenEndpoint = tokenEndpoint ?: config.token_endpoint
-            endSessionEndpoint = endSessionEndpoint ?: config.end_session_endpoint
-            userInfoEndpoint = userInfoEndpoint ?: config.userinfo_endpoint
-            revocationEndpoint = revocationEndpoint ?: config.revocation_endpoint
+            authorizationEndpoint = authorizationEndpoint ?: config.authorizationEndpoint
+            tokenEndpoint = tokenEndpoint ?: config.tokenEndpoint
+            endSessionEndpoint = endSessionEndpoint ?: config.endSessionEndpoint
+            userInfoEndpoint = userInfoEndpoint ?: config.userinfoEndpoint
+            revocationEndpoint = revocationEndpoint ?: config.revocationEndpoint
         }
-        this.scope = scope ?: config.scopes_supported?.joinToString(" ")
+        this.scope = scope ?: config.scopesSupported?.joinToString(" ")
     }
 }
 
@@ -109,12 +111,12 @@ private annotation class EndpointMarker
 @OptIn(ExperimentalObjCName::class)
 @EndpointMarker
 @ObjCName(swiftName = "Endpoints", name = "Endpoints", exact = true)
-data class Endpoints(
-    var tokenEndpoint: String? = null,
-    var authorizationEndpoint: String? = null,
-    var userInfoEndpoint: String? = null,
-    var endSessionEndpoint: String? = null,
-    var revocationEndpoint: String? = null
+public data class Endpoints(
+    public var tokenEndpoint: String? = null,
+    public var authorizationEndpoint: String? = null,
+    public var userInfoEndpoint: String? = null,
+    public var endSessionEndpoint: String? = null,
+    public var revocationEndpoint: String? = null
 ) {
     /**
      * Set a baseUrl that is applied for all endpoints.
@@ -122,8 +124,7 @@ data class Endpoints(
      *      tokenEndpoint = "token"
      * }
      */
-    @Suppress("unused")
-    fun baseUrl(baseUrl: String, block: Endpoints.() -> Unit) {
+    public fun baseUrl(baseUrl: String, block: Endpoints.() -> Unit) {
         val endpoints = Endpoints()
         endpoints.block()
         tokenEndpoint = baseUrl + endpoints.tokenEndpoint
@@ -139,7 +140,7 @@ data class Endpoints(
  * @receiver the [OpenIdConnectClientConfig] to validate
  * @throws OpenIdConnectException if the config is invalid
  */
-fun OpenIdConnectClientConfig.validate() {
+public fun OpenIdConnectClientConfig.validate() {
     if (discoveryUri.isNullOrBlank()) {
         if (endpoints?.tokenEndpoint == null) {
             throw OpenIdConnectException.InvalidUrl("Invalid configuration: tokenEndpoint is null")

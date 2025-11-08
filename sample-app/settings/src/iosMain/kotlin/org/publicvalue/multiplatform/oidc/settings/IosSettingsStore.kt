@@ -11,7 +11,7 @@ import platform.Security.kSecAttrAccessibleAfterFirstUnlock
 import platform.Security.kSecAttrService
 
 @OptIn(ExperimentalSettingsImplementation::class)
-class IosSettingsStore : SettingsStore {
+public class IosSettingsStore : SettingsStore {
 
     @OptIn(ExperimentalForeignApi::class)
     private val keyChainSettings by lazy {
@@ -36,6 +36,4 @@ class IosSettingsStore : SettingsStore {
     override suspend fun clear() {
         keyChainSettings.clear()
     }
-
-
 }

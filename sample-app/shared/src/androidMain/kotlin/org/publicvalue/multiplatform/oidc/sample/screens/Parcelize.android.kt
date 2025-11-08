@@ -1,3 +1,3 @@
 package org.publicvalue.multiplatform.oidc.sample.screens
 
-actual typealias CommonParcelable = android.os.Parcelable
+internal actual typealias CommonParcelable = android.os.Parcelable

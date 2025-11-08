@@ -16,9 +16,9 @@ import org.publicvalue.multiplatform.oidc.sample.domain.ClientSettings
 import org.publicvalue.multiplatform.oidc.sample.domain.IdpSettings
 import kotlin.String
 
-class ConfigPresenter(
+internal class ConfigPresenter(
     val navigator: Navigator
-): ErrorPresenter<ConfigUiState> {
+) : ErrorPresenter<ConfigUiState> {
 
     override var errorMessage = MutableStateFlow<String?>(null)
 
@@ -31,24 +31,27 @@ class ConfigPresenter(
         val idpSettings by settingsStore.observeIdpSettings().collectAsRetainedState()
 
         fun eventSink(event: ConfigUiEvent) {
-            when(event) {
+            when (event) {
                 ConfigUiEvent.NavigateBack -> {
-                     navigator.pop()
+                    navigator.pop()
                 }
+
                 is ConfigUiEvent.ChangeClientId -> {
                     val clientSettings = clientSettings ?: ClientSettings.Empty
 
                     scope.launch {
-                        settingsStore.setClientSettings(clientSettings.copy(client_id = event.clientId))
+                        settingsStore.setClientSettings(clientSettings.copy(clientId = event.clientId))
                     }
                 }
+
                 is ConfigUiEvent.ChangeClientSecret -> {
                     val clientSettings = clientSettings ?: ClientSettings.Empty
 
                     scope.launch {
-                        settingsStore.setClientSettings(clientSettings.copy(client_secret = event.clientSecret))
+                        settingsStore.setClientSettings(clientSettings.copy(clientSecret = event.clientSecret))
                     }
                 }
+
                 is ConfigUiEvent.ChangeScope -> {
                     val clientSettings = clientSettings ?: ClientSettings.Empty
 
@@ -56,13 +59,17 @@ class ConfigPresenter(
                         settingsStore.setClientSettings(clientSettings.copy(scope = event.scope))
                     }
                 }
+
                 is ConfigUiEvent.ChangeCodeChallengeMethod -> {
                     val clientSettings = clientSettings ?: ClientSettings.Empty
 
                     scope.launch {
-                        settingsStore.setClientSettings(clientSettings.copy(code_challenge_method = event.codeChallengeMethod))
+                        settingsStore.setClientSettings(
+                            clientSettings.copy(codeChallengeMethod = event.codeChallengeMethod)
+                        )
                     }
                 }
+
                 is ConfigUiEvent.ChangeDiscoveryUrl -> {
                     val idpSettings = idpSettings ?: IdpSettings.Empty
 
@@ -70,13 +77,17 @@ class ConfigPresenter(
                         settingsStore.setIdpSettings(idpSettings.copy(discoveryUrl = event.discoveryUrl))
                     }
                 }
+
                 is ConfigUiEvent.ChangeEndpointAuthorization -> {
                     val idpSettings = idpSettings ?: IdpSettings.Empty
 
                     scope.launch {
-                        settingsStore.setIdpSettings(idpSettings.copy(endpointAuthorization = event.endpointAuthorization))
+                        settingsStore.setIdpSettings(
+                            idpSettings.copy(endpointAuthorization = event.endpointAuthorization)
+                        )
                     }
                 }
+
                 is ConfigUiEvent.ChangeEndpointEndSession -> {
                     val idpSettings = idpSettings ?: IdpSettings.Empty
 
@@ -84,6 +95,7 @@ class ConfigPresenter(
                         settingsStore.setIdpSettings(idpSettings.copy(endpointEndSession = event.endpointEndSession))
                     }
                 }
+
                 is ConfigUiEvent.ChangeEndpointToken -> {
                     val idpSettings = idpSettings ?: IdpSettings.Empty
 
@@ -91,10 +103,13 @@ class ConfigPresenter(
                         settingsStore.setIdpSettings(idpSettings.copy(endpointToken = event.endpointToken))
                     }
                 }
+
                 ConfigUiEvent.Discover -> {
                     scope.launch {
                         catchErrorMessage {
-                            if (!idpSettings?.discoveryUrl.isNullOrEmpty() && idpSettings?.discoveryUrl?.let { Url(it) } != null) {
+                            if (!idpSettings?.discoveryUrl.isNullOrEmpty() &&
+                                idpSettings?.discoveryUrl?.let { Url(it) } != null
+                            ) {
                                 settingsStore.setIdpSettings(
                                     IdpSettings(
                                         discoveryUrl = idpSettings?.discoveryUrl
@@ -105,12 +120,12 @@ class ConfigPresenter(
                                     idpSettings.discoveryUrl?.let {
                                         val config = d.downloadConfiguration(it)
                                         val newSettings = idpSettings.copy(
-                                            endpointToken = config.token_endpoint,
-                                            endpointAuthorization = config.authorization_endpoint,
-                                            endpointDeviceAuthorization = config.device_authorization_endpoint,
-                                            endpointEndSession = config.end_session_endpoint,
-                                            endpointIntrospection = config.introspection_endpoint,
-                                            endpointUserInfo = config.userinfo_endpoint
+                                            endpointToken = config.tokenEndpoint,
+                                            endpointAuthorization = config.authorizationEndpoint,
+                                            endpointDeviceAuthorization = config.deviceAuthorizationEndpoint,
+                                            endpointEndSession = config.endSessionEndpoint,
+                                            endpointIntrospection = config.introspectionEndpoint,
+                                            endpointUserInfo = config.userinfoEndpoint
                                         )
                                         settingsStore.setIdpSettings(newSettings)
                                     }

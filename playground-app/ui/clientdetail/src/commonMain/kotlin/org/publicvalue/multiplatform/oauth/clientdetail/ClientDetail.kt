@@ -346,15 +346,15 @@ internal fun AuthFlow(
             if (tokenResponse != null) {
                 ExpandableInfo(
                     label = "Access Token",
-                    text = tokenResponse.access_token,
+                    text = tokenResponse.accessToken,
                 )
                 ExpandableInfo(
                     label = "Refresh Token",
-                    text = tokenResponse.refresh_token.orEmpty(),
+                    text = tokenResponse.refreshToken.orEmpty(),
                 )
                 ExpandableInfo(
                     label = "Id Token",
-                    text = tokenResponse.id_token.orEmpty(),
+                    text = tokenResponse.idToken.orEmpty(),
                 )
 //                FormHeadline(text = "Access Token: ")
 //                FormHeadline(text = "Refresh Token: ${tokenResponse.refresh_token}")
@@ -412,19 +412,19 @@ fun ExpandableInfo(
 
 fun AccessTokenResponse.format(): String {
     return """
-        access_token: $access_token
-        refresh_token: $refresh_token
+        access_token: $accessToken
+        refresh_token: $refreshToken
         scope: $scope
-        expires_in: $expires_in
-        token_type: $token_type
+        expires_in: $expiresIn
+        token_type: $tokenType
     """.trimIndent()
 }
 
 fun ErrorResponse.format(): String {
     return """
         error: $error
-        error_description: $error_description
-        error_uri: $error_uri
+        error_description: $errorDescription
+        error_uri: $errorUri
         state: $state
     """.trimIndent()
 }

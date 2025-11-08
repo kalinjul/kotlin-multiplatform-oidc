@@ -8,22 +8,21 @@ import kotlin.native.ObjCName
  */
 @OptIn(ExperimentalObjCName::class)
 @ObjCName(swiftName = "CodeChallengeMethod", name = "CodeChallengeMethod", exact = true)
-enum class CodeChallengeMethod(
-    val queryString: String?
+public enum class CodeChallengeMethod(
+    public val queryString: String?
 ) {
     /** Send a random code_challenge in code request and a SHA-256 hashed code_verifier in token
      *  request.
-    **/
+     **/
     S256("S256"),
 
     /**
      *  code_challenge = code_verifier
      */
-    @Suppress("unused")
-    plain("plain"),
+    PLAIN("plain"),
 
     /**
      * Disable PKCE Headers.
      */
-    off(null)
+    OFF(null)
 }

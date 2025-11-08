@@ -58,21 +58,21 @@ object README {
     }
 
     // Request access token using code auth flow
-    suspend fun `Request_access_token_using_code_auth_flow`() {
+    suspend fun `Request_accessToken_using_code_auth_flow`() {
         val flow = authFlowFactory.createAuthFlow(client)
         val tokens = flow.getAccessToken()
     }
 
     // perform refresh or endSession
     suspend fun `perform_refresh_or_endSession`() {
-        tokens.refresh_token?.let { client.refreshToken(refreshToken = it) }
-        tokens.id_token?.let { client.endSession(idToken = it) }
+        tokens.refreshToken?.let { client.refreshToken(refreshToken = it) }
+        tokens.idToken?.let { client.endSession(idToken = it) }
     }
 
     // endSession using web flow
     suspend fun `perform_endSession_getrequest`() {
         val flow = authFlowFactory.createEndSessionFlow(client)
-        tokens.id_token?.let { flow.endSession(it) }
+        tokens.idToken?.let { flow.endSession(it) }
     }
 
     // Custom headers/url parameters
@@ -96,7 +96,7 @@ object README {
     // We provide simple JWT parsing
     fun `We_provide_simple_JWT_parsing`() {
         val tokens = AccessTokenResponse("abc")
-        val jwt = tokens.id_token?.parseJwt()
+        val jwt = tokens.idToken?.parseJwt()
         println(jwt?.payload?.aud) // print audience
         println(jwt?.payload?.iss) // print issuer
         println(jwt?.payload?.additionalClaims?.get("email")) // get claim

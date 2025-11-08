@@ -1,12 +1,8 @@
-import com.android.build.gradle.internal.tasks.factory.dependsOn
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.publicvalue.convention.config.configureIosTargets
 import org.publicvalue.convention.config.configureWasmTarget
 import org.publicvalue.convention.config.exportKdoc
-import java.nio.file.Files
-import java.util.stream.Collectors.toList
-import kotlin.io.path.name
 
 plugins {
     id("org.publicvalue.convention.android.library")
@@ -28,42 +24,24 @@ kotlin {
     configureIosTargets(baseName = "OpenIdConnectClient")
     configureWasmTarget(baseName = "OpenIdConnectClient")
     sourceSets {
-        val commonMain by getting {
-            dependencies {
-                api(projects.oidcCore)
-                api(projects.oidcTokenstore)
-            }
+        commonMain.dependencies {
+            api(projects.oidcCore)
+            api(projects.oidcTokenstore)
         }
 
-        val iosMain by getting {
-            dependencies {
-            }
+        androidMain.dependencies {
+            implementation(libs.androidx.activity.compose)
+            implementation(libs.androidx.core.ktx)
+            implementation(libs.androidx.browser)
         }
 
-        val androidMain by getting {
-            dependencies {
-                implementation(libs.androidx.activity.compose)
-                implementation(libs.androidx.core.ktx)
-                implementation(libs.androidx.browser)
-            }
+        jvmMain.dependencies {
+            implementation(libs.ktor.server.core)
+            implementation(libs.ktor.server.cio)
         }
 
-        val jvmMain by getting {
-            dependencies {
-                implementation(libs.ktor.server.core)
-                implementation(libs.ktor.server.cio)
-            }
-        }
-
-        val wasmJsMain by getting {
-            dependencies {
-                implementation(libs.kotlinx.browser)
-            }
-        }
-
-        val commonTest by getting {
-            dependencies {
-            }
+        wasmJsMain.dependencies {
+            implementation(libs.kotlinx.browser)
         }
     }
 
@@ -73,7 +51,8 @@ kotlin {
             export(projects.oidcCore)
             export(projects.oidcTokenstore)
 
-//            freeCompilerArgs += listOf("-Xoverride-konan-properties=minVersion.ios=15.0;minVersionSinceXcode15.ios=15.0")
+            /*freeCompilerArgs += listOf("-Xoverride-konan-properties=minVersion.ios=15.0" +
+                    ";minVersionSinceXcode15.ios=15.0")*/
         }
     }
 }

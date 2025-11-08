@@ -4,8 +4,8 @@ import kotlinx.serialization.Serializable
 import kotlin.experimental.ExperimentalObjCName
 import kotlin.native.ObjCName
 
-typealias AuthCodeResponse = Result<AuthCodeResult>
-typealias EndSessionResponse = Result<Unit>
+public typealias AuthCodeResponse = Result<AuthCodeResult>
+public typealias EndSessionResponse = Result<Unit>
 
 /**
  * Result of an Auth Code Request
@@ -13,7 +13,7 @@ typealias EndSessionResponse = Result<Unit>
 @OptIn(ExperimentalObjCName::class)
 @ObjCName(swiftName = "AuthCodeResult", name = "AuthCodeResult", exact = true)
 @Serializable
-data class AuthCodeResult(
+public data class AuthCodeResult(
     val code: String?,
     val state: String?
 )

@@ -28,65 +28,83 @@ import kotlin.experimental.ExperimentalObjCName
  */
 @OptIn(ExperimentalObjCName::class)
 @ObjCName(swiftName = "CodeAuthFlow", name = "CodeAuthFlow", exact = true)
-actual class PlatformCodeAuthFlow internal constructor(
+public actual class PlatformCodeAuthFlow internal constructor(
     actual override val client: OpenIdConnectClient,
     ephemeralBrowserSession: Boolean = false,
     private val webFlow: WebAuthenticationFlow,
-): CodeAuthFlow, EndSessionFlow {
+) : CodeAuthFlow, EndSessionFlow {
 
-    actual override suspend fun getAuthorizationCode(request: AuthCodeRequest): AuthCodeResponse = wrapExceptions {
-        val result = webFlow.startWebFlow(request.url, request.url.parameters.get("redirect_uri").orEmpty())
-        return if (result is WebAuthenticationFlowResult.Success) {
-            when (val error = getErrorResult<AuthCodeResult>(result.responseUri)) {
-                null -> {
-                    val state = result.responseUri?.parameters?.get("state")
-                    val code = result.responseUri?.parameters?.get("code")
-                    Result.success(AuthCodeResult(code, state))
+    actual override suspend fun getAuthorizationCode(request: AuthCodeRequest): AuthCodeResponse =
+        wrapExceptions {
+            val result = webFlow.startWebFlow(
+                request.url,
+                request.url.parameters["redirect_uri"].orEmpty()
+            )
+            return if (result is WebAuthenticationFlowResult.Success) {
+                when (val error = getErrorResult<AuthCodeResult>(result.responseUri)) {
+                    null -> {
+                        val state = result.responseUri?.parameters["state"]
+                        val code = result.responseUri?.parameters["code"]
+                        Result.success(AuthCodeResult(code, state))
+                    }
+
+                    else -> {
+                        return error
+                    }
                 }
-                else -> {
-                    return error
-                }
+            } else {
+                // browser closed, no redirect
+                Result.failure(OpenIdConnectException.AuthenticationCancelled())
             }
-        } else {
-            // browser closed, no redirect
-            Result.failure(OpenIdConnectException.AuthenticationCancelled())
         }
-    }
 
-    actual override suspend fun endSession(request: EndSessionRequest): EndSessionResponse = wrapExceptions {
-        val result = webFlow.startWebFlow(request.url, request.url.parameters.get("post_logout_redirect_uri").orEmpty())
+    actual override suspend fun endSession(request: EndSessionRequest): EndSessionResponse =
+        wrapExceptions {
+            val result = webFlow.startWebFlow(
+                request.url,
+                request.url.parameters.get("post_logout_redirect_uri").orEmpty()
+            )
 
-        return if (result is WebAuthenticationFlowResult.Success) {
-            when (val error = getErrorResult<Unit>(result.responseUri)) {
-                null -> {
-                    return EndSessionResponse.success(Unit)
+            return if (result is WebAuthenticationFlowResult.Success) {
+                return when (val error = getErrorResult<Unit>(result.responseUri)) {
+                    null -> {
+                        EndSessionResponse.success(Unit)
+                    }
+
+                    else -> {
+                        error
+                    }
                 }
-                else -> {
-                    return error
-                }
+            } else {
+                // browser closed, no redirect
+                EndSessionResponse.failure(OpenIdConnectException.AuthenticationCancelled("Logout cancelled"))
             }
-        } else {
-            // browser closed, no redirect
-            EndSessionResponse.failure(OpenIdConnectException.AuthenticationCancelled("Logout cancelled"))
         }
-    }
 }
 
-class PresentationContext: NSObject(), ASWebAuthenticationPresentationContextProvidingProtocol {
-    override fun presentationAnchorForWebAuthenticationSession(session: ASWebAuthenticationSession): ASPresentationAnchor {
+internal class PresentationContext :
+    NSObject(),
+    ASWebAuthenticationPresentationContextProvidingProtocol {
+    override fun presentationAnchorForWebAuthenticationSession(
+        session: ASWebAuthenticationSession
+    ): ASPresentationAnchor {
         return ASPresentationAnchor()
     }
 }
 
-/** fix for multiple callbacks from ASWebAuthenticationSession (https://github.com/kalinjul/kotlin-multiplatform-oidc/issues/89) **/
-fun <T> CancellableContinuation<T>.resumeIfActive(value: T) {
+/** fix for multiple callbacks from
+ * ASWebAuthenticationSession (https://github.com/kalinjul/kotlin-multiplatform-oidc/issues/89)
+ * **/
+internal fun <T> CancellableContinuation<T>.resumeIfActive(value: T) {
     if (isActive) {
         resume(value)
     }
 }
 
-/** fix for multiple callbacks from ASWebAuthenticationSession (https://github.com/kalinjul/kotlin-multiplatform-oidc/issues/89) **/
-fun <T> CancellableContinuation<T>.resumeWithExceptionIfActive(value: Exception) {
+/** fix for multiple callbacks
+ * from ASWebAuthenticationSession (https://github.com/kalinjul/kotlin-multiplatform-oidc/issues/89)
+ **/
+internal fun <T> CancellableContinuation<T>.resumeWithExceptionIfActive(value: Exception) {
     if (isActive) {
         resumeWithException(value)
     }

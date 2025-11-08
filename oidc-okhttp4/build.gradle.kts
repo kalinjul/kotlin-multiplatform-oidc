@@ -8,22 +8,13 @@ description = "Kotlin Multiplatform OIDC support library for Android OkHttp"
 
 kotlin {
     sourceSets {
-        val commonMain by getting {
-            dependencies {
-                api(projects.oidcCore)
-                implementation(projects.oidcTokenstore)
-            }
+        commonMain.dependencies {
+            api(projects.oidcCore)
+            implementation(projects.oidcTokenstore)
         }
 
-        val androidMain by getting {
-            dependencies {
-                implementation(libs.okhttp)
-            }
-        }
-
-        val commonTest by getting {
-            dependencies {
-            }
+        androidMain.dependencies {
+            implementation(libs.okhttp)
         }
     }
 }

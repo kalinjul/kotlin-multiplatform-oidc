@@ -1,4 +1,5 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
 
 plugins {
     id("org.publicvalue.convention.kotlin.multiplatform")
@@ -6,6 +7,7 @@ plugins {
 }
 
 kotlin {
+    explicitApi = ExplicitApiMode.Disabled
     jvmToolchain(17)
     jvm()
     sourceSets {

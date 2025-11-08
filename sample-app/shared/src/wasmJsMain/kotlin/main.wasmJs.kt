@@ -9,7 +9,7 @@ import org.publicvalue.multiplatform.oidc.settings.WasmJsSettingsStore
 
 @OptIn(ExperimentalOpenIdConnect::class)
 @Composable
-fun MainView() {
+public fun MainView() {
     val backstack = rememberSaveableBackStack(listOf(HomeScreen))
 
     val navigator = rememberCircuitNavigator(backstack) {}

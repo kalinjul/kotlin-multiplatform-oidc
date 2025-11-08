@@ -15,11 +15,10 @@ import kotlinx.coroutines.flow.first
  * @param resultFlow a MutableStateFlow(null) that should live longer than the activity
  * @param contract the contract
  */
-fun <Input, Output> ComponentActivity.registerForActivityResultSuspend(
+internal fun <Input, Output> ComponentActivity.registerForActivityResultSuspend(
     resultFlow: MutableStateFlow<Output?> = MutableStateFlow(null),
     contract: ActivityResultContract<Input, Output>
 ): ActivityResultLauncherSuspend<Input, Output> {
-
     val delegate = registerForActivityResult(contract) {
         resultFlow.value = it
     }
@@ -30,10 +29,10 @@ fun <Input, Output> ComponentActivity.registerForActivityResultSuspend(
     )
 }
 
-class ActivityResultLauncherSuspend<Input, Output>(
+internal class ActivityResultLauncherSuspend<Input, Output>(
     val delegate: ActivityResultLauncher<Input>,
     val resultFlow: MutableStateFlow<Output?>,
-): ActivityResultLauncher<Input>() {
+) : ActivityResultLauncher<Input>() {
 
     override fun launch(input: Input, options: ActivityOptionsCompat?) {
         delegate.launch(input, options)

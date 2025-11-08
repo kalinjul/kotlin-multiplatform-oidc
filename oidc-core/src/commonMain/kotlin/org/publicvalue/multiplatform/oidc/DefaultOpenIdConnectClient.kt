@@ -1,14 +1,25 @@
 package org.publicvalue.multiplatform.oidc
 
-import io.ktor.client.*
-import io.ktor.client.call.*
-import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.client.request.*
-import io.ktor.client.request.forms.*
-import io.ktor.client.statement.*
-import io.ktor.http.*
+import io.ktor.client.HttpClient
+import io.ktor.client.call.HttpClientCall
+import io.ktor.client.call.NoTransformationFoundException
+import io.ktor.client.call.body
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.request.HttpRequestBuilder
+import io.ktor.client.request.forms.prepareForm
+import io.ktor.client.request.forms.submitForm
+import io.ktor.client.request.url
+import io.ktor.client.statement.HttpResponse
+import io.ktor.client.statement.HttpStatement
+import io.ktor.http.ContentType
+import io.ktor.http.ContentTypeMatcher
+import io.ktor.http.HttpStatusCode
+import io.ktor.http.URLBuilder
+import io.ktor.http.decodeURLQueryComponent
+import io.ktor.http.isSuccess
+import io.ktor.http.parameters
 import io.ktor.serialization.JsonConvertException
-import io.ktor.serialization.kotlinx.*
+import io.ktor.serialization.kotlinx.KotlinxSerializationConverter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -29,16 +40,17 @@ import kotlin.native.ObjCName
 
 /**
  * OpenIdConnectClient implements the basic methods used to perform OpenID Connect Authentication.
- * A client may also be constructed using the [Builder method][org.publicvalue.multiplatform.oidc.OpenIdConnectClient]
+ * A client may also be constructed using the [Builder method][OpenIdConnectClient]
  *
  * @param httpClient The (ktor) HTTP client to be used for code <-> token exchange and endSession requests.
  * Authentication is performed using [CodeAuthFlow][org.publicvalue.multiplatform.oidc.flows.CodeAuthFlow]
  *
- * @param config [Configuration][org.publicvalue.multiplatform.oidc.OpenIdConnectClientConfig] for this client
+ * @param config [Configuration][OpenIdConnectClientConfig] for this client
  */
 @OptIn(ExperimentalObjCName::class)
 @ObjCName(swiftName = "OpenIdConnectClient", name = "OpenIdConnectClient", exact = true)
-class DefaultOpenIdConnectClient(
+@Suppress("TooManyFunctions")
+public class DefaultOpenIdConnectClient(
     private val httpClient: HttpClient = DefaultHttpClient,
     override val config: OpenIdConnectClientConfig,
 ) : OpenIdConnectClient {
@@ -46,14 +58,17 @@ class DefaultOpenIdConnectClient(
      * Swift convenience constructor
      * @suppress
      */
-    constructor(config: OpenIdConnectClientConfig): this(httpClient = DefaultHttpClient, config = config)
+    public constructor(config: OpenIdConnectClientConfig) : this(
+        httpClient = DefaultHttpClient,
+        config = config
+    )
 
     override var discoverDocument: OpenIdConnectConfiguration? = null
 
     private val scope by lazy { CoroutineScope(Dispatchers.Default + SupervisorJob()) }
 
-    companion object {
-        val DefaultHttpClient by lazy {
+    public companion object {
+        public val DefaultHttpClient: HttpClient by lazy {
             HttpClient {
                 install(ContentNegotiation) {
                     // register custom type matcher to support broken IDPs that don't send correct content-type
@@ -87,27 +102,48 @@ class DefaultOpenIdConnectClient(
         val nonce = if (config.disableNonce) null else secureRandomBytes().encodeForPKCE()
         val state = secureRandomBytes().encodeForPKCE()
 
-        val authorizationEndpoint = config.endpoints?.authorizationEndpoint ?: run { throw OpenIdConnectException.InvalidConfiguration("No authorizationEndpoint set") }
+        val authorizationEndpoint = config.endpoints?.authorizationEndpoint ?: run {
+            throw OpenIdConnectException.InvalidConfiguration("No authorizationEndpoint set")
+        }
         val url = URLBuilder(authorizationEndpoint).apply {
             parameters.append("client_id", config.clientId!!)
             parameters.append("response_type", "code")
             parameters.append("response_mode", "query")
             config.scope?.let { parameters.append("scope", it) }
             nonce?.let { parameters.append("nonce", it) }
-            config.codeChallengeMethod.queryString?.let { parameters.append("code_challenge_method", it) }
-            if (config.codeChallengeMethod != CodeChallengeMethod.off) { parameters.append("code_challenge", pkce.codeChallenge) }
+            config.codeChallengeMethod.queryString?.let {
+                parameters.append(
+                    "code_challenge_method",
+                    it
+                )
+            }
+            if (config.codeChallengeMethod != CodeChallengeMethod.OFF) {
+                parameters.append(
+                    "code_challenge",
+                    pkce.codeChallenge
+                )
+            }
             config.redirectUri?.let { parameters.append("redirect_uri", it) }
             parameters.append("state", state)
             configure?.invoke(this)
         }.build()
 
         return AuthCodeRequest(
-            url, config, pkce, state, nonce
+            url,
+            config,
+            pkce,
+            state,
+            nonce
         )
     }
 
-    override fun createEndSessionRequest(idToken: String?, configure: (URLBuilder.() -> Unit)?): EndSessionRequest {
-        val authorizationEndpoint = config.endpoints?.endSessionEndpoint ?: run { throw OpenIdConnectException.InvalidConfiguration("No endSessionEndpoint set") }
+    override fun createEndSessionRequest(
+        idToken: String?,
+        configure: (URLBuilder.() -> Unit)?
+    ): EndSessionRequest {
+        val authorizationEndpoint = config.endpoints?.endSessionEndpoint ?: run {
+            throw OpenIdConnectException.InvalidConfiguration("No endSessionEndpoint set")
+        }
         val url = URLBuilder(authorizationEndpoint).apply {
             idToken?.let { parameters.append("id_token_hint", it) }
             config.postLogoutRedirectUri?.let { parameters.append("post_logout_redirect_uri", it) }
@@ -118,18 +154,23 @@ class DefaultOpenIdConnectClient(
     }
 
     @Throws(OpenIdConnectException::class, CancellationException::class)
-    override suspend fun discover(configure: (HttpRequestBuilder.() -> Unit)?) = wrapExceptions {
-        config.discoveryUri?.let { discoveryUri ->
-            val config = OpenIdConnectDiscover(httpClient).downloadConfiguration(discoveryUri, configure)
-            this.config.updateWithDiscovery(config)
-            discoverDocument = config
-        } ?: run {
-            throw OpenIdConnectException.InvalidUrl("No discoveryUri set")
+    override suspend fun discover(configure: (HttpRequestBuilder.() -> Unit)?): Unit =
+        wrapExceptions {
+            config.discoveryUri?.let { discoveryUri ->
+                val config =
+                    OpenIdConnectDiscover(httpClient).downloadConfiguration(discoveryUri, configure)
+                this.config.updateWithDiscovery(config)
+                discoverDocument = config
+            } ?: run {
+                throw OpenIdConnectException.InvalidUrl("No discoveryUri set")
+            }
         }
-    }
 
     @Throws(OpenIdConnectException::class, CancellationException::class)
-    override suspend fun endSession(idToken: String, configure: (HttpRequestBuilder.() -> Unit)?): HttpStatusCode = wrapExceptions {
+    override suspend fun endSession(
+        idToken: String,
+        configure: (HttpRequestBuilder.() -> Unit)?
+    ): HttpStatusCode = wrapExceptions {
         val endpoint = config.endpoints?.endSessionEndpoint?.trim()
         if (!endpoint.isNullOrEmpty()) {
             val url = URLBuilder(endpoint)
@@ -148,14 +189,24 @@ class DefaultOpenIdConnectClient(
     }
 
     @Throws(OpenIdConnectException::class, CancellationException::class)
-    override suspend fun revokeToken(token: String, configure: (HttpRequestBuilder.() -> Unit)?): HttpStatusCode = wrapExceptions {
+    override suspend fun revokeToken(
+        token: String,
+        configure: (HttpRequestBuilder.() -> Unit)?
+    ): HttpStatusCode = wrapExceptions {
         val endpoint = config.endpoints?.revocationEndpoint?.trim()
         if (!endpoint.isNullOrEmpty()) {
             val url = URLBuilder(endpoint)
             val response = httpClient.submitForm(
                 formParameters = parameters {
                     append("token", token)
-                    append("client_id", config.clientId ?: run { throw OpenIdConnectException.InvalidConfiguration("clientId is missing") })
+                    append(
+                        "client_id",
+                        config.clientId ?: run {
+                            throw OpenIdConnectException.InvalidConfiguration(
+                                "clientId is missing"
+                            )
+                        }
+                    )
                     config.clientSecret?.let { append("client_secret", it) }
                 }
             ) {
@@ -169,29 +220,48 @@ class DefaultOpenIdConnectClient(
     }
 
     @Throws(OpenIdConnectException::class, CancellationException::class)
-    override suspend fun exchangeToken(authCodeRequest: AuthCodeRequest, code: String, configure: (HttpRequestBuilder.() -> Unit)?): AccessTokenResponse = wrapExceptions {
+    override suspend fun exchangeToken(
+        authCodeRequest: AuthCodeRequest,
+        code: String,
+        configure: (HttpRequestBuilder.() -> Unit)?
+    ): AccessTokenResponse = wrapExceptions {
         val tokenRequest = createAccessTokenRequest(authCodeRequest, code, configure)
         return executeTokenRequest(tokenRequest.request)
     }
 
     @Throws(OpenIdConnectException::class, CancellationException::class)
-    @Suppress("Unused")
-    override suspend fun refreshToken(refreshToken: String, configure: (HttpRequestBuilder.() -> Unit)?): AccessTokenResponse = wrapExceptions {
+    override suspend fun refreshToken(
+        refreshToken: String,
+        configure: (HttpRequestBuilder.() -> Unit)?
+    ): AccessTokenResponse = wrapExceptions {
         val tokenRequest = createRefreshTokenRequest(refreshToken, configure)
         return executeTokenRequest(tokenRequest.request)
     }
 
     @Throws(OpenIdConnectException::class, CancellationException::class)
-    override suspend fun createAccessTokenRequest(authCodeRequest: AuthCodeRequest, code: String, configure: (HttpRequestBuilder.() -> Unit)?): TokenRequest = wrapExceptions {
+    override suspend fun createAccessTokenRequest(
+        authCodeRequest: AuthCodeRequest,
+        code: String,
+        configure: (HttpRequestBuilder.() -> Unit)?
+    ): TokenRequest = wrapExceptions {
         val url = URLBuilder(getOrDiscoverTokenEndpoint()).build()
 
         val formParameters = parameters {
             append("grant_type", "authorization_code")
             append("code", code)
             config.redirectUri?.let { append("redirect_uri", it) }
-            append("client_id", config.clientId ?: run { throw OpenIdConnectException.InvalidConfiguration("clientId is missing") })
+            append(
+                "client_id",
+                config.clientId
+                    ?: run { throw OpenIdConnectException.InvalidConfiguration("clientId is missing") }
+            )
             config.clientSecret?.let { append("client_secret", it) }
-            if (config.codeChallengeMethod != CodeChallengeMethod.off) { append("code_verifier", authCodeRequest.pkce.codeVerifier) }
+            if (config.codeChallengeMethod != CodeChallengeMethod.OFF) {
+                append(
+                    "code_verifier",
+                    authCodeRequest.pkce.codeVerifier
+                )
+            }
         }
         val request = scope.async { // there is no suspending happening here
             httpClient.prepareForm(
@@ -209,12 +279,19 @@ class DefaultOpenIdConnectClient(
     }
 
     @Throws(OpenIdConnectException::class, CancellationException::class)
-    override suspend fun createRefreshTokenRequest(refreshToken: String, configure: (HttpRequestBuilder.() -> Unit)?): TokenRequest = wrapExceptions {
+    override suspend fun createRefreshTokenRequest(
+        refreshToken: String,
+        configure: (HttpRequestBuilder.() -> Unit)?
+    ): TokenRequest = wrapExceptions {
         val url = URLBuilder(getOrDiscoverTokenEndpoint()).build()
 
         val formParameters = parameters {
             append("grant_type", "refresh_token")
-            append("client_id", config.clientId ?: run { throw OpenIdConnectException.InvalidConfiguration("clientId is missing") })
+            append(
+                "client_id",
+                config.clientId
+                    ?: run { throw OpenIdConnectException.InvalidConfiguration("clientId is missing") }
+            )
             config.clientSecret?.let { append("client_secret", it) }
             append("refresh_token", refreshToken)
             config.scope?.let { append("scope", it) }
@@ -258,11 +335,13 @@ class DefaultOpenIdConnectClient(
         }
     }
 
-    private suspend fun HttpResponse.toOpenIdConnectException(cause: Throwable? = null): OpenIdConnectException.UnsuccessfulTokenRequest {
+    private suspend fun HttpResponse.toOpenIdConnectException(cause: Throwable? = null):
+        OpenIdConnectException.UnsuccessfulTokenRequest {
         val errorResponse = call.errorBody()
         val body = call.body<String>().decodeURLQueryComponent(plusIsSpace = true)
         return OpenIdConnectException.UnsuccessfulTokenRequest(
-            message = "Exchange token failed: ${status.value} ${errorResponse?.error_description ?: errorResponse?.error}",
+            message = "Exchange token failed: ${status.value} " +
+                "${errorResponse?.errorDescription ?: errorResponse?.error}",
             statusCode = status,
             body = body,
             errorResponse = errorResponse,
@@ -274,7 +353,7 @@ class DefaultOpenIdConnectClient(
 private suspend fun HttpClientCall.errorBody(): ErrorResponse? {
     return try {
         body<ErrorResponse>()
-    } catch (e: Exception) {
+    } catch (_: Exception) {
         null
     }
 }

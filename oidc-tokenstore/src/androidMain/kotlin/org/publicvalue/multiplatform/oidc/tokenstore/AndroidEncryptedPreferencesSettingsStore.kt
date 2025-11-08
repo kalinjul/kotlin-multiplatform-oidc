@@ -11,7 +11,7 @@ import com.russhwolf.settings.get
     "EncryptedSharedPreferences is deprecated",
     replaceWith = ReplaceWith("AndroidDataStoreSettingsStore")
 )
-class AndroidEncryptedPreferencesSettingsStore(
+public class AndroidEncryptedPreferencesSettingsStore(
     context: Context
 ) : SettingsStore {
 
@@ -45,5 +45,4 @@ class AndroidEncryptedPreferencesSettingsStore(
     override suspend fun clear() {
         settings.clear()
     }
-
 }

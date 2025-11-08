@@ -79,8 +79,8 @@ do {
 
 Perform refresh or endSession:
 ```swift
-try await client.refreshToken(refreshToken: tokens.refresh_token!)
-try await client.endSession(idToken: tokens.id_token!)
+try await client.refreshToken(refreshToken: tokens.refreshToken!)
+try await client.endSession(idToken: tokens.idToken!)
 ```
 
 ## Custom headers/url parameters
@@ -112,7 +112,7 @@ try await flow.getAccessToken(
 # JWT Parsing
 We provide simple JWT parsing:
 ```swift
-let jwt = tokens.id_token.map { try! JwtParser.shared.parse(from: $0) }
+let jwt = tokens.idToken.map { try! JwtParser.shared.parse(from: $0) }
 print(jwt?.payload.aud) // print audience
 print(jwt?.payload.iss) // print issuer
 print(jwt?.payload.additionalClaims["email"]) // get claim

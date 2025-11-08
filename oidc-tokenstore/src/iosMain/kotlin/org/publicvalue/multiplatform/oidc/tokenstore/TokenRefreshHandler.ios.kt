@@ -13,8 +13,10 @@ import kotlin.coroutines.cancellation.CancellationException
  */
 @OptIn(ExperimentalOpenIdConnect::class)
 @Throws(OpenIdConnectException::class, CancellationException::class)
-@Suppress("unused")
-suspend fun TokenRefreshHandler.refreshAndSaveToken(refresher: TokenRefresher, oldAccessToken: String): OauthTokens {
+public suspend fun TokenRefreshHandler.refreshAndSaveToken(
+    refresher: TokenRefresher,
+    oldAccessToken: String
+): OauthTokens {
     return refreshAndSaveToken(
         refreshCall = { refreshToken ->
             refresher.refreshToken(refreshToken = refreshToken)
@@ -26,6 +28,6 @@ suspend fun TokenRefreshHandler.refreshAndSaveToken(refresher: TokenRefresher, o
 /**
  * For iOS because we cannot accept lambdas as parameters yet
  */
-interface TokenRefresher {
-    suspend fun refreshToken(refreshToken: String): AccessTokenResponse
+public interface TokenRefresher {
+    public suspend fun refreshToken(refreshToken: String): AccessTokenResponse
 }

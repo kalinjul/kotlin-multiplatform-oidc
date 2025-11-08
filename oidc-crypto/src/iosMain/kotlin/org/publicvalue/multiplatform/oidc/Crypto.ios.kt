@@ -10,7 +10,7 @@ import platform.Security.errSecSuccess
 import platform.Security.kSecRandomDefault
 
 @OptIn(ExperimentalForeignApi::class)
-actual fun secureRandomBytes(size: Int): ByteArray {
+public actual fun secureRandomBytes(size: Int): ByteArray {
     val bytes = ByteArray(size)
 
     bytes.usePinned { pin ->
@@ -25,14 +25,18 @@ actual fun secureRandomBytes(size: Int): ByteArray {
 }
 
 @OptIn(ExperimentalForeignApi::class)
-actual fun String.s256(): ByteArray {
+public actual fun String.s256(): ByteArray {
     val inputBytes = this.encodeToByteArray()
-    val output = UByteArray(32)// 32 bytes for the SHA-256
+
+    @Suppress("MagicNumber")
+    val output = UByteArray(32) // 32 bytes for the SHA-256
 
     inputBytes.usePinned { inputPin ->
         output.usePinned { outputPin ->
             CC_SHA256(
-                inputPin.addressOf(0), inputBytes.size.toUInt(), outputPin.addressOf(0)
+                inputPin.addressOf(0),
+                inputBytes.size.toUInt(),
+                outputPin.addressOf(0)
             )
         }
     }

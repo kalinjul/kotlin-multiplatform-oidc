@@ -16,7 +16,7 @@ import org.publicvalue.multiplatform.oidc.tokenstore.removeTokens
  * Configure Bearer Authentication using TokenStore + RefreshHandler.
  */
 @ExperimentalOpenIdConnect
-fun AuthConfig.oidcBearer(
+public fun AuthConfig.oidcBearer(
     tokenStore: TokenStore,
     refreshHandler: TokenRefreshHandler,
     client: OpenIdConnectClient,
@@ -40,7 +40,7 @@ fun AuthConfig.oidcBearer(
  * save it into the store.
  */
 @ExperimentalOpenIdConnect
-fun AuthConfig.oidcBearer(
+public fun AuthConfig.oidcBearer(
     tokenStore: TokenStore,
     /** receives the old access token as parameter.
      *  This function should get new tokens and save them.
@@ -49,7 +49,6 @@ fun AuthConfig.oidcBearer(
     /** called when refresh throws **/
     onRefreshFailed: suspend (Exception) -> Unit
 ) {
-
     bearer {
         loadTokens(
             tokenStore = tokenStore
@@ -66,7 +65,7 @@ fun AuthConfig.oidcBearer(
  * Load tokens from given token store.
  */
 @ExperimentalOpenIdConnect
-fun BearerAuthConfig.loadTokens(tokenStore: TokenStore) {
+public fun BearerAuthConfig.loadTokens(tokenStore: TokenStore) {
     loadTokens {
         val accessToken = tokenStore.getAccessToken()
         val refreshToken = tokenStore.getRefreshToken()
@@ -88,7 +87,7 @@ fun BearerAuthConfig.loadTokens(tokenStore: TokenStore) {
  * @param onRefreshFailed called when the refresh throws an exception
  */
 @ExperimentalOpenIdConnect
-fun BearerAuthConfig.refreshTokens(
+public fun BearerAuthConfig.refreshTokens(
     /** receives the old access token **/
     refreshAndSaveTokens: suspend (String) -> OauthTokens?,
     /** called when refresh throws **/
@@ -97,10 +96,10 @@ fun BearerAuthConfig.refreshTokens(
     refreshTokens {
         val newTokens = try {
             refreshAndSaveTokens(this.oldTokens?.accessToken.orEmpty())
-        } catch (e: OpenIdConnectException) {
-            if (e is OpenIdConnectException.UnsuccessfulTokenRequest) {
-                onRefreshFailed(e)
-            }
+        } catch (e: OpenIdConnectException.UnsuccessfulTokenRequest) {
+            onRefreshFailed(e)
+            null
+        } catch (_: OpenIdConnectException) {
             null
         }
         newTokens?.let {

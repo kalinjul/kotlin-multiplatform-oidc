@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>Filename:JwtConvenienceExtensions.kt$org.publicvalue.multiplatform.oidc.types.JwtConvenienceExtensions.kt</ID>
+    <ID>ForbiddenPublicDataClass:AccessTokenResponse.kt$AccessTokenResponse</ID>
+    <ID>ForbiddenPublicDataClass:AuthCodeRequest.kt$AuthCodeRequest</ID>
+    <ID>ForbiddenPublicDataClass:AuthCodeResult.kt$AuthCodeResult</ID>
+    <ID>ForbiddenPublicDataClass:EndSessionRequest.kt$EndSessionRequest</ID>
+    <ID>ForbiddenPublicDataClass:ErrorResponse.kt$ErrorResponse</ID>
+    <ID>ForbiddenPublicDataClass:IdToken.kt$IdToken</ID>
+    <ID>ForbiddenPublicDataClass:Jwt.kt$Jwt</ID>
+    <ID>ForbiddenPublicDataClass:Jwt.kt$JwtHeader</ID>
+    <ID>ForbiddenPublicDataClass:OpenIdConnectClientConfig.kt$Endpoints</ID>
+    <ID>ForbiddenPublicDataClass:OpenIdConnectConfiguration.kt$OpenIdConnectConfiguration</ID>
+    <ID>ForbiddenPublicDataClass:TokenRequest.kt$TokenRequest</ID>
+    <ID>MatchingDeclarationName:JwtConvenienceExtensions.kt$JwtParser</ID>
+    <ID>MaxLineLength:JwtTest.kt$JwtTest$val</ID>
+    <ID>MaxLineLength:JwtTest.kt$JwtTest$val idToken = "eyJhbGciOiJSUzI1NiIsImtpZCI6IjFlOWdkazcifQ.ewogImlzcyI6ICJodHRwOi8vc2VydmVyLmV4YW1wbGUuY29tIiwKICJzdWIiOiAiMjQ4Mjg5NzYxMDAxIiwKICJhdWQiOiAiczZCaGRSa3F0MyIsCiAibm9uY2UiOiAibi0wUzZfV3pBMk1qIiwKICJleHAiOiAxMzExMjgxOTcwLAogImlhdCI6IDEzMTEyODA5NzAKfQ.ggW8hZ1EuVLuxNuuIJKX_V8a_OMXzR0EHR9R6jgdqrOOF4daGU96Sr_P6qJp6IcmD3HP99Obi1PRs-cwh3LO-p146waJ8IhehcwL7F09JdijmBqkvPeB2T9CJNqeGpe-gccMg4vfKjkM8FcGvnzZUN4_KSP0aAp1tOJ1zZwgjxqGByKHiOtX7TpdQyHE5lcMiKPXfEIQILVq0pc_E2DzL7emopWoaoZTF_m0_N0YzFC6g6EJbOEoRoSK5hoDalrcvRYLSrQAZZKflyuVCyixEoV9GfNQC3_osjzw2PAithfubEEBLuVVk4XUVrWOLrLl0nx7RkKU8NXNHq-rvKMzqg"</ID>
+    <ID>MaxLineLength:OpenIdConnectClientConfig.kt$OpenIdConnectClientConfig$*</ID>
+    <ID>ThrowsCount:CodeAuthFlow.kt$CodeAuthFlow$private suspend fun exchangeToken( client: OpenIdConnectClient, request: AuthCodeRequest, result: AuthCodeResult, configure: (HttpRequestBuilder.() -> Unit)? ): AccessTokenResponse</ID>
+    <ID>ThrowsCount:DefaultOpenIdConnectClient.kt$DefaultOpenIdConnectClient$private suspend fun executeTokenRequest(httpFormRequest: HttpStatement): AccessTokenResponse</ID>
+    <ID>ThrowsCount:OpenIdConnectClientConfig.kt$public fun OpenIdConnectClientConfig.validate()</ID>
+    <ID>TooGenericExceptionThrown:OpenIdConnectDiscover.kt$throw Exception("Could not download discovery document: $this")</ID>
+    <ID>VariableNaming:JwtTest.kt$JwtTest$@Suppress("MaximumLineLength") val idToken = "eyJhxbGciOiJSUzI1NiIsImtpZCI6IjFlOWdkazcifQ.ewogImlzcyI6ICJodHRwOi8vc2VydmVyLmV4YW1wbGUuY29tIiwKICJzdWIiOiAiMjQ4Mjg5NzYxMDAxIiwKICJhdWQiOiAiczZCaGRSa3F0MyIsCiAibm9uY2UiOiAibi0wUzZfV3pBMk1qIiwKICJleHAiOiAxMzExMjgxOTcwLAogImlhdCI6IDEzMTEyODA5NzAKfQ.ggW8hZ1EuVLuxNuuIJKX_V8a_OMXzR0EHR9R6jgdqrOOF4daGU96Sr_P6qJp6IcmD3HP99Obi1PRs-cwh3LO-p146waJ8IhehcwL7F09JdijmBqkvPeB2T9CJNqeGpe-gccMg4vfKjkM8FcGvnzZUN4_KSP0aAp1tOJ1zZwgjxqGByKHiOtX7TpdQyHE5lcMiKPXfEIQILVq0pc_E2DzL7emopWoaoZTF_m0_N0YzFC6g6EJbOEoRoSK5hoDalrcvRYLSrQAZZKflyuVCyixEoV9GfNQC3_osjzw2PAithfubEEBLuVVk4XUVrWOLrLl0nx7RkKU8NXNHq-rvKMzqg"</ID>
+    <ID>VariableNaming:JwtTest.kt$JwtTest$val idToken = "eyJhbGciOiJSUzI1NiIsImtpZCI6IjFlOWdkazcifQ.ewogImlzcyI6ICJodHRwOi8vc2VydmVyLmV4YW1wbGUuY29tIiwKICJzdWIiOiAiMjQ4Mjg5NzYxMDAxIiwKICJhdWQiOiAiczZCaGRSa3F0MyIsCiAibm9uY2UiOiAibi0wUzZfV3pBMk1qIiwKICJleHAiOiAxMzExMjgxOTcwLAogImlhdCI6IDEzMTEyODA5NzAKfQ.ggW8hZ1EuVLuxNuuIJKX_V8a_OMXzR0EHR9R6jgdqrOOF4daGU96Sr_P6qJp6IcmD3HP99Obi1PRs-cwh3LO-p146waJ8IhehcwL7F09JdijmBqkvPeB2T9CJNqeGpe-gccMg4vfKjkM8FcGvnzZUN4_KSP0aAp1tOJ1zZwgjxqGByKHiOtX7TpdQyHE5lcMiKPXfEIQILVq0pc_E2DzL7emopWoaoZTF_m0_N0YzFC6g6EJbOEoRoSK5hoDalrcvRYLSrQAZZKflyuVCyixEoV9GfNQC3_osjzw2PAithfubEEBLuVVk4XUVrWOLrLl0nx7RkKU8NXNHq-rvKMzqg"</ID>
+  </CurrentIssues>
+</SmellBaseline>

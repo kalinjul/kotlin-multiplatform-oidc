@@ -1,5 +1,6 @@
 package org.publicvalue.multiplatform.oidc.types.remote
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlin.experimental.ExperimentalObjCName
 import kotlin.native.ObjCName
@@ -12,24 +13,47 @@ import kotlin.native.ObjCName
 @OptIn(ExperimentalObjCName::class)
 @ObjCName(swiftName = "OpenIdConnectErrorResponse", name = "OpenIdConnectErrorResponse", exact = true)
 @Serializable
-data class ErrorResponse(
+public data class ErrorResponse(
     val error: Error,
-    val error_description: String?,
-    val error_uri: String?,
+    @SerialName("error_description")
+    val errorDescription: String?,
+    @SerialName("error_uri")
+    val errorUri: String?,
     val state: String?
 ) {
     @Serializable
-    enum class Error {
-        invalid_client,
-        invalid_grant,
-        bad_verification_code,
-        invalid_request,
-        unauthorized_client,
-        unsupported_grant_type,
-        access_denied,
-        unsupported_response_type,
-        invalid_scope,
-        server_error,
-        temporarily_unavailable
+    public enum class Error {
+        @SerialName("invalid_client")
+        INVALID_CLIENT,
+
+        @SerialName("invalid_grant")
+        INVALID_GRANT,
+
+        @SerialName("bad_verification_code")
+        BAD_VERIFICATION_CODE,
+
+        @SerialName("invalid_request")
+        INVALID_REQUEST,
+
+        @SerialName("unauthorized_client")
+        UNAUTHORIZED_CLIENT,
+
+        @SerialName("unsupported_grant_type")
+        UNSUPPORTED_GRANT_TYPE,
+
+        @SerialName("access_denied")
+        ACCESS_DENIED,
+
+        @SerialName("unsupported_response_type")
+        UNSUPPORTED_RESPONSE_TYPE,
+
+        @SerialName("invalid_scope")
+        INVALID_SCOPE,
+
+        @SerialName("server_error")
+        SERVER_ERROR,
+
+        @SerialName("temporarily_unavailable")
+        TEMPORARILY_UNAVAILABLE
     }
 }

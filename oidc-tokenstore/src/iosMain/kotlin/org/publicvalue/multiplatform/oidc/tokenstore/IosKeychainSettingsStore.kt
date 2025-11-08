@@ -14,7 +14,7 @@ import kotlin.experimental.ExperimentalObjCRefinement
 
 @OptIn(ExperimentalObjCRefinement::class, ExperimentalSettingsImplementation::class)
 @HiddenFromObjC
-class IosKeychainSettingsStore: SettingsStore {
+public class IosKeychainSettingsStore : SettingsStore {
 
     @OptIn(ExperimentalForeignApi::class, ExperimentalSettingsApi::class)
     private val keyChainSettings by lazy {
@@ -39,6 +39,4 @@ class IosKeychainSettingsStore: SettingsStore {
     override suspend fun clear() {
         keyChainSettings.clear()
     }
-
-
 }

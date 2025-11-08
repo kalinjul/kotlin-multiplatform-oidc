@@ -5,12 +5,12 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.publicvalue.convention.config.configureAndroidTarget
-import org.publicvalue.convention.config.configureKotlin
 
 /**
  * No JVM target, only android + ios
  */
-class KotlinMultiplatformMobileConventionPlugin : Plugin<Project> {
+@Suppress("unused")
+internal class KotlinMultiplatformMobileConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
             with(pluginManager) {
@@ -19,6 +19,7 @@ class KotlinMultiplatformMobileConventionPlugin : Plugin<Project> {
 
             extensions.configure<KotlinMultiplatformExtension> {
                 applyDefaultHierarchyTemplate()
+                explicitApi()
 
                 if (pluginManager.hasPlugin("com.android.library")) {
                     this.configureAndroidTarget()

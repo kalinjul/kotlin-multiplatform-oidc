@@ -18,8 +18,7 @@ import kotlin.native.ObjCName
 @ExperimentalOpenIdConnect
 @OptIn(ExperimentalObjCName::class, ExperimentalObjCRefinement::class)
 @ObjCName("TokenRefreshHandler", "TokenRefreshHandler", exact = true)
-@Suppress("unused")
-class TokenRefreshHandler(
+public class TokenRefreshHandler(
     private val tokenStore: TokenStore,
 ) {
     private val mutex = Mutex()
@@ -29,7 +28,7 @@ class TokenRefreshHandler(
      * @return The new tokens
      */
     @Throws(OpenIdConnectException::class, CancellationException::class)
-    suspend fun refreshAndSaveToken(client: OpenIdConnectClient, oldAccessToken: String): OauthTokens {
+    public suspend fun refreshAndSaveToken(client: OpenIdConnectClient, oldAccessToken: String): OauthTokens {
         return refreshAndSaveToken(client::refreshToken, oldAccessToken)
     }
 
@@ -43,7 +42,10 @@ class TokenRefreshHandler(
      */
     @Throws(OpenIdConnectException::class, CancellationException::class)
     @HiddenFromObjC
-    suspend fun refreshAndSaveToken(refreshCall: suspend (String) -> AccessTokenResponse, oldAccessToken: String): OauthTokens {
+    public suspend fun refreshAndSaveToken(
+        refreshCall: suspend (String) -> AccessTokenResponse,
+        oldAccessToken: String
+    ): OauthTokens {
         mutex.withLock {
             val currentTokens = tokenStore.getTokens()
             return if (currentTokens != null && currentTokens.accessToken != oldAccessToken) {
@@ -51,15 +53,15 @@ class TokenRefreshHandler(
             } else {
                 val refreshToken = tokenStore.getRefreshToken()
                 var newTokens = refreshCall(refreshToken ?: "")
-                if(newTokens.refresh_token == null) {
-                    newTokens = newTokens.copy(refresh_token = refreshToken)
+                if (newTokens.refreshToken == null) {
+                    newTokens = newTokens.copy(refreshToken = refreshToken)
                 }
                 tokenStore.saveTokens(newTokens)
 
                 OauthTokens(
-                    accessToken = newTokens.access_token,
-                    refreshToken = newTokens.refresh_token,
-                    idToken = newTokens.id_token
+                    accessToken = newTokens.accessToken,
+                    refreshToken = newTokens.refreshToken,
+                    idToken = newTokens.idToken
                 )
             }
         }

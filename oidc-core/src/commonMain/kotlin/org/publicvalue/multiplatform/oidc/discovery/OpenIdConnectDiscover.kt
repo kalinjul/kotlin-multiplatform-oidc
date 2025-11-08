@@ -19,7 +19,7 @@ import kotlin.native.ObjCName
  */
 @OptIn(ExperimentalObjCName::class)
 @ObjCName(swiftName = "OpenIdConnectDiscover", name = "OpenIdConnectDiscover", exact = true)
-class OpenIdConnectDiscover(
+public class OpenIdConnectDiscover(
     private val httpClient: HttpClient = HttpClient()
 ) {
 
@@ -36,7 +36,10 @@ class OpenIdConnectDiscover(
      * @param configure configuration closure to configure the http request builder with
      * @return [OpenIdConnectConfiguration]
      */
-    suspend fun downloadConfiguration(configurationUrl: String, configure: (HttpRequestBuilder.() -> Unit)? = null): OpenIdConnectConfiguration {
+    public suspend fun downloadConfiguration(
+        configurationUrl: String,
+        configure: (HttpRequestBuilder.() -> Unit)? = null
+    ): OpenIdConnectConfiguration {
         return downloadConfiguration(Url(configurationUrl), configure)
     }
 
@@ -47,7 +50,10 @@ class OpenIdConnectDiscover(
      * @param configure configuration closure to configure the http request builder with
      * @return [OpenIdConnectConfiguration]
      */
-    suspend fun downloadConfiguration(configurationUrl: Url, configure: (HttpRequestBuilder.() -> Unit)? = null): OpenIdConnectConfiguration {
+    public suspend fun downloadConfiguration(
+        configurationUrl: Url,
+        configure: (HttpRequestBuilder.() -> Unit)? = null
+    ): OpenIdConnectConfiguration {
         val result = httpClient.get(configurationUrl) {
             configure?.invoke(this)
         }
@@ -56,9 +62,9 @@ class OpenIdConnectDiscover(
     }
 }
 
-private suspend inline fun <reified T: Any> HttpResponse.forceUnwrapBody(json: Json = Json): T =
+private suspend inline fun <reified T : Any> HttpResponse.forceUnwrapBody(json: Json = Json): T =
     if (call.response.status.isSuccess()) {
-        val bodyString:String = call.body()
+        val bodyString: String = call.body()
         json.decodeFromString(bodyString)
     } else {
         throw Exception("Could not download discovery document: $this")
