@@ -6,7 +6,7 @@ on:
 
 jobs:
   deploy-release:
-    runs-on: macos-13
+    runs-on: macos-15
 
     steps:
       - uses: actions/checkout@v4
@@ -30,7 +30,7 @@ jobs:
           SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
 
   create-swift-package:
-    runs-on: macos-13
+    runs-on: macos-15
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/workflows/actions/createSwiftPackage
@@ -39,7 +39,7 @@ jobs:
 
   deploy-swift-package-release:
     needs: [ create-swift-package ]
-    runs-on: macos-13
+    runs-on: macos-15
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/workflows/actions/deploySwiftPackage
