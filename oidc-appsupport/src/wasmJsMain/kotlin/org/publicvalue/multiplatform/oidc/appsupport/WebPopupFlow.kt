@@ -5,6 +5,7 @@ import kotlinx.browser.window
 import kotlinx.serialization.json.Json
 import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
 import org.publicvalue.multiplatform.oidc.OpenIdConnectException.TechnicalFailure
+import org.publicvalue.multiplatform.oidc.flows.Preferences
 import org.w3c.dom.MessageEvent
 import org.w3c.dom.Window
 import org.w3c.dom.events.Event
@@ -37,6 +38,7 @@ internal class WebPopupFlow(
                         val urlString: String = Json.decodeFromString(getEventData(event))
                         val url = Url(urlString)
                         window.removeEventListener("message", messageHandler)
+                        Preferences.resultUri = url
                         continuation.resume(WebAuthenticationFlowResult.Success(url))
                     } else {
                         // Log an advisory but stay registered for the true callback

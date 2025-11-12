@@ -17,7 +17,9 @@ import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
+import io.ktor.http.Url
 import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
+import org.publicvalue.multiplatform.oidc.flows.Preferences
 
 internal const val EXTRA_KEY_USEWEBVIEW = "usewebview"
 internal const val EXTRA_KEY_EPHEMERAL_SESSION = "ephemeral_session"
@@ -58,8 +60,7 @@ class HandleRedirectActivity : ComponentActivity() {
                     ): Boolean {
                         val requestedUrl = request?.url
                         return if (requestedUrl != null && redirectUrl != null && requestedUrl.toString().startsWith(redirectUrl)) {
-                            intent.data = request.url
-                            setResult(RESULT_OK, intent)
+                            Preferences.resultUri = Url(requestedUrl.toString())
                             finish()
                             true
                         } else {
@@ -116,6 +117,7 @@ class HandleRedirectActivity : ComponentActivity() {
         if (intent?.data != null) {
             // we're called by custom tab
             // create new intent for result to mitigate intent redirection vulnerability
+            Preferences.resultUri = Url(intent?.data.toString())
             setResult(RESULT_OK, Intent().setData(intent?.data))
             finish()
         } else if (useWebView == true && url == null) {

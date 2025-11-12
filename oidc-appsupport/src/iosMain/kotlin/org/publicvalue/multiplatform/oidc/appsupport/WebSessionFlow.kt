@@ -5,6 +5,7 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import org.publicvalue.multiplatform.oidc.OpenIdConnectException
+import org.publicvalue.multiplatform.oidc.flows.Preferences
 import platform.AuthenticationServices.ASWebAuthenticationSession
 import platform.AuthenticationServices.ASWebAuthenticationSessionCompletionHandler
 import platform.Foundation.NSError
@@ -27,6 +28,7 @@ internal class WebSessionFlow(
                         override fun invoke(p1: NSURL?, p2: NSError?) {
                             if (p1 != null) {
                                 val url = Url(p1.toString()) // use sane url instead of NS garbage
+                                Preferences.resultUri = url
                                 continuation.resumeIfActive(WebAuthenticationFlowResult.Success(url))
                             } else {
                                 // browser closed, no redirect.

@@ -6,6 +6,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
 import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
 import org.publicvalue.multiplatform.oidc.appsupport.webserver.Webserver
+import org.publicvalue.multiplatform.oidc.flows.Preferences
 
 @ExperimentalOpenIdConnect
 internal class WebServerFlow(
@@ -18,6 +19,7 @@ internal class WebServerFlow(
             async {
                 openUrl(requestUrl)
                 val response = webserver.startAndWaitForRedirect(redirectPath = Url(redirectUrl).encodedPath)
+                Preferences.resultUri = response
                 webserver.stop()
                 response
             }.await()
