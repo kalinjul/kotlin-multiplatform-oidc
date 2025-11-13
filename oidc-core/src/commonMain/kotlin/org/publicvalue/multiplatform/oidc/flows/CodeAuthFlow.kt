@@ -122,12 +122,14 @@ interface CodeAuthFlow {
 /**
  * Continue login flow.
  *
+ * @param request The original auth code request
+ * @param responseUri URI returned by the IDP in response to the authorization, containing code and state.
  * @param configureTokenExchange configuration closure to configure the http request builder with (will _not_
  * be used for discovery if necessary)
  */
 @Throws(OpenIdConnectException::class)
-private suspend fun OpenIdConnectClient.continueLogin(
-    authCodeRequest: AuthCodeRequest,
+suspend fun OpenIdConnectClient.continueLogin(
+    request: AuthCodeRequest,
     responseUri: Url,
     configureTokenExchange: (HttpRequestBuilder.() -> Unit)? = null
 ): AccessTokenResponse {
@@ -137,7 +139,7 @@ private suspend fun OpenIdConnectClient.continueLogin(
     val code = responseUri.parameters["code"]
 
     return continueLogin(
-        request = authCodeRequest,
+        request = request,
         result = AuthCodeResult(code = code, state = state),
         configureTokenExchange = configureTokenExchange
     )
@@ -146,7 +148,7 @@ private suspend fun OpenIdConnectClient.continueLogin(
 /**
  * Continue login flow.
  *
- * @param request The original token request
+ * @param request The original auth code request
  * @param result [AuthCodeResult] containing the authorization code and state returned by the IDP
  * @param configureTokenExchange Configuration closure to configure the http request builder with (will _not_
  * be used for discovery if necessary)
@@ -154,7 +156,7 @@ private suspend fun OpenIdConnectClient.continueLogin(
  * @return The AccessTokenResponse
  */
 @Throws(OpenIdConnectException::class)
-suspend fun OpenIdConnectClient.continueLogin(
+private suspend fun OpenIdConnectClient.continueLogin(
     request: AuthCodeRequest,
     result: AuthCodeResult,
     configureTokenExchange: (HttpRequestBuilder.() -> Unit)?
