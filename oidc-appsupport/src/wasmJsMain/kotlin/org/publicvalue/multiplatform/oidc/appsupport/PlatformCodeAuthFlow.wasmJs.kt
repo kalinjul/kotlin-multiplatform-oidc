@@ -5,6 +5,7 @@ import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
 import org.publicvalue.multiplatform.oidc.flows.CodeAuthFlow
 import org.publicvalue.multiplatform.oidc.flows.EndSessionFlow
 import org.publicvalue.multiplatform.oidc.flows.EndSessionResponse
+import org.publicvalue.multiplatform.oidc.preferences.Preferences
 import org.publicvalue.multiplatform.oidc.types.AuthCodeRequest
 import org.publicvalue.multiplatform.oidc.types.EndSessionRequest
 
@@ -14,9 +15,10 @@ actual class PlatformCodeAuthFlow(
     windowFeatures: String = "width=1000,height=800,resizable=yes,scrollbars=yes",
     redirectOrigin: String,
     actual override val client: OpenIdConnectClient,
+    actual override val preferences: Preferences,
 ) : CodeAuthFlow, EndSessionFlow {
 
-    private val webFlow = WebPopupFlow(windowTarget, windowFeatures, redirectOrigin)
+    private val webFlow = WebPopupFlow(windowTarget, windowFeatures, redirectOrigin, preferences)
 
     @ExperimentalOpenIdConnect
     actual override suspend fun startLoginFlow(request: AuthCodeRequest) {

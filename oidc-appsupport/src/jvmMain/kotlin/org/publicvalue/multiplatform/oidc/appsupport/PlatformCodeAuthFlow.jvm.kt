@@ -7,6 +7,7 @@ import org.publicvalue.multiplatform.oidc.OpenIdConnectException
 import org.publicvalue.multiplatform.oidc.flows.CodeAuthFlow
 import org.publicvalue.multiplatform.oidc.flows.EndSessionFlow
 import org.publicvalue.multiplatform.oidc.flows.EndSessionResponse
+import org.publicvalue.multiplatform.oidc.preferences.Preferences
 import org.publicvalue.multiplatform.oidc.types.AuthCodeRequest
 import org.publicvalue.multiplatform.oidc.types.EndSessionRequest
 import java.awt.Desktop
@@ -19,7 +20,8 @@ import kotlin.contracts.contract
 @ExperimentalOpenIdConnect
 actual class PlatformCodeAuthFlow internal constructor(
     actual override val client: OpenIdConnectClient,
-    private val webFlow: WebAuthenticationFlow
+    private val webFlow: WebAuthenticationFlow,
+    actual override val preferences: Preferences
 ) : CodeAuthFlow, EndSessionFlow {
 
     actual override suspend fun startLoginFlow(request: AuthCodeRequest) {

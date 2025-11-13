@@ -5,7 +5,8 @@ import kotlinx.browser.window
 import kotlinx.serialization.json.Json
 import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
 import org.publicvalue.multiplatform.oidc.OpenIdConnectException.TechnicalFailure
-import org.publicvalue.multiplatform.oidc.flows.Preferences
+import org.publicvalue.multiplatform.oidc.preferences.Preferences
+import org.publicvalue.multiplatform.oidc.preferences.setResponseUri
 import org.w3c.dom.MessageEvent
 import org.w3c.dom.Window
 import org.w3c.dom.events.Event
@@ -17,12 +18,13 @@ internal class WebPopupFlow(
     private val windowTarget: String = "",
     private val windowFeatures: String = "width=1000,height=800,resizable=yes,scrollbars=yes",
     private val redirectOrigin: String,
+    private val preferences: Preferences,
 ): WebAuthenticationFlow {
 
     private class WindowHolder(var window: Window?)
 
     override suspend fun startWebFlow(requestUrl: Url, redirectUrl: String): WebAuthenticationFlowResult {
-        return suspendCoroutine<WebAuthenticationFlowResult> { continuation ->
+        val result = suspendCoroutine<WebAuthenticationFlowResult> { continuation ->
 
             val popupHolder = WindowHolder(null)
             lateinit var messageHandler: (Event) -> Unit
@@ -38,7 +40,6 @@ internal class WebPopupFlow(
                         val urlString: String = Json.decodeFromString(getEventData(event))
                         val url = Url(urlString)
                         window.removeEventListener("message", messageHandler)
-                        Preferences.resultUri = url
                         continuation.resume(WebAuthenticationFlowResult.Success(url))
                     } else {
                         // Log an advisory but stay registered for the true callback
@@ -52,6 +53,11 @@ internal class WebPopupFlow(
             popupHolder.window = window.open(requestUrl.toString(), windowTarget, windowFeatures)
                 ?: throw TechnicalFailure("Could not open popup", null)
         }
+        if(result is WebAuthenticationFlowResult.Success) {
+            // TODO refactor wasm code to just set preferences in event handler
+            preferences.setResponseUri(result.responseUri)
+        }
+        return result
     }
 
     internal companion object {
