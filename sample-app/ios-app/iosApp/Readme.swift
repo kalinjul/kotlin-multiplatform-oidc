@@ -60,64 +60,64 @@ struct Readme {
     }
     
     // Request access token using code auth flow:
-    func _2() async {
-        let flow = CodeAuthFlow(client: client)
-        do {
-            let tokens = try await flow.getAccessToken()
-        } catch {
-            print(error)
-        }
-    }
+//    func _2() async {
+//        let flow = CodeAuthFlow(client: client)
+//        do {
+//            let tokens = try await flow.getAccessToken()
+//        } catch {
+//            print(error)
+//        }
+//    }
     
-    // Perform refresh or endSession:
-    func _3() async throws {
-        try await client.refreshToken(refreshToken: tokens.refresh_token!)
-        try await client.endSession(idToken: tokens.id_token!)
-    }
+//    // Perform refresh or endSession:
+//    func _3() async throws {
+//        try await client.refreshToken(refreshToken: tokens.refresh_token!)
+//        try await client.endSession(idToken: tokens.id_token!)
+//    }
     
     // customize endSession request:
-    func _3a() async throws {
-        try await client.endSession(idToken: "") { requestBuilder in
-            requestBuilder.headers.append(name: "X-CUSTOM-HEADER", value: "value")
-            requestBuilder.url.parameters.append(name: "custom_parameter", value: "value")
-        }
-        // endSession with Web flow (opens browser and handles post_logout_redirect_uri redirect)
-        let flow = CodeAuthFlow(client: client)
-        try await flow.endSession(idToken: "<idToken>", configureEndSessionUrl: { urlBuilder in
-        })
-        
-    }
+//    func _3a() async throws {
+//        try await client.endSession(idToken: "") { requestBuilder in
+//            requestBuilder.headers.append(name: "X-CUSTOM-HEADER", value: "value")
+//            requestBuilder.url.parameters.append(name: "custom_parameter", value: "value")
+//        }
+//        // endSession with Web flow (opens browser and handles post_logout_redirect_uri redirect)
+//        let flow = CodeAuthFlow(client: client)
+//        try await flow.endSession(idToken: "<idToken>", configureEndSessionUrl: { urlBuilder in
+//        })
+//        
+//    }
     
     // customize getAccessToken request:
-    func _3b() async throws {
-        let flow = CodeAuthFlow(client: client)
-        try await flow.getAccessToken(
-            configureAuthUrl: { urlBuilder in
-                urlBuilder.parameters.append(name: "prompt", value: "login")
-            },
-            configureTokenExchange: { requestBuilder in
-                requestBuilder.headers.append(name: "additionalHeaderField", value: "value")
-            }
-        )
-    }
+//    func _3b() async throws {
+//        let flow = CodeAuthFlow(client: client)
+//        try await flow.getAccessToken(
+//            configureAuthUrl: { urlBuilder in
+//                urlBuilder.parameters.append(name: "prompt", value: "login")
+//            },
+//            configureTokenExchange: { requestBuilder in
+//                requestBuilder.headers.append(name: "additionalHeaderField", value: "value")
+//            }
+//        )
+//    }
     
     // We provide simple JWT parsing:
-    func _4() {
-        let jwt = tokens.id_token.map { try! JwtParser.shared.parse(from: $0) }
-        print(jwt?.payload.aud) // print audience
-        print(jwt?.payload.iss) // print issuer
-        print(jwt?.payload.additionalClaims["email"]) // get claim
-    }
-    
-    // TokenStore
-    func _5() async throws {
-        let tokenstore = KeychainTokenStore()
-        try await tokenstore.saveTokens(tokens: tokens)
-    }
-    
-    // RefreshHandler
-    func _6() async throws {
-        let refreshHandler = TokenRefreshHandler(tokenStore: tokenstore)
-        try await refreshHandler.refreshAndSaveToken(client: client, oldAccessToken: oldAccessToken)  // thread-safe refresh and save new tokens to store
-    }
+//    func _4() {
+//        let jwt = tokens.id_token.map { try! JwtParser.shared.parse(from: $0) }
+//        print(jwt?.payload.aud) // print audience
+//        print(jwt?.payload.iss) // print issuer
+//        print(jwt?.payload.additionalClaims["email"]) // get claim
+//    }
+//    
+//    // TokenStore
+//    func _5() async throws {
+//        let tokenstore = KeychainTokenStore()
+//        try await tokenstore.saveTokens(tokens: tokens)
+//    }
+//    
+//    // RefreshHandler
+//    func _6() async throws {
+//        let refreshHandler = TokenRefreshHandler(tokenStore: tokenstore)
+//        try await refreshHandler.refreshAndSaveToken(client: client, oldAccessToken: oldAccessToken)  // thread-safe refresh and save new tokens to store
+//    }
 }
