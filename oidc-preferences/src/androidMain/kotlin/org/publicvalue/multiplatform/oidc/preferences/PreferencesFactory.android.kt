@@ -4,12 +4,14 @@ import android.content.Context
 import okio.Path.Companion.toPath
 import org.publicvalue.multiplatform.oidc.preferences.org.publicvalue.multiplatform.oidc.preferences.PreferencesDataStore
 
-actual class PreferencesFactory actual constructor() {
+actual class PreferencesFactory(context: Context) : PreferencesSingletonFactory() {
+
+    private val filesDir = context.filesDir
 
     /**
      * Filename must end with ".preferences_pb".
      */
-    fun create(context: Context, filename: String): PreferencesDataStore {
-        return PreferencesDataStore(context.filesDir.resolve(filename).absolutePath.toPath())
+    override fun create(filename: String): Preferences {
+        return PreferencesDataStore(filesDir.resolve(filename).absolutePath.toPath())
     }
 }

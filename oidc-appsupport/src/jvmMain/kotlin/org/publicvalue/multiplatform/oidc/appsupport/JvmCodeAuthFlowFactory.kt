@@ -1,6 +1,7 @@
 package org.publicvalue.multiplatform.oidc.appsupport
 
 import io.ktor.http.*
+import kotlinx.coroutines.runBlocking
 import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
 import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
 import org.publicvalue.multiplatform.oidc.appsupport.webserver.SimpleKtorWebserver
@@ -18,7 +19,7 @@ class JvmCodeAuthFlowFactory(
     private val preferencesFactory: PreferencesFactory = PreferencesFactory()
 ): CodeAuthFlowFactory {
     override fun createAuthFlow(client: OpenIdConnectClient): PlatformCodeAuthFlow {
-        val preferences = preferencesFactory.create(PREFERENCES_FILENAME)
+        val preferences = runBlocking { preferencesFactory.getOrCreate(PREFERENCES_FILENAME) }
         return PlatformCodeAuthFlow(
             client = client,
             webFlow = WebServerFlow(

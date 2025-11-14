@@ -15,7 +15,6 @@ import org.publicvalue.multiplatform.oidc.appsupport.customtab.getCustomTabProvi
 import org.publicvalue.multiplatform.oidc.appsupport.webview.WebViewFlow
 import org.publicvalue.multiplatform.oidc.flows.EndSessionFlow
 import org.publicvalue.multiplatform.oidc.preferences.Preferences
-import org.publicvalue.multiplatform.oidc.preferences.PreferencesFactory
 import org.publicvalue.multiplatform.oidc.preferences.org.publicvalue.multiplatform.oidc.preferences.PreferencesDataStore
 
 /**
@@ -45,8 +44,6 @@ class AndroidCodeAuthFlowFactory(
     private val ephemeralSession: Boolean = false,
     /** preferred custom tab providers, list of package names in order of priority. Check [Browser][org.publicvalue.multiplatform.oidc.appsupport.customtab.Browser] for example values. **/
     private val customTabProviderPriority: List<String> = listOf(),
-    /** factory used to create preferences to save session information during login process. **/
-    private val preferencesFactory: PreferencesFactory = PreferencesFactory()
 ): CodeAuthFlowFactory {
 
     private lateinit var activityResultLauncher: ActivityResultLauncherSuspend<Intent, ActivityResult>

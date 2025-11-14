@@ -101,7 +101,7 @@ interface CodeAuthFlow {
      * @param configureTokenExchange configuration closure to configure the http request builder with (will _not_
      * be used for discovery if necessary)
      */
-    @Throws(OpenIdConnectException::class)
+    @Throws(OpenIdConnectException::class, CancellationException::class)
     suspend fun continueLogin(configureTokenExchange: (HttpRequestBuilder.() -> Unit)? = null): AccessTokenResponse {
         val authRequest = preferences.getAuthRequest()
         val responseUri = preferences.getResponseUri()
@@ -127,7 +127,7 @@ interface CodeAuthFlow {
  * @param configureTokenExchange configuration closure to configure the http request builder with (will _not_
  * be used for discovery if necessary)
  */
-@Throws(OpenIdConnectException::class)
+@Throws(OpenIdConnectException::class, CancellationException::class)
 suspend fun OpenIdConnectClient.continueLogin(
     request: AuthCodeRequest,
     responseUri: Url,
@@ -155,7 +155,7 @@ suspend fun OpenIdConnectClient.continueLogin(
  *
  * @return The AccessTokenResponse
  */
-@Throws(OpenIdConnectException::class)
+@Throws(OpenIdConnectException::class, CancellationException::class)
 private suspend fun OpenIdConnectClient.continueLogin(
     request: AuthCodeRequest,
     result: AuthCodeResult,

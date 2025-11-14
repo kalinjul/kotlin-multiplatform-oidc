@@ -1,6 +1,6 @@
 package org.publicvalue.multiplatform.oidc.appsupport
 
-import androidx.datastore.preferences.core.Preferences
+import kotlinx.coroutines.runBlocking
 import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
 import org.publicvalue.multiplatform.oidc.flows.EndSessionFlow
 import org.publicvalue.multiplatform.oidc.preferences.PREFERENCES_FILENAME
@@ -15,8 +15,8 @@ class IosCodeAuthFlowFactory(
     /** factory used to create preferences to save session information during login process. **/
     private val preferencesFactory: PreferencesFactory = PreferencesFactory()
 ): CodeAuthFlowFactory {
+    private val preferences = runBlocking { preferencesFactory.getOrCreate(PREFERENCES_FILENAME) }
     override fun createAuthFlow(client: OpenIdConnectClient): PlatformCodeAuthFlow {
-        val preferences = preferencesFactory.create(PREFERENCES_FILENAME)
         return PlatformCodeAuthFlow(
             client = client,
             webFlow = WebSessionFlow(
