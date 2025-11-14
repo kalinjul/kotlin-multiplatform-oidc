@@ -3,8 +3,11 @@ package org.publicvalue.multiplatform.oidc.appsupport
 import io.ktor.http.Url
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.suspendCancellableCoroutine
 import org.publicvalue.multiplatform.oidc.OpenIdConnectException
+import org.publicvalue.multiplatform.oidc.preferences.Preferences
+import org.publicvalue.multiplatform.oidc.preferences.setResponseUri
 import platform.AuthenticationServices.ASWebAuthenticationSession
 import platform.AuthenticationServices.ASWebAuthenticationSessionCompletionHandler
 import platform.Foundation.NSError
@@ -12,6 +15,7 @@ import platform.Foundation.NSURL
 
 internal class WebSessionFlow(
     private val ephemeralBrowserSession: Boolean,
+    private val preferences: Preferences,
 ): WebAuthenticationFlow {
     /**
      * @return null if user cancelled the flow (closed the web view)
@@ -27,6 +31,9 @@ internal class WebSessionFlow(
                         override fun invoke(p1: NSURL?, p2: NSError?) {
                             if (p1 != null) {
                                 val url = Url(p1.toString()) // use sane url instead of NS garbage
+                                runBlocking {
+                                    preferences.setResponseUri(url)
+                                }
                                 continuation.resumeIfActive(WebAuthenticationFlowResult.Success(url))
                             } else {
                                 // browser closed, no redirect.

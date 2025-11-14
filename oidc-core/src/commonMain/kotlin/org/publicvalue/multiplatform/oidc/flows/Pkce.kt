@@ -1,5 +1,6 @@
 package org.publicvalue.multiplatform.oidc.flows
 
+import kotlinx.serialization.Serializable
 import org.publicvalue.multiplatform.oidc.encodeForPKCE
 import org.publicvalue.multiplatform.oidc.s256
 import org.publicvalue.multiplatform.oidc.secureRandomBytes
@@ -12,13 +13,18 @@ import kotlin.native.ObjCName
  */
 @OptIn(ExperimentalObjCName::class)
 @ObjCName(swiftName = "PKCE", name = "PKCE", exact = true)
-class Pkce(
-    codeChallengeMethod: CodeChallengeMethod,
+@Serializable
+data class Pkce(
     /** For token request **/
     val codeVerifier: String = verifier(),
     /** For authorization **/
-    val codeChallenge: String = challenge(codeVerifier, codeChallengeMethod),
+    val codeChallenge: String
 ) {
+    constructor(codeChallengeMethod: CodeChallengeMethod, codeVerifier: String = verifier()) : this(
+        codeChallenge = challenge(codeVerifier = codeVerifier, method = codeChallengeMethod),
+        codeVerifier = codeVerifier
+    )
+
     private companion object {
         fun verifier(): String {
             val bytes = secureRandomBytes()

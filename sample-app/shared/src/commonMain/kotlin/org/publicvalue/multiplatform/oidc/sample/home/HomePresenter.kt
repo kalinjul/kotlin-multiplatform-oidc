@@ -124,6 +124,7 @@ class HomePresenter(
                                                 }
                                                 if (result.isSuccess) HttpStatusCode.OK else null
                                             } else {
+                                                // maybe send bearer?
                                                 client.endSession(idToken = it.id_token ?: "")
                                             }
                                         }
@@ -160,6 +161,20 @@ class HomePresenter(
                     }
                 }
             }
+        }
+
+        DisposableEffect(authFlowFactory) {
+            val client = createClient()
+            val authFlowFactory = client?.let { this@HomePresenter.authFlowFactory.createAuthFlow(it) }
+            scope.launch {
+                if (authFlowFactory != null && authFlowFactory.canContinueLogin()) {
+                    catchErrorMessage {
+                        val tokens = authFlowFactory.continueLogin(configureTokenExchange = null)
+                        updateTokenResponse(tokens)
+                    }
+                }
+            }
+            onDispose {  }
         }
 
         return HomeUiState(
