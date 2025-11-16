@@ -24,8 +24,8 @@ actual class PlatformCodeAuthFlow(
         return if (result is WebAuthenticationFlowResult.Success) {
             when (val error = getErrorResult<AuthCodeResult>(result.responseUri)) {
                 null -> {
-                    val state = result.responseUri.parameters.get("state")
-                    val code = result.responseUri.parameters.get("code")
+                    val state = result.responseUri?.parameters?.get("state")
+                    val code = result.responseUri?.parameters?.get("code")
                     Result.success(AuthCodeResult(code, state))
                 }
 
