@@ -11,11 +11,7 @@ kotlin {
     // Explicitly apply the default KMP hierarchy so js and wasmJs get a shared 'webMain' source set.
     applyDefaultHierarchyTemplate()
     js(IR) {
-        browser {
-            commonWebpackConfig {
-                outputFileName = "wasm-js-app.js"
-            }
-        }
+        browser()
         binaries.executable()
     }
     @OptIn(ExperimentalWasmDsl::class)
