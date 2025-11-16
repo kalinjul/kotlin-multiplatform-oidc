@@ -3,11 +3,7 @@ package org.publicvalue.multiplatform.oidc.appsupport
 import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
 import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
 import org.publicvalue.multiplatform.oidc.OpenIdConnectException
-import org.publicvalue.multiplatform.oidc.flows.AuthCodeResponse
-import org.publicvalue.multiplatform.oidc.flows.AuthCodeResult
-import org.publicvalue.multiplatform.oidc.flows.CodeAuthFlow
-import org.publicvalue.multiplatform.oidc.flows.EndSessionFlow
-import org.publicvalue.multiplatform.oidc.flows.EndSessionResponse
+import org.publicvalue.multiplatform.oidc.flows.*
 import org.publicvalue.multiplatform.oidc.types.AuthCodeRequest
 import org.publicvalue.multiplatform.oidc.types.EndSessionRequest
 
@@ -23,26 +19,23 @@ actual class PlatformCodeAuthFlow(
 
     @ExperimentalOpenIdConnect
     actual override suspend fun getAuthorizationCode(request: AuthCodeRequest): AuthCodeResponse {
-        val result = webFlow.startWebFlow(request.url, request.url.parameters["redirect_uri"].orEmpty())
+        val result = webFlow.startWebFlow(request.url, request.url.parameters.get("redirect_uri").orEmpty())
 
-        if (result !is WebAuthenticationFlowResult.Success) {
+        return if (result is WebAuthenticationFlowResult.Success) {
+            when (val error = getErrorResult<AuthCodeResult>(result.responseUri)) {
+                null -> {
+                    val state = result.responseUri.parameters.get("state")
+                    val code = result.responseUri.parameters.get("code")
+                    Result.success(AuthCodeResult(code, state))
+                }
+
+                else -> {
+                    return error
+                }
+            }
+        } else {
             // browser closed, no redirect
-            return Result.failure(OpenIdConnectException.AuthenticationCancelled())
-        }
-
-        if (result.responseUri == null) {
-            return Result.failure(OpenIdConnectException.AuthenticationFailure("No Uri in callback from browser."))
-        }
-
-        return when (val error = getErrorResult<AuthCodeResult>(result.responseUri)) {
-            null -> {
-                val state = result.responseUri.parameters["state"]
-                val code = result.responseUri.parameters["code"]
-                Result.success(AuthCodeResult(code, state))
-            }
-            else -> {
-                return error
-            }
+            Result.failure(OpenIdConnectException.AuthenticationCancelled())
         }
     }
 
