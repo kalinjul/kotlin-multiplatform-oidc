@@ -1,4 +1,5 @@
 import org.publicvalue.convention.config.configureIosTargets
+import org.publicvalue.convention.config.configureJsTarget
 import org.publicvalue.convention.config.configureWasmTarget
 
 plugins {
@@ -12,12 +13,9 @@ description = "Kotlin Multiplatform OIDC tokenstore library"
 
 kotlin {
     jvm()
-    js(IR) {
-        browser()
-        binaries.library()
-    }
     configureIosTargets()
     configureWasmTarget()
+    configureJsTarget()
     sourceSets {
         val commonMain by getting {
             dependencies {

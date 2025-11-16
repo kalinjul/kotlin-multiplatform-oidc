@@ -1,5 +1,5 @@
-import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 import org.publicvalue.convention.config.configureIosTargets
+import org.publicvalue.convention.config.configureJsTarget
 import org.publicvalue.convention.config.configureWasmTarget
 import org.publicvalue.convention.config.exportKdoc
 
@@ -14,12 +14,9 @@ description = "Kotlin Multiplatform OIDC crypto library"
 
 kotlin {
     jvm()
-    js(IR) {
-        browser()
-        binaries.library()
-    }
     configureIosTargets()
     configureWasmTarget()
+    configureJsTarget()
     sourceSets {
         val commonMain by getting {
             dependencies {

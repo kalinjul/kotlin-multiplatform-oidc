@@ -1,12 +1,9 @@
-import com.android.build.gradle.internal.tasks.factory.dependsOn
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.publicvalue.convention.config.configureIosTargets
+import org.publicvalue.convention.config.configureJsTarget
 import org.publicvalue.convention.config.configureWasmTarget
 import org.publicvalue.convention.config.exportKdoc
-import java.nio.file.Files
-import java.util.stream.Collectors.toList
-import kotlin.io.path.name
 
 plugins {
     id("org.publicvalue.convention.android.library")
@@ -25,12 +22,9 @@ multiplatformSwiftPackage {
 
 kotlin {
     jvm()
-    js(IR) {
-        browser()
-        binaries.library()
-    }
     configureIosTargets(baseName = "OpenIdConnectClient")
     configureWasmTarget(baseName = "OpenIdConnectClient")
+    configureJsTarget()
     sourceSets {
         val commonMain by getting {
             dependencies {
