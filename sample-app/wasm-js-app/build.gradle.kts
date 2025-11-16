@@ -8,6 +8,7 @@ plugins {
 
 kotlin {
     jvm()
+    // Explicitly apply the default KMP hierarchy so js and wasmJs get a shared 'webMain' source set.
     applyDefaultHierarchyTemplate()
     js(IR) {
         browser {
