@@ -32,6 +32,7 @@ fun KotlinMultiplatformExtension.configureWasmTarget(baseName: String? = null) {
                         add(project.projectDir.path)
                         add(project.projectDir.path + "/commonMain/")
                         add(project.projectDir.path + "/webMain/")
+                        add(project.projectDir.path + "/wasmJsMain/")
                     }
                 }
             }
