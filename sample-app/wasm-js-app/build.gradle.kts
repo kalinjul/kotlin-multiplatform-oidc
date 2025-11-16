@@ -8,6 +8,15 @@ plugins {
 
 kotlin {
     jvm()
+    applyDefaultHierarchyTemplate()
+    js(IR) {
+        browser {
+            commonWebpackConfig {
+                outputFileName = "wasm-js-app.js"
+            }
+        }
+        binaries.executable()
+    }
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
         outputModuleName = "wasm-js-app"
@@ -27,7 +36,7 @@ kotlin {
     }
 
     sourceSets {
-        val webMain by getting  {
+        val webMain by getting {
             dependencies {
                 implementation(compose.runtime)
                 implementation(compose.foundation)
