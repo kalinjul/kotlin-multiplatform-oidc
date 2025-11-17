@@ -28,16 +28,14 @@ actual class PlatformCodeAuthFlow internal constructor(
         val redirectUrl = request.url.parameters.get("redirect_uri").orEmpty()
         checkRedirectPort(Url(redirectUrl))
         val result = webFlow.startWebFlow(request.url, redirectUrl)
-        throwIfCancelled(result)
+        throwAuthenticationIfCancelled(result)
     }
 
-    actual override suspend fun endSession(request: EndSessionRequest): EndSessionResponse {
+    actual override suspend fun startLogoutFlow(request: EndSessionRequest) {
         val redirectUrl = request.url.parameters.get("post_logout_redirect_uri").orEmpty()
         checkRedirectPort(Url(redirectUrl))
-
-        webFlow.startWebFlow(request.url, redirectUrl)
-        // doesn't return at all if unsuccessful
-        return EndSessionResponse.success(Unit)
+        val result = webFlow.startWebFlow(request.url, redirectUrl)
+        throwEndsessionIfCancelled(result)
     }
 
     @OptIn(ExperimentalContracts::class)

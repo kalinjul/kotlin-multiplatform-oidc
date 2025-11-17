@@ -23,13 +23,13 @@ actual class PlatformCodeAuthFlow(
     @ExperimentalOpenIdConnect
     actual override suspend fun startLoginFlow(request: AuthCodeRequest) {
         val result = webFlow.startWebFlow(request.url, request.url.parameters.get("redirect_uri").orEmpty())
-        throwIfCancelled(result)
+        throwAuthenticationIfCancelled(result)
     }
 
-    actual override suspend fun endSession(request: EndSessionRequest): EndSessionResponse {
+    actual override suspend fun startLogoutFlow(request: EndSessionRequest) {
         val redirectUrl = request.url.parameters.get("post_logout_redirect_uri").orEmpty()
-        webFlow.startWebFlow(request.url, redirectUrl)
-        return Result.success(Unit)
+        val result = webFlow.startWebFlow(request.url, redirectUrl)
+        throwEndsessionIfCancelled(result)
     }
 
     companion object {

@@ -36,25 +36,12 @@ actual class PlatformCodeAuthFlow internal constructor(
 
     actual override suspend fun startLoginFlow(request: AuthCodeRequest) = wrapExceptions {
         val result = webFlow.startWebFlow(request.url, request.url.parameters.get("redirect_uri").orEmpty())
-        throwIfCancelled(result)
+        throwAuthenticationIfCancelled(result)
     }
 
-    actual override suspend fun endSession(request: EndSessionRequest): EndSessionResponse = wrapExceptions {
+    actual override suspend fun startLogoutFlow(request: EndSessionRequest) = wrapExceptions {
         val result = webFlow.startWebFlow(request.url, request.url.parameters.get("post_logout_redirect_uri").orEmpty())
-
-        return if (result is WebAuthenticationFlowResult.Success) {
-            when (val error = getErrorResult<Unit>(result.responseUri)) {
-                null -> {
-                    return EndSessionResponse.success(Unit)
-                }
-                else -> {
-                    return error
-                }
-            }
-        } else {
-            // browser closed, no redirect
-            EndSessionResponse.failure(OpenIdConnectException.AuthenticationCancelled("Logout cancelled"))
-        }
+        throwEndsessionIfCancelled(result)
     }
 }
 

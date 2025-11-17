@@ -5,6 +5,7 @@ import io.ktor.http.URLBuilder
 import io.ktor.http.Url
 import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
 import org.publicvalue.multiplatform.oidc.OpenIdConnectException
+import org.publicvalue.multiplatform.oidc.getError
 import org.publicvalue.multiplatform.oidc.preferences.Preferences
 import org.publicvalue.multiplatform.oidc.preferences.clearOidcPreferences
 import org.publicvalue.multiplatform.oidc.preferences.getAuthRequest
@@ -79,6 +80,8 @@ interface CodeAuthFlow {
 
     /**
      * Uses the request URL to open a browser and perform authorization.
+     * Call [continueLogin] after returning to your app to receive tokens.
+     *
      * @param request The request containing the url and relevant state information
      */
     @Throws(CancellationException::class, OpenIdConnectException::class)
@@ -133,7 +136,7 @@ suspend fun OpenIdConnectClient.continueLogin(
     responseUri: Url,
     configureTokenExchange: (HttpRequestBuilder.() -> Unit)? = null
 ): AccessTokenResponse {
-    getError(responseUri)?.let { throw it }
+    responseUri.getError()?.let { throw it }
 
     val state = responseUri.parameters["state"]
     val code = responseUri.parameters["code"]
@@ -174,11 +177,4 @@ private suspend fun OpenIdConnectClient.continueLogin(
     } else {
         throw OpenIdConnectException.AuthenticationFailure("No auth code", cause = null)
     }
-}
-
-private fun getError(responseUri: Url?): OpenIdConnectException.AuthenticationFailure? {
-    return if (responseUri?.parameters?.contains("error") == true) {
-        OpenIdConnectException.AuthenticationFailure(
-            message = responseUri.parameters.get("error") ?: "")
-    } else null
 }
