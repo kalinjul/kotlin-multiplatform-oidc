@@ -107,33 +107,31 @@ class HomePresenter(
                                 val isGoogle = client.config.discoveryUri.toString().contains("accounts.google.com")
                                 if (!client.config.endpoints?.endSessionEndpoint.isNullOrEmpty() || isGoogle) {
                                     catchErrorMessage {
-                                        val result = if(isGoogle) {
+                                        if(isGoogle) {
                                             val endpoint = "https://accounts.google.com/o/oauth2/revoke"
                                             val url = URLBuilder(endpoint)
                                             val response = DefaultHttpClient.submitForm {
                                                 url(url.build())
                                                 parameter("token", it.access_token)
                                             }
-                                            response.status
+                                            if (response.status.isSuccess().not()) {
+                                                throw Exception("Logout received ${response.status}")
+                                            }
                                         } else {
                                             if (event.useWebFlow) {
                                                 val flow = authFlowFactory.createEndSessionFlow(client)
-                                                val result = flow.endSession(it.id_token ?: "")
-                                                if (result.isFailure) {
-                                                    setErrorMessage(result.exceptionOrNull()?.message ?: "Unknown error")
-                                                }
-                                                if (result.isSuccess) HttpStatusCode.OK else null
+                                                flow.endSession(it.id_token ?: "")
                                             } else {
-                                                client.endSession(idToken = it.id_token ?: "")
+                                                // maybe send bearer?
+                                                val status =client.endSession(idToken = it.id_token ?: "")
+                                                if (status.isSuccess().not()) {
+                                                    throw Exception("Logout received ${status}")
+                                                }
                                             }
                                         }
-                                        if (result?.isSuccess() == true || result == HttpStatusCode.Found) {
-                                            tokenResponse = null
-                                            subject = null
-                                            settingsStore.clearTokenData()
-                                        } else {
-                                            setErrorMessage("Logout received $result")
-                                        }
+                                        tokenResponse = null
+                                        subject = null
+                                        settingsStore.clearTokenData()
                                     }
                                 } else {
                                     setErrorMessage("No endSessionEndpoint set")
@@ -160,6 +158,29 @@ class HomePresenter(
                     }
                 }
             }
+        }
+
+        DisposableEffect(authFlowFactory) {
+            val client = createClient()
+            val authFlow = client?.let { this@HomePresenter.authFlowFactory.createAuthFlow(it) }
+            val endSessionFlow = client?.let { this@HomePresenter.authFlowFactory.createEndSessionFlow(it) }
+            scope.launch {
+                if (authFlow != null && authFlow.canContinueLogin()) {
+                    catchErrorMessage {
+                        val tokens = authFlow.continueLogin(configureTokenExchange = null)
+                        updateTokenResponse(tokens)
+                    }
+                }
+                if (endSessionFlow != null && endSessionFlow.canContinueLogout()) {
+                    catchErrorMessage {
+                        endSessionFlow.continueLogout()
+                        tokenResponse = null
+                        subject = null
+                        settingsStore.clearTokenData()
+                    }
+                }
+            }
+            onDispose {  }
         }
 
         return HomeUiState(

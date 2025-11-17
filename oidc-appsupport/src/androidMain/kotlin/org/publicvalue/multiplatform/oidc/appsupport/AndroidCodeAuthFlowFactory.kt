@@ -14,6 +14,8 @@ import org.publicvalue.multiplatform.oidc.appsupport.customtab.CustomTabFlow
 import org.publicvalue.multiplatform.oidc.appsupport.customtab.getCustomTabProviders
 import org.publicvalue.multiplatform.oidc.appsupport.webview.WebViewFlow
 import org.publicvalue.multiplatform.oidc.flows.EndSessionFlow
+import org.publicvalue.multiplatform.oidc.preferences.Preferences
+import org.publicvalue.multiplatform.oidc.preferences.org.publicvalue.multiplatform.oidc.preferences.PreferencesDataStore
 
 /**
  * Factory to create an Auth Flow on Android.
@@ -41,11 +43,12 @@ class AndroidCodeAuthFlowFactory(
      */
     private val ephemeralSession: Boolean = false,
     /** preferred custom tab providers, list of package names in order of priority. Check [Browser][org.publicvalue.multiplatform.oidc.appsupport.customtab.Browser] for example values. **/
-    private val customTabProviderPriority: List<String> = listOf()
+    private val customTabProviderPriority: List<String> = listOf(),
 ): CodeAuthFlowFactory {
 
     private lateinit var activityResultLauncher: ActivityResultLauncherSuspend<Intent, ActivityResult>
     private lateinit var context: Context
+    private lateinit var preferences: Preferences
 
     private val resultFlow: MutableStateFlow<ActivityResult?> = MutableStateFlow(null)
 
@@ -80,6 +83,7 @@ class AndroidCodeAuthFlowFactory(
             }
         )
         this.context = activity.applicationContext
+        this.preferences = PreferencesDataStore(context.dataStore)
     }
 
     override fun createAuthFlow(client: OpenIdConnectClient): PlatformCodeAuthFlow {
@@ -106,7 +110,8 @@ class AndroidCodeAuthFlowFactory(
         }
         return PlatformCodeAuthFlow(
             client = client,
-            webFlow = webFlow
+            webFlow = webFlow,
+            preferences = preferences
         )
     }
 

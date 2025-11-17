@@ -82,7 +82,7 @@ interface OpenIdConnectClient {
 
     /**
      * RP-initiated logout.
-     * Just performs the POST request for logout, we skip the redirect part for convenience.
+     * Performs the POST request for logout.
      *
      * See: [OpenID Spec](https://openid.net/specs/openid-connect-rpinitiated-1_0.html)
      *
