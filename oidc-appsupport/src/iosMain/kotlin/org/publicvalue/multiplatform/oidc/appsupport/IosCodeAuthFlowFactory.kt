@@ -5,10 +5,11 @@ import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
 import org.publicvalue.multiplatform.oidc.flows.EndSessionFlow
 import org.publicvalue.multiplatform.oidc.preferences.PREFERENCES_FILENAME
 import org.publicvalue.multiplatform.oidc.preferences.PreferencesFactory
+import kotlin.experimental.ExperimentalObjCName
 import kotlin.experimental.ExperimentalObjCRefinement
 
-@OptIn(ExperimentalObjCRefinement::class)
-@HiddenFromObjC
+@OptIn(ExperimentalObjCRefinement::class, ExperimentalObjCName::class)
+@ObjCName("CodeAuthFlowFactory")
 @Suppress("unused")
 class IosCodeAuthFlowFactory(
     private val ephemeralBrowserSession: Boolean = false,
@@ -16,6 +17,10 @@ class IosCodeAuthFlowFactory(
     private val preferencesFactory: PreferencesFactory = PreferencesFactory()
 ): CodeAuthFlowFactory {
     private val preferences = runBlocking { preferencesFactory.getOrCreate(PREFERENCES_FILENAME) }
+
+    // constructor for swift-only library
+    constructor(ephemeralBrowserSession: Boolean) : this(ephemeralBrowserSession, preferencesFactory = PreferencesFactory())
+
     override fun createAuthFlow(client: OpenIdConnectClient): PlatformCodeAuthFlow {
         return PlatformCodeAuthFlow(
             client = client,

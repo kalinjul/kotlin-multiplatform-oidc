@@ -52,7 +52,7 @@ interface CodeAuthFlow {
         configureAuthUrl: (URLBuilder.() -> Unit)? = null,
         configureTokenExchange: (HttpRequestBuilder.() -> Unit)? = null
     ): AccessTokenResponse {
-        startLogin()
+        startLogin(configureAuthUrl)
         return continueLogin(configureTokenExchange)
     }
 
