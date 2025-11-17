@@ -55,7 +55,9 @@ internal class WebPopupFlow(
         }
         if(result is WebAuthenticationFlowResult.Success) {
             // TODO refactor wasm code to just set preferences in event handler
-            preferences.setResponseUri(result.responseUri)
+            result.responseUri?.let {
+                preferences.setResponseUri(it)
+            }
         }
         return result
     }
