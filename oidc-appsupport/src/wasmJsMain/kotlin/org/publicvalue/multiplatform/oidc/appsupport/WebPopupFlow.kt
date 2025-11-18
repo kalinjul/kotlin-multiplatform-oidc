@@ -24,7 +24,7 @@ internal class WebPopupFlow(
     private class WindowHolder(var window: Window?)
 
     override suspend fun startWebFlow(requestUrl: Url, redirectUrl: String): WebAuthenticationFlowResult {
-        val result = suspendCoroutine<WebAuthenticationFlowResult> { continuation ->
+        val result = suspendCoroutine<Url> { continuation ->
 
             val popupHolder = WindowHolder(null)
             lateinit var messageHandler: (Event) -> Unit
@@ -40,7 +40,7 @@ internal class WebPopupFlow(
                         val urlString: String = Json.decodeFromString(getEventData(event))
                         val url = Url(urlString)
                         window.removeEventListener("message", messageHandler)
-                        continuation.resume(WebAuthenticationFlowResult.Success(url))
+                        continuation.resume(url)
                     } else {
                         // Log an advisory but stay registered for the true callback
                         println("${WebPopupFlow::class.simpleName} skipping message from unknown source: ${event.source}")
@@ -53,13 +53,8 @@ internal class WebPopupFlow(
             popupHolder.window = window.open(requestUrl.toString(), windowTarget, windowFeatures)
                 ?: throw TechnicalFailure("Could not open popup", null)
         }
-        if(result is WebAuthenticationFlowResult.Success) {
-            // TODO refactor wasm code to just set preferences in event handler
-            result.responseUri?.let {
-                preferences.setResponseUri(it)
-            }
-        }
-        return result
+        preferences.setResponseUri(result)
+        return WebAuthenticationFlowResult.Success(result)
     }
 
     internal companion object {
