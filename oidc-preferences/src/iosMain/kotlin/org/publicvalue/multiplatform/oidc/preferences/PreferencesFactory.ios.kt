@@ -8,9 +8,6 @@ import platform.Foundation.NSFileManager
 import platform.Foundation.NSUserDomainMask
 
 actual class PreferencesFactory: PreferencesSingletonFactory() {
-    /**
-     * Filename must end with ".preferences_pb"
-     */
     @OptIn(ExperimentalForeignApi::class)
     override fun create(filename: String): Preferences {
         val documentDirectory = NSFileManager.defaultManager.URLForDirectory(

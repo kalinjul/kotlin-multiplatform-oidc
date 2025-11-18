@@ -6,9 +6,6 @@ import java.io.File
 
 actual class PreferencesFactory: PreferencesSingletonFactory() {
 
-    /**
-     * Filename must end with ".preferences_pb"
-     */
     override fun create(filename: String): Preferences {
         val home = System.getProperty("user.home")
         val path = File(home, "beihilfeapp/$filename").absolutePath.toPath()
