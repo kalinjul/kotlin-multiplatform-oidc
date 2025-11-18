@@ -5,4 +5,7 @@ interface Constants {
     val postLogoutRedirectUrl: String
 }
 
-expect object PlatformConstants: Constants
+expect object PlatformConstants : Constants {
+    override val redirectUrl: String
+    override val postLogoutRedirectUrl: String
+}
