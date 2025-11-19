@@ -1,4 +1,5 @@
 import org.publicvalue.convention.config.configureIosTargets
+import org.publicvalue.convention.config.configureJsTarget
 import org.publicvalue.convention.config.configureWasmTarget
 import org.publicvalue.convention.config.exportKdoc
 
@@ -16,6 +17,7 @@ kotlin {
     jvm()
     configureIosTargets()
     configureWasmTarget()
+    configureJsTarget()
     sourceSets {
         commonMain {
             dependencies {
