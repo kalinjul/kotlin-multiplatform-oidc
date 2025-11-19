@@ -2,19 +2,10 @@ package org.publicvalue.multiplatform.oidc.settings
 
 import com.russhwolf.settings.StorageSettings
 import com.russhwolf.settings.get
-import kotlinx.browser.localStorage
-import org.w3c.dom.Storage
 
 class WebMainSettingsStore : SettingsStore {
 
-    val prefs: StorageSettings
-
-    constructor(storage: Storage) {
-        prefs = StorageSettings(storage)
-    }
-
-    constructor() : this(localStorage)
-
+    private val prefs: StorageSettings = StorageSettings()
 
     override suspend fun get(key: String): String? {
         return prefs[key]
