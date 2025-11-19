@@ -30,6 +30,8 @@ kotlin {
             dependencies {
                 api(projects.oidcCore)
                 api(projects.oidcTokenstore)
+
+                implementation(projects.oidcPreferences)
             }
         }
 
@@ -43,6 +45,7 @@ kotlin {
                 implementation(libs.androidx.activity.compose)
                 implementation(libs.androidx.core.ktx)
                 implementation(libs.androidx.browser)
+                implementation(libs.androidx.datastore)
             }
         }
 

@@ -140,21 +140,20 @@ Android implementation is [AndroidEncryptedPreferencesSettingsStore](https://kal
 You can use "oidc-ktor" dependency, which provides easy integration for ktor projects:
 
 ```kotlin
-    HttpClient(engine) {
-        install(Auth) {
-            oidcBearer(
-                tokenStore = tokenStore,
-                refreshHandler = refreshHandler,
-                client = client,
-            )
-        }
+HttpClient(engine) {
+    install(Auth) {
+        oidcBearer(
+            tokenStore = tokenStore,
+            refreshHandler = refreshHandler,
+            client = client,
+        )
     }
 }
 ```
 
 Because of the [way ktor works](https://youtrack.jetbrains.com/issue/KTOR-4759/Auth-BearerAuthProvider-caches-result-of-loadToken-until-process-death), you need to tell the client if the token is invalidated outside of ktor's refresh logic, e.g. on logout:
 ```kotlin
-    ktorHttpClient.clearTokens()
+ktorHttpClient.clearTokens()
 ```
 
 ## Custom headers/url parameters
