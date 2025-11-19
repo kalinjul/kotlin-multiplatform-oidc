@@ -1,7 +1,6 @@
 package org.publicvalue.multiplatform.oidc
 
 import io.ktor.http.HttpStatusCode
-import io.ktor.http.Url
 import org.publicvalue.multiplatform.oidc.types.remote.ErrorResponse
 import kotlin.experimental.ExperimentalObjCName
 import kotlin.native.ObjCName
@@ -29,11 +28,4 @@ sealed class OpenIdConnectException(
     data class TechnicalFailure(override val message: String, override val cause: Throwable?): OpenIdConnectException(message, cause)
 
     data class InvalidConfiguration(override val message: String): OpenIdConnectException(message)
-}
-
-internal fun Url?.getError(): OpenIdConnectException.AuthenticationFailure? {
-    return if (this?.parameters?.contains("error") == true) {
-        OpenIdConnectException.AuthenticationFailure(
-            message = this.parameters.get("error") ?: "")
-    } else null
 }

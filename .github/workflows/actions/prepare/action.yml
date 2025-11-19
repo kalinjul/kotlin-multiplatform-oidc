@@ -29,7 +29,7 @@ runs:
     - name: Select Xcode Version
       uses: mobiledevops/xcode-select-version-action@v1
       with:
-        xcode-select-version: 16.4.0
+        xcode-select-version: 15.0.1
 
     - name: show Xcode version
       shell: bash

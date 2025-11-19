@@ -4,10 +4,13 @@ import io.ktor.http.*
 import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
 import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
 import org.publicvalue.multiplatform.oidc.OpenIdConnectException
+import org.publicvalue.multiplatform.oidc.appsupport.webserver.SimpleKtorWebserver
+import org.publicvalue.multiplatform.oidc.appsupport.webserver.Webserver
+import org.publicvalue.multiplatform.oidc.flows.AuthCodeResponse
+import org.publicvalue.multiplatform.oidc.flows.AuthCodeResult
 import org.publicvalue.multiplatform.oidc.flows.CodeAuthFlow
 import org.publicvalue.multiplatform.oidc.flows.EndSessionFlow
 import org.publicvalue.multiplatform.oidc.flows.EndSessionResponse
-import org.publicvalue.multiplatform.oidc.preferences.Preferences
 import org.publicvalue.multiplatform.oidc.types.AuthCodeRequest
 import org.publicvalue.multiplatform.oidc.types.EndSessionRequest
 import java.awt.Desktop
@@ -20,22 +23,38 @@ import kotlin.contracts.contract
 @ExperimentalOpenIdConnect
 actual class PlatformCodeAuthFlow internal constructor(
     actual override val client: OpenIdConnectClient,
-    private val webFlow: WebAuthenticationFlow,
-    actual override val preferences: Preferences
+    private val webFlow: WebAuthenticationFlow
 ) : CodeAuthFlow, EndSessionFlow {
 
-    actual override suspend fun startLoginFlow(request: AuthCodeRequest) {
+    actual override suspend fun getAuthorizationCode(request: AuthCodeRequest): AuthCodeResponse {
         val redirectUrl = request.url.parameters.get("redirect_uri").orEmpty()
-        checkRedirectPort(Url(redirectUrl))
         val result = webFlow.startWebFlow(request.url, redirectUrl)
-        throwAuthenticationIfCancelled(result)
+        checkRedirectPort(Url(redirectUrl))
+
+        return if (result is WebAuthenticationFlowResult.Success) {
+            when (val error = getErrorResult<AuthCodeResult>(result.responseUri)) {
+                null -> {
+                    val state = result.responseUri.parameters.get("state")
+                    val code = result.responseUri.parameters.get("code")
+                    Result.success(AuthCodeResult(code, state))
+                }
+                else -> {
+                    return error
+                }
+            }
+        } else {
+            // doesn't return at all if unsuccessful, so this will not happen
+            Result.failure(OpenIdConnectException.AuthenticationCancelled())
+        }
     }
 
-    actual override suspend fun startLogoutFlow(request: EndSessionRequest) {
+    actual override suspend fun endSession(request: EndSessionRequest): EndSessionResponse {
         val redirectUrl = request.url.parameters.get("post_logout_redirect_uri").orEmpty()
         checkRedirectPort(Url(redirectUrl))
-        val result = webFlow.startWebFlow(request.url, redirectUrl)
-        throwEndsessionIfCancelled(result)
+
+        webFlow.startWebFlow(request.url, redirectUrl)
+        // doesn't return at all if unsuccessful
+        return EndSessionResponse.success(Unit)
     }
 
     @OptIn(ExperimentalContracts::class)

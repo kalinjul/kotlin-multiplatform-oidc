@@ -7,8 +7,6 @@ import kotlinx.browser.window
 import kotlinx.serialization.json.Json
 import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
 import org.publicvalue.multiplatform.oidc.OpenIdConnectException.TechnicalFailure
-import org.publicvalue.multiplatform.oidc.preferences.Preferences
-import org.publicvalue.multiplatform.oidc.preferences.setResponseUri
 import org.w3c.dom.MessageEvent
 import org.w3c.dom.Window
 import org.w3c.dom.events.Event
@@ -20,13 +18,14 @@ internal actual class WebPopupFlow actual constructor(
     private val windowTarget: String,
     private val windowFeatures: String,
     private val redirectOrigin: String,
-    private val preferences: Preferences,
 ) : WebAuthenticationFlow {
 
     private class WindowHolder(var window: Window?)
 
-    override suspend fun startWebFlow(requestUrl: Url, redirectUrl: String): WebAuthenticationFlowResult {
-        val result = suspendCoroutine<Url> { continuation ->
+    actual override suspend fun startWebFlow(
+        requestUrl: Url,
+        redirectUrl: String
+    ): WebAuthenticationFlowResult = suspendCoroutine { continuation ->
 
         val popupHolder = WindowHolder(null)
         lateinit var messageHandler: (Event) -> Unit
@@ -42,7 +41,7 @@ internal actual class WebPopupFlow actual constructor(
                     val urlString: String = Json.decodeFromString(getEventData(event))
                     val url = Url(urlString)
                     window.removeEventListener("message", messageHandler)
-                    continuation.resume(url)
+                    continuation.resume(WebAuthenticationFlowResult.Success(url))
                 } else {
                     // Log an advisory but stay registered for the true callback
                     println("${WebPopupFlow::class.simpleName} skipping message from unknown source: ${event.source}")
@@ -52,11 +51,8 @@ internal actual class WebPopupFlow actual constructor(
 
         window.addEventListener("message", messageHandler)
 
-            popupHolder.window = window.open(requestUrl.toString(), windowTarget, windowFeatures)
-                ?: throw TechnicalFailure("Could not open popup", null)
-        }
-        preferences.setResponseUri(result)
-        return WebAuthenticationFlowResult.Success(result)
+        popupHolder.window = window.open(requestUrl.toString(), windowTarget, windowFeatures)
+            ?: throw TechnicalFailure("Could not open popup", null)
     }
 
     actual companion object {

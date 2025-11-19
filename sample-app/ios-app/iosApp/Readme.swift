@@ -61,8 +61,7 @@ struct Readme {
     
     // Request access token using code auth flow:
     func _2() async {
-        let factory = CodeAuthFlowFactory_(ephemeralBrowserSession: false)
-        let flow = factory.createAuthFlow(client: client)
+        let flow = CodeAuthFlow(client: client)
         do {
             let tokens = try await flow.getAccessToken()
         } catch {
@@ -76,24 +75,22 @@ struct Readme {
         try await client.endSession(idToken: tokens.id_token!)
     }
     
-//     customize endSession request:
+    // customize endSession request:
     func _3a() async throws {
         try await client.endSession(idToken: "") { requestBuilder in
             requestBuilder.headers.append(name: "X-CUSTOM-HEADER", value: "value")
             requestBuilder.url.parameters.append(name: "custom_parameter", value: "value")
         }
         // endSession with Web flow (opens browser and handles post_logout_redirect_uri redirect)
-        let factory = CodeAuthFlowFactory_(ephemeralBrowserSession: false)
-        let flow = factory.createAuthFlow(client: client)
+        let flow = CodeAuthFlow(client: client)
         try await flow.endSession(idToken: "<idToken>", configureEndSessionUrl: { urlBuilder in
         })
         
     }
     
-//     customize getAccessToken request:
+    // customize getAccessToken request:
     func _3b() async throws {
-        let factory = CodeAuthFlowFactory_(ephemeralBrowserSession: false)
-        let flow = factory.createAuthFlow(client: client)
+        let flow = CodeAuthFlow(client: client)
         try await flow.getAccessToken(
             configureAuthUrl: { urlBuilder in
                 urlBuilder.parameters.append(name: "prompt", value: "login")

@@ -17,11 +17,7 @@ import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
-import io.ktor.http.Url
-import kotlinx.coroutines.runBlocking
 import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
-import org.publicvalue.multiplatform.oidc.preferences.org.publicvalue.multiplatform.oidc.preferences.PreferencesDataStore
-import org.publicvalue.multiplatform.oidc.preferences.setResponseUri
 
 internal const val EXTRA_KEY_USEWEBVIEW = "usewebview"
 internal const val EXTRA_KEY_EPHEMERAL_SESSION = "ephemeral_session"
@@ -52,8 +48,7 @@ class HandleRedirectActivity : ComponentActivity() {
 
         @ExperimentalOpenIdConnect
         var createWebView: ComponentActivity.(redirectUrl: String?) -> WebView = { redirectUrl ->
-            val context = this
-            WebView(context).apply {
+            WebView(this).apply {
                 configureWebView(this)
                 webChromeClient = WebChromeClient()
                 webViewClient = object : WebViewClient() {
@@ -63,10 +58,8 @@ class HandleRedirectActivity : ComponentActivity() {
                     ): Boolean {
                         val requestedUrl = request?.url
                         return if (requestedUrl != null && redirectUrl != null && requestedUrl.toString().startsWith(redirectUrl)) {
-                            val preferences = PreferencesDataStore(context.dataStore)
-                            runBlocking {
-                                preferences.setResponseUri(Url(requestedUrl.toString()))
-                            }
+                            intent.data = request.url
+                            setResult(RESULT_OK, intent)
                             finish()
                             true
                         } else {
@@ -122,10 +115,6 @@ class HandleRedirectActivity : ComponentActivity() {
 
         if (intent?.data != null) {
             // we're called by custom tab
-            runBlocking {
-                val preferences = PreferencesDataStore(this@HandleRedirectActivity.dataStore)
-                preferences.setResponseUri(Url(intent?.data.toString()))
-            }
             // create new intent for result to mitigate intent redirection vulnerability
             setResult(RESULT_OK, Intent().setData(intent?.data))
             finish()

@@ -1,7 +1,6 @@
 package org.publicvalue.multiplatform.oidc.types
 
 import io.ktor.http.Url
-import kotlinx.serialization.Serializable
 import org.publicvalue.multiplatform.oidc.OpenIdConnectClientConfig
 import org.publicvalue.multiplatform.oidc.flows.Pkce
 import kotlin.experimental.ExperimentalObjCName
@@ -9,7 +8,6 @@ import kotlin.native.ObjCName
 
 @OptIn(ExperimentalObjCName::class)
 @ObjCName(swiftName = "AuthCodeRequest", name = "AuthCodeRequest", exact = true)
-@Serializable
 data class AuthCodeRequest(
     val url: Url,
     val config: OpenIdConnectClientConfig,

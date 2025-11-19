@@ -1,6 +1,5 @@
 package org.publicvalue.multiplatform.oidc
 
-import kotlinx.serialization.Serializable
 import org.publicvalue.multiplatform.oidc.types.CodeChallengeMethod
 import org.publicvalue.multiplatform.oidc.types.remote.OpenIdConnectConfiguration
 import kotlin.experimental.ExperimentalObjCName
@@ -17,9 +16,6 @@ fun OpenIdConnectClientConfig(block: OpenIdConnectClientConfig.() -> Unit): Open
     return config
 }
 
-@DslMarker
-private annotation class EndpointMarker
-
 /**
  * Configuration for an [OpenIdConnectClient].
  * A configuration can also be built using [OpenIdConnectClient] builder function with block
@@ -28,8 +24,7 @@ private annotation class EndpointMarker
 @OptIn(ExperimentalObjCName::class)
 @EndpointMarker
 @ObjCName(swiftName = "OpenIdConnectClientConfig", name = "OpenIdConnectClientConfig", exact = true)
-@Serializable
-data class OpenIdConnectClientConfig(
+class OpenIdConnectClientConfig(
     /**
      * If set, no further endpoints have to be configured.
      * You can override discovered endpoints in [endpoints]
@@ -105,13 +100,15 @@ data class OpenIdConnectClientConfig(
     }
 }
 
+@DslMarker
+private annotation class EndpointMarker
+
 /**
  * Endpoint configuration
  */
 @OptIn(ExperimentalObjCName::class)
 @EndpointMarker
 @ObjCName(swiftName = "Endpoints", name = "Endpoints", exact = true)
-@Serializable
 data class Endpoints(
     var tokenEndpoint: String? = null,
     var authorizationEndpoint: String? = null,

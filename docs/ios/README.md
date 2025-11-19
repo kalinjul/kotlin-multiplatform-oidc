@@ -69,8 +69,7 @@ let client = OpenIdConnectClient(
 
 Request access token using code auth flow:
 ```swift 
-let factory = CodeAuthFlowFactory_(ephemeralBrowserSession: false)
-let flow = factory.createAuthFlow(client: client)
+let flow = CodeAuthFlow(client: client)
 do {
     let tokens = try await flow.getAccessToken()
 } catch {
@@ -94,9 +93,8 @@ try await client.endSession(idToken: idToken) { requestBuilder in
     requestBuilder.url.parameters.append(name: "custom_parameter", value: "value")
 }
 // endSession with Web flow (opens browser and handles post_logout_redirect_uri redirect)
-let factory = CodeAuthFlowFactory_(ephemeralBrowserSession: false)
-let flow = factory.createAuthFlow(client: client)
-try await flow.endSession(idToken: "<idToken>", configureEndSessionUrl: { urlBuilder in
+let flow = CodeAuthFlow(client: client)
+    try await flow.endSession(idToken: "<idToken>", configureEndSessionUrl: { urlBuilder in
 })
 ```
 

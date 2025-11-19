@@ -63,7 +63,6 @@ androidx-datastore = { module = "androidx.datastore:datastore-preferences", vers
 androidx-browser = { module = "androidx.browser:browser", version = "1.9.0" }
 androidx-security-crypto-ktx = { module = "androidx.security:security-crypto-ktx", version.ref = "securityCryptoKtx" }
 androidx-security-crypto = { module = "androidx.security:security-crypto", version.ref = "securityCryptoKtx" }
-androidx-datastore-core = { module = "androidx.datastore:datastore-preferences-core", version.ref = "androidxDataStore" }
 material-icons-core = { module = "org.jetbrains.compose.material:material-icons-core", version.ref = "material-icons" }
 
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
