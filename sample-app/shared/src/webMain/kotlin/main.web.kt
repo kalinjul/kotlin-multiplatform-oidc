@@ -5,7 +5,7 @@ import kotlinx.browser.window
 import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
 import org.publicvalue.multiplatform.oidc.appsupport.WasmCodeAuthFlowFactory
 import org.publicvalue.multiplatform.oidc.sample.screens.HomeScreen
-import org.publicvalue.multiplatform.oidc.settings.WasmJsSettingsStore
+import org.publicvalue.multiplatform.oidc.settings.WebMainSettingsStore
 
 @OptIn(ExperimentalOpenIdConnect::class)
 @Composable
@@ -14,7 +14,7 @@ fun MainView() {
 
     val navigator = rememberCircuitNavigator(backstack) {}
 
-    val settingsStore = WasmJsSettingsStore()
+    val settingsStore = WebMainSettingsStore()
 
     App(
         backstack = backstack,

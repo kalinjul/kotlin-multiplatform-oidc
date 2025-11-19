@@ -52,6 +52,12 @@ kotlin {
                 implementation(libs.kotlinx.coroutines.test)
             }
         }
+
+        webMain {
+            dependencies {
+                implementation(libs.kotlinx.browser)
+            }
+        }
     }
 
     targets.withType<KotlinNativeTarget>().configureEach {
