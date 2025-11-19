@@ -1,4 +1,5 @@
 import org.publicvalue.convention.config.configureIosTargets
+import org.publicvalue.convention.config.configureJsTarget
 import org.publicvalue.convention.config.configureWasmTarget
 
 plugins {
@@ -14,6 +15,7 @@ kotlin {
     jvm()
     configureIosTargets()
     configureWasmTarget()
+    configureJsTarget()
     sourceSets {
         val commonMain by getting {
             dependencies {

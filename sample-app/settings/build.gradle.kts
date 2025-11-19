@@ -1,4 +1,5 @@
 import org.publicvalue.convention.config.configureIosTargets
+import org.publicvalue.convention.config.configureJsTarget
 import org.publicvalue.convention.config.configureWasmTarget
 
 plugins {
@@ -9,9 +10,11 @@ plugins {
 
 kotlin {
     jvm()
+    configureIosTargets()
+    configureWasmTarget()
+    configureJsTarget()
+    
     sourceSets {
-        configureIosTargets()
-        configureWasmTarget()
         val commonMain by getting {
             dependencies {
                 implementation("io.github.kalinjul.kotlin.multiplatform:oidc-core")
@@ -21,7 +24,7 @@ kotlin {
             }
         }
 
-        wasmJsMain {
+        webMain {
             dependencies {
                 implementation(libs.kotlinx.browser)
             }

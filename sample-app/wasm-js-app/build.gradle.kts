@@ -8,6 +8,12 @@ plugins {
 
 kotlin {
     jvm()
+    // Explicitly apply the default KMP hierarchy so js and wasmJs get a shared 'webMain' source set.
+    applyDefaultHierarchyTemplate()
+    js(IR) {
+        browser()
+        binaries.executable()
+    }
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
         outputModuleName = "wasm-js-app"
@@ -27,7 +33,7 @@ kotlin {
     }
 
     sourceSets {
-        val wasmJsMain by getting  {
+        val webMain by getting {
             dependencies {
                 implementation(compose.runtime)
                 implementation(compose.foundation)
