@@ -38,6 +38,25 @@ class MainActivity : ComponentActivity() {
 > will attach to the ComponentActivity's lifecycle.
 > If you don't use ComponentActivity, you'll need to implement your own Factory.
 
+## Login/Logout continuation
+As the actual authentication is performed in a Web Browser, it is possible, especially on low-end devices, that your application is terminated while in background.
+This behaviour can be forced by using ```adb shell am kill <app id>```.
+To continue the login flow on application restart, call ```authFlow.continueLogin()``` on startup:
+```
+if (authFlow.canContinueLogin()) {
+    val tokens = authFlow.continueLogin(configureTokenExchange = null)
+    // save tokens
+}
+```
+
+To continue a logout flow on application restart:
+```
+if (endSessionFlow.canContinueLogout()) {
+    endSessionFlow.continueLogout()
+    // clear tokens
+}
+```
+
 ## Verified App-Links as Redirect Url
 If you want to use [https redirect links instead of custom schemes](https://github.com/kalinjul/kotlin-multiplatform-oidc/issues/46), you can do so by replacing the original intent filter in your AndroidManifest.xml:
 

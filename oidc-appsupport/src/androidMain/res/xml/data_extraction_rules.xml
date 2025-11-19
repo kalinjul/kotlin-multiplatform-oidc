@@ -2,8 +2,12 @@
 <data-extraction-rules>
     <cloud-backup>
         <exclude domain="sharedpref" path="org.publicvalue.multiplatform.oidc.tokenstore.xml"/>
+        <exclude domain="file" path="datastore/org.publicvalue.multiplatform.oidc.oidcsession.preferences_pb"/>
+        <exclude domain="file" path="datastore/org.publicvalue.multiplatform.oidc.tokenstore.preferences_pb"/>
     </cloud-backup>
     <device-transfer>
         <exclude domain="sharedpref" path="org.publicvalue.multiplatform.oidc.tokenstore.xml"/>
+        <exclude domain="file" path="datastore/org.publicvalue.multiplatform.oidc.oidcsession.preferences_pb"/>
+        <exclude domain="file" path="datastore/org.publicvalue.multiplatform.oidc.tokenstore.preferences_pb"/>
     </device-transfer>
 </data-extraction-rules>

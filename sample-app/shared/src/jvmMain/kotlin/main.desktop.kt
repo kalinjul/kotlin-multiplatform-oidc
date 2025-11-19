@@ -1,4 +1,5 @@
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import com.slack.circuit.backstack.rememberSaveableBackStack
 import com.slack.circuit.foundation.rememberCircuitNavigator
 import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
@@ -20,6 +21,6 @@ fun MainView() {
         backstack = backstack,
         navigator = navigator,
         settingsStore = settingsStore,
-        authFlowFactory = JvmCodeAuthFlowFactory()
+        authFlowFactory = remember { JvmCodeAuthFlowFactory() }
     )
 }

@@ -54,6 +54,7 @@ rootProject.name="kotlin-multiplatform-oidc"
 
 include(":oidc-crypto")
 include(":oidc-core")
+include(":oidc-preferences")
 include(":oidc-appsupport")
 include(":oidc-tokenstore")
 include(":oidc-okhttp4")

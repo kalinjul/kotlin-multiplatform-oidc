@@ -19,7 +19,7 @@ permissions:
 
 jobs:
   build:
-    runs-on: macos-13
+    runs-on: macos-15
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/workflows/actions/build
@@ -27,7 +27,7 @@ jobs:
 
   test:
     needs: [ build ]
-    runs-on: macos-13
+    runs-on: macos-15
     permissions:
       id-token: write
       actions: read
@@ -40,7 +40,7 @@ jobs:
   create-swift-package:
     needs: [ build, test]
     if: github.ref == 'refs/heads/main'
-    runs-on: macos-13
+    runs-on: macos-15
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/workflows/actions/createSwiftPackage
@@ -50,7 +50,7 @@ jobs:
   deploy-swift-package-snapshot:
     needs: [create-swift-package]
     if: github.ref == 'refs/heads/main'
-    runs-on: macos-13
+    runs-on: macos-15
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/workflows/actions/deploySwiftPackage
@@ -61,7 +61,7 @@ jobs:
   deploy-snapshot:
     needs: [ test ]
     if: github.ref == 'refs/heads/main'
-    runs-on: macos-13
+    runs-on: macos-15
 
     steps:
       - uses: actions/checkout@v4

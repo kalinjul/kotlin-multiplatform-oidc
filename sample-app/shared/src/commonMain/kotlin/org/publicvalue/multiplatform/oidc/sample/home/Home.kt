@@ -132,14 +132,17 @@ fun Home(
             Button(onClick = {
                 onLogoutClick(useWebFlow)
             },
-                enabled = logoutEnabled) {
+                enabled = logoutEnabled
+            ) {
                 Text("Logout")
             }
 
-            Button(onClick = {
-                onRefreshClick()
-            },
-                enabled = refreshEnabled) {
+            Button(
+                onClick = {
+                    onRefreshClick()
+                },
+                enabled = refreshEnabled
+            ) {
                 Text("Refresh")
             }
         }
