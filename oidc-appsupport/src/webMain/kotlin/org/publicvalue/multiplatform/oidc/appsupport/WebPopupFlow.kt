@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalWasmJsInterop::class)
+
 package org.publicvalue.multiplatform.oidc.appsupport
 
 import io.ktor.http.*
@@ -12,6 +14,8 @@ import org.w3c.dom.Window
 import org.w3c.dom.events.Event
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
+import kotlin.js.ExperimentalWasmJsInterop
+import kotlin.js.js
 
 @ExperimentalOpenIdConnect
 internal class WebPopupFlow(
@@ -19,7 +23,7 @@ internal class WebPopupFlow(
     private val windowFeatures: String = "width=1000,height=800,resizable=yes,scrollbars=yes",
     private val redirectOrigin: String,
     private val preferences: Preferences,
-): WebAuthenticationFlow {
+) : WebAuthenticationFlow {
 
     private class WindowHolder(var window: Window?)
 
