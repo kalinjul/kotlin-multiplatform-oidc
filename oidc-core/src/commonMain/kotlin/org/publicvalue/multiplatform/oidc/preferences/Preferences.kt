@@ -6,7 +6,7 @@ import kotlinx.serialization.json.Json
 import org.publicvalue.multiplatform.oidc.types.AuthCodeRequest
 import org.publicvalue.multiplatform.oidc.types.EndSessionRequest
 
-val PREFERENCES_FILENAME = "org.publicvalue.multiplatform.oidc.oidcsession"
+const val PREFERENCES_FILENAME = "org.publicvalue.multiplatform.oidc.oidcsession.preferences_pb"
 
 private enum class PreferenceKeys(val key: String) {
     LAST_AUTH_REQUEST("lastAuthRequest"),
