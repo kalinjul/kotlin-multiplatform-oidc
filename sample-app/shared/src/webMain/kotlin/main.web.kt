@@ -3,7 +3,7 @@ import com.slack.circuit.backstack.rememberSaveableBackStack
 import com.slack.circuit.foundation.rememberCircuitNavigator
 import kotlinx.browser.window
 import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
-import org.publicvalue.multiplatform.oidc.appsupport.WasmCodeAuthFlowFactory
+import org.publicvalue.multiplatform.oidc.appsupport.WebCodeAuthFlowFactory
 import org.publicvalue.multiplatform.oidc.sample.screens.HomeScreen
 import org.publicvalue.multiplatform.oidc.settings.WebMainSettingsStore
 
@@ -20,7 +20,7 @@ fun MainView() {
         backstack = backstack,
         navigator = navigator,
         settingsStore = settingsStore,
-        authFlowFactory = WasmCodeAuthFlowFactory(
+        authFlowFactory = WebCodeAuthFlowFactory(
             redirectOrigin = window.location.origin
         )
     )
