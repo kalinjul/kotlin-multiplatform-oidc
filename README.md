@@ -48,6 +48,7 @@ Add the dependency to your commonMain sourceSet (KMP) / Android dependencies (an
 implementation("io.github.kalinjul.kotlin.multiplatform:oidc-appsupport:<version>")
 implementation("io.github.kalinjul.kotlin.multiplatform:oidc-ktor:<version>") // optional ktor support
 implementation("io.github.kalinjul.kotlin.multiplatform:oidc-okhttp4:<version>") // optional okhttp support (android only)
+implementation("io.github.kalinjul.kotlin.multiplatform:oidc-preferences:<version>")
 ```
 
 Or, for your libs.versions.toml:
@@ -58,6 +59,7 @@ oidc = "<version>"
 oidc-appsupport = { module = "io.github.kalinjul.kotlin.multiplatform:oidc-appsupport", version.ref = "oidc" }
 oidc-okhttp4 = { module = "io.github.kalinjul.kotlin.multiplatform:oidc-okhttp4", version.ref = "oidc" }
 oidc-ktor = { module = "io.github.kalinjul.kotlin.multiplatform:oidc-ktor", version.ref = "oidc" }
+oidc-preferences = { module = "io.github.kalinjul.kotlin.multiplatform:oidc-preferences", version.ref = "oidc" }
 ```
 
 ## Using a snapshot version
