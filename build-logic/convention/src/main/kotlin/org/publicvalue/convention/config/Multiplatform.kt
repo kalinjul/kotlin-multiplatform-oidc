@@ -22,7 +22,7 @@ fun KotlinMultiplatformExtension.configureAndroidTarget() {
 @OptIn(ExperimentalWasmDsl::class)
 fun KotlinMultiplatformExtension.configureWasmTarget(baseName: String? = null) {
     wasmJs {
-        outputModuleName.set(baseName ?: project.path.substring(1).replace(":","-").replace("-","_"))
+        outputModuleName.set(baseName ?: project.path.substring(1).replace(":", "-").replace("-", "_"))
         browser {
             commonWebpackConfig {
                 outputFileName = "$baseName.js"
@@ -31,11 +31,19 @@ fun KotlinMultiplatformExtension.configureWasmTarget(baseName: String? = null) {
                         // Serve sources to debug inside browser
                         add(project.projectDir.path)
                         add(project.projectDir.path + "/commonMain/")
+                        add(project.projectDir.path + "/webMain/")
                         add(project.projectDir.path + "/wasmJsMain/")
                     }
                 }
             }
         }
+    }
+}
+
+fun KotlinMultiplatformExtension.configureJsTarget() {
+    js(IR) {
+        browser()
+        binaries.library()
     }
 }
 

@@ -1,5 +1,5 @@
-import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 import org.publicvalue.convention.config.configureIosTargets
+import org.publicvalue.convention.config.configureJsTarget
 import org.publicvalue.convention.config.configureWasmTarget
 import org.publicvalue.convention.config.exportKdoc
 
@@ -16,6 +16,7 @@ kotlin {
     jvm()
     configureIosTargets()
     configureWasmTarget()
+    configureJsTarget()
     sourceSets {
         val commonMain by getting {
             dependencies {
@@ -34,7 +35,7 @@ kotlin {
             }
         }
 
-        val wasmJsMain by getting {
+        val webMain by getting {
             dependencies {
                 implementation(project.dependencies.platform(libs.kotlincrypto.hash.bom))
                 implementation(libs.kotlincrypto.hash.sha2)
