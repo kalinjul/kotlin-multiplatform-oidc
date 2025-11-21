@@ -59,6 +59,11 @@ include(":oidc-appsupport")
 include(":oidc-tokenstore")
 include(":oidc-okhttp4")
 include(":oidc-ktor")
+include(":sample-app:shared")
+include(":sample-app:android-app")
+include(":sample-app:desktop-app")
+include(":sample-app:wasm-js-app")
+include(":sample-app:settings")
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 // https://docs.gradle.org/8.3/userguide/configuration_cache.html#config_cache:stable

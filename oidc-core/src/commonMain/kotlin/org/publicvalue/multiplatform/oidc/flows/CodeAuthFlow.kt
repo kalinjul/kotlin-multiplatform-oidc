@@ -5,7 +5,6 @@ import io.ktor.http.URLBuilder
 import io.ktor.http.Url
 import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
 import org.publicvalue.multiplatform.oidc.OpenIdConnectException
-import org.publicvalue.multiplatform.oidc.getError
 import org.publicvalue.multiplatform.oidc.preferences.Preferences
 import org.publicvalue.multiplatform.oidc.preferences.clearOidcPreferences
 import org.publicvalue.multiplatform.oidc.preferences.getAuthRequest
@@ -61,6 +60,7 @@ interface CodeAuthFlow {
      * Should return the Authorization Code.
      */
     @Throws(CancellationException::class, OpenIdConnectException::class)
+    @Suppress("unused")
     suspend fun getAuthorizationCode(request: AuthCodeRequest): AuthCodeResponse {
         return try {
             preferences.setAuthRequest(request)

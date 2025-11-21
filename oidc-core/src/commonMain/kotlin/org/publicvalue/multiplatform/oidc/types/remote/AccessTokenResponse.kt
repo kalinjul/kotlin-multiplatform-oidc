@@ -15,7 +15,7 @@ import kotlin.time.ExperimentalTime
 @OptIn(ExperimentalObjCName::class, ExperimentalTime::class)
 @Serializable
 @ObjCName(swiftName = "AccessTokenResponse", name = "AccessTokenResponse", exact = true)
-data class AccessTokenResponse  constructor(
+data class AccessTokenResponse (
     /**
      * **Required**
      *
