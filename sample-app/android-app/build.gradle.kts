@@ -9,8 +9,7 @@ kotlin {
     sourceSets {
         val androidMain by getting {
             dependencies {
-                implementation(projects.shared)
-
+                implementation(projects.sampleApp.shared)
             }
         }
     }
