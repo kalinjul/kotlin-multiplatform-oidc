@@ -28,7 +28,6 @@ import kotlin.native.ObjCName
  * Implementations have to provide their own method [startLoginFlow]
  * as this requires user interaction (e.g. via browser).
  */
-
 @OptIn(ExperimentalObjCName::class)
 @ObjCName(swiftName = "AbstractCodeAuthFlow", name = "AbstractCodeAuthFlow", exact = true)
 interface CodeAuthFlow {
@@ -55,6 +54,22 @@ interface CodeAuthFlow {
     ): AccessTokenResponse {
         startLogin(configureAuthUrl)
         return continueLogin(configureTokenExchange)
+    }
+
+    /**
+     * Uses the request URL to open a browser and perform authorization.
+     * Should return the Authorization Code.
+     */
+    @Throws(CancellationException::class, OpenIdConnectException::class)
+    suspend fun getAuthorizationCode(request: AuthCodeRequest): AuthCodeResponse {
+        return try {
+            preferences.setAuthRequest(request)
+            startLoginFlow(request)
+            val (_, responseUri) = getResultFromPreferences()
+            AuthCodeResponse.success(responseUri.toAuthCodeResult())
+        } catch (e: Exception) {
+            AuthCodeResponse.failure(e)
+        }
     }
 
     /**
@@ -106,6 +121,12 @@ interface CodeAuthFlow {
      */
     @Throws(OpenIdConnectException::class, CancellationException::class)
     suspend fun continueLogin(configureTokenExchange: (HttpRequestBuilder.() -> Unit)? = null): AccessTokenResponse {
+        val (authRequest, responseUri) = getResultFromPreferences()
+        val tokenResponse = client.continueLogin(authRequest,  responseUri, configureTokenExchange)
+        return tokenResponse
+    }
+
+    private suspend fun getResultFromPreferences(): Pair<AuthCodeRequest, Url> {
         val authRequest = preferences.getAuthRequest()
         val responseUri = preferences.getResponseUri()
         if (authRequest == null) {
@@ -115,9 +136,7 @@ interface CodeAuthFlow {
             throw OpenIdConnectException.AuthenticationFailure("No responseUri present")
         }
         preferences.clearOidcPreferences()
-
-        val tokenResponse = client.continueLogin(authRequest,  responseUri, configureTokenExchange)
-        return tokenResponse
+        return authRequest to responseUri
     }
 }
 
@@ -136,14 +155,9 @@ suspend fun OpenIdConnectClient.continueLogin(
     responseUri: Url,
     configureTokenExchange: (HttpRequestBuilder.() -> Unit)? = null
 ): AccessTokenResponse {
-    responseUri.getError()?.let { throw it }
-
-    val state = responseUri.parameters["state"]
-    val code = responseUri.parameters["code"]
-
     return continueLogin(
         request = request,
-        result = AuthCodeResult(code = code, state = state),
+        result = responseUri.toAuthCodeResult(),
         configureTokenExchange = configureTokenExchange
     )
 }
