@@ -8,10 +8,13 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import org.publicvalue.multiplatform.oidc.OpenIdConnectException
 import org.publicvalue.multiplatform.oidc.preferences.Preferences
 import org.publicvalue.multiplatform.oidc.preferences.setResponseUri
+import platform.AuthenticationServices.ASPresentationAnchor
+import platform.AuthenticationServices.ASWebAuthenticationPresentationContextProvidingProtocol
 import platform.AuthenticationServices.ASWebAuthenticationSession
 import platform.AuthenticationServices.ASWebAuthenticationSessionCompletionHandler
 import platform.Foundation.NSError
 import platform.Foundation.NSURL
+import platform.darwin.NSObject
 
 internal class WebSessionFlow(
     private val ephemeralBrowserSession: Boolean,
@@ -52,5 +55,11 @@ internal class WebSessionFlow(
                 continuation.resumeWithExceptionIfActive(OpenIdConnectException.InvalidUrl(requestUrl.toString()))
             }
         }
+    }
+}
+
+private class PresentationContext: NSObject(), ASWebAuthenticationPresentationContextProvidingProtocol {
+    override fun presentationAnchorForWebAuthenticationSession(session: ASWebAuthenticationSession): ASPresentationAnchor {
+        return ASPresentationAnchor()
     }
 }

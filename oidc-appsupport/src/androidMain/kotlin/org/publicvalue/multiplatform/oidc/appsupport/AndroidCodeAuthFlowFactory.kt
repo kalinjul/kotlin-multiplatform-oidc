@@ -87,27 +87,7 @@ class AndroidCodeAuthFlowFactory(
     }
 
     override fun createAuthFlow(client: OpenIdConnectClient): PlatformCodeAuthFlow {
-        val customTabProviders = context.getCustomTabProviders().map { it.activityInfo.packageName }
-        val preferredBrowserPackage = if (customTabProviderPriority.isNotEmpty()) {
-            val presentPreferredProviders =
-                customTabProviderPriority.filter { customTabProviders.contains(it) }
-            presentPreferredProviders.firstOrNull()
-        } else customTabProviders.firstOrNull()
-
-        val webFlow = if (useWebView) {
-            WebViewFlow(
-                context = context,
-                contract = activityResultLauncher,
-                epheremalSession = ephemeralSession
-            )
-        } else {
-            CustomTabFlow(
-                context = context,
-                contract = activityResultLauncher,
-                epheremalSession = ephemeralSession,
-                preferredBrowserPackage = preferredBrowserPackage,
-            )
-        }
+        val webFlow = createWebFlow()
         return PlatformCodeAuthFlow(
             client = client,
             webFlow = webFlow,
@@ -116,6 +96,36 @@ class AndroidCodeAuthFlowFactory(
     }
 
     override fun createEndSessionFlow(client: OpenIdConnectClient): EndSessionFlow {
-        return createAuthFlow(client)
+        val webFlow = createWebFlow()
+        return PlatformEndSessionFlow(
+            client = client,
+            webFlow = webFlow,
+            preferences = preferences
+        )
+    }
+
+    private fun createWebFlow(): WebAuthenticationFlow {
+        val webFlow = if (useWebView) {
+            WebViewFlow(
+                context = context,
+                contract = activityResultLauncher,
+                epheremalSession = ephemeralSession
+            )
+        } else {
+            val customTabProviders = context.getCustomTabProviders().map { it.activityInfo.packageName }
+            val preferredBrowserPackage = if (customTabProviderPriority.isNotEmpty()) {
+                val presentPreferredProviders =
+                    customTabProviderPriority.filter { customTabProviders.contains(it) }
+                presentPreferredProviders.firstOrNull()
+            } else customTabProviders.firstOrNull()
+
+            CustomTabFlow(
+                context = context,
+                contract = activityResultLauncher,
+                epheremalSession = ephemeralSession,
+                preferredBrowserPackage = preferredBrowserPackage,
+            )
+        }
+        return webFlow
     }
 }

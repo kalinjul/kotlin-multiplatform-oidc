@@ -20,6 +20,7 @@ class WebCodeAuthFlowFactory(
     }
 
     override fun createEndSessionFlow(client: OpenIdConnectClient): EndSessionFlow {
-        return createAuthFlow(client)
+        val preferences = preferencesFactory.create()
+        return PlatformEndSessionFlow(windowTarget, windowFeatures, redirectOrigin, client, preferences)
     }
 }
