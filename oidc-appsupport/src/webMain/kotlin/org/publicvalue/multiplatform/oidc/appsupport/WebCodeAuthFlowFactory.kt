@@ -4,6 +4,7 @@ import kotlinx.browser.window
 import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
 import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
 import org.publicvalue.multiplatform.oidc.flows.EndSessionFlow
+import org.publicvalue.multiplatform.oidc.preferences.Preferences
 import org.publicvalue.multiplatform.oidc.preferences.PreferencesFactory
 
 @ExperimentalOpenIdConnect
@@ -16,11 +17,16 @@ class WebCodeAuthFlowFactory(
 ) : CodeAuthFlowFactory {
     override fun createAuthFlow(client: OpenIdConnectClient): PlatformCodeAuthFlow {
         val preferences = preferencesFactory.create()
-        return PlatformCodeAuthFlow(windowTarget, windowFeatures, redirectOrigin, client, preferences)
+        val webFlow = createWebFlow(preferences)
+        return PlatformCodeAuthFlow(client, preferences, webFlow)
     }
 
     override fun createEndSessionFlow(client: OpenIdConnectClient): EndSessionFlow {
         val preferences = preferencesFactory.create()
-        return PlatformEndSessionFlow(windowTarget, windowFeatures, redirectOrigin, client, preferences)
+        val webFlow = createWebFlow(preferences)
+        return PlatformEndSessionFlow(client, preferences, webFlow)
+    }
+    private fun createWebFlow(preferences: Preferences): WebPopupFlow {
+        return WebPopupFlow(windowTarget, windowFeatures, redirectOrigin, preferences)
     }
 }
