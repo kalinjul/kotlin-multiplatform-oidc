@@ -7,15 +7,11 @@ import org.publicvalue.multiplatform.oidc.preferences.Preferences
 import org.publicvalue.multiplatform.oidc.types.AuthCodeRequest
 
 @ExperimentalOpenIdConnect
-actual class PlatformCodeAuthFlow(
-    windowTarget: String = "",
-    windowFeatures: String = "width=1000,height=800,resizable=yes,scrollbars=yes",
-    redirectOrigin: String,
+actual class PlatformCodeAuthFlow internal constructor (
     client: OpenIdConnectClient,
     preferences: Preferences,
+    private val webFlow: WebPopupFlow,
 ) : PreferencesCodeAuthFlow(client, preferences) {
-
-    private val webFlow = WebPopupFlow(windowTarget, windowFeatures, redirectOrigin, preferences)
 
     @ExperimentalOpenIdConnect
     actual override suspend fun startLoginFlow(request: AuthCodeRequest) {
