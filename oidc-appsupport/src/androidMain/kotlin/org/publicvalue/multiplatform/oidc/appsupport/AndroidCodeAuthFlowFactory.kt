@@ -90,8 +90,8 @@ class AndroidCodeAuthFlowFactory(
         val webFlow = createWebFlow()
         return PlatformCodeAuthFlow(
             client = client,
+            preferences = preferences,
             webFlow = webFlow,
-            preferences = preferences
         )
     }
 
@@ -99,8 +99,8 @@ class AndroidCodeAuthFlowFactory(
         val webFlow = createWebFlow()
         return PlatformEndSessionFlow(
             client = client,
+            preferences = preferences,
             webFlow = webFlow,
-            preferences = preferences
         )
     }
 

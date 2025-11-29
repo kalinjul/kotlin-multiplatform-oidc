@@ -18,13 +18,21 @@ class WebCodeAuthFlowFactory(
     override fun createAuthFlow(client: OpenIdConnectClient): PlatformCodeAuthFlow {
         val preferences = preferencesFactory.create()
         val webFlow = createWebFlow(preferences)
-        return PlatformCodeAuthFlow(client, preferences, webFlow)
+        return PlatformCodeAuthFlow(
+            client = client,
+            preferences = preferences,
+            webFlow = webFlow
+        )
     }
 
     override fun createEndSessionFlow(client: OpenIdConnectClient): EndSessionFlow {
         val preferences = preferencesFactory.create()
         val webFlow = createWebFlow(preferences)
-        return PlatformEndSessionFlow(client, preferences, webFlow)
+        return PlatformEndSessionFlow(
+            client = client,
+            preferences = preferences,
+            webFlow = webFlow
+        )
     }
     private fun createWebFlow(preferences: Preferences): WebPopupFlow {
         return WebPopupFlow(windowTarget, windowFeatures, redirectOrigin, preferences)

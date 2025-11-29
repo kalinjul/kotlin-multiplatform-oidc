@@ -25,8 +25,8 @@ class JvmCodeAuthFlowFactory(
         val preferences = runBlocking { preferencesFactory.getOrCreate(PREFERENCES_FILENAME) }
         return PlatformCodeAuthFlow(
             client = client,
+            preferences = preferences,
             webFlow = createWebFlow(preferences),
-            preferences = preferences
         )
     }
 
@@ -34,8 +34,8 @@ class JvmCodeAuthFlowFactory(
         val preferences = runBlocking { preferencesFactory.getOrCreate(PREFERENCES_FILENAME) }
         return PlatformEndSessionFlow(
             client = client,
-            webFlow = createWebFlow(preferences),
             preferences = preferences,
+            webFlow = createWebFlow(preferences),
         )
     }
 

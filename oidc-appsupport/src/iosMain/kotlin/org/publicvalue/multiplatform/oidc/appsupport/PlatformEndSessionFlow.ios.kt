@@ -19,8 +19,8 @@ import kotlin.experimental.ExperimentalObjCName
 actual class PlatformEndSessionFlow internal constructor(
     client: OpenIdConnectClient,
     ephemeralBrowserSession: Boolean = false,
-    private val webFlow: WebAuthenticationFlow,
     preferences: Preferences,
+    private val webFlow: WebAuthenticationFlow,
 ): PreferencesEndSessionFlow(client, preferences) {
 
     actual override suspend fun startLogoutFlow(request: EndSessionRequest) = wrapExceptions {

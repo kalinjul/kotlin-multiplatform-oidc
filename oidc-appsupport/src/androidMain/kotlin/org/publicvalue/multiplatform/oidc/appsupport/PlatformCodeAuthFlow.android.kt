@@ -6,9 +6,9 @@ import org.publicvalue.multiplatform.oidc.preferences.Preferences
 import org.publicvalue.multiplatform.oidc.types.AuthCodeRequest
 
 actual class PlatformCodeAuthFlow internal constructor(
-    private val webFlow: WebAuthenticationFlow,
     client: OpenIdConnectClient,
-    preferences: Preferences
+    preferences: Preferences,
+    private val webFlow: WebAuthenticationFlow,
 ) : PreferencesCodeAuthFlow(client, preferences) {
 
     actual override suspend fun startLoginFlow(request: AuthCodeRequest) {
