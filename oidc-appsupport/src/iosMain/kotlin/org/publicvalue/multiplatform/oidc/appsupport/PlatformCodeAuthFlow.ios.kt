@@ -2,16 +2,10 @@ package org.publicvalue.multiplatform.oidc.appsupport
 
 import kotlinx.coroutines.CancellableContinuation
 import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
-import org.publicvalue.multiplatform.oidc.flows.EndSessionFlow
 import org.publicvalue.multiplatform.oidc.flows.PreferencesCodeAuthFlow
 import org.publicvalue.multiplatform.oidc.preferences.Preferences
 import org.publicvalue.multiplatform.oidc.types.AuthCodeRequest
-import org.publicvalue.multiplatform.oidc.types.EndSessionRequest
 import org.publicvalue.multiplatform.oidc.wrapExceptions
-import platform.AuthenticationServices.ASPresentationAnchor
-import platform.AuthenticationServices.ASWebAuthenticationPresentationContextProvidingProtocol
-import platform.AuthenticationServices.ASWebAuthenticationSession
-import platform.darwin.NSObject
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.experimental.ExperimentalObjCName
@@ -30,22 +24,11 @@ actual class PlatformCodeAuthFlow internal constructor(
     ephemeralBrowserSession: Boolean = false,
     private val webFlow: WebAuthenticationFlow,
     preferences: Preferences,
-): PreferencesCodeAuthFlow(client, preferences), EndSessionFlow {
+): PreferencesCodeAuthFlow(client, preferences) {
 
     actual override suspend fun startLoginFlow(request: AuthCodeRequest) = wrapExceptions {
         val result = webFlow.startWebFlow(request.url, request.url.parameters.get("redirect_uri").orEmpty())
         throwAuthenticationIfCancelled(result)
-    }
-
-    actual override suspend fun startLogoutFlow(request: EndSessionRequest) = wrapExceptions {
-        val result = webFlow.startWebFlow(request.url, request.url.parameters.get("post_logout_redirect_uri").orEmpty())
-        throwEndsessionIfCancelled(result)
-    }
-}
-
-class PresentationContext: NSObject(), ASWebAuthenticationPresentationContextProvidingProtocol {
-    override fun presentationAnchorForWebAuthenticationSession(session: ASWebAuthenticationSession): ASPresentationAnchor {
-        return ASPresentationAnchor()
     }
 }
 

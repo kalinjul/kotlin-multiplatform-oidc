@@ -87,6 +87,24 @@ class AndroidCodeAuthFlowFactory(
     }
 
     override fun createAuthFlow(client: OpenIdConnectClient): PlatformCodeAuthFlow {
+        val webFlow = createWebFlow()
+        return PlatformCodeAuthFlow(
+            client = client,
+            webFlow = webFlow,
+            preferences = preferences
+        )
+    }
+
+    override fun createEndSessionFlow(client: OpenIdConnectClient): EndSessionFlow {
+        val webFlow = createWebFlow()
+        return PlatformEndSessionFlow(
+            client = client,
+            webFlow = webFlow,
+            preferences = preferences
+        )
+    }
+
+    private fun createWebFlow(): WebAuthenticationFlow {
         val customTabProviders = context.getCustomTabProviders().map { it.activityInfo.packageName }
         val preferredBrowserPackage = if (customTabProviderPriority.isNotEmpty()) {
             val presentPreferredProviders =
@@ -108,14 +126,6 @@ class AndroidCodeAuthFlowFactory(
                 preferredBrowserPackage = preferredBrowserPackage,
             )
         }
-        return PlatformCodeAuthFlow(
-            client = client,
-            webFlow = webFlow,
-            preferences = preferences
-        )
-    }
-
-    override fun createEndSessionFlow(client: OpenIdConnectClient): EndSessionFlow {
-        return createAuthFlow(client)
+        return webFlow
     }
 }

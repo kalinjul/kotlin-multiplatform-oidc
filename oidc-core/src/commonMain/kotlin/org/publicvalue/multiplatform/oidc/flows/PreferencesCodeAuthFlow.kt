@@ -20,16 +20,6 @@ abstract class PreferencesCodeAuthFlow(
     val preferences: Preferences,
 ) : CodeAuthFlow {
 
-    override suspend fun canContinueLogin(): Boolean {
-        return preferences.getAuthRequest() != null && preferences.getResponseUri() != null
-    }
-
-    override suspend fun continueLogin(configureTokenExchange: (HttpRequestBuilder.() -> Unit)?): AccessTokenResponse {
-        val (authRequest, responseUri) = getResultFromPreferences()
-        val tokenResponse = client.continueLogin(authRequest,  responseUri, configureTokenExchange)
-        return tokenResponse
-    }
-
     /**
      * Uses the request URL to open a browser and perform authorization.
      * Should return the Authorization Code.
@@ -65,6 +55,17 @@ abstract class PreferencesCodeAuthFlow(
      */
     @Throws(CancellationException::class, OpenIdConnectException::class)
     protected abstract suspend fun startLoginFlow(request: AuthCodeRequest)
+
+    override suspend fun canContinueLogin(): Boolean {
+        return preferences.getAuthRequest() != null && preferences.getResponseUri() != null
+    }
+
+    @Throws(CancellationException::class, OpenIdConnectException::class)
+    override suspend fun continueLogin(configureTokenExchange: (HttpRequestBuilder.() -> Unit)?): AccessTokenResponse {
+        val (authRequest, responseUri) = getResultFromPreferences()
+        val tokenResponse = client.continueLogin(authRequest,  responseUri, configureTokenExchange)
+        return tokenResponse
+    }
 
     private suspend fun getResultFromPreferences(): Pair<AuthCodeRequest, Url> {
         val authRequest = preferences.getAuthRequest()
