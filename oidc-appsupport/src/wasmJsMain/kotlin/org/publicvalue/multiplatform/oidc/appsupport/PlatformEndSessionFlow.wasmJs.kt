@@ -7,15 +7,11 @@ import org.publicvalue.multiplatform.oidc.preferences.Preferences
 import org.publicvalue.multiplatform.oidc.types.EndSessionRequest
 
 @ExperimentalOpenIdConnect
-actual class PlatformEndSessionFlow(
-    windowTarget: String = "",
-    windowFeatures: String = "width=1000,height=800,resizable=yes,scrollbars=yes",
-    redirectOrigin: String,
+actual class PlatformEndSessionFlow internal constructor(
     client: OpenIdConnectClient,
     preferences: Preferences,
+    private val webFlow: WebPopupFlow,
 ) : PreferencesEndSessionFlow(client, preferences) {
-
-    private val webFlow = WebPopupFlow(windowTarget, windowFeatures, redirectOrigin, preferences)
 
     actual override suspend fun startLogoutFlow(request: EndSessionRequest) {
         val redirectUrl = request.url.parameters.get("post_logout_redirect_uri").orEmpty()
