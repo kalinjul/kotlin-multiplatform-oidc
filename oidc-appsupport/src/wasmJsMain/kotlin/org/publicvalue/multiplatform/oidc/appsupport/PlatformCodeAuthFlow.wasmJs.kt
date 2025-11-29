@@ -2,8 +2,8 @@ package org.publicvalue.multiplatform.oidc.appsupport
 
 import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
 import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
-import org.publicvalue.multiplatform.oidc.flows.CodeAuthFlow
 import org.publicvalue.multiplatform.oidc.flows.EndSessionFlow
+import org.publicvalue.multiplatform.oidc.flows.PreferencesCodeAuthFlow
 import org.publicvalue.multiplatform.oidc.preferences.Preferences
 import org.publicvalue.multiplatform.oidc.types.AuthCodeRequest
 import org.publicvalue.multiplatform.oidc.types.EndSessionRequest
@@ -13,9 +13,9 @@ actual class PlatformCodeAuthFlow(
     windowTarget: String = "",
     windowFeatures: String = "width=1000,height=800,resizable=yes,scrollbars=yes",
     redirectOrigin: String,
-    actual override val client: OpenIdConnectClient,
-    actual override val preferences: Preferences,
-) : CodeAuthFlow, EndSessionFlow {
+    client: OpenIdConnectClient,
+    preferences: Preferences,
+) : PreferencesCodeAuthFlow(client, preferences), EndSessionFlow {
 
     private val webFlow = WebPopupFlow(windowTarget, windowFeatures, redirectOrigin, preferences)
 
