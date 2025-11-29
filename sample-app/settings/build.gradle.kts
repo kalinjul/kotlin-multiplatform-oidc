@@ -14,7 +14,7 @@ kotlin {
         configureWasmTarget()
         val commonMain by getting {
             dependencies {
-                implementation("io.github.kalinjul.kotlin.multiplatform:oidc-core")
+                implementation(projects.oidcCore)
                 implementation(libs.russhwolf.multiplatformsettings)
 
                 api(libs.kotlinx.serialization.json)
