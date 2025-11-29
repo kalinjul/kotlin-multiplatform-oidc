@@ -10,8 +10,8 @@ import org.publicvalue.multiplatform.oidc.types.EndSessionRequest
 @ExperimentalOpenIdConnect
 actual class PlatformEndSessionFlow internal constructor(
     client: OpenIdConnectClient,
+    preferences: Preferences,
     private val webFlow: WebAuthenticationFlow,
-    preferences: Preferences
 ) : PreferencesEndSessionFlow(client, preferences) {
 
     actual override suspend fun startLogoutFlow(request: EndSessionRequest) {

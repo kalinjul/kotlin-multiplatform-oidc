@@ -22,8 +22,8 @@ import kotlin.experimental.ExperimentalObjCName
 actual class PlatformCodeAuthFlow internal constructor(
     client: OpenIdConnectClient,
     ephemeralBrowserSession: Boolean = false,
-    private val webFlow: WebAuthenticationFlow,
     preferences: Preferences,
+    private val webFlow: WebAuthenticationFlow,
 ): PreferencesCodeAuthFlow(client, preferences) {
 
     actual override suspend fun startLoginFlow(request: AuthCodeRequest) = wrapExceptions {

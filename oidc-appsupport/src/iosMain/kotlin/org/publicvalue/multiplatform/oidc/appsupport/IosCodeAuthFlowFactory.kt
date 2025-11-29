@@ -24,16 +24,16 @@ class IosCodeAuthFlowFactory(
     override fun createAuthFlow(client: OpenIdConnectClient): PlatformCodeAuthFlow {
         return PlatformCodeAuthFlow(
             client = client,
+            preferences = preferences,
             webFlow = createWebFlow(),
-            preferences = preferences
         )
     }
 
     override fun createEndSessionFlow(client: OpenIdConnectClient): EndSessionFlow {
         return PlatformEndSessionFlow(
             client = client,
+            preferences = preferences,
             webFlow = createWebFlow(),
-            preferences = preferences
         )
     }
 
