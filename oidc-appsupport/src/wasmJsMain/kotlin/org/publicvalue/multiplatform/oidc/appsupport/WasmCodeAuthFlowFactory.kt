@@ -4,7 +4,6 @@ import kotlinx.browser.window
 import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
 import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
 import org.publicvalue.multiplatform.oidc.flows.EndSessionFlow
-import org.publicvalue.multiplatform.oidc.preferences.PREFERENCES_FILENAME
 import org.publicvalue.multiplatform.oidc.preferences.PreferencesFactory
 
 @ExperimentalOpenIdConnect
@@ -21,6 +20,7 @@ class WasmCodeAuthFlowFactory(
     }
 
     override fun createEndSessionFlow(client: OpenIdConnectClient): EndSessionFlow {
-        return createAuthFlow(client)
+        val preferences = preferencesFactory.create()
+        return PlatformEndSessionFlow(windowTarget, windowFeatures, redirectOrigin, client, preferences)
     }
 }
