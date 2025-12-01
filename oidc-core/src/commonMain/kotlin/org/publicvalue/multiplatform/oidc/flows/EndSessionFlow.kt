@@ -40,6 +40,7 @@ interface EndSessionFlow {
      * @param idToken used for id_token_hint, recommended by openid spec, optional
      * @param configureEndSessionUrl configuration closure to configure the http request builder with
      */
+    @Throws(CancellationException::class, OpenIdConnectException::class)
     suspend fun startLogout(
         idToken: String?,
         configureEndSessionUrl: (URLBuilder.() -> Unit)? = null,
@@ -60,6 +61,7 @@ interface EndSessionFlow {
      * @throws OpenIdConnectException if canContinueLogout() returns false or if there was an error during logout.
      *
      */
+    @Throws(CancellationException::class, OpenIdConnectException::class)
     suspend fun continueLogout()
 }
 
