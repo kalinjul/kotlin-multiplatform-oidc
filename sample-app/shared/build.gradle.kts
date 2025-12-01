@@ -2,6 +2,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.publicvalue.convention.addParcelizeAnnotation
 import org.publicvalue.convention.config.configureIosTargets
+import org.publicvalue.convention.config.configureJsTarget
 import org.publicvalue.convention.config.configureWasmTarget
 
 plugins {
@@ -17,6 +18,7 @@ kotlin {
     jvm()
     configureIosTargets()
     configureWasmTarget()
+    configureJsTarget()
     sourceSets {
         val commonMain by getting {
             dependencies {
@@ -48,6 +50,12 @@ kotlin {
                 implementation(kotlin("test"))
                 implementation(libs.assertk)
                 implementation(libs.kotlinx.coroutines.test)
+            }
+        }
+
+        webMain {
+            dependencies {
+                implementation(libs.kotlinx.browser)
             }
         }
     }

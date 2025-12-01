@@ -1,4 +1,5 @@
 import org.publicvalue.convention.config.configureIosTargets
+import org.publicvalue.convention.config.configureJsTarget
 import org.publicvalue.convention.config.configureWasmTarget
 import org.publicvalue.convention.config.exportKdoc
 
@@ -16,6 +17,7 @@ kotlin {
     jvm()
     configureIosTargets()
     configureWasmTarget()
+    configureJsTarget()
     sourceSets {
         commonMain {
             dependencies {
@@ -26,23 +28,22 @@ kotlin {
             }
         }
 
-        wasmJsMain {
+        webMain {
             dependencies {
                 implementation(libs.kotlinx.browser)
             }
         }
 
-        val nonWasmJsMain by creating {
+        val nonWebMain by creating {
             dependsOn(commonMain.get())
             dependencies {
                 implementation(libs.androidx.datastore.core)
             }
         }
 
-        jvmMain.get().dependsOn(nonWasmJsMain)
-        iosMain.get().dependsOn(nonWasmJsMain)
-        androidMain.get().dependsOn(nonWasmJsMain)
-
+        jvmMain.get().dependsOn(nonWebMain)
+        iosMain.get().dependsOn(nonWebMain)
+        androidMain.get().dependsOn(nonWebMain)
     }
 
     exportKdoc()
