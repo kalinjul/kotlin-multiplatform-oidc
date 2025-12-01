@@ -44,12 +44,12 @@ suspend fun Preferences.clearOidcPreferences() {
 }
 
 inline fun <reified T> Json.decodeFromStringOrNull(string: String): T? {
-    try {
-        return Json.decodeFromString<T>(string)
+    return try {
+        Json.decodeFromString<T>(string)
     } catch (e: Exception) {
         when (e) {
             is SerializationException, is IllegalArgumentException -> {
-                return null
+                null
             }
             else -> throw e
         }

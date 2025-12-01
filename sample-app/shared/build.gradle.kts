@@ -30,8 +30,8 @@ kotlin {
                 implementation(libs.circuit.runtime)
                 implementation(libs.circuit.foundation)
                 implementation(libs.circuit.retained)
-                api("io.github.kalinjul.kotlin.multiplatform:oidc-appsupport")
-                implementation(projects.settings)
+                api(projects.oidcAppsupport)
+                implementation(projects.sampleApp.settings)
                 implementation(libs.kotlinx.serialization.json)
             }
         }
@@ -40,7 +40,7 @@ kotlin {
                 api(libs.androidx.activity.compose)
                 implementation(libs.androidx.appcompat)
                 api(libs.androidx.core.ktx)
-                api("io.github.kalinjul.kotlin.multiplatform:oidc-okhttp4")
+                api(projects.oidcOkhttp4)
                 api(libs.okhttp)
             }
         }
