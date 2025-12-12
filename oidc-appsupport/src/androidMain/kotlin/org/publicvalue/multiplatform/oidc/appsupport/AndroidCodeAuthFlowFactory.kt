@@ -87,13 +87,24 @@ class AndroidCodeAuthFlowFactory(
     }
 
     override fun createAuthFlow(client: OpenIdConnectClient): PlatformCodeAuthFlow {
-        val customTabProviders = context.getCustomTabProviders().map { it.activityInfo.packageName }
-        val preferredBrowserPackage = if (customTabProviderPriority.isNotEmpty()) {
-            val presentPreferredProviders =
-                customTabProviderPriority.filter { customTabProviders.contains(it) }
-            presentPreferredProviders.firstOrNull()
-        } else customTabProviders.firstOrNull()
+        val webFlow = createWebFlow()
+        return PlatformCodeAuthFlow(
+            client = client,
+            preferences = preferences,
+            webFlow = webFlow,
+        )
+    }
 
+    override fun createEndSessionFlow(client: OpenIdConnectClient): EndSessionFlow {
+        val webFlow = createWebFlow()
+        return PlatformEndSessionFlow(
+            client = client,
+            preferences = preferences,
+            webFlow = webFlow,
+        )
+    }
+
+    private fun createWebFlow(): WebAuthenticationFlow {
         val webFlow = if (useWebView) {
             WebViewFlow(
                 context = context,
@@ -101,6 +112,13 @@ class AndroidCodeAuthFlowFactory(
                 epheremalSession = ephemeralSession
             )
         } else {
+            val customTabProviders = context.getCustomTabProviders().map { it.activityInfo.packageName }
+            val preferredBrowserPackage = if (customTabProviderPriority.isNotEmpty()) {
+                val presentPreferredProviders =
+                    customTabProviderPriority.filter { customTabProviders.contains(it) }
+                presentPreferredProviders.firstOrNull()
+            } else customTabProviders.firstOrNull()
+
             CustomTabFlow(
                 context = context,
                 contract = activityResultLauncher,
@@ -108,14 +126,6 @@ class AndroidCodeAuthFlowFactory(
                 preferredBrowserPackage = preferredBrowserPackage,
             )
         }
-        return PlatformCodeAuthFlow(
-            client = client,
-            webFlow = webFlow,
-            preferences = preferences
-        )
-    }
-
-    override fun createEndSessionFlow(client: OpenIdConnectClient): EndSessionFlow {
-        return createAuthFlow(client)
+        return webFlow
     }
 }
