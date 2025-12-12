@@ -10,6 +10,13 @@ import kotlin.native.ObjCName
 @OptIn(ExperimentalObjCRefinement::class, ExperimentalObjCName::class)
 @ObjCName("CodeAuthFlowFactoryProtocol", "CodeAuthFlowFactoryProtocol", exact = true)
 interface CodeAuthFlowFactory {
+    /**
+     * Create an auth flow to perform authorization.
+     */
     fun createAuthFlow(client: OpenIdConnectClient): CodeAuthFlow
+
+    /**
+     * Create a flow to perform session termination.
+     */
     fun createEndSessionFlow(client: OpenIdConnectClient): EndSessionFlow
 }
