@@ -5,11 +5,6 @@ import io.ktor.http.URLBuilder
 import io.ktor.http.Url
 import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
 import org.publicvalue.multiplatform.oidc.OpenIdConnectException
-import org.publicvalue.multiplatform.oidc.preferences.Preferences
-import org.publicvalue.multiplatform.oidc.preferences.clearOidcPreferences
-import org.publicvalue.multiplatform.oidc.preferences.getAuthRequest
-import org.publicvalue.multiplatform.oidc.preferences.getResponseUri
-import org.publicvalue.multiplatform.oidc.preferences.setAuthRequest
 import org.publicvalue.multiplatform.oidc.types.AuthCodeRequest
 import org.publicvalue.multiplatform.oidc.types.parseJwt
 import org.publicvalue.multiplatform.oidc.types.remote.AccessTokenResponse
