@@ -8,6 +8,7 @@ abstract class PreferencesSingletonFactory {
     companion object {
         @JvmStatic
         protected val mutex = Mutex()
+
         @JvmStatic
         @kotlin.concurrent.Volatile
         protected var INSTANCE: Preferences? = null
@@ -23,7 +24,7 @@ abstract class PreferencesSingletonFactory {
         }
     }
 
-    protected abstract fun create(filename: String): Preferences
+    abstract fun create(filename: String): Preferences
 }
 
 expect class PreferencesFactory
