@@ -48,6 +48,8 @@ actual class PlatformCodeAuthFlow internal constructor(
 
 class PresentationContext : NSObject(), ASWebAuthenticationPresentationContextProvidingProtocol {
     override fun presentationAnchorForWebAuthenticationSession(session: ASWebAuthenticationSession): ASPresentationAnchor {
+        // Locate the active UIWindow to correctly anchor the browser session on top of the app.
+        // If no window is found, create a new ASPresentationAnchor.
         val window = UIApplication.sharedApplication.connectedScenes
             .mapNotNull { it as? UIWindowScene }
             .firstOrNull { it.activationState == UISceneActivationStateForegroundActive }
