@@ -1,6 +1,5 @@
 package org.publicvalue.multiplatform.oidc.appsupport
 
-import kotlinx.coroutines.runBlocking
 import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
 import org.publicvalue.multiplatform.oidc.flows.EndSessionFlow
 import org.publicvalue.multiplatform.oidc.preferences.PREFERENCES_FILENAME
@@ -15,11 +14,14 @@ class IosCodeAuthFlowFactory(
     private val ephemeralBrowserSession: Boolean = false,
     /** factory used to create preferences to save session information during login process. **/
     private val preferencesFactory: PreferencesFactory = PreferencesFactory()
-): CodeAuthFlowFactory {
-    private val preferences = runBlocking { preferencesFactory.getOrCreate(PREFERENCES_FILENAME) }
+) : CodeAuthFlowFactory {
+    private val preferences = preferencesFactory.create(PREFERENCES_FILENAME)
 
     // constructor for swift-only library
-    constructor(ephemeralBrowserSession: Boolean) : this(ephemeralBrowserSession, preferencesFactory = PreferencesFactory())
+    constructor(ephemeralBrowserSession: Boolean) : this(
+        ephemeralBrowserSession,
+        preferencesFactory = PreferencesFactory()
+    )
 
     override fun createAuthFlow(client: OpenIdConnectClient): PlatformCodeAuthFlow {
         return PlatformCodeAuthFlow(
