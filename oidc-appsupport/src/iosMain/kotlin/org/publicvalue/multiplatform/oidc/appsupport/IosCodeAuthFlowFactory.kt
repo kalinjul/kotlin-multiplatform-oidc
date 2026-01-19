@@ -9,7 +9,7 @@ import kotlin.experimental.ExperimentalObjCName
 import kotlin.experimental.ExperimentalObjCRefinement
 
 @OptIn(ExperimentalObjCRefinement::class, ExperimentalObjCName::class)
-@ObjCName("CodeAuthFlowFactory")
+@ObjCName("CodeAuthFlowFactory", "CodeAuthFlowFactory", exact = true)
 @Suppress("unused")
 class IosCodeAuthFlowFactory(
     private val ephemeralBrowserSession: Boolean = false,
