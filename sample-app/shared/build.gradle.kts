@@ -31,6 +31,7 @@ kotlin {
                 implementation(libs.circuit.foundation)
                 implementation(libs.circuit.retained)
                 api(projects.oidcAppsupport)
+                api(projects.oidcTokenstore)
                 implementation(projects.sampleApp.settings)
                 implementation(libs.kotlinx.serialization.json)
             }
@@ -64,9 +65,12 @@ kotlin {
         binaries.withType<Framework> {
             isStatic = true
             baseName = "shared"
-            export("io.github.kalinjul.kotlin.multiplatform:oidc-appsupport")
-            export("io.github.kalinjul.kotlin.multiplatform:oidc-tokenstore")
-            export("io.github.kalinjul.kotlin.multiplatform:oidc-core")
+            export(projects.oidcAppsupport)
+            export(projects.oidcCore)
+            export(projects.oidcTokenstore)
+//            export("io.github.kalinjul.kotlin.multiplatform:oidc-appsupport")
+//            export("io.github.kalinjul.kotlin.multiplatform:oidc-tokenstore")
+//            export("io.github.kalinjul.kotlin.multiplatform:oidc-core")
         }
     }
     addParcelizeAnnotation("org.publicvalue.multiplatform.oidc.sample.screens.CommonParcelize")

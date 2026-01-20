@@ -61,7 +61,7 @@ struct Readme {
     
     // Request access token using code auth flow:
     func _2() async {
-        let factory = CodeAuthFlowFactory_(ephemeralBrowserSession: false)
+        let factory = CodeAuthFlowFactory(ephemeralBrowserSession: false)
         let flow = factory.createAuthFlow(client: client)
         do {
             let tokens = try await flow.getAccessToken()
@@ -83,7 +83,7 @@ struct Readme {
             requestBuilder.url.parameters.append(name: "custom_parameter", value: "value")
         }
         // endSession with Web flow (opens browser and handles post_logout_redirect_uri redirect)
-        let factory = CodeAuthFlowFactory_(ephemeralBrowserSession: false)
+        let factory = CodeAuthFlowFactory(ephemeralBrowserSession: false)
         let flow = factory.createAuthFlow(client: client)
         try await flow.endSession(idToken: "<idToken>", configureEndSessionUrl: { urlBuilder in
         })
@@ -92,7 +92,7 @@ struct Readme {
     
 //     customize getAccessToken request:
     func _3b() async throws {
-        let factory = CodeAuthFlowFactory_(ephemeralBrowserSession: false)
+        let factory = CodeAuthFlowFactory(ephemeralBrowserSession: false)
         let flow = factory.createAuthFlow(client: client)
         try await flow.getAccessToken(
             configureAuthUrl: { urlBuilder in
