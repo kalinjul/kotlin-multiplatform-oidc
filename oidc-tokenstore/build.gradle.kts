@@ -3,9 +3,9 @@ import org.publicvalue.convention.config.configureJsTarget
 import org.publicvalue.convention.config.configureWasmTarget
 
 plugins {
-    id("org.publicvalue.convention.android.library")
     id("org.publicvalue.convention.kotlin.multiplatform")
     id("org.publicvalue.convention.kotlin.multiplatform.mobile")
+    id("org.publicvalue.convention.android.library")
     id("org.publicvalue.convention.centralPublish")
 }
 
@@ -43,5 +43,9 @@ kotlin {
                 implementation(projects.oidcAppsupport) // for readme
             }
         }
+    }
+
+    androidLibrary {
+        namespace = "org.publicvalue.multiplatform.oidc.tokenstore"
     }
 }
