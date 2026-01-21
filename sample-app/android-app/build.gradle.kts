@@ -22,6 +22,7 @@ android {
         applicationId = "org.publicvalue.multiplatform.oidc.sample"
         versionCode = 1
         versionName = "1.0"
+        minSdk = 23
 
         addManifestPlaceholders(
             mapOf("oidcRedirectScheme" to "org.publicvalue.multiplatform.oidc.sample")

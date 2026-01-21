@@ -11,8 +11,6 @@ import org.publicvalue.multiplatform.oidc.preferences.setResponseUri
 import platform.AuthenticationServices.ASPresentationAnchor
 import platform.AuthenticationServices.ASWebAuthenticationPresentationContextProvidingProtocol
 import platform.AuthenticationServices.ASWebAuthenticationSession
-import platform.AuthenticationServices.ASWebAuthenticationSessionCompletionHandler
-import platform.Foundation.NSError
 import platform.Foundation.NSURL
 import platform.darwin.NSObject
 
@@ -30,18 +28,16 @@ internal class WebSessionFlow(
                 val session = ASWebAuthenticationSession(
                     uRL = nsurl,
                     callbackURLScheme = Url(redirectUrl).protocol.name,
-                    completionHandler = object : ASWebAuthenticationSessionCompletionHandler {
-                        override fun invoke(p1: NSURL?, p2: NSError?) {
-                            if (p1 != null) {
-                                val url = Url(p1.toString()) // use sane url instead of NS garbage
-                                runBlocking {
-                                    preferences.setResponseUri(url)
-                                }
-                                continuation.resumeIfActive(WebAuthenticationFlowResult.Success(url))
-                            } else {
-                                // browser closed, no redirect.
-                                continuation.resumeIfActive(WebAuthenticationFlowResult.Cancelled)
+                    completionHandler = { url, error ->
+                        if (url != null) {
+                            val url = Url(url.toString()) // use sane url instead of NS garbage
+                            runBlocking {
+                                preferences.setResponseUri(url)
                             }
+                            continuation.resumeIfActive(WebAuthenticationFlowResult.Success(url))
+                        } else {
+                            // browser closed, no redirect.
+                            continuation.resumeIfActive(WebAuthenticationFlowResult.Cancelled)
                         }
                     }
                 )

@@ -32,3 +32,8 @@ kotlin {
     }
 }
 
+android {
+    defaultConfig {
+        minSdk = 23
+    }
+}
