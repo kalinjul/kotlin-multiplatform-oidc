@@ -6,9 +6,9 @@ import org.publicvalue.convention.config.configureWasmTarget
 import org.publicvalue.convention.config.exportKdoc
 
 plugins {
-    id("org.publicvalue.convention.android.library")
     id("org.publicvalue.convention.kotlin.multiplatform")
     id("org.publicvalue.convention.kotlin.multiplatform.mobile")
+    id("org.publicvalue.convention.android.library")
     id("org.publicvalue.convention.centralPublish")
     id("org.publicvalue.convention.multiplatformSwiftPackage")
 }
@@ -77,8 +77,12 @@ kotlin {
 //            freeCompilerArgs += listOf("-Xoverride-konan-properties=minVersion.ios=15.0;minVersionSinceXcode15.ios=15.0")
         }
     }
-}
 
-android {
-    namespace = "org.publicvalue.multiplatform.oidc.appsupport"
+    androidLibrary {
+        namespace = "org.publicvalue.multiplatform.oidc.appsupport"
+
+        androidResources {
+            enable = true
+        }
+    }
 }

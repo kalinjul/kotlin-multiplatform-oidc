@@ -1,6 +1,6 @@
 plugins {
-    id("org.publicvalue.convention.android.library")
     id("org.publicvalue.convention.kotlin.multiplatform.mobile")
+    id("org.publicvalue.convention.android.library")
     id("org.publicvalue.convention.centralPublish")
 }
 
@@ -26,8 +26,8 @@ kotlin {
             }
         }
     }
-}
 
-android {
-    namespace = "org.publicvalue.multiplatform.oidc.appsupport.okhttp"
+    androidLibrary {
+        namespace = "org.publicvalue.multiplatform.oidc.appsupport.okhttp"
+    }
 }
