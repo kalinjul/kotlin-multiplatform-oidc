@@ -94,7 +94,7 @@ class AndroidCodeAuthFlowFactory(
             presentPreferredProviders.firstOrNull()
         } else customTabProviders.firstOrNull()
 
-        val webFlow = if (useWebView) {
+        val webFlow = if (useWebView || preferredBrowserPackage == null) {
             WebViewFlow(
                 context = context,
                 contract = activityResultLauncher,

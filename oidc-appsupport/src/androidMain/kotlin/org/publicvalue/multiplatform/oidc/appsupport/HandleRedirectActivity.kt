@@ -67,6 +67,7 @@ class HandleRedirectActivity : ComponentActivity() {
                             runBlocking {
                                 preferences.setResponseUri(Url(requestedUrl.toString()))
                             }
+                            setResult(RESULT_OK, Intent().setData(intent?.data))
                             finish()
                             true
                         } else {
@@ -173,12 +174,7 @@ class HandleRedirectActivity : ComponentActivity() {
             if (CustomTabsClient.isEphemeralBrowsingSupported(this, preferredBrowserPackage)) {
                 builder.setEphemeralBrowsingEnabled(ephemeralSession ?: false)
             }
-        } else {
-            // If custom tabs are not available, fallback to WebView
-            showWebView(url, redirectUrl, ephemeralSession ?: false)
-            return
         }
-
 
         val intent = builder.build()
 
