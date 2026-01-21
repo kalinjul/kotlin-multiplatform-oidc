@@ -18,7 +18,7 @@ internal class CustomTabFlow(
     private val context: Context,
     private val contract: ActivityResultLauncherSuspend<Intent, ActivityResult>,
     private val epheremalSession: Boolean,
-    private val preferredBrowserPackage: String?,
+    private val preferredBrowserPackage: String,
 ): WebAuthenticationFlow {
     override suspend fun startWebFlow(requestUrl: Url, redirectUrl: String): WebAuthenticationFlowResult {
         val intent = prepareIntent(requestUrl = requestUrl.toString(), redirectUrl = redirectUrl)
