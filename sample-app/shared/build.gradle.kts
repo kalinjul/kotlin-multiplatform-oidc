@@ -78,4 +78,8 @@ kotlin {
 
 android {
     namespace = "org.publicvalue.multiplatform.oidc.sample.shared"
+
+    defaultConfig {
+        minSdk = 23
+    }
 }
