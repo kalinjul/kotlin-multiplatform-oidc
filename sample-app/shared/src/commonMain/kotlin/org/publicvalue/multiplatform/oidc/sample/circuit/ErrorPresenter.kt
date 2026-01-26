@@ -16,7 +16,7 @@ interface ErrorPresenter<UiState : CircuitUiState>: Presenter<UiState> {
     }
 }
 
-suspend fun <T: ErrorPresenter<UiState>, UiState> T.catchErrorMessage(block: suspend T.() -> Unit) {
+suspend fun <T: ErrorPresenter<CircuitUiState>, CircuitUiState> T.catchErrorMessage(block: suspend T.() -> Unit) {
     try {
         block()
     } catch (t: Throwable) {

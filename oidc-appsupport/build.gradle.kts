@@ -1,3 +1,4 @@
+import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.publicvalue.convention.config.configureIosTargets
@@ -15,9 +16,11 @@ plugins {
 
 description = "Kotlin Multiplatform OIDC appsupport library for Android/iOS"
 
-multiplatformSwiftPackage {
-    packageName("OpenIdConnectClient")
-    zipFileName("OpenIdConnectClient")
+if (DefaultNativePlatform.getCurrentOperatingSystem().isMacOsX) {
+    multiplatformSwiftPackage {
+        packageName("OpenIdConnectClient")
+        zipFileName("OpenIdConnectClient")
+    }
 }
 
 kotlin {
@@ -32,11 +35,6 @@ kotlin {
                 api(projects.oidcTokenstore)
 
                 implementation(projects.oidcPreferences)
-            }
-        }
-
-        val iosMain by getting {
-            dependencies {
             }
         }
 
