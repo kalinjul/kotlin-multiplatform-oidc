@@ -4,7 +4,6 @@ import com.slack.circuit.backstack.SaveableBackStack
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.screen.PopResult
 import com.slack.circuit.runtime.screen.Screen
-import kotlinx.collections.immutable.ImmutableList
 import org.publicvalue.multiplatform.oauth.logging.Logger
 
 internal class OAuthPlaygroundNavigator(
@@ -27,7 +26,7 @@ internal class OAuthPlaygroundNavigator(
         return navigator.peek()
     }
 
-    override fun peekBackStack(): ImmutableList<Screen> {
+    override fun peekBackStack(): List<Screen> {
         return navigator.peekBackStack()
     }
 
@@ -38,9 +37,8 @@ internal class OAuthPlaygroundNavigator(
 
     override fun resetRoot(
         newRoot: Screen,
-        saveState: Boolean,
-        restoreState: Boolean
-    ): ImmutableList<Screen> {
+        options: Navigator.StateOptions
+    ): List<Screen> {
         logger.d { "resetRoot(), newRoot:$${newRoot::class.simpleName}, backstack: ${backStack.toList().map { it.screen::class.simpleName }}}" }
         return navigator.resetRoot(newRoot)
     }
