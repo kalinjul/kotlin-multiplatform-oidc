@@ -2,22 +2,10 @@ package org.publicvalue.convention.config
 
 import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.withType
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
-import org.publicvalue.convention.libs
-
-@OptIn(ExperimentalKotlinGradlePluginApi::class)
-fun KotlinMultiplatformExtension.configureAndroidTarget() {
-    androidTarget {
-        compilerOptions {
-            jvmTarget.set(JvmTarget.fromTarget((project.libs.versions.jvmTarget.get())))
-        }
-    }
-}
 
 @OptIn(ExperimentalWasmDsl::class)
 fun KotlinMultiplatformExtension.configureWasmTarget(baseName: String? = null) {
@@ -27,22 +15,32 @@ fun KotlinMultiplatformExtension.configureWasmTarget(baseName: String? = null) {
             commonWebpackConfig {
                 outputFileName = "$baseName.js"
                 devServer = (devServer ?: KotlinWebpackConfig.DevServer()).apply {
-                    static = (static ?: mutableListOf()).apply {
-                        // Serve sources to debug inside browser
-                        add(project.projectDir.path)
-                        add(project.projectDir.path + "/commonMain/")
-                        add(project.projectDir.path + "/webMain/")
-                        add(project.projectDir.path + "/wasmJsMain/")
-                    }
+                    // Serve sources to debug inside browser
+                    static(project.projectDir.path)
+                    static(project.projectDir.path + "/commonMain/")
+                    static(project.projectDir.path + "/webMain/")
+                    static(project.projectDir.path + "/wasmJsMain/")
                 }
             }
         }
     }
 }
 
-fun KotlinMultiplatformExtension.configureJsTarget() {
+fun KotlinMultiplatformExtension.configureJsTarget(baseName: String? = null) {
     js(IR) {
         binaries.library()
+        browser {
+            commonWebpackConfig {
+                outputFileName = "$baseName.js"
+                devServer = (devServer ?: KotlinWebpackConfig.DevServer()).apply {
+                    // Serve sources to debug inside browser
+                    static(project.projectDir.path)
+                    static(project.projectDir.path + "/commonMain/")
+                    static(project.projectDir.path + "/webMain/")
+                    static(project.projectDir.path + "/wasmJsMain/")
+                }
+            }
+        }
     }
 }
 
