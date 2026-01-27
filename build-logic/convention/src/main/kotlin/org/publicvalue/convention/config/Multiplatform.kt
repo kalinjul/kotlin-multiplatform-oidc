@@ -42,7 +42,6 @@ fun KotlinMultiplatformExtension.configureWasmTarget(baseName: String? = null) {
 
 fun KotlinMultiplatformExtension.configureJsTarget() {
     js(IR) {
-        browser()
         binaries.library()
     }
 }

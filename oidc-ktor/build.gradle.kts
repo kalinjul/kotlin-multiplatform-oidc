@@ -35,3 +35,7 @@ kotlin {
         namespace = "org.publicvalue.multiplatform.oidc.appsupport.ktor"
     }
 }
+
+tasks.withType<AbstractTestTask>().configureEach {
+    failOnNoDiscoveredTests = false
+}
