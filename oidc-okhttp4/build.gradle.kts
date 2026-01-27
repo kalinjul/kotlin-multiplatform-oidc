@@ -31,3 +31,7 @@ kotlin {
         namespace = "org.publicvalue.multiplatform.oidc.appsupport.okhttp"
     }
 }
+
+tasks.withType<AbstractTestTask>().configureEach {
+    failOnNoDiscoveredTests = false
+}
