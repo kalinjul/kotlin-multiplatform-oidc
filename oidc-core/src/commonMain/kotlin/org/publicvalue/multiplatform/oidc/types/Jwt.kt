@@ -1,6 +1,5 @@
 package org.publicvalue.multiplatform.oidc.types
 
-import io.ktor.util.decodeBase64String
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -14,6 +13,7 @@ import org.publicvalue.multiplatform.oidc.OpenIdConnectException
 import org.publicvalue.multiplatform.oidc.wrapExceptions
 import kotlin.experimental.ExperimentalObjCName
 import kotlin.experimental.ExperimentalObjCRefinement
+import kotlin.io.encoding.Base64
 import kotlin.jvm.JvmInline
 import kotlin.native.HiddenFromObjC
 import kotlin.native.ObjCName
@@ -34,6 +34,7 @@ data class Jwt(
     val signature: String?
 ) {
     companion object {
+        private val base64 by lazy { Base64.withPadding(Base64.PaddingOption.ABSENT) }
 
         /**
          * JWTs are either encoded using JWS Compact Serialization (signed, 3 parts) or JWE Compact Serialization (encrypted, 5 parts).
@@ -56,8 +57,8 @@ data class Jwt(
 
             return wrapExceptions {
                 Jwt(
-                    header = JwtHeader.parse(headerB64.decodeBase64String()),
-                    payload = JwtClaims.parse(payloadB64.decodeBase64String()).toOpenIdConnectToken(),
+                    header = JwtHeader.parse(base64.decode(headerB64).decodeToString()),
+                    payload = JwtClaims.parse(base64.decode(payloadB64).decodeToString()).toOpenIdConnectToken(),
                     signature = signatureB64
                 )
             }
