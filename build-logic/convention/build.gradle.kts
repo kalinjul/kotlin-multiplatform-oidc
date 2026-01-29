@@ -3,6 +3,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     `kotlin-dsl`
+    //kotlin("jvm") version embeddedKotlinVersion
+    id("org.jetbrains.kotlin.jvm") version "2.3.0"
 }
 
 group = "org.publicvalue.buildlogic"

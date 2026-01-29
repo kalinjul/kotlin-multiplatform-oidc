@@ -38,7 +38,8 @@ Library dependency versions:
 | 0.12.+           | 2.0.20         | 3.0.+        |
 | 0.13.+           | 2.1.20         | 3.1.+        |
 | 0.14.0 - 0.15.+  | 2.1.21         | 3.2.+        |
-| 0.16.0           | 2.2.20         | 3.3.+        |
+| 0.16.+           | 2.2.20         | 3.3.+        |
+| 0.17.0           | 2.3.0          | 3.3.+        |
 
 Note that while the library may work with other kotlin/ktor versions, proceed at your own risk.
 
@@ -63,14 +64,6 @@ oidc-ktor = { module = "io.github.kalinjul.kotlin.multiplatform:oidc-ktor", vers
 ## Using a snapshot version
 If you want try a snapshot version, just add ```maven("https://central.sonatype.com/repository/maven-snapshots/")``` to your repositories.
 There is currently no way to view available snapshots on sonatype central.
-
-## Compiler options
-If you want to run tests, currently you need to pass additional linker flags (adjust the path to your Xcode installation): 
-```kotlin
-iosSimulatorArm64().compilerOptions {
-    freeCompilerArgs.set(listOf("-linker-options", "-L/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphonesimulator"))
-}
-```
 
 # Usage
 

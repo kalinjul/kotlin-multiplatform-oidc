@@ -6,9 +6,9 @@ import org.publicvalue.convention.config.configureJsTarget
 import org.publicvalue.convention.config.configureWasmTarget
 
 plugins {
-    id("org.publicvalue.convention.android.library")
     id("org.publicvalue.convention.kotlin.multiplatform")
     id("org.publicvalue.convention.kotlin.multiplatform.mobile")
+    id("org.publicvalue.convention.android.library")
     id("org.publicvalue.convention.compose.multiplatform")
     id("kotlin-parcelize")
     alias(libs.plugins.kotlin.serialization)
@@ -68,14 +68,13 @@ kotlin {
             export(projects.oidcAppsupport)
             export(projects.oidcCore)
             export(projects.oidcTokenstore)
-//            export("io.github.kalinjul.kotlin.multiplatform:oidc-appsupport")
-//            export("io.github.kalinjul.kotlin.multiplatform:oidc-tokenstore")
-//            export("io.github.kalinjul.kotlin.multiplatform:oidc-core")
         }
     }
-    addParcelizeAnnotation("org.publicvalue.multiplatform.oidc.sample.screens.CommonParcelize")
-}
 
-android {
-    namespace = "org.publicvalue.multiplatform.oidc.sample.shared"
+    addParcelizeAnnotation("org.publicvalue.multiplatform.oidc.sample.screens.CommonParcelize")
+
+    androidLibrary {
+        minSdk = 23
+        namespace = "org.publicvalue.multiplatform.oidc.sample.shared"
+    }
 }
