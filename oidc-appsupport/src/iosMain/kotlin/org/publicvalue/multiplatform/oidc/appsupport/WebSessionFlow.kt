@@ -1,9 +1,8 @@
 package org.publicvalue.multiplatform.oidc.appsupport
 
-import io.ktor.http.Url
+import io.ktor.http.*
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.suspendCancellableCoroutine
 import org.publicvalue.multiplatform.oidc.OpenIdConnectException
 import org.publicvalue.multiplatform.oidc.preferences.Preferences
@@ -16,7 +15,11 @@ import platform.Foundation.NSURL
 internal class WebSessionFlow(
     private val ephemeralBrowserSession: Boolean,
     private val preferences: Preferences,
-): WebAuthenticationFlow {
+) : WebAuthenticationFlow {
+
+    // Hold a strong reference delegate, otherwise it gets garbage collected
+    private val presentationContext = PresentationContext()
+
     /**
      * @return null if user cancelled the flow (closed the web view)
      */
@@ -31,10 +34,10 @@ internal class WebSessionFlow(
                         override fun invoke(p1: NSURL?, p2: NSError?) {
                             if (p1 != null) {
                                 val url = Url(p1.toString()) // use sane url instead of NS garbage
-                                runBlocking {
+                                MainScope().launch {
                                     preferences.setResponseUri(url)
+                                    continuation.resumeIfActive(WebAuthenticationFlowResult.Success(url))
                                 }
-                                continuation.resumeIfActive(WebAuthenticationFlowResult.Success(url))
                             } else {
                                 // browser closed, no redirect.
                                 continuation.resumeIfActive(WebAuthenticationFlowResult.Cancelled)
@@ -43,7 +46,7 @@ internal class WebSessionFlow(
                     }
                 )
                 session.prefersEphemeralWebBrowserSession = ephemeralBrowserSession
-                session.presentationContextProvider = PresentationContext()
+                session.presentationContextProvider = presentationContext
 
                 MainScope().launch {
                     session.start()

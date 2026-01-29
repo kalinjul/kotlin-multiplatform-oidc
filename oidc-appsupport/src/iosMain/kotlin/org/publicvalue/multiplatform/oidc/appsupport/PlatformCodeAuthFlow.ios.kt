@@ -11,6 +11,9 @@ import org.publicvalue.multiplatform.oidc.wrapExceptions
 import platform.AuthenticationServices.ASPresentationAnchor
 import platform.AuthenticationServices.ASWebAuthenticationPresentationContextProvidingProtocol
 import platform.AuthenticationServices.ASWebAuthenticationSession
+import platform.UIKit.UIApplication
+import platform.UIKit.UISceneActivationStateForegroundActive
+import platform.UIKit.UIWindowScene
 import platform.darwin.NSObject
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -30,7 +33,7 @@ actual class PlatformCodeAuthFlow internal constructor(
     ephemeralBrowserSession: Boolean = false,
     private val webFlow: WebAuthenticationFlow,
     actual override val preferences: Preferences,
-): CodeAuthFlow, EndSessionFlow {
+) : CodeAuthFlow, EndSessionFlow {
 
     actual override suspend fun startLoginFlow(request: AuthCodeRequest) = wrapExceptions {
         val result = webFlow.startWebFlow(request.url, request.url.parameters.get("redirect_uri").orEmpty())
@@ -43,9 +46,17 @@ actual class PlatformCodeAuthFlow internal constructor(
     }
 }
 
-class PresentationContext: NSObject(), ASWebAuthenticationPresentationContextProvidingProtocol {
+class PresentationContext : NSObject(), ASWebAuthenticationPresentationContextProvidingProtocol {
     override fun presentationAnchorForWebAuthenticationSession(session: ASWebAuthenticationSession): ASPresentationAnchor {
-        return ASPresentationAnchor()
+        // Locate the active UIWindow to correctly anchor the browser session on top of the app.
+        // If no window is found, create a new ASPresentationAnchor.
+        val window = UIApplication.sharedApplication.connectedScenes
+            .mapNotNull { it as? UIWindowScene }
+            .firstOrNull { it.activationState == UISceneActivationStateForegroundActive }
+            ?.keyWindow
+            ?: UIApplication.sharedApplication.keyWindow
+
+        return window ?: ASPresentationAnchor()
     }
 }
 
