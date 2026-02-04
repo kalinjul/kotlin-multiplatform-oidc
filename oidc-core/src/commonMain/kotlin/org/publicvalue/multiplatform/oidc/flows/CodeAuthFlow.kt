@@ -15,7 +15,6 @@ import org.publicvalue.multiplatform.oidc.types.parseJwt
 import org.publicvalue.multiplatform.oidc.types.remote.AccessTokenResponse
 import org.publicvalue.multiplatform.oidc.types.validateNonce
 import org.publicvalue.multiplatform.oidc.types.validateState
-import org.publicvalue.multiplatform.oidc.wrapExceptions
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.experimental.ExperimentalObjCName
 import kotlin.native.ObjCName
@@ -30,8 +29,6 @@ import kotlin.native.ObjCName
 @OptIn(ExperimentalObjCName::class)
 @ObjCName(swiftName = "AbstractCodeAuthFlow", name = "AbstractCodeAuthFlow", exact = true)
 interface CodeAuthFlow {
-    val client: OpenIdConnectClient
-    val preferences: Preferences
 
     /**
      * Start the authorization flow to request an access token.
@@ -56,23 +53,6 @@ interface CodeAuthFlow {
     }
 
     /**
-     * Uses the request URL to open a browser and perform authorization.
-     * Should return the Authorization Code.
-     */
-    @Throws(CancellationException::class, OpenIdConnectException::class)
-    @Suppress("unused")
-    suspend fun getAuthorizationCode(request: AuthCodeRequest): AuthCodeResponse {
-        return try {
-            preferences.setAuthRequest(request)
-            startLoginFlow(request)
-            val (_, responseUri) = getResultFromPreferences()
-            AuthCodeResponse.success(responseUri.toAuthCodeResult())
-        } catch (e: Exception) {
-            AuthCodeResponse.failure(e)
-        }
-    }
-
-    /**
      * Start the authorization flow.
      *
      * @return the Authorization Code Request
@@ -83,33 +63,14 @@ interface CodeAuthFlow {
     @Throws(CancellationException::class, OpenIdConnectException::class)
     suspend fun startLogin(
         configureAuthUrl: (URLBuilder.() -> Unit)? = null,
-    ): AuthCodeRequest = wrapExceptions {
-        if (!client.config.discoveryUri.isNullOrEmpty()) {
-            client.discover()
-        }
-        val request = client.createAuthorizationCodeRequest(configureAuthUrl)
-        preferences.setAuthRequest(request)
-        startLoginFlow(request)
-        return request
-    }
-
-    /**
-     * Uses the request URL to open a browser and perform authorization.
-     * Call [continueLogin] after returning to your app to receive tokens.
-     *
-     * @param request The request containing the url and relevant state information
-     */
-    @Throws(CancellationException::class, OpenIdConnectException::class)
-    suspend fun startLoginFlow(request: AuthCodeRequest)
+    ): AuthCodeRequest
 
     /**
      * Check whether continueLogin can safely be called.
      *
      * @return true if startLogin() was called before and continueLogin() was not yet called.
      */
-    suspend fun canContinueLogin(): Boolean {
-        return preferences.getAuthRequest() != null && preferences.getResponseUri() != null
-    }
+    suspend fun canContinueLogin(): Boolean
 
     /**
      * Continue login flow.
@@ -120,24 +81,7 @@ interface CodeAuthFlow {
      * be used for discovery if necessary)
      */
     @Throws(OpenIdConnectException::class, CancellationException::class)
-    suspend fun continueLogin(configureTokenExchange: (HttpRequestBuilder.() -> Unit)? = null): AccessTokenResponse {
-        val (authRequest, responseUri) = getResultFromPreferences()
-        val tokenResponse = client.continueLogin(authRequest,  responseUri, configureTokenExchange)
-        return tokenResponse
-    }
-
-    private suspend fun getResultFromPreferences(): Pair<AuthCodeRequest, Url> {
-        val authRequest = preferences.getAuthRequest()
-        val responseUri = preferences.getResponseUri()
-        if (authRequest == null) {
-            throw OpenIdConnectException.AuthenticationFailure("No authRequest present")
-        }
-        if (responseUri == null) {
-            throw OpenIdConnectException.AuthenticationFailure("No responseUri present")
-        }
-        preferences.clearOidcPreferences()
-        return authRequest to responseUri
-    }
+    suspend fun continueLogin(configureTokenExchange: (HttpRequestBuilder.() -> Unit)? = null): AccessTokenResponse
 }
 
 

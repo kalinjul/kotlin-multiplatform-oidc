@@ -4,9 +4,9 @@ import io.ktor.client.request.header
 import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
 import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
 import org.publicvalue.multiplatform.oidc.appsupport.AndroidCodeAuthFlowFactory
-import org.publicvalue.multiplatform.oidc.tokenstore.TokenStore
 import org.publicvalue.multiplatform.oidc.appsupport.CodeAuthFlowFactory
 import org.publicvalue.multiplatform.oidc.tokenstore.TokenRefreshHandler
+import org.publicvalue.multiplatform.oidc.tokenstore.TokenStore
 import org.publicvalue.multiplatform.oidc.tokenstore.saveTokens
 import org.publicvalue.multiplatform.oidc.types.CodeChallengeMethod
 import org.publicvalue.multiplatform.oidc.types.parseJwt
@@ -61,6 +61,14 @@ object README {
     suspend fun `Request_access_token_using_code_auth_flow`() {
         val flow = authFlowFactory.createAuthFlow(client)
         val tokens = flow.getAccessToken()
+    }
+
+    suspend fun `Request_access_token_using_code_auth_flow_continuation`() {
+        val flow = authFlowFactory.createAuthFlow(client)
+        flow.startLogin()
+        if (flow.canContinueLogin()) {
+            val tokens = flow.continueLogin()
+        }
     }
 
     // perform refresh or endSession
