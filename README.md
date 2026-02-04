@@ -38,7 +38,7 @@ Library dependency versions:
 | 0.12.+           | 2.0.20         | 3.0.+        |
 | 0.13.+           | 2.1.20         | 3.1.+        |
 | 0.14.0 - 0.15.+  | 2.1.21         | 3.2.+        |
-| 0.16.0           | 2.2.20         | 3.3.+        |
+| 0.16.+           | 2.2.20         | 3.3.+        |
 
 Note that while the library may work with other kotlin/ktor versions, proceed at your own risk.
 
@@ -63,14 +63,6 @@ oidc-ktor = { module = "io.github.kalinjul.kotlin.multiplatform:oidc-ktor", vers
 ## Using a snapshot version
 If you want try a snapshot version, just add ```maven("https://central.sonatype.com/repository/maven-snapshots/")``` to your repositories.
 There is currently no way to view available snapshots on sonatype central.
-
-## Compiler options
-If you want to run tests, currently you need to pass additional linker flags (adjust the path to your Xcode installation): 
-```kotlin
-iosSimulatorArm64().compilerOptions {
-    freeCompilerArgs.set(listOf("-linker-options", "-L/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphonesimulator"))
-}
-```
 
 # Usage
 
@@ -105,16 +97,30 @@ val client = OpenIdConnectClient(discoveryUri = "<discovery url>") {
 If you provide a Discovery URI, you may skip the endpoint configuration and call [discover()](https://kalinjul.github.io/kotlin-multiplatform-oidc/kotlin-multiplatform-oidc/org.publicvalue.multiplatform.oidc/-open-id-connect-client/discover.html) on the client to retrieve the endpoint configuration.
 
 ## Authenticate
-The Code Auth Flow method is implemented by [CodeAuthFlow](https://kalinjul.github.io/kotlin-multiplatform-oidc/kotlin-multiplatform-oidc/org.publicvalue.multiplatform.oidc.flows/-code-auth-flow/index.html). You'll need platform specific variants (see [Setup](#Setup)).
+The Authorization Code Flow is implemented by [CodeAuthFlow](https://kalinjul.github.io/kotlin-multiplatform-oidc/kotlin-multiplatform-oidc/org.publicvalue.multiplatform.oidc.flows/-code-auth-flow/index.html). You'll need platform specific variants (see [Setup](#Setup)).
 Preferably, those instances should be provided using Dependency Injection.
 For more information, have a look at the [KMP sample app](./sample-app).
 
 Request tokens using code auth flow (this will open the browser for login):
 ```kotlin 
 val flow = authFlowFactory.createAuthFlow(client)
-val tokens = flow.getAccessToken()
+flow.startLogin()
+val tokens = flow.continueLogin()
 ```
 
+## Android Activity/Process Termination
+The login flow is split into ```startLogin``` and ```continueLogin```. 
+The main reason is that on Android, the activity and/or process can easily get killed during login.
+In order to mitigate this, call ```continueLogin()``` during your activity's onCreate():
+```kotlin
+authFlowFactory.registerActivity(this)
+val flow = authFlowFactory.createAuthFlow(client)
+if (flow.canContinueLogin()) {
+    val tokens = flow.continueLogin()
+}
+```
+
+## Refresh / End session
 Perform refresh or endSession:
 ```kotlin
 tokens.refresh_token?.let { client.refreshToken(refreshToken = it) }

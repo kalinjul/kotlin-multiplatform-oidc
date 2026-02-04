@@ -8,7 +8,7 @@ actual class PreferencesFactory: PreferencesSingletonFactory() {
 
     override fun create(filename: String): Preferences {
         val home = System.getProperty("user.home")
-        val path = File(home, "beihilfeapp/$filename").absolutePath.toPath()
+        val path = File(home, "$filename").absolutePath.toPath()
         return PreferencesDataStore(path)
     }
 }
