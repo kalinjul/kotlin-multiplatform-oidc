@@ -47,6 +47,13 @@ fun KotlinMultiplatformExtension.configureJsTarget() {
     }
 }
 
+fun KotlinMultiplatformExtension.configureJsTarget2() {
+    js(IR) {
+        browser()
+        binaries.library()
+    }
+}
+
 fun KotlinMultiplatformExtension.configureIosTargets(baseName: String? = null) {
     listOf(
         iosX64(),
