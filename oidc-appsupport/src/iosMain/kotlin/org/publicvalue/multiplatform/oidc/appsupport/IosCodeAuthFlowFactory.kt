@@ -2,6 +2,7 @@ package org.publicvalue.multiplatform.oidc.appsupport
 
 import kotlinx.coroutines.runBlocking
 import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
+import org.publicvalue.multiplatform.oidc.flows.CodeAuthFlowFactory
 import org.publicvalue.multiplatform.oidc.flows.EndSessionFlow
 import org.publicvalue.multiplatform.oidc.preferences.PREFERENCES_FILENAME
 import org.publicvalue.multiplatform.oidc.preferences.PreferencesFactory
