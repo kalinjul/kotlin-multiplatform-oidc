@@ -34,7 +34,7 @@ data class Jwt(
     val signature: String?
 ) {
     companion object {
-        private val base64 by lazy { Base64.withPadding(Base64.PaddingOption.ABSENT) }
+        private val base64 by lazy { Base64.UrlSafe.withPadding(Base64.PaddingOption.ABSENT) }
 
         /**
          * JWTs are either encoded using JWS Compact Serialization (signed, 3 parts) or JWE Compact Serialization (encrypted, 5 parts).
