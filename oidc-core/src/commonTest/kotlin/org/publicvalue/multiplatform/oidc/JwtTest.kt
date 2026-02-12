@@ -78,4 +78,12 @@ class JwtTest {
         assertThat(identitiesMap["userId"]).isEqualTo("amzn1.account.EXAMPLE")
         assertThat(identitiesMap["providerName"]).isEqualTo("LoginWithAmazon")
     }
+
+    @Test
+    fun urlEncodedChar() {
+        // this token contains _ and - chars, which are base64url encoded
+        val idToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaWF0IjoxNTE2MjM5MDIyLCJmaWVsZCI6Im8_PHA-In0.xqkIJiRfQJX_WHso5O5AAEbz3XM0JJd_uVX48tzh9j0"
+        val jwt = Jwt.parse(idToken)
+        assertThat(jwt.payload.additionalClaims["field"]).isEqualTo("o?<p>")
+    }
 }
