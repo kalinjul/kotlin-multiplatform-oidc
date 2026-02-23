@@ -81,12 +81,12 @@ class JvmKeyringSettingsStore(
         }
 
         keysToRemove.forEach { remove(it) }
-        
+
         // Also explicitly attempt removal of known SettingsKey entries
         // in case they were written before this instance was created (e.g. on a previous app run)
         SettingsKey.entries.forEach { settingsKey ->
-            runCatching { 
-                keyring.deletePassword(serviceName, accountKey(settingsKey.name)) 
+            runCatching {
+                keyring.deletePassword(serviceName, accountKey(settingsKey.name))
             }.onFailure { e ->
                 if (e !is PasswordAccessException) {
                     println("JvmKeyringSettingsStore: failed to clear default key '${settingsKey.name}': ${e.message}")
