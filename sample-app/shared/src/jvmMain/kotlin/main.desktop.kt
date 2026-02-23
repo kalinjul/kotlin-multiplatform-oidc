@@ -15,7 +15,7 @@ fun MainView() {
     val navigator = rememberCircuitNavigator(backstack) {
     }
 
-    val settingsStore = JvmSettingsStore()
+    val settingsStore = remember { JvmSettingsStore() }
 
     App(
         backstack = backstack,

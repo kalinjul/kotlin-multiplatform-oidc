@@ -55,6 +55,8 @@ russhwolf = "1.3.0"
 kotlincrypto-hash = "0.8.0"
 material-icons = "1.7.3"
 
+java-keyring = "1.0.4"
+
 [libraries]
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidxActivity" }
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "androidxAppCompat" }
@@ -121,6 +123,8 @@ russhwolf-multiplatformsettings = { module = "com.russhwolf:multiplatform-settin
 
 kotlincrypto-hash-bom = { module = "org.kotlincrypto.hash:bom", version.ref = "kotlincrypto-hash" }
 kotlincrypto-hash-sha2 = { module = "org.kotlincrypto.hash:sha2", version.ref = "kotlincrypto-hash" }
+
+java-keyring = { module = "com.github.javakeyring:java-keyring", version.ref = "java-keyring" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
