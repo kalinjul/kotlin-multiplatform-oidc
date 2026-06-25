@@ -8,6 +8,7 @@ import android.webkit.CookieManager
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceRequest
 import android.webkit.WebSettings
+import android.webkit.WebStorage
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.activity.ComponentActivity
@@ -28,8 +29,12 @@ internal const val EXTRA_KEY_EPHEMERAL_SESSION = "ephemeral_session"
 internal const val EXTRA_KEY_REDIRECTURL = "redirecturl"
 internal const val EXTRA_KEY_URL = "url"
 internal const val EXTRA_KEY_PACKAGE_NAME = "package"
+internal const val EXTRA_KEY_UNSUPPORTED_EPHEMERAL_CUSTOM_TABS_FALLBACK = "unsupported_ephemeral_custom_tabs_fallback"
 
 class HandleRedirectActivity : ComponentActivity() {
+
+    private var clearWebViewDataOnDestroy = false
+    private var currentWebView: WebView? = null
 
     companion object {
         /** Set to use your own web settings when using WebView **/
@@ -79,7 +84,7 @@ class HandleRedirectActivity : ComponentActivity() {
         }
 
         @ExperimentalOpenIdConnect
-        var showWebView: ComponentActivity.(url: String, redirectUrl: String?, epheremalSession: Boolean) -> Unit = { url, redirectUrl, epheremalSession ->
+        var showWebView: ComponentActivity.(url: String, redirectUrl: String?, ephemeralSession: Boolean) -> Unit = { url, redirectUrl, ephemeralSession ->
             val webView = createWebView(this, redirectUrl)
             ViewCompat.setOnApplyWindowInsetsListener(webView) { view, windowInsets ->
                 val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout())
@@ -91,10 +96,12 @@ class HandleRedirectActivity : ComponentActivity() {
                 }
                 WindowInsetsCompat.CONSUMED
             }
-            if (epheremalSession) {
-                CookieManager.getInstance().removeAllCookies(null)
-                webView.clearHistory()
-                webView.clearCache(true)
+            if (ephemeralSession) {
+                (this as? HandleRedirectActivity)?.apply {
+                    clearWebViewSessionData(webView)
+                    clearWebViewDataOnDestroy = true
+                    currentWebView = webView
+                }
             }
             setContentView(webView)
             webView.loadUrl(url)
@@ -120,6 +127,10 @@ class HandleRedirectActivity : ComponentActivity() {
         val ephemeralSession = intent.extras?.getBoolean(EXTRA_KEY_EPHEMERAL_SESSION)
         val url = intent.extras?.getString(EXTRA_KEY_URL)
         val redirectUrl = intent.extras?.getString(EXTRA_KEY_REDIRECTURL)
+        val unsupportedEphemeralCustomTabsFallback = intent.extras
+            ?.getString(EXTRA_KEY_UNSUPPORTED_EPHEMERAL_CUSTOM_TABS_FALLBACK)
+            ?.toUnsupportedEphemeralCustomTabsFallback()
+            ?: UnsupportedEphemeralCustomTabsFallback.PrivateWebView
 
         if (intent?.data != null) {
             // we're called by custom tab
@@ -146,13 +157,14 @@ class HandleRedirectActivity : ComponentActivity() {
                 val preferredBrowserPackage = intent.extras?.getString(EXTRA_KEY_PACKAGE_NAME)
                 intent.removeExtra(EXTRA_KEY_PACKAGE_NAME)
                 if (useWebView == true) {
-                    showWebView(url, redirectUrl, ephemeralSession ?: false)
+                    showWebViewSession(url, redirectUrl, ephemeralSession ?: false)
                 } else {
                     launchCustomTabsIntent(
                         url,
                         redirectUrl,
                         preferredBrowserPackage,
-                        ephemeralSession
+                        ephemeralSession,
+                        unsupportedEphemeralCustomTabsFallback
                     )
                 }
             }
@@ -164,15 +176,27 @@ class HandleRedirectActivity : ComponentActivity() {
         url: String,
         redirectUrl: String?,
         preferredBrowserPackage: String?,
-        ephemeralSession: Boolean?
+        ephemeralSession: Boolean?,
+        unsupportedEphemeralCustomTabsFallback: UnsupportedEphemeralCustomTabsFallback
     ) {
         val builder = CustomTabsIntent.Builder()
         builder.configureCustomTabsIntent()
 
+        val ephemeralSessionRequested = ephemeralSession ?: false
         if (preferredBrowserPackage != null) {
-            // Enable ephemeral browsing if supported
-            if (CustomTabsClient.isEphemeralBrowsingSupported(this, preferredBrowserPackage)) {
-                builder.setEphemeralBrowsingEnabled(ephemeralSession ?: false)
+            val launchMode = resolveEphemeralCustomTabsLaunchMode(
+                ephemeralSession = ephemeralSessionRequested,
+                ephemeralBrowsingSupported = CustomTabsClient.isEphemeralBrowsingSupported(this, preferredBrowserPackage),
+                unsupportedEphemeralCustomTabsFallback = unsupportedEphemeralCustomTabsFallback
+            )
+
+            when (launchMode) {
+                EphemeralCustomTabsLaunchMode.EphemeralCustomTab -> builder.setEphemeralBrowsingEnabled(true)
+                EphemeralCustomTabsLaunchMode.PrivateWebView -> {
+                    showWebViewSession(url, redirectUrl, true)
+                    return
+                }
+                EphemeralCustomTabsLaunchMode.NormalCustomTab -> Unit
             }
         }
 
@@ -183,8 +207,33 @@ class HandleRedirectActivity : ComponentActivity() {
             intent.launchUrl(this, url.toUri())
         } catch (_: ActivityNotFoundException) {
             // If there is no browser activity available, fallback to WebView
-            showWebView(url, redirectUrl, ephemeralSession ?: false)
+            showWebViewSession(url, redirectUrl, ephemeralSessionRequested)
         }
+    }
+
+    @OptIn(ExperimentalOpenIdConnect::class)
+    private fun showWebViewSession(url: String, redirectUrl: String?, ephemeralSession: Boolean) {
+        intent.putExtra(EXTRA_KEY_USEWEBVIEW, true)
+        showWebView(url, redirectUrl, ephemeralSession)
+    }
+
+    private fun clearWebViewSessionData(webView: WebView?) {
+        CookieManager.getInstance().apply {
+            removeAllCookies(null)
+            flush()
+        }
+        WebStorage.getInstance().deleteAllData()
+        webView?.clearHistory()
+        webView?.clearCache(true)
+    }
+
+    override fun onDestroy() {
+        if (clearWebViewDataOnDestroy) {
+            clearWebViewSessionData(currentWebView)
+            currentWebView = null
+            clearWebViewDataOnDestroy = false
+        }
+        super.onDestroy()
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -192,3 +241,6 @@ class HandleRedirectActivity : ComponentActivity() {
         setIntent(intent)
     }
 }
+
+private fun String.toUnsupportedEphemeralCustomTabsFallback(): UnsupportedEphemeralCustomTabsFallback? =
+    UnsupportedEphemeralCustomTabsFallback.entries.firstOrNull { it.name == this }

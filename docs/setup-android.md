@@ -38,6 +38,45 @@ class MainActivity : ComponentActivity() {
 > will attach to the ComponentActivity's lifecycle.
 > If you don't use ComponentActivity, you'll need to implement your own Factory.
 
+### Ephemeral authorization sessions
+
+`AndroidCodeAuthFlowFactory` supports ephemeral authorization sessions:
+
+```kotlin
+val codeAuthFlowFactory = AndroidCodeAuthFlowFactory(
+    ephemeralSession = true,
+)
+```
+
+When using Custom Tabs, the selected browser must support ephemeral Custom Tabs. If it does,
+the library launches an ephemeral Custom Tab. If it does not, the library uses
+`UnsupportedEphemeralCustomTabsFallback.PrivateWebView` by default:
+
+```kotlin
+val codeAuthFlowFactory = AndroidCodeAuthFlowFactory(
+    ephemeralSession = true,
+    unsupportedEphemeralCustomTabsFallback = UnsupportedEphemeralCustomTabsFallback.PrivateWebView,
+)
+```
+
+The private WebView fallback clears WebView cookies, storage, cache, and history before and after
+the session. Android WebView does not provide the same isolated ephemeral browser profile as
+supported ephemeral Custom Tabs, but this avoids silently reusing the user's regular browser cookies
+and SSO session.
+
+If you prefer the old compatibility behavior, explicitly opt into launching a normal Custom Tab when
+ephemeral Custom Tabs are unsupported:
+
+```kotlin
+val codeAuthFlowFactory = AndroidCodeAuthFlowFactory(
+    ephemeralSession = true,
+    unsupportedEphemeralCustomTabsFallback = UnsupportedEphemeralCustomTabsFallback.NormalCustomTab,
+)
+```
+
+`NormalCustomTab` may reuse the user's existing browser cookies and SSO session even when
+`ephemeralSession` is `true`. This fallback applies to login and end-session web flows.
+
 ## Login/Logout continuation
 As the actual authentication is performed in a Web Browser, it is possible, especially on low-end devices, that your application is terminated while in background.
 This behaviour can be forced by using ```adb shell am kill <app id>```.

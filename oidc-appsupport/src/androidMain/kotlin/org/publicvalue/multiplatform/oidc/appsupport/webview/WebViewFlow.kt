@@ -10,8 +10,8 @@ import org.publicvalue.multiplatform.oidc.appsupport.util.toAuthenticationFlowRe
 internal class WebViewFlow(
     private val context: Context,
     private val contract: ActivityResultLauncherSuspend<Intent, ActivityResult>,
-    private val epheremalSession: Boolean,
-): WebAuthenticationFlow {
+    private val ephemeralSession: Boolean,
+) : WebAuthenticationFlow {
     override suspend fun startWebFlow(requestUrl: Url, redirectUrl: String): WebAuthenticationFlowResult {
         val intent = prepareIntent(requestUrl = requestUrl.toString(), redirectUrl = redirectUrl)
         val result = contract.launchSuspend(intent)
@@ -27,7 +27,7 @@ internal class WebViewFlow(
                 this.putExtra(EXTRA_KEY_URL, requestUrl)
                 this.putExtra(EXTRA_KEY_USEWEBVIEW, true)
                 this.putExtra(EXTRA_KEY_REDIRECTURL, redirectUrl)
-                this.putExtra(EXTRA_KEY_EPHEMERAL_SESSION, epheremalSession)
+                this.putExtra(EXTRA_KEY_EPHEMERAL_SESSION, ephemeralSession)
             }
         return intent
     }

@@ -75,6 +75,11 @@ You will need some basic project setup to handle redirect urls and create an ins
 
 [Setup Wasm](docs/setup-wasm.md)
 
+On Android, `AndroidCodeAuthFlowFactory(ephemeralSession = true)` uses ephemeral Custom Tabs when
+the selected browser supports them. If it does not, the default fallback is a private WebView; callers
+can explicitly choose a normal Custom Tab fallback for compatibility. See
+[Ephemeral authorization sessions](docs/setup-android.md#ephemeral-authorization-sessions).
+
 ## OpenID Configuration
 Create an [OpenIdConnectClient](https://kalinjul.github.io/kotlin-multiplatform-oidc/kotlin-multiplatform-oidc/org.publicvalue.multiplatform.oidc/-open-id-connect-client/index.html):
 ```kotlin

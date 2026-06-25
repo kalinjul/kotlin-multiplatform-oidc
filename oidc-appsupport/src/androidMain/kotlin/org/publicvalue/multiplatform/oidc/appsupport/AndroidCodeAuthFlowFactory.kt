@@ -39,13 +39,28 @@ class AndroidCodeAuthFlowFactory(
 
     /**
      * If `true`, the authorization session will be ephemeral:
-     * cookies, cache, and other session data will be cleared before starting
-     * the flow in both WebView and Custom Tabs (if supported).
+     * cookies, cache, and other session data will be cleared before starting the flow in WebView.
+     * For Custom Tabs, ephemeral browsing is used when supported by the selected provider.
+     * If the selected provider does not support ephemeral browsing,
+     * [unsupportedEphemeralCustomTabsFallback] decides whether to use a private WebView fallback or
+     * continue with a normal Custom Tab.
      */
     private val ephemeralSession: Boolean = false,
-    /** preferred custom tab providers, list of package names in order of priority. Check [Browser][org.publicvalue.multiplatform.oidc.appsupport.customtab.Browser] for example values. **/
+
+    /**
+     * Preferred custom tab providers, list of package names in order of priority.
+     *
+     * Check [Browser][org.publicvalue.multiplatform.oidc.appsupport.customtab.Browser] for example values.
+     */
     private val customTabProviderPriority: List<String> = listOf(),
-): CodeAuthFlowFactory {
+
+    /**
+     * Fallback used when [ephemeralSession] is `true` and the selected Custom Tabs provider does
+     * not support ephemeral browsing.
+     */
+    private val unsupportedEphemeralCustomTabsFallback: UnsupportedEphemeralCustomTabsFallback =
+        UnsupportedEphemeralCustomTabsFallback.PrivateWebView,
+) : CodeAuthFlowFactory {
 
     private lateinit var activityResultLauncher: ActivityResultLauncherSuspend<Intent, ActivityResult>
     private lateinit var context: Context
@@ -59,6 +74,17 @@ class AndroidCodeAuthFlowFactory(
     constructor(activity: ComponentActivity, useWebView: Boolean = false) : this(useWebView = useWebView) {
         registerActivity(activity)
     }
+
+    constructor(
+        useWebView: Boolean = false,
+        ephemeralSession: Boolean = false,
+        customTabProviderPriority: List<String> = listOf(),
+    ) : this(
+        useWebView = useWebView,
+        ephemeralSession = ephemeralSession,
+        customTabProviderPriority = customTabProviderPriority,
+        unsupportedEphemeralCustomTabsFallback = UnsupportedEphemeralCustomTabsFallback.PrivateWebView,
+    )
 
     /**
      * Registers a lifecycle observer to be able to start a browser when required for login.
@@ -117,14 +143,15 @@ class AndroidCodeAuthFlowFactory(
             WebViewFlow(
                 context = context,
                 contract = activityResultLauncher,
-                epheremalSession = ephemeralSession
+                ephemeralSession = ephemeralSession
             )
         } else {
             CustomTabFlow(
                 context = context,
                 contract = activityResultLauncher,
-                epheremalSession = ephemeralSession,
+                ephemeralSession = ephemeralSession,
                 preferredBrowserPackage = preferredBrowserPackage,
+                unsupportedEphemeralCustomTabsFallback = unsupportedEphemeralCustomTabsFallback,
             )
         }
         return webFlow

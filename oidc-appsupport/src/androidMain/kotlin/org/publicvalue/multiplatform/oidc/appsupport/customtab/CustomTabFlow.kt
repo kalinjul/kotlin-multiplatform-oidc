@@ -8,8 +8,10 @@ import org.publicvalue.multiplatform.oidc.appsupport.ActivityResultLauncherSuspe
 import org.publicvalue.multiplatform.oidc.appsupport.EXTRA_KEY_EPHEMERAL_SESSION
 import org.publicvalue.multiplatform.oidc.appsupport.EXTRA_KEY_PACKAGE_NAME
 import org.publicvalue.multiplatform.oidc.appsupport.EXTRA_KEY_REDIRECTURL
+import org.publicvalue.multiplatform.oidc.appsupport.EXTRA_KEY_UNSUPPORTED_EPHEMERAL_CUSTOM_TABS_FALLBACK
 import org.publicvalue.multiplatform.oidc.appsupport.EXTRA_KEY_URL
 import org.publicvalue.multiplatform.oidc.appsupport.HandleRedirectActivity
+import org.publicvalue.multiplatform.oidc.appsupport.UnsupportedEphemeralCustomTabsFallback
 import org.publicvalue.multiplatform.oidc.appsupport.WebAuthenticationFlow
 import org.publicvalue.multiplatform.oidc.appsupport.WebAuthenticationFlowResult
 import org.publicvalue.multiplatform.oidc.appsupport.util.toAuthenticationFlowResult
@@ -17,9 +19,10 @@ import org.publicvalue.multiplatform.oidc.appsupport.util.toAuthenticationFlowRe
 internal class CustomTabFlow(
     private val context: Context,
     private val contract: ActivityResultLauncherSuspend<Intent, ActivityResult>,
-    private val epheremalSession: Boolean,
+    private val ephemeralSession: Boolean,
     private val preferredBrowserPackage: String,
-): WebAuthenticationFlow {
+    private val unsupportedEphemeralCustomTabsFallback: UnsupportedEphemeralCustomTabsFallback,
+) : WebAuthenticationFlow {
     override suspend fun startWebFlow(requestUrl: Url, redirectUrl: String): WebAuthenticationFlowResult {
         val intent = prepareIntent(requestUrl = requestUrl.toString(), redirectUrl = redirectUrl)
         val result = contract.launchSuspend(intent)
@@ -35,7 +38,11 @@ internal class CustomTabFlow(
                 this.putExtra(EXTRA_KEY_URL, requestUrl)
                 this.putExtra(EXTRA_KEY_PACKAGE_NAME, preferredBrowserPackage)
                 this.putExtra(EXTRA_KEY_REDIRECTURL, redirectUrl) // if fallback to webview is triggered
-                this.putExtra(EXTRA_KEY_EPHEMERAL_SESSION, epheremalSession)
+                this.putExtra(EXTRA_KEY_EPHEMERAL_SESSION, ephemeralSession)
+                this.putExtra(
+                    EXTRA_KEY_UNSUPPORTED_EPHEMERAL_CUSTOM_TABS_FALLBACK,
+                    unsupportedEphemeralCustomTabsFallback.name
+                )
             }
         return intent
     }

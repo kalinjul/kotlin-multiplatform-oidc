@@ -4,6 +4,7 @@ import io.ktor.client.request.header
 import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
 import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
 import org.publicvalue.multiplatform.oidc.appsupport.AndroidCodeAuthFlowFactory
+import org.publicvalue.multiplatform.oidc.appsupport.UnsupportedEphemeralCustomTabsFallback
 import org.publicvalue.multiplatform.oidc.flows.CodeAuthFlowFactory
 import org.publicvalue.multiplatform.oidc.tokenstore.TokenRefreshHandler
 import org.publicvalue.multiplatform.oidc.tokenstore.TokenStore
@@ -55,6 +56,13 @@ object README {
                 factory.registerActivity(this)
             }
         }
+    }
+
+    fun `Create_ephemeral_AuthFlowFactory`() {
+        AndroidCodeAuthFlowFactory(
+            ephemeralSession = true,
+            unsupportedEphemeralCustomTabsFallback = UnsupportedEphemeralCustomTabsFallback.PrivateWebView,
+        )
     }
 
     // Request access token using code auth flow

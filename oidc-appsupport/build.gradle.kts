@@ -66,6 +66,12 @@ kotlin {
             dependencies {
             }
         }
+
+        val androidUnitTest by getting {
+            dependencies {
+                implementation(kotlin("test"))
+            }
+        }
     }
 
     exportKdoc()
