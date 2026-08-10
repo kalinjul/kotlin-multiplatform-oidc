@@ -17,6 +17,16 @@ subprojects {
     group = "io.github.kalinjul.kotlin.multiplatform"
 }
 
+dependencies {
+    dokka(projects.oidcCore)
+    dokka(projects.oidcAppsupport)
+    dokka(projects.oidcCrypto)
+    dokka(projects.oidcKtor)
+    dokka(projects.oidcOkhttp4)
+    dokka(projects.oidcPreferences)
+    dokka(projects.oidcTokenstore)
+}
+
 nexusPublishing {
     repositories {
         sonatype {

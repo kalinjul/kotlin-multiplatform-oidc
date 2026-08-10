@@ -12,6 +12,7 @@ import org.gradle.kotlin.dsl.withType
 import org.gradle.plugins.signing.Sign
 import org.gradle.plugins.signing.SigningExtension
 import org.jetbrains.compose.internal.utils.getLocalProperty
+import org.jetbrains.dokka.gradle.DokkaExtension
 
 class MavenCentralPublishConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
@@ -22,9 +23,13 @@ class MavenCentralPublishConventionPlugin : Plugin<Project> {
                 apply("org.jetbrains.dokka")
             }
 
+            extensions.configure<DokkaExtension> {
+                moduleName.set(target.name)
+            }
+
             val javadocJar = tasks.register("javadocJar", Jar::class.java) {
                 archiveClassifier.set("javadoc")
-                from(tasks.getByName("dokkaHtml"))
+                from(tasks.getByName("dokkaGeneratePublicationHtml"))
             }
 
             extensions.configure<PublishingExtension> {
