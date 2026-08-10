@@ -71,5 +71,5 @@ data class AccessTokenResponse (
     val scope: String? = null,
 
     /** Computed locally **/
-    val received_at: Long = Clock.System.now().epochSeconds //.System.now().epochSeconds
+    val received_at: Long = Clock.System.now().epochSeconds
 )
