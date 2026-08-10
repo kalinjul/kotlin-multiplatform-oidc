@@ -1,14 +1,23 @@
 package org.publicvalue.multiplatform.oidc
 
-import io.ktor.client.*
-import io.ktor.client.call.*
-import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.client.request.*
-import io.ktor.client.request.forms.*
-import io.ktor.client.statement.*
-import io.ktor.http.*
+import io.ktor.client.HttpClient
+import io.ktor.client.call.NoTransformationFoundException
+import io.ktor.client.call.body
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.request.HttpRequestBuilder
+import io.ktor.client.request.forms.prepareForm
+import io.ktor.client.request.forms.submitForm
+import io.ktor.client.request.url
+import io.ktor.client.statement.HttpResponse
+import io.ktor.client.statement.HttpStatement
+import io.ktor.http.ContentType
+import io.ktor.http.ContentTypeMatcher
+import io.ktor.http.HttpStatusCode
+import io.ktor.http.URLBuilder
+import io.ktor.http.isSuccess
+import io.ktor.http.parameters
 import io.ktor.serialization.JsonConvertException
-import io.ktor.serialization.kotlinx.*
+import io.ktor.serialization.kotlinx.KotlinxSerializationConverter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -21,8 +30,8 @@ import org.publicvalue.multiplatform.oidc.types.CodeChallengeMethod
 import org.publicvalue.multiplatform.oidc.types.EndSessionRequest
 import org.publicvalue.multiplatform.oidc.types.TokenRequest
 import org.publicvalue.multiplatform.oidc.types.remote.AccessTokenResponse
-import org.publicvalue.multiplatform.oidc.types.remote.ErrorResponse
 import org.publicvalue.multiplatform.oidc.types.remote.OpenIdConnectConfiguration
+import org.publicvalue.multiplatform.oidc.util.errorBody
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.experimental.ExperimentalObjCName
 import kotlin.native.ObjCName
@@ -254,27 +263,17 @@ class DefaultOpenIdConnectClient(
                 throw response.toOpenIdConnectException(e)
             }
         } else {
-            throw response.toOpenIdConnectException()
+            throw response.toOpenIdConnectException(response.toHttpException())
         }
     }
 
-    private suspend fun HttpResponse.toOpenIdConnectException(cause: Throwable? = null): OpenIdConnectException.UnsuccessfulTokenRequest {
+    private suspend fun HttpResponse.toOpenIdConnectException(cause: Exception): OpenIdConnectException.UnsuccessfulTokenRequest {
         val errorResponse = call.errorBody()
-        val body = call.body<String>().decodeURLQueryComponent(plusIsSpace = true)
         return OpenIdConnectException.UnsuccessfulTokenRequest(
-            message = "Exchange token failed: ${status.value} ${errorResponse?.error_description ?: errorResponse?.error}",
+            message = "Exchange token failed: HTTP ${status.value}, ${errorResponse?.error_description ?: errorResponse?.error ?: "No error body."}",
             statusCode = status,
-            body = body,
             errorResponse = errorResponse,
             cause = cause
         )
-    }
-}
-
-private suspend fun HttpClientCall.errorBody(): ErrorResponse? {
-    return try {
-        body<ErrorResponse>()
-    } catch (e: Exception) {
-        null
     }
 }

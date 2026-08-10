@@ -33,6 +33,7 @@ import org.publicvalue.multiplatform.oauth.domain.LogoutWebFlow
 import org.publicvalue.multiplatform.oauth.domain.types.AuthorizeResult
 import org.publicvalue.multiplatform.oauth.logging.Logger
 import org.publicvalue.multiplatform.oauth.screens.ClientDetailScreen
+import org.publicvalue.multiplatform.oidc.HttpException
 import org.publicvalue.multiplatform.oidc.types.AuthCodeRequest
 import org.publicvalue.multiplatform.oidc.types.remote.AccessTokenResponse
 import org.publicvalue.multiplatform.oidc.types.remote.ErrorResponse
@@ -154,7 +155,7 @@ class ClientDetailPresenter(
                                             is ExchangeTokenResult.Response -> {
                                                 tokenResponse = it.accessTokenResponse
                                                 tokenResponseStatusCode = it.httpStatusCode
-                                                errorTokenResponse = it.errorResponse
+                                                errorTokenResponse = (it.cause as? HttpException)?.errorResponse
                                             }
                                         }
                                     }
