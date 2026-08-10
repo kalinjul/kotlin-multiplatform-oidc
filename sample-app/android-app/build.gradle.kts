@@ -1,18 +1,13 @@
+import org.publicvalue.convention.config.configureJava
+
 plugins {
     id("org.publicvalue.convention.android.application")
-    id("org.publicvalue.convention.kotlin.multiplatform.mobile")
+    id("org.jetbrains.kotlin.android")
     id("org.publicvalue.convention.compose.multiplatform")
 }
 
-kotlin {
-    androidTarget()
-    sourceSets {
-        val androidMain by getting {
-            dependencies {
-                implementation(projects.sampleApp.shared)
-            }
-        }
-    }
+dependencies {
+    implementation(projects.sampleApp.shared)
 }
 
 android {
@@ -22,9 +17,13 @@ android {
         applicationId = "org.publicvalue.multiplatform.oidc.sample"
         versionCode = 1
         versionName = "1.0"
+        minSdk = 23
 
         addManifestPlaceholders(
             mapOf("oidcRedirectScheme" to "org.publicvalue.multiplatform.oidc.sample")
         )
     }
+
 }
+
+configureJava()

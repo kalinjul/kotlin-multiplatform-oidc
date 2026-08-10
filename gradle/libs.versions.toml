@@ -6,20 +6,20 @@ minSdk = "21"
 jvmTarget = "17"
 # https://developer.android.com/build/releases/gradle-plugin#compatibility
 # https://kotlinlang.org/docs/multiplatform-compatibility-guide.html
-agp = "8.11.1"
+agp = "8.13.2"
 
 #https://github.com/JetBrains/compose-multiplatform
-compose-multiplatform = "1.9.0-rc01"
-kotlin = "2.2.20"
+compose-multiplatform = "1.10.0"
+kotlin = "2.3.0"
 # https://github.com/google/ksp
 ksp = "2.2.20-2.0.3"
-kotlin-inject = "0.8.0"
+kotlin-inject = "0.9.0"
 
 # https://developer.android.com/jetpack/androidx/releases/activity
-androidxActivity = "1.11.0"
+androidxActivity = "1.12.2"
 # https://developer.android.com/jetpack/androidx/releases/appcompat
 androidxAppCompat = "1.7.1"
-androidxDataStore = "1.1.7"
+androidxDataStore = "1.2.0"
 
 coreKtx = "1.17.0"
 #https://developer.android.com/jetpack/androidx/releases/arch-core
@@ -36,14 +36,14 @@ kotlinxAtomicfu = "0.29.0"
 kotlinxBrowser = "0.5.0"
 
 # https://github.com/slackhq/circuit/releases
-circuit = "0.30.0"
-sqldelight = "2.1.0"
+circuit = "0.32.0"
+sqldelight = "2.2.1"
 
-okhttp = "5.2.1"
-ktor = "3.3.1"
+okhttp = "5.3.2"
+ktor = "3.3.3"
 
 nexus-publish-plugin = "2.0.0"
-multiplatform-swiftpackage = "2.2.4"
+multiplatform-swiftpackage = "2.3.0"
 swiftklib = "0.6.4"
 dokka = "1.9.10"
 # https://developer.android.com/jetpack/androidx/releases/security
@@ -127,6 +127,7 @@ android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
 composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "compose-multiplatform" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 kmp = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }

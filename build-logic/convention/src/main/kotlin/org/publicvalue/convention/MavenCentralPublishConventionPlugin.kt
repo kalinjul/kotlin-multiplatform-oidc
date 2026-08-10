@@ -12,7 +12,6 @@ import org.gradle.kotlin.dsl.withType
 import org.gradle.plugins.signing.Sign
 import org.gradle.plugins.signing.SigningExtension
 import org.jetbrains.compose.internal.utils.getLocalProperty
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
 class MavenCentralPublishConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
@@ -22,15 +21,6 @@ class MavenCentralPublishConventionPlugin : Plugin<Project> {
                 apply("signing")
                 apply("org.jetbrains.dokka")
             }
-
-            extensions.configure<KotlinMultiplatformExtension> {
-                if (pluginManager.hasPlugin("com.android.library")) {
-                    androidTarget {
-                        publishLibraryVariants("release")
-                    }
-                }
-            }
-
 
             val javadocJar = tasks.register("javadocJar", Jar::class.java) {
                 archiveClassifier.set("javadoc")

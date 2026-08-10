@@ -4,9 +4,9 @@ import org.publicvalue.convention.config.configureWasmTarget
 import org.publicvalue.convention.config.exportKdoc
 
 plugins {
-    id("org.publicvalue.convention.android.library")
     id("org.publicvalue.convention.kotlin.multiplatform")
     id("org.publicvalue.convention.kotlin.multiplatform.mobile")
+    id("org.publicvalue.convention.android.library")
 //    alias(libs.plugins.kotlin.serialization)
     id("org.publicvalue.convention.centralPublish")
 }
@@ -47,4 +47,8 @@ kotlin {
     }
 
     exportKdoc()
+
+    androidLibrary {
+        namespace = "org.publicvalue.multiplatform.oidc.appsupport.preferences"
+    }
 }

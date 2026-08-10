@@ -1,6 +1,6 @@
 plugins {
-    id("org.publicvalue.convention.android.library")
     id("org.publicvalue.convention.kotlin.multiplatform.mobile")
+    id("org.publicvalue.convention.android.library")
     id("org.publicvalue.convention.centralPublish")
 }
 
@@ -26,8 +26,12 @@ kotlin {
             }
         }
     }
+
+    androidLibrary {
+        namespace = "org.publicvalue.multiplatform.oidc.appsupport.okhttp"
+    }
 }
 
-android {
-    namespace = "org.publicvalue.multiplatform.oidc.appsupport.okhttp"
+tasks.withType<AbstractTestTask>().configureEach {
+    failOnNoDiscoveredTests = false
 }
