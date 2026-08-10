@@ -7,7 +7,6 @@ import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
 import org.publicvalue.multiplatform.oidc.tokenstore.OauthTokens
 import org.publicvalue.multiplatform.oidc.tokenstore.TokenRefreshHandler
 import org.publicvalue.multiplatform.oidc.tokenstore.TokenStore
-import org.publicvalue.multiplatform.oidc.tokenstore.removeTokens
 
 /**
  * [OpenIdConnectAuthenticator] using [TokenStore] to retrieve tokens and

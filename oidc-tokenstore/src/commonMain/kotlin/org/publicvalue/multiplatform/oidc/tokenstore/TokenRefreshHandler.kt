@@ -49,10 +49,11 @@ class TokenRefreshHandler(
             return if (currentTokens != null && currentTokens.accessToken != oldAccessToken) {
                 currentTokens
             } else {
-                val refreshToken = tokenStore.getRefreshToken()
-                var newTokens = refreshCall(refreshToken ?: "")
+                val oldTokenResponse = tokenStore.getTokenResponse()
+                var newTokens = refreshCall(oldTokenResponse?.refresh_token ?: "")
+                // keep old refresh token if no new one was issued
                 if(newTokens.refresh_token == null) {
-                    newTokens = newTokens.copy(refresh_token = refreshToken)
+                    newTokens = newTokens.copy(refresh_token = oldTokenResponse?.refresh_token, refresh_token_expires_in = oldTokenResponse?.refresh_token_expires_in)
                 }
                 tokenStore.saveTokens(newTokens)
 
