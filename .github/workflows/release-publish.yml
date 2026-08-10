@@ -5,6 +5,12 @@ on:
     types: [prereleased, released]
 
 jobs:
+  build-docs:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/workflows/actions/doc
+
   deploy-release:
     runs-on: macos-15
 

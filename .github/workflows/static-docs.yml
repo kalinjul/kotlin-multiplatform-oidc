@@ -2,9 +2,9 @@
 name: Deploy static content to Pages
 
 on:
-  # Runs on pushes targeting the default branch
+  # Runs after a release has been published
   workflow_run:
-    workflows: [Build main and release]
+    workflows: [Publish Release]
     types:
       - completed
 
@@ -37,7 +37,7 @@ jobs:
         uses: actions/configure-pages@v4
       - uses: dawidd6/action-download-artifact@v3
         with:
-          workflow: main.yml
+          workflow: release-publish.yml
           workflow_conclusion: success
           name: oidc-dokka
       - name: Upload artifact
