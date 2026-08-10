@@ -16,4 +16,4 @@ runs:
       run: ./gradlew -p playground-app assemble
     - name: Build dokka
       shell: bash
-      run: ./gradlew dokkaHtmlCollector
+      run: ./gradlew :dokkaGenerate

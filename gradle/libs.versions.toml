@@ -45,7 +45,7 @@ ktor = "3.3.3"
 nexus-publish-plugin = "2.0.0"
 multiplatform-swiftpackage = "2.3.0"
 swiftklib = "0.6.4"
-dokka = "1.9.10"
+dokka = "2.2.0"
 # https://developer.android.com/jetpack/androidx/releases/security
 securityCryptoKtx = "1.1.0"
 
