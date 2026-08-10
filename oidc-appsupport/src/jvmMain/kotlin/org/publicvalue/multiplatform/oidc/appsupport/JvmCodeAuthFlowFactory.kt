@@ -57,6 +57,13 @@ private fun Url.openInBrowser() {
             throw UrlOpenException(e.message, cause = e)
         }
     } else {
-        throw UrlOpenException("Desktop does not support Browse Action")
+        when (val current = DesktopPlatform.Current) {
+            DesktopPlatform.Linux ->
+                Runtime.getRuntime().exec(arrayOf("xdg-open", toURI().toString()))
+            DesktopPlatform.Windows, DesktopPlatform.MacOS ->
+                throw UrlOpenException("AWT doesn't support the BROWSE action on $current")
+            DesktopPlatform.Unknown ->
+                throw UrlOpenException("AWT doesn't support $current")
+        }
     }
 }
