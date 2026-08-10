@@ -19,10 +19,9 @@ sealed class OpenIdConnectException(
     data class UnsuccessfulTokenRequest(
         override val message: String,
         val statusCode: HttpStatusCode,
-        val body: String?,
         val errorResponse: ErrorResponse?,
-        override val cause: Throwable? = null
-    ): OpenIdConnectException(message = "Authentication failed. $message", cause = cause)
+        override val cause: Exception,
+        ): OpenIdConnectException(message = "Authentication failed. $message", cause = cause)
 
     data class UnsupportedFormat(override val message: String): OpenIdConnectException(message)
 

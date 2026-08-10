@@ -11,10 +11,10 @@ import org.publicvalue.multiplatform.oauth.data.daos.IdpDao
 import org.publicvalue.multiplatform.oauth.data.db.Client
 import org.publicvalue.multiplatform.oauth.logging.Logger
 import org.publicvalue.multiplatform.oauth.util.DispatcherProvider
-import org.publicvalue.multiplatform.oidc.types.remote.ErrorResponse
-import org.publicvalue.multiplatform.oidc.types.AuthCodeRequest
 import org.publicvalue.multiplatform.oidc.OpenIdConnectException
+import org.publicvalue.multiplatform.oidc.types.AuthCodeRequest
 import org.publicvalue.multiplatform.oidc.types.remote.AccessTokenResponse
+import org.publicvalue.multiplatform.oidc.types.remote.ErrorResponse
 
 sealed class ExchangeTokenResult {
     data class Request(
@@ -23,7 +23,7 @@ sealed class ExchangeTokenResult {
     data class Response(
         val httpStatusCode: HttpStatusCode,
         val accessTokenResponse: AccessTokenResponse?,
-        val errorResponse: ErrorResponse? = null
+        val cause: Exception? = null
     ): ExchangeTokenResult()
 }
 
@@ -62,7 +62,7 @@ class ExchangeToken(
                     ExchangeTokenResult.Response(
                         httpStatusCode = e.statusCode,
                         accessTokenResponse = null,
-                        errorResponse = e.errorResponse
+                        cause = e.cause
                     )
                 )
                 throw e

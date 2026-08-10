@@ -9,6 +9,8 @@ import io.ktor.http.Url
 import io.ktor.http.isSuccess
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
+import org.publicvalue.multiplatform.oidc.OpenIdConnectException
+import org.publicvalue.multiplatform.oidc.toHttpException
 import org.publicvalue.multiplatform.oidc.types.remote.OpenIdConnectConfiguration
 import kotlin.experimental.ExperimentalObjCName
 import kotlin.native.ObjCName
@@ -61,5 +63,6 @@ private suspend inline fun <reified T: Any> HttpResponse.forceUnwrapBody(json: J
         val bodyString:String = call.body()
         json.decodeFromString(bodyString)
     } else {
-        throw Exception("Could not download discovery document: $this")
+        val cause = call.response.toHttpException()
+        throw OpenIdConnectException.TechnicalFailure("Could not download discovery document: ${cause.message}", cause)
     }
