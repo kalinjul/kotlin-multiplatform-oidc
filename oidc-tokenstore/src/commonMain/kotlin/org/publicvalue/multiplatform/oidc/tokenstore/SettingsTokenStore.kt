@@ -1,14 +1,22 @@
 package org.publicvalue.multiplatform.oidc.tokenstore
 
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.serialization.json.Json
 import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
+import org.publicvalue.multiplatform.oidc.types.remote.AccessTokenResponse
 
 enum class SettingsKey {
-    ACCESSTOKEN, REFRESHTOKEN, IDTOKEN
+    /** Legacy keys */
+    ACCESSTOKEN, REFRESHTOKEN, IDTOKEN,
+
+    /** Current key, holds the whole [AccessTokenResponse] as JSON. */
+    TOKENS
 }
 
 /**
@@ -22,109 +30,113 @@ open class SettingsTokenStore(
 
     private val mutex = Mutex(false)
 
-    private val currentAccessToken = MutableStateFlow<String?>(null)
-    private val currentRefreshToken = MutableStateFlow<String?>(null)
-    private val currentIdToken = MutableStateFlow<String?>(null)
-
-    private var accessTokenLoaded = false
-    private var refreshTokenLoaded = false
-    private var idTokenLoaded = false
-
-    override val accessTokenFlow get() = flow {
-        if (!accessTokenLoaded) {
-            accessTokenLoaded = true
-            currentAccessToken.value = getAccessToken()
-        }
-        emitAll(currentAccessToken)
+    private val json = Json {
+        ignoreUnknownKeys = true
+        encodeDefaults = true
     }
 
-    override val refreshTokenFlow get() = flow {
-        if (!refreshTokenLoaded) {
-            refreshTokenLoaded = true
-            currentRefreshToken.value = getRefreshToken()
+    private val currentTokens = MutableStateFlow<AccessTokenResponse?>(null)
+
+    private var tokensLoaded = false
+    private var legacyMigrated = false
+
+    override val tokenResponseFlow: Flow<AccessTokenResponse?> get() = flow {
+        if (!tokensLoaded) {
+            getTokenResponse()
         }
-        emitAll(currentRefreshToken)
+        emitAll(currentTokens)
     }
 
-    override val idTokenFlow get() = flow {
-        if (!idTokenLoaded) {
-            idTokenLoaded = true
-            currentIdToken.value = getIdToken()
-        }
-        emitAll(currentIdToken)
-    }
+    @Deprecated("Use tokenResponseFlow instead")
+    override val accessTokenFlow get() = tokenResponseFlow.map { it?.access_token }
 
-    override suspend fun getAccessToken(): String? {
+    @Deprecated("Use tokenResponseFlow instead")
+    override val refreshTokenFlow get() = tokenResponseFlow.map { it?.refresh_token }
+
+    @Deprecated("Use tokenResponseFlow instead")
+    override val idTokenFlow get() = tokenResponseFlow.map { it?.id_token }
+
+    override suspend fun getTokenResponse(): AccessTokenResponse? {
         return runOrNull {
             mutex.withLock {
-                settings.get(SettingsKey.ACCESSTOKEN.name)
+                readTokens()
             }
         }
     }
 
-    override suspend fun getRefreshToken(): String? {
-        return runOrNull {
-            mutex.withLock {
-                settings.get(SettingsKey.REFRESHTOKEN.name)
-            }
-        }
-    }
+    override suspend fun getAccessToken(): String? = getTokenResponse()?.access_token
 
-    override suspend fun getIdToken(): String? {
-        return runOrNull {
-            mutex.withLock {
-                settings.get(SettingsKey.IDTOKEN.name)
-            }
-        }
-    }
+    override suspend fun getRefreshToken(): String? = getTokenResponse()?.refresh_token
 
-    override suspend fun removeAccessToken() {
+    override suspend fun getIdToken(): String? = getTokenResponse()?.id_token
+
+    override suspend fun removeTokens() {
         runOrNull {
             mutex.withLock {
-                settings.remove(SettingsKey.ACCESSTOKEN.name)
-                currentAccessToken.value = null
+                writeTokens(null)
             }
         }
     }
 
-    override suspend fun removeRefreshToken() {
+    override suspend fun saveTokens(tokens: AccessTokenResponse) {
         runOrNull {
             mutex.withLock {
-                settings.remove(SettingsKey.REFRESHTOKEN.name)
-                currentRefreshToken.value = null
+                writeTokens(tokens)
             }
         }
     }
 
-    override suspend fun removeIdToken() {
-        runOrNull {
-            mutex.withLock {
-                settings.remove(SettingsKey.IDTOKEN.name)
-                currentIdToken.value = null
-            }
-        }
+    /** Must be called while holding [mutex]. */
+    private suspend fun readTokens(): AccessTokenResponse? {
+        val tokens = settings.get(SettingsKey.TOKENS.name)?.let { stored ->
+            runOrNull { json.decodeFromString<AccessTokenResponse>(stored) }
+        } ?: migrateLegacyTokens()
+
+        tokensLoaded = true
+        currentTokens.value = tokens
+        return tokens
     }
 
-    override suspend fun saveTokens(accessToken: String, refreshToken: String?, idToken: String?) {
-        runOrNull {
-            mutex.withLock {
-                settings.put(SettingsKey.ACCESSTOKEN.name, accessToken)
-                if (refreshToken != null) {
-                    settings.put(SettingsKey.REFRESHTOKEN.name, refreshToken)
-                } else {
-                    settings.remove(SettingsKey.REFRESHTOKEN.name)
-                }
-                if (idToken != null) {
-                    settings.put(SettingsKey.IDTOKEN.name, idToken)
-                } else {
-                    settings.remove(SettingsKey.IDTOKEN.name)
-                }
-                // update cached values
-                currentAccessToken.value = accessToken
-                currentRefreshToken.value = refreshToken
-                currentIdToken.value = idToken
-            }
+    /** Must be called while holding [mutex]. */
+    private suspend fun writeTokens(tokens: AccessTokenResponse?) {
+        if (tokens != null) {
+            settings.put(SettingsKey.TOKENS.name, json.encodeToString(tokens))
+        } else {
+            settings.remove(SettingsKey.TOKENS.name)
         }
+        removeLegacyTokens()
+
+        tokensLoaded = true
+        currentTokens.value = tokens
+    }
+
+    /**
+     * Migrates tokens to current json format. Must be called while holding [mutex].
+     */
+    private suspend fun migrateLegacyTokens(): AccessTokenResponse? {
+        if (legacyMigrated) return null
+
+        val accessToken = settings.get(SettingsKey.ACCESSTOKEN.name)
+        if (accessToken == null) {
+            legacyMigrated = true
+            return null
+        }
+
+        val tokens = AccessTokenResponse(
+            access_token = accessToken,
+            refresh_token = settings.get(SettingsKey.REFRESHTOKEN.name),
+            id_token = settings.get(SettingsKey.IDTOKEN.name)
+        )
+        writeTokens(tokens)
+        return tokens
+    }
+
+    private suspend fun removeLegacyTokens() {
+        if (legacyMigrated) return
+        settings.remove(SettingsKey.ACCESSTOKEN.name)
+        settings.remove(SettingsKey.REFRESHTOKEN.name)
+        settings.remove(SettingsKey.IDTOKEN.name)
+        legacyMigrated = true
     }
 }
 
