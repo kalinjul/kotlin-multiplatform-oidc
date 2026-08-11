@@ -10,16 +10,24 @@ import org.publicvalue.multiplatform.oidc.OpenIdConnectException
 import org.publicvalue.multiplatform.oidc.tokenstore.OauthTokens
 import org.publicvalue.multiplatform.oidc.tokenstore.TokenRefreshHandler
 import org.publicvalue.multiplatform.oidc.tokenstore.TokenStore
+import org.publicvalue.multiplatform.oidc.types.remote.ErrorResponse
 
 /**
  * Configure Bearer Authentication using TokenStore + RefreshHandler.
+ *
+ * Tokens are removed if a refresh fails with a non-temporary exception (e.g. invalid_grant on token expiry)
  */
 @ExperimentalOpenIdConnect
 fun AuthConfig.oidcBearer(
     tokenStore: TokenStore,
     refreshHandler: TokenRefreshHandler,
     client: OpenIdConnectClient,
-    onRefreshFailed: suspend (Exception) -> Unit = { tokenStore.removeTokens() }
+    onRefreshFailed: suspend (Exception) -> Unit = {
+        if (it is OpenIdConnectException.UnsuccessfulTokenRequest && it.errorResponse?.error in ErrorResponse.Error.tokenErrors) {
+            // iif we have real, permanent error on token refresh, remove tokens.
+            tokenStore.removeTokens()
+        }
+    }
 ) {
     oidcBearer(
         tokenStore = tokenStore,
@@ -37,15 +45,13 @@ fun AuthConfig.oidcBearer(
  *
  * @param refreshAndSaveTokens Callback that is used to refresh the token. Receives the old token and should
  * save it into the store.
+ *
+ * @param onRefreshFailed called when refresh call fails
  */
 @ExperimentalOpenIdConnect
 fun AuthConfig.oidcBearer(
     tokenStore: TokenStore,
-    /** receives the old access token as parameter.
-     *  This function should get new tokens and save them.
-     **/
     refreshAndSaveTokens: suspend (String) -> OauthTokens?,
-    /** called when refresh throws **/
     onRefreshFailed: suspend (Exception) -> Unit
 ) {
 
@@ -84,23 +90,21 @@ fun BearerAuthConfig.loadTokens(tokenStore: TokenStore) {
  * @param refreshAndSaveTokens The callback receives the old access token and should refresh tokens,
  * _save_ them into e.g. a token store and return them as result.
  *
- * @param onRefreshFailed called when the refresh throws an exception
+ * @param onRefreshFailed called when refresh call fails
  */
 @ExperimentalOpenIdConnect
 fun BearerAuthConfig.refreshTokens(
-    /** receives the old access token **/
     refreshAndSaveTokens: suspend (String) -> OauthTokens?,
-    /** called when refresh throws **/
-    onRefreshFailed: suspend (Exception) -> Unit
+    onRefreshFailed: suspend (OpenIdConnectException) -> Unit,
 ) {
     refreshTokens {
         val newTokens = try {
             refreshAndSaveTokens(this.oldTokens?.accessToken.orEmpty())
-        } catch (e: OpenIdConnectException) {
-            if (e is OpenIdConnectException.UnsuccessfulTokenRequest) {
-                onRefreshFailed(e)
-            }
-            null
+        } catch (e: OpenIdConnectException.UnsuccessfulTokenRequest) {
+            onRefreshFailed(e)
+            throw e
+        } catch (e: Exception) {
+            throw e
         }
         newTokens?.let {
             BearerTokens(
