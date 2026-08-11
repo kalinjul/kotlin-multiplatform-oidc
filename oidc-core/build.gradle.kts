@@ -28,7 +28,6 @@ kotlin {
                 implementation(libs.ktor.serialization.kotlinx.json)
 
                 implementation(projects.oidcCrypto)
-                implementation(projects.oidcPreferences)
             }
         }
 

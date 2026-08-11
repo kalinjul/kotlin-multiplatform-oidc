@@ -21,8 +21,7 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-//                implementation(libs.kotlinx.coroutines.core)
-//
+                implementation(projects.oidcCore)
                 implementation(libs.kotlinx.serialization.json)
                 implementation(libs.ktor.serialization.kotlinx.json)
             }
