@@ -23,8 +23,8 @@ fun AuthConfig.oidcBearer(
     refreshHandler: TokenRefreshHandler,
     client: OpenIdConnectClient,
     onRefreshFailed: suspend (Exception) -> Unit = {
-        if (it is OpenIdConnectException.UnsuccessfulTokenRequest && it.errorResponse?.error in ErrorResponse.Error.tokenErrors) {
-            // iif we have real, permanent error on token refresh, remove tokens.
+        if ((it is OpenIdConnectException.UnsuccessfulTokenRequest && it.errorResponse?.error in ErrorResponse.Error.tokenErrors) || it is OpenIdConnectException.TokenExpired) {
+            // if we have real, permanent error on token refresh or the token is expired, remove tokens.
             tokenStore.removeTokens()
         }
     }
@@ -43,8 +43,8 @@ fun AuthConfig.oidcBearer(
  *
  * The tokenStore is only used to retrieve tokens.
  *
- * @param refreshAndSaveTokens Callback that is used to refresh the token. Receives the old token and should
- * save it into the store.
+ * @param refreshAndSaveTokens Callback that is used to refresh the token.
+ * Receives the old token for comparison and should save new tokens.
  *
  * @param onRefreshFailed called when refresh call fails
  */
@@ -101,6 +101,9 @@ fun BearerAuthConfig.refreshTokens(
         val newTokens = try {
             refreshAndSaveTokens(this.oldTokens?.accessToken.orEmpty())
         } catch (e: OpenIdConnectException.UnsuccessfulTokenRequest) {
+            onRefreshFailed(e)
+            throw e
+        } catch (e: OpenIdConnectException.TokenExpired) {
             onRefreshFailed(e)
             throw e
         } catch (e: Exception) {
