@@ -30,6 +30,26 @@ data class ErrorResponse(
         unsupported_response_type,
         invalid_scope,
         server_error,
-        temporarily_unavailable
+        temporarily_unavailable;
+
+        companion object {
+            val tokenErrors = listOf(
+                Error.invalid_request,
+                Error.invalid_client,
+                Error.invalid_grant,
+                Error.unauthorized_client,
+                Error.unsupported_grant_type,
+                Error.invalid_scope
+            )
+            val authorizationErrors = listOf(
+                Error.invalid_request,
+                Error.unauthorized_client,
+                Error.access_denied,
+                Error.unsupported_response_type,
+                Error.invalid_scope,
+                Error.server_error,
+                Error.temporarily_unavailable
+            )
+        }
     }
 }
