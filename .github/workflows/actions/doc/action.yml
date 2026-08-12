@@ -8,7 +8,7 @@ runs:
     - name: Build dokka
       shell: bash
       run: ./gradlew :dokkaGenerate
-    - uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@v7
       with:
         name: oidc-dokka
         path: build/dokka/html/

@@ -21,7 +21,7 @@ jobs:
   build:
     runs-on: macos-15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: ./.github/workflows/actions/build
 
   test:
@@ -33,7 +33,7 @@ jobs:
       checks: write
       contents: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: ./.github/workflows/actions/test
 
   create-swift-package:
@@ -41,7 +41,7 @@ jobs:
     if: github.ref == 'refs/heads/main'
     runs-on: macos-15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: ./.github/workflows/actions/createSwiftPackage
         with:
           version: "main"
@@ -51,7 +51,7 @@ jobs:
     if: github.ref == 'refs/heads/main'
     runs-on: macos-15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: ./.github/workflows/actions/deploySwiftPackage
         with:
           branch: "develop"
@@ -63,7 +63,7 @@ jobs:
     runs-on: macos-15
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           ref: ${{ github.ref }}
           fetch-tags: true

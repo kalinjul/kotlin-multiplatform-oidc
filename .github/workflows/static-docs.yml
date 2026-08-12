@@ -32,16 +32,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Setup Pages
-        uses: actions/configure-pages@v4
-      - uses: dawidd6/action-download-artifact@v3
+        uses: actions/configure-pages@v6
+      - uses: dawidd6/action-download-artifact@v21
         with:
           workflow: release-publish.yml
           workflow_conclusion: success
           name: oidc-dokka
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v2
+        uses: actions/upload-pages-artifact@v5
         with:
           path: '.'
       - name: Deploy to GitHub Pages

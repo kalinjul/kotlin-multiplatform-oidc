@@ -8,14 +8,14 @@ jobs:
   build-docs:
     runs-on: macos-15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: ./.github/workflows/actions/doc
 
   deploy-release:
     runs-on: macos-15
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: ./.github/workflows/actions/prepare
 
       - name: Generate version
@@ -38,7 +38,7 @@ jobs:
   create-swift-package:
     runs-on: macos-15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: ./.github/workflows/actions/createSwiftPackage
         with:
           version: ${{ github.event.release.tag_name }}
@@ -47,7 +47,7 @@ jobs:
     needs: [ create-swift-package ]
     runs-on: macos-15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: ./.github/workflows/actions/deploySwiftPackage
         with:
           branch: "main"
