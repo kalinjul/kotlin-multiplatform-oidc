@@ -6,6 +6,9 @@ import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
 import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
 import org.publicvalue.multiplatform.oidc.OpenIdConnectException
 import org.publicvalue.multiplatform.oidc.types.remote.AccessTokenResponse
+import org.publicvalue.multiplatform.oidc.util.DefaultTokenExpirationPolicy
+import org.publicvalue.multiplatform.oidc.util.TokenExpirationPolicy
+import org.publicvalue.multiplatform.oidc.util.refreshTokenExpired
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.experimental.ExperimentalObjCName
 import kotlin.experimental.ExperimentalObjCRefinement
@@ -21,6 +24,7 @@ import kotlin.native.ObjCName
 @Suppress("unused")
 class TokenRefreshHandler(
     private val tokenStore: TokenStore,
+    private val expirationPolicy: TokenExpirationPolicy = DefaultTokenExpirationPolicy,
 ) {
     private val mutex = Mutex()
 
@@ -50,10 +54,17 @@ class TokenRefreshHandler(
                 currentTokens
             } else {
                 val oldTokenResponse = tokenStore.getTokenResponse()
-                var newTokens = refreshCall(oldTokenResponse?.refresh_token ?: "")
+                val refreshToken = oldTokenResponse?.refresh_token
+                if (refreshToken == null) {
+                    throw OpenIdConnectException.TokenExpired("No refresh token available", null)
+                }
+                if (oldTokenResponse.refreshTokenExpired(expirationPolicy.expiryTimeTolerance)) {
+                    throw OpenIdConnectException.TokenExpired("Refresh token expired", null)
+                }
+                var newTokens = refreshCall(refreshToken)
                 // keep old refresh token if no new one was issued
                 if(newTokens.refresh_token == null) {
-                    newTokens = newTokens.copy(refresh_token = oldTokenResponse?.refresh_token, refresh_token_expires_in = oldTokenResponse?.refresh_token_expires_in)
+                    newTokens = newTokens.copy(refresh_token = oldTokenResponse.refresh_token, refresh_token_expires_in = oldTokenResponse?.refresh_token_expires_in)
                 }
                 tokenStore.saveTokens(newTokens)
 

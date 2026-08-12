@@ -27,6 +27,8 @@ sealed class OpenIdConnectException(
 
     data class TechnicalFailure(override val message: String, override val cause: Throwable?): OpenIdConnectException(message, cause)
 
+    data class TokenExpired(override val message: String, override val cause: Throwable?): OpenIdConnectException(message, cause)
+
     data class InvalidConfiguration(override val message: String): OpenIdConnectException(message)
 }
 
