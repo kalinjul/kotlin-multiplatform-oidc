@@ -58,6 +58,18 @@ class TokenExpirationTest {
     }
 
     @Test
+    fun refreshToken_alternativeField_ExpiredWithinTolerance() {
+        val now = Clock.System.now().epochSeconds
+        val response = AccessTokenResponse(
+            access_token = "access",
+            refresh_expires_in = 30,
+            received_at = now
+        )
+
+        assertThat(response.refreshTokenExpired()).isTrue()
+    }
+
+    @Test
     fun accessTokenNeverExpiresWithoutExpiresIn() {
         val response = AccessTokenResponse(
             access_token = "access",

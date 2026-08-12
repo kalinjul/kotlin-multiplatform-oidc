@@ -61,6 +61,11 @@ data class AccessTokenResponse (
     val refresh_token_expires_in: Int? = null,
 
     /**
+     * Alternative field to refresh_token_expires_in.
+     */
+    val refresh_expires_in: Int? = null,
+
+    /**
      * **Required in OpenIDConnect**
      *
      * ID Token value associated with the authenticated session.

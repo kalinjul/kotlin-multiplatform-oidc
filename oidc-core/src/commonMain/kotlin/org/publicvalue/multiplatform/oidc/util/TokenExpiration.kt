@@ -20,7 +20,7 @@ val AccessTokenResponse.accessTokenExpirationTime: Instant? get() {
 }
 
 val AccessTokenResponse.refreshTokenExpirationTime: Instant? get() {
-    return refresh_token_expires_in?.let { Instant.fromEpochSeconds(received_at + it) }
+    return (refresh_token_expires_in ?: refresh_expires_in)?.let { Instant.fromEpochSeconds(received_at + it) }
 }
 
 fun AccessTokenResponse.accessTokenExpired(expiryTimeTolerance: Duration = DefaultTokenExpirationPolicy.expiryTimeTolerance): Boolean = accessTokenExpirationTime?.let { it <= Clock.System.now() + expiryTimeTolerance } ?: false
