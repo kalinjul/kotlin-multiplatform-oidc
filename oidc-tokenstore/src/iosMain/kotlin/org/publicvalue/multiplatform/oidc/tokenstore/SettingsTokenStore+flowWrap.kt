@@ -3,6 +3,7 @@ package org.publicvalue.multiplatform.oidc.tokenstore
 import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
 import org.publicvalue.multiplatform.oidc.helper.FlowWrapper
 import org.publicvalue.multiplatform.oidc.helper.wrap
+import org.publicvalue.multiplatform.oidc.types.remote.AccessTokenResponse
 import kotlin.experimental.ExperimentalObjCName
 
 @OptIn(ExperimentalOpenIdConnect::class, ExperimentalObjCName::class)
@@ -19,3 +20,8 @@ val TokenStore.refreshTokenFlowWrap: FlowWrapper<String?> get() = this.refreshTo
 @ObjCName("idToken")
 @Suppress("unused")
 val TokenStore.idTokenFlowWrap: FlowWrapper<String?> get() = this.idTokenFlow.wrap()
+
+@OptIn(ExperimentalOpenIdConnect::class, ExperimentalObjCName::class)
+@ObjCName("tokenResponse")
+@Suppress("unused")
+val TokenStore.tokenResponseFlowWrap: FlowWrapper<AccessTokenResponse?> get() = this.tokenResponseFlow.wrap()

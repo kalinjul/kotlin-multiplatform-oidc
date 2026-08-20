@@ -11,7 +11,9 @@ class TokenExpirationPolicy(
      * Tokens with less this duration left before expiration are considered expired.
      */
     val expiryTimeTolerance: Duration = 60.seconds
-)
+) {
+    companion object
+}
 
 val DefaultTokenExpirationPolicy: TokenExpirationPolicy = TokenExpirationPolicy()
 

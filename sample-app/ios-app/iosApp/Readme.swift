@@ -84,7 +84,7 @@ struct Readme {
         }
         // endSession with Web flow (opens browser and handles post_logout_redirect_uri redirect)
         let factory = CodeAuthFlowFactory(ephemeralBrowserSession: false)
-        let flow = factory.createAuthFlow(client: client)
+        let flow = factory.createEndSessionFlow(client: client)
         try await flow.endSession(idToken: "<idToken>", configureEndSessionUrl: { urlBuilder in
         })
         
@@ -120,7 +120,7 @@ struct Readme {
     
     // RefreshHandler
     func _6() async throws {
-        let refreshHandler = TokenRefreshHandler(tokenStore: tokenstore)
+        let refreshHandler = TokenRefreshHandler(tokenStore: tokenstore, expirationPolicy: TokenExpirationPolicy.companion.seconds(value: 60))
         try await refreshHandler.refreshAndSaveToken(client: client, oldAccessToken: oldAccessToken)  // thread-safe refresh and save new tokens to store
     }
 }

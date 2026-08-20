@@ -3,7 +3,9 @@ package org.publicvalue.multiplatform.oidc.tokenstore
 import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
 import org.publicvalue.multiplatform.oidc.OpenIdConnectException
 import org.publicvalue.multiplatform.oidc.types.remote.AccessTokenResponse
+import org.publicvalue.multiplatform.oidc.util.TokenExpirationPolicy
 import kotlin.coroutines.cancellation.CancellationException
+import kotlin.time.Duration.Companion.seconds
 
 /**
  * Thread-safe refresh the tokens and save to store.
@@ -29,3 +31,5 @@ suspend fun TokenRefreshHandler.refreshAndSaveToken(refresher: TokenRefresher, o
 interface TokenRefresher {
     suspend fun refreshToken(refreshToken: String): AccessTokenResponse
 }
+
+fun TokenExpirationPolicy.Companion.seconds(value: Int) = TokenExpirationPolicy(value.seconds)
