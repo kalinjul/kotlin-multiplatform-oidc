@@ -73,9 +73,12 @@ open class SettingsTokenStore(
     override suspend fun removeTokens() {
         runOrNull {
             mutex.withLock {
-                writeTokens(null)
+                settings.remove(SettingsKey.TOKENS.name)
             }
         }
+
+        tokensLoaded = false
+        currentTokens.value = null
     }
 
     override suspend fun saveTokens(tokens: AccessTokenResponse) {

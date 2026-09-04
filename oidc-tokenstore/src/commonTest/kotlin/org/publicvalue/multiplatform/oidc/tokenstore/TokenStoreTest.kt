@@ -4,6 +4,7 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
 import assertk.assertions.isNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
 import org.publicvalue.multiplatform.oidc.types.remote.AccessTokenResponse
@@ -80,5 +81,44 @@ class TokenStoreTest {
     fun emptyStore() = runTest {
         assertThat(tokenStore.getTokenResponse()).isNull()
         assertThat(tokenStore.getAccessToken()).isNull()
+    }
+
+
+    private inner class LockingSettingsStore: SettingsStore {
+        var locked = false
+        override suspend fun get(key: String): String? {
+            if (locked) throw RuntimeException("Locked")
+            return settings.get(key)
+        }
+
+        override suspend fun put(key: String, value: String) {
+            if (locked) throw RuntimeException("Locked")
+            return settings.put(key, value)
+        }
+
+        override suspend fun remove(key: String) {
+            if (locked) throw RuntimeException("Locked")
+            settings.remove(key)
+        }
+
+        override suspend fun clear() {
+            if (locked) throw RuntimeException("Locked")
+            settings.clear()
+        }
+    }
+
+    @Test
+    fun removeTokensClearsCacheEvenIfSettingsThrows() = runTest {
+        val throwingSettings = LockingSettingsStore()
+        val tokenStore = SettingsTokenStore(settings = throwingSettings)
+        tokenStore.saveTokens("1", "2", "3")
+        val first = tokenStore.tokenResponseFlow.first()
+
+        throwingSettings.locked = true
+        tokenStore.removeTokens()
+        val result = tokenStore.tokenResponseFlow.first()
+
+        // local cache must be cleared even though settings.remove() threw
+        assertThat(result).isNull()
     }
 }
