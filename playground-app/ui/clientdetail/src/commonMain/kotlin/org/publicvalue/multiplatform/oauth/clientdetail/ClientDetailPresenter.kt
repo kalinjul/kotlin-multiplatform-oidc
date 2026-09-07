@@ -30,6 +30,8 @@ import org.publicvalue.multiplatform.oauth.domain.ExchangeToken
 import org.publicvalue.multiplatform.oauth.domain.ExchangeTokenResult
 import org.publicvalue.multiplatform.oauth.domain.LogoutPost
 import org.publicvalue.multiplatform.oauth.domain.LogoutWebFlow
+import org.publicvalue.multiplatform.oauth.domain.RefreshToken
+import org.publicvalue.multiplatform.oauth.domain.RefreshTokenResult
 import org.publicvalue.multiplatform.oauth.domain.types.AuthorizeResult
 import org.publicvalue.multiplatform.oauth.logging.Logger
 import org.publicvalue.multiplatform.oauth.screens.ClientDetailScreen
@@ -63,7 +65,8 @@ class ClientDetailPresenter(
     private val authorize: Authorize,
     private val logoutWebFlow: LogoutWebFlow,
     private val logoutPost: LogoutPost,
-    private val exchangeToken: ExchangeToken
+    private val exchangeToken: ExchangeToken,
+    private val refreshToken: RefreshToken,
 ) : ErrorPresenter<ClientDetailUiState> {
 
     override var errorMessage = MutableStateFlow<String?>(null)
@@ -202,6 +205,30 @@ class ClientDetailPresenter(
                         }
                     }
                 }
+                ClientDetailUiEvent.Refresh -> {
+                    val refreshTokenValue = tokenResponse?.refresh_token ?: return
+                    client?.let { client ->
+                        scope.launch {
+                            catchErrorMessage {
+                                refreshToken(client, refreshTokenValue).collect {
+                                    when (it) {
+                                        is RefreshTokenResult.Request -> {
+                                            tokenRequestParameters = it.parameters
+                                            tokenResponse = null
+                                            tokenResponseStatusCode = null
+                                            errorTokenResponse = null
+                                        }
+                                        is RefreshTokenResult.Response -> {
+                                            tokenResponse = it.accessTokenResponse
+                                            tokenResponseStatusCode = it.httpStatusCode
+                                            errorTokenResponse = (it.cause as? HttpException)?.errorResponse
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
                 ClientDetailUiEvent.ResetErrorMessage -> resetErrorMessage()
             }
         }
@@ -221,7 +248,8 @@ class ClientDetailPresenter(
             endSessionRequestUrl = endSessionRequestUrl,
             endSessionStatusCode = endSessionStatusCode,
             loginEnabled = tokenResponse == null || errorTokenResponse != null,
-            logoutEnabled = tokenResponse != null && errorTokenResponse == null
+            logoutEnabled = tokenResponse != null && errorTokenResponse == null,
+            refreshEnabled = tokenResponse?.refresh_token != null && errorTokenResponse == null,
         )
     }
 }

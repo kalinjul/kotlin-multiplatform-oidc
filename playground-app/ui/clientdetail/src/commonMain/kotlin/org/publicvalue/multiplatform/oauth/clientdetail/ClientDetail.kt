@@ -111,6 +111,9 @@ internal fun ClientDetail(
         onLogout = {
             state.eventSink(ClientDetailUiEvent.Logout)
         },
+        onRefresh = {
+            state.eventSink(ClientDetailUiEvent.Refresh)
+        },
         errorMessage = state.errorMessage,
         resetErrorMessage = {
             state.eventSink(ClientDetailUiEvent.ResetErrorMessage)
@@ -125,7 +128,8 @@ internal fun ClientDetail(
         endSessionRequestUrl = state.endSessionRequestUrl,
         endSessionStatusCode = state.endSessionStatusCode,
         logoutEnabled = state.logoutEnabled,
-        loginEnabled = state.loginEnabled
+        loginEnabled = state.loginEnabled,
+        refreshEnabled = state.refreshEnabled,
     )
 }
 
@@ -142,6 +146,7 @@ internal fun ClientDetail(
     onUseWebFlowLogoutChange: (Boolean) -> Unit,
     onLogin: () -> Unit,
     onLogout: () -> Unit,
+    onRefresh: () -> Unit,
     errorMessage: String?,
     resetErrorMessage: () -> Unit,
     authcodeRequestUrl: String?,
@@ -154,7 +159,8 @@ internal fun ClientDetail(
     endSessionRequestUrl: String?,
     endSessionStatusCode: HttpStatusCode?,
     loginEnabled: Boolean,
-    logoutEnabled: Boolean
+    logoutEnabled: Boolean,
+    refreshEnabled: Boolean,
 ) {
     Scaffold(
         modifier.fillMaxSize(),
@@ -199,6 +205,8 @@ internal fun ClientDetail(
                         logoutEnabled = logoutEnabled,
                         onLogin = onLogin,
                         onLogout = onLogout,
+                        onRefresh = onRefresh,
+                        refreshEnabled = refreshEnabled,
                     )
                 }
             }
@@ -312,6 +320,8 @@ internal fun AuthFlow(
     logoutEnabled: Boolean,
     onLogin: () -> Unit,
     onLogout: () -> Unit,
+    onRefresh: () -> Unit,
+    refreshEnabled: Boolean,
 ) {
     var currentEpochSeconds by remember(tokenResponse) {
         mutableStateOf(Clock.System.now().epochSeconds)
@@ -331,6 +341,9 @@ internal fun AuthFlow(
             }
             Button(onClick = { onLogout() }, enabled = logoutEnabled) {
                 Text("Logout")
+            }
+            Button(onClick = onRefresh, enabled = refreshEnabled) {
+                Text("Refresh")
             }
         }
 //        FormHeadline(text = "Discovery")
