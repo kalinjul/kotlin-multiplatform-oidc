@@ -34,6 +34,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,6 +48,7 @@ import com.slack.circuit.runtime.ui.Ui
 import com.slack.circuit.runtime.ui.ui
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.Parameters
+import kotlinx.coroutines.delay
 import me.tatarka.inject.annotations.Inject
 import org.publicvalue.multiplatform.oauth.compose.components.ColumnHeadline
 import org.publicvalue.multiplatform.oauth.compose.components.ErrorMessageBox
@@ -59,6 +61,7 @@ import org.publicvalue.multiplatform.oauth.domain.Constants
 import org.publicvalue.multiplatform.oauth.screens.ClientDetailScreen
 import org.publicvalue.multiplatform.oidc.types.remote.ErrorResponse
 import org.publicvalue.multiplatform.oidc.types.remote.AccessTokenResponse
+import kotlin.time.Clock
 
 @Inject
 class ClientDetailUiFactory : Ui.Factory {
@@ -310,6 +313,17 @@ internal fun AuthFlow(
     onLogin: () -> Unit,
     onLogout: () -> Unit,
 ) {
+    var currentEpochSeconds by remember(tokenResponse) {
+        mutableStateOf(Clock.System.now().epochSeconds)
+    }
+
+    LaunchedEffect(tokenResponse) {
+        while (tokenResponse != null) {
+            currentEpochSeconds = Clock.System.now().epochSeconds
+            delay(1_000)
+        }
+    }
+
     Column(modifier = modifier.verticalScroll(rememberScrollState())) {
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             Button(onClick = { onLogin() }, enabled = loginEnabled) {
@@ -344,6 +358,7 @@ internal fun AuthFlow(
                 loading = tokenResponse == null && errorTokenResponse == null
             )
             if (tokenResponse != null) {
+                TokenLifetimes(tokenResponse, currentEpochSeconds)
                 ExpandableInfo(
                     label = "Access Token",
                     text = tokenResponse.access_token,
@@ -367,6 +382,35 @@ internal fun AuthFlow(
             FormHeadline(text = "Response Status Code: $endSessionStatusCode")
         }
     }
+}
+
+@Composable
+private fun TokenLifetimes(
+    tokenResponse: AccessTokenResponse,
+    currentEpochSeconds: Long,
+) {
+    val accessTokenSeconds = tokenResponse.expires_in?.let {
+        (tokenResponse.received_at + it - currentEpochSeconds).coerceAtLeast(0)
+    }
+    val refreshTokenSeconds = (tokenResponse.refresh_token_expires_in ?: tokenResponse.refresh_expires_in)?.let {
+        (tokenResponse.received_at + it - currentEpochSeconds).coerceAtLeast(0)
+    }
+
+    accessTokenSeconds?.let {
+        FormHeadline(text = "Access token lifetime: ${it.formatLifetime()}")
+    }
+    refreshTokenSeconds?.let {
+        FormHeadline(text = "Refresh token lifetime: ${it.formatLifetime()}")
+    }
+}
+
+private fun Long.formatLifetime(): String {
+    if (this == 0L) return "expired"
+
+    val hours = this / 3_600
+    val minutes = (this % 3_600) / 60
+    val seconds = this % 60
+    return "${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}"
 }
 
 @Composable
