@@ -9,13 +9,13 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation(projects.common.ui.compose)
-                implementation(compose.foundation)
+                implementation(libs.compose.foundation)
                 api(projects.domain)
 //
 //                api(projects.common.ui.resources.strings)
                 api(projects.common.screens)
 //
-                implementation(compose.material3)
+                implementation(libs.compose.material3)
                 implementation(libs.material.icons.core)
             }
         }

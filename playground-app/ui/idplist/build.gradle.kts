@@ -17,9 +17,9 @@ kotlin {
                 api(libs.kotlinx.coroutines.core)
                 implementation(libs.kotlin.inject.runtime)
 
-                implementation(compose.foundation)
-                implementation(compose.materialIconsExtended)
-                implementation(compose.material3)
+                implementation(libs.compose.foundation)
+                implementation(libs.compose.materialIconsExtended)
+                implementation(libs.compose.material3)
             }
         }
     }
