@@ -1,18 +1,18 @@
 [versions]
-compileSdk = "36"
-targetSdk = "36"
+compileSdk = "37"
+targetSdk = "37"
 minSdk = "21"
 
 jvmTarget = "17"
 # https://developer.android.com/build/releases/gradle-plugin#compatibility
 # https://kotlinlang.org/docs/multiplatform-compatibility-guide.html
-agp = "8.13.2"
+agp = "9.3.1"
 
 #https://github.com/JetBrains/compose-multiplatform
-compose-multiplatform = "1.10.0"
-kotlin = "2.3.0"
+compose-multiplatform = "1.12.0"
+kotlin = "2.4.20"
 # https://github.com/google/ksp
-ksp = "2.2.20-2.0.3"
+ksp = "2.3.11"
 kotlin-inject = "0.9.0"
 
 # https://developer.android.com/jetpack/androidx/releases/activity
@@ -40,7 +40,7 @@ circuit = "0.32.0"
 sqldelight = "2.2.1"
 
 okhttp = "5.3.2"
-ktor = "3.3.3"
+ktor = "3.5.2"
 
 nexus-publish-plugin = "2.0.0"
 multiplatform-swiftpackage = "2.3.0"

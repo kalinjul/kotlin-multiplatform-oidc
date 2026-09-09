@@ -27,7 +27,7 @@ fun KotlinMultiplatformExtension.configureWasmTarget(baseName: String? = null) {
 }
 
 fun KotlinMultiplatformExtension.configureJsTarget(baseName: String? = null) {
-    js(IR) {
+    js {
         binaries.library()
         browser {
             commonWebpackConfig {
@@ -46,7 +46,6 @@ fun KotlinMultiplatformExtension.configureJsTarget(baseName: String? = null) {
 
 fun KotlinMultiplatformExtension.configureIosTargets(baseName: String? = null) {
     listOf(
-        iosX64(),
         iosArm64(),
         iosSimulatorArm64()
     ).forEach {
