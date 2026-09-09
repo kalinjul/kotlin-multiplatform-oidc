@@ -73,7 +73,7 @@ kotlin {
 
     addParcelizeAnnotation("org.publicvalue.multiplatform.oidc.sample.screens.CommonParcelize")
 
-    androidLibrary {
+    android {
         minSdk = 23
         namespace = "org.publicvalue.multiplatform.oidc.sample.shared"
     }
