@@ -26,7 +26,8 @@ data class ClientDetailUiState(
     val endSessionRequestUrl: String?,
     val endSessionStatusCode: HttpStatusCode?,
     val loginEnabled: Boolean,
-    val logoutEnabled: Boolean
+    val logoutEnabled: Boolean,
+    val refreshEnabled: Boolean,
 ) : CircuitUiState {
 }
 
@@ -38,5 +39,6 @@ sealed interface ClientDetailUiEvent : CircuitUiEvent {
         ClientDetailUiEvent
     data object Login: ClientDetailUiEvent
     data object Logout : ClientDetailUiEvent
+    data object Refresh : ClientDetailUiEvent
 
 }
