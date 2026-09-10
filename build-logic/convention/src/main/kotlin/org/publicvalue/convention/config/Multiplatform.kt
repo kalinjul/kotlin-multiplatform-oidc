@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 @OptIn(ExperimentalWasmDsl::class)
 fun KotlinMultiplatformExtension.configureWasmTarget(baseName: String? = null) {
     wasmJs {
+        binaries.executable() // required for tests
         outputModuleName.set(baseName ?: project.path.substring(1).replace(":", "-").replace("-", "_"))
         browser {
             commonWebpackConfig {
@@ -29,6 +30,7 @@ fun KotlinMultiplatformExtension.configureWasmTarget(baseName: String? = null) {
 fun KotlinMultiplatformExtension.configureJsTarget(baseName: String? = null) {
     js {
         binaries.library()
+        binaries.executable() // required for tests
         browser {
             commonWebpackConfig {
                 outputFileName = "$baseName.js"
