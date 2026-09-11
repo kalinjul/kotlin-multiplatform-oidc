@@ -8,7 +8,7 @@ import kotlin.experimental.ExperimentalObjCName
 
 @OptIn(ExperimentalOpenIdConnect::class, ExperimentalObjCName::class)
 @ObjCName("accessToken")
-@Suppress("unused")
+@Suppress("unused", "deprecated")
 val TokenStore.accessTokenFlowWrap: FlowWrapper<String?> get() = this.accessTokenFlow.wrap()
 
 @OptIn(ExperimentalOpenIdConnect::class, ExperimentalObjCName::class)

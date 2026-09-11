@@ -1,7 +1,6 @@
 package org.publicvalue.multiplatform.oidc
 
-import io.ktor.util.encodeBase64
-import kotlin.random.Random
+import kotlin.io.encoding.Base64
 
 /**
  * Generate random bytes using a cryptographically secure random
@@ -21,7 +20,7 @@ expect fun secureRandomBytes(size: Int = 32): ByteArray
  * Implementation of base64urlencode,
  * see [RFC7636](https://datatracker.ietf.org/doc/html/rfc7636#appendix-A)
  */
-fun ByteArray.encodeForPKCE() = this.encodeBase64()
+fun ByteArray.encodeForPKCE() = Base64.encode(this)
     .replace("=", "")
     .replace("+", "-")
     .replace("/", "_")

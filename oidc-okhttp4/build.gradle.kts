@@ -20,14 +20,9 @@ kotlin {
                 implementation(libs.okhttp)
             }
         }
-
-        val commonTest by getting {
-            dependencies {
-            }
-        }
     }
 
-    androidLibrary {
+    android {
         namespace = "org.publicvalue.multiplatform.oidc.appsupport.okhttp"
     }
 }

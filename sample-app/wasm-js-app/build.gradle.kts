@@ -10,7 +10,7 @@ kotlin {
     jvm()
     // Explicitly apply the default KMP hierarchy so js and wasmJs get a shared 'webMain' source set.
     applyDefaultHierarchyTemplate()
-    js(IR) {
+    js {
         browser()
         binaries.executable()
     }
@@ -21,11 +21,9 @@ kotlin {
             commonWebpackConfig {
                 outputFileName = "wasm-js-app.js"
                 devServer = (devServer ?: KotlinWebpackConfig.DevServer()).apply {
-                    static = (static ?: mutableListOf()).apply {
-                        // Serve sources to debug inside browser
-                        add(project.rootDir.path)
-                        add(project.projectDir.path)
-                    }
+                    // Serve sources to debug inside browser
+                    static(project.rootDir.path)
+                    static(project.projectDir.path)
                 }
             }
         }
@@ -35,12 +33,12 @@ kotlin {
     sourceSets {
         val webMain by getting {
             dependencies {
-                implementation(compose.runtime)
-                implementation(compose.foundation)
-                implementation(compose.material)
-                implementation(compose.ui)
-                implementation(compose.components.resources)
-                implementation(compose.components.uiToolingPreview)
+                implementation(libs.compose.runtime)
+                implementation(libs.compose.foundation)
+                implementation(libs.compose.material3)
+                implementation(libs.compose.ui)
+                implementation(libs.compose.components.resources)
+                implementation(libs.compose.uiToolingPreview)
 
                 implementation(projects.sampleApp.shared)
             }

@@ -12,9 +12,9 @@ kotlin {
                 api(libs.circuit.overlay)
                 api(libs.circuit.retained)
 
-                implementation(compose.foundation)
-                implementation(compose.material3)
-                implementation(compose.materialIconsExtended)
+                implementation(libs.compose.foundation)
+                implementation(libs.compose.material3)
+                implementation(libs.compose.materialIconsExtended)
 
                 api(projects.common.screens)
                 api(projects.common.ui.resources.strings)
