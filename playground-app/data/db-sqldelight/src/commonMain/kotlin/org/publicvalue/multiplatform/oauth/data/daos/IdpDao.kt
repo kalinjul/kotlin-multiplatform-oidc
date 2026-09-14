@@ -27,7 +27,8 @@ class IdpDao(
             endpointToken = entity.endpointToken,
             endpointEndSession = entity.endpointEndSession,
             endpointIntrospection = entity.endpointIntrospection,
-            endpointUserInfo = entity.endpointUserInfo
+            endpointUserInfo = entity.endpointUserInfo,
+            endpointRevocation = entity.endpointRevocation,
         )
         return db.idpsQueries.lastInsertRowId().executeAsOne()
     }
@@ -43,7 +44,8 @@ class IdpDao(
             endpointToken = entity.endpointToken,
             endpointEndSession = entity.endpointEndSession,
             endpointIntrospection = entity.endpointIntrospection,
-            endpointUserInfo = entity.endpointUserInfo
+            endpointUserInfo = entity.endpointUserInfo,
+            endpointRevocation = entity.endpointRevocation,
         )
     }
 

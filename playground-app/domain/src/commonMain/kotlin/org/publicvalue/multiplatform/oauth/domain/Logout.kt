@@ -87,3 +87,30 @@ class LogoutPost(
         )
     }
 }
+
+@OptIn(ExperimentalOpenIdConnect::class)
+@Inject
+class LogoutRevoke(
+    private val logger: Logger,
+    private val idpDao: IdpDao,
+) {
+    suspend operator fun invoke(client: Client, offlineToken: String): Flow<EndSessionResult> = flow {
+
+        logger.d { "Logout with $client" }
+
+        val idp = idpDao.getIdp(client.idpId).first()
+        val client = client.createOidcClient(idp)
+
+        emit(EndSessionResult.Request(
+            endSessionRequestUrl = ""
+        )
+        )
+        val code = client.revokeToken(offlineToken)
+
+        logger.d { "logout response: $code" }
+
+        emit(
+            EndSessionResult.Response(code)
+        )
+    }
+}

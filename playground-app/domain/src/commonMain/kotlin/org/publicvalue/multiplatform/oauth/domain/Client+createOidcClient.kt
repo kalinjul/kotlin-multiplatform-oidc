@@ -11,6 +11,7 @@ fun Client.createOidcClient(idp: Identityprovider): OpenIdConnectClient {
             tokenEndpoint = idp.endpointToken
             authorizationEndpoint = idp.endpointAuthorization
             endSessionEndpoint = idp.endpointEndSession
+            revocationEndpoint = idp.endpointRevocation
         }
         clientId = this@createOidcClient.client_id
         clientSecret = this@createOidcClient.client_secret

@@ -26,7 +26,8 @@ class AddIdp(
                     endpointDeviceAuthorization = null,
                     endpointEndSession = null,
                     endpointUserInfo = null,
-                    endpointIntrospection = null
+                    endpointIntrospection = null,
+                    endpointRevocation = null,
                 )
             )
         }

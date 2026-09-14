@@ -18,14 +18,15 @@ class DiscoverIdpConfig(
         logger.d { "Discovering with $idp" }
 
         withContext(dispatchers.io()) {
-            // set en   dpoints to null first for ui observers to trigger
+            // set endpoints to null first for ui observers to trigger
             idpDao.update(idp.copy(
                 endpointToken = null,
                 endpointAuthorization = null,
                 endpointEndSession = null,
                 endpointUserInfo = null,
                 endpointIntrospection = null,
-                endpointDeviceAuthorization = null
+                endpointDeviceAuthorization = null,
+                endpointRevocation = null
             ))
 
             idp.discoveryUrl?.let {

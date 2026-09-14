@@ -29,6 +29,7 @@ import org.publicvalue.multiplatform.oauth.domain.EndSessionResult
 import org.publicvalue.multiplatform.oauth.domain.ExchangeToken
 import org.publicvalue.multiplatform.oauth.domain.ExchangeTokenResult
 import org.publicvalue.multiplatform.oauth.domain.LogoutPost
+import org.publicvalue.multiplatform.oauth.domain.LogoutRevoke
 import org.publicvalue.multiplatform.oauth.domain.LogoutWebFlow
 import org.publicvalue.multiplatform.oauth.domain.RefreshToken
 import org.publicvalue.multiplatform.oauth.domain.RefreshTokenResult
@@ -65,6 +66,7 @@ class ClientDetailPresenter(
     private val authorize: Authorize,
     private val logoutWebFlow: LogoutWebFlow,
     private val logoutPost: LogoutPost,
+    private val logoutRevoke: LogoutRevoke,
     private val exchangeToken: ExchangeToken,
     private val refreshToken: RefreshToken,
 ) : ErrorPresenter<ClientDetailUiState> {
@@ -202,6 +204,27 @@ class ClientDetailPresenter(
                                         }
                                     }
                             }
+                        }
+                    }
+                }
+                ClientDetailUiEvent.Revoke -> {
+                    client?.let { client ->
+                        scope.launch {
+                            logoutRevoke(client, offlineToken = tokenResponse?.refresh_token.orEmpty())
+                                .collect {
+                                    when (it) {
+                                        is EndSessionResult.Request -> {
+                                            endSessionRequestUrl = it.endSessionRequestUrl
+                                        }
+
+                                        is EndSessionResult.Response -> {
+                                            endSessionStatusCode = it.statusCode
+                                            if (it.statusCode?.isSuccess() == true) {
+                                                clearLogin()
+                                            }
+                                        }
+                                    }
+                                }
                         }
                     }
                 }

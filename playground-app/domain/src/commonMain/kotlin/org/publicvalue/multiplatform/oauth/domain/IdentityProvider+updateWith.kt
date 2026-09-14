@@ -10,5 +10,6 @@ fun Identityprovider.updateWith(config: OpenIdConnectConfiguration): Identitypro
         endpointDeviceAuthorization = config.device_authorization_endpoint,
         endpointIntrospection = config.introspection_endpoint,
         endpointUserInfo = config.userinfo_endpoint,
-        endpointEndSession = config.end_session_endpoint
+        endpointEndSession = config.end_session_endpoint,
+        endpointRevocation = config.revocation_endpoint,
     )

@@ -21,18 +21,14 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme.colorScheme
-import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
-import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -45,7 +41,6 @@ import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.screen.Screen
 import com.slack.circuit.runtime.ui.Ui
 import com.slack.circuit.runtime.ui.ui
-import org.publicvalue.multiplatform.oauth.screens.ClientListScreen
 import me.tatarka.inject.annotations.Inject
 import org.publicvalue.multiplatform.oauth.compose.components.ColumnHeadline
 import org.publicvalue.multiplatform.oauth.compose.components.ErrorMessageBox
@@ -54,6 +49,7 @@ import org.publicvalue.multiplatform.oauth.compose.components.OidcPlaygroundTopB
 import org.publicvalue.multiplatform.oauth.compose.components.SingleLineInput
 import org.publicvalue.multiplatform.oauth.data.db.Client
 import org.publicvalue.multiplatform.oauth.data.db.Identityprovider
+import org.publicvalue.multiplatform.oauth.screens.ClientListScreen
 
 @Inject
 class ClientListUiFactory : Ui.Factory {
@@ -113,6 +109,9 @@ internal fun ClientList(
         },
         onEndpointEndsessionChange = {
             state.eventSink(ClientListUiEvent.ChangeIdpProperty(Identityprovider::endpointEndSession, it))
+        },
+        onEndpointRevocationChange = {
+            state.eventSink(ClientListUiEvent.ChangeIdpProperty(Identityprovider::endpointRevocation, it))
         }
     )
 }
@@ -131,6 +130,7 @@ internal fun ClientList(
     onEndpointTokenChange: (String) -> Unit,
     onEndpointAuthorizationChange: (String) -> Unit,
     onEndpointEndsessionChange: (String) -> Unit,
+    onEndpointRevocationChange: (String) -> Unit,
     onNameChange: (String) -> Unit,
     onUseDiscoveryChange: (Boolean) -> Unit,
     onDiscoveryUrlChange: (String) -> Unit,
@@ -168,6 +168,7 @@ internal fun ClientList(
                         onEndpointTokenChange = onEndpointTokenChange,
                         onEndpointAuthorizationChange = onEndpointAuthorizationChange,
                         onEndpointEndsessionChange = onEndpointEndsessionChange,
+                        onEndpointRevocationChange = onEndpointRevocationChange,
                         onNameChange = onNameChange,
                         onUseDiscoveryChange = onUseDiscoveryChange,
                         onDiscoveryUrlChange = onDiscoveryUrlChange,
@@ -203,6 +204,7 @@ internal fun IdpDetail(
     onEndpointTokenChange: (String) -> Unit,
     onEndpointAuthorizationChange: (String) -> Unit,
     onEndpointEndsessionChange: (String) -> Unit,
+    onEndpointRevocationChange: (String) -> Unit,
     onNameChange: (String) -> Unit,
     onUseDiscoveryChange: (Boolean) -> Unit,
     onDiscoveryUrlChange: (String) -> Unit,
@@ -227,6 +229,9 @@ internal fun IdpDetail(
         }
         var endpointEndSession by remember(idp?.endpointEndSession == null) {
             mutableStateOf(idp?.endpointEndSession.orEmpty())
+        }
+        var endpointRevocation by remember(idp?.endpointRevocation == null) {
+            mutableStateOf(idp?.endpointRevocation.orEmpty())
         }
 
         FormHeadline(text = "General")
@@ -266,6 +271,11 @@ internal fun IdpDetail(
             value = "${idp?.endpointEndSession}",
             onValueChange = { endpointEndSession = it; onEndpointEndsessionChange(it) },
             label = { Text("EndSession") }
+        )
+        SingleLineInput(
+            value = "${idp?.endpointRevocation}",
+            onValueChange = { endpointRevocation = it; onEndpointRevocationChange(it) },
+            label = { Text("Revocation") }
         )
 //        SingleLineInput(
 //            value = "${idp?.endpointUserInfo}",
