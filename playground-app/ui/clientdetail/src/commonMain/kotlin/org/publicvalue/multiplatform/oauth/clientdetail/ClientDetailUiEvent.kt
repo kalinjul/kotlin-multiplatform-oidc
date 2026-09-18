@@ -39,6 +39,7 @@ sealed interface ClientDetailUiEvent : CircuitUiEvent {
         ClientDetailUiEvent
     data object Login: ClientDetailUiEvent
     data object Logout : ClientDetailUiEvent
+    data object Revoke : ClientDetailUiEvent
     data object Refresh : ClientDetailUiEvent
 
 }

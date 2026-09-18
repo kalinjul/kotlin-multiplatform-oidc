@@ -8,7 +8,8 @@ CREATE TABLE IF NOT EXISTS `identityprovider` (
     `endpointDeviceAuthorization` TEXT,
     `endpointEndSession` TEXT,
     `endpointUserInfo` Text,
-    `endpointIntrospection` Text
+    `endpointIntrospection` Text,
+    `endpointRevocation` TEXT
 );
 
 
@@ -26,7 +27,8 @@ INSERT INTO identityprovider(
     `endpointDeviceAuthorization`,
     `endpointEndSession`,
     `endpointUserInfo`,
-    `endpointIntrospection`
+    `endpointIntrospection`,
+    `endpointRevocation`
 ) VALUES (
     nullif(:id, 0),
     :name,
@@ -37,7 +39,8 @@ INSERT INTO identityprovider(
     :endpointDeviceAuthorization,
     :endpointEndSession,
     :endpointUserInfo,
-    :endpointIntrospection
+    :endpointIntrospection,
+    :endpointRevocation
 );
 
 getAll:
@@ -51,7 +54,8 @@ SELECT
     `endpointDeviceAuthorization`,
     `endpointEndSession`,
     `endpointUserInfo`,
-    `endpointIntrospection`
+    `endpointIntrospection`,
+    `endpointRevocation`
 FROM identityprovider;
 
 get:
@@ -65,7 +69,8 @@ SELECT
     `endpointDeviceAuthorization`,
     `endpointEndSession`,
     `endpointUserInfo`,
-    `endpointIntrospection`
+    `endpointIntrospection`,
+    `endpointRevocation`
 FROM identityprovider
 WHERE id = :id;
 
@@ -79,7 +84,8 @@ UPDATE identityprovider SET
     `endpointDeviceAuthorization` = :endpointDeviceAuthorization,
     `endpointEndSession` = :endpointEndSession,
     `endpointUserInfo` = :endpointUserInfo,
-    `endpointIntrospection` = :endpointIntrospection
+    `endpointIntrospection` = :endpointIntrospection,
+    `endpointRevocation` = :endpointRevocation
 WHERE id = :id;
 
 delete:

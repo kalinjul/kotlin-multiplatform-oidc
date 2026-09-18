@@ -59,8 +59,8 @@ import org.publicvalue.multiplatform.oauth.data.db.Client
 import org.publicvalue.multiplatform.oauth.data.types.CodeChallengeMethod
 import org.publicvalue.multiplatform.oauth.domain.Constants
 import org.publicvalue.multiplatform.oauth.screens.ClientDetailScreen
-import org.publicvalue.multiplatform.oidc.types.remote.ErrorResponse
 import org.publicvalue.multiplatform.oidc.types.remote.AccessTokenResponse
+import org.publicvalue.multiplatform.oidc.types.remote.ErrorResponse
 import kotlin.time.Clock
 
 @Inject
@@ -111,6 +111,9 @@ internal fun ClientDetail(
         onLogout = {
             state.eventSink(ClientDetailUiEvent.Logout)
         },
+        onRevoke = {
+            state.eventSink(ClientDetailUiEvent.Revoke)
+        },
         onRefresh = {
             state.eventSink(ClientDetailUiEvent.Refresh)
         },
@@ -146,6 +149,7 @@ internal fun ClientDetail(
     onUseWebFlowLogoutChange: (Boolean) -> Unit,
     onLogin: () -> Unit,
     onLogout: () -> Unit,
+    onRevoke: () -> Unit,
     onRefresh: () -> Unit,
     errorMessage: String?,
     resetErrorMessage: () -> Unit,
@@ -205,6 +209,7 @@ internal fun ClientDetail(
                         logoutEnabled = logoutEnabled,
                         onLogin = onLogin,
                         onLogout = onLogout,
+                        onRevoke = onRevoke,
                         onRefresh = onRefresh,
                         refreshEnabled = refreshEnabled,
                     )
@@ -320,6 +325,7 @@ internal fun AuthFlow(
     logoutEnabled: Boolean,
     onLogin: () -> Unit,
     onLogout: () -> Unit,
+    onRevoke: () -> Unit,
     onRefresh: () -> Unit,
     refreshEnabled: Boolean,
 ) {
@@ -341,6 +347,9 @@ internal fun AuthFlow(
             }
             Button(onClick = { onLogout() }, enabled = logoutEnabled) {
                 Text("Logout")
+            }
+            Button(onClick = { onRevoke() }, enabled = logoutEnabled) {
+                Text("Revoke")
             }
             Button(onClick = onRefresh, enabled = refreshEnabled) {
                 Text("Refresh")
