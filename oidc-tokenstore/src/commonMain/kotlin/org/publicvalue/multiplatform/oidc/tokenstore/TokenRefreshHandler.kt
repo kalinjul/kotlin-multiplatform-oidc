@@ -64,7 +64,7 @@ class TokenRefreshHandler(
                 var newTokens = refreshCall(refreshToken)
                 // keep old refresh token if no new one was issued
                 if(newTokens.refresh_token == null) {
-                    newTokens = newTokens.copy(refresh_token = oldTokenResponse.refresh_token, refresh_token_expires_in = oldTokenResponse?.refresh_token_expires_in)
+                    newTokens = newTokens.copy(refresh_token = oldTokenResponse.refresh_token, refresh_token_expires_in = oldTokenResponse.refresh_token_expires_in)
                 }
                 tokenStore.saveTokens(newTokens)
 

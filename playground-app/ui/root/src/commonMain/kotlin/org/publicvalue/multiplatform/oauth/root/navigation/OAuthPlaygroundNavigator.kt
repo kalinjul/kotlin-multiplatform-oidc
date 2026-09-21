@@ -2,6 +2,7 @@ package org.publicvalue.multiplatform.oauth.root.navigation
 
 import com.slack.circuit.backstack.SaveableBackStack
 import com.slack.circuit.runtime.Navigator
+import com.slack.circuit.runtime.navigation.NavStackList
 import com.slack.circuit.runtime.screen.PopResult
 import com.slack.circuit.runtime.screen.Screen
 import org.publicvalue.multiplatform.oauth.logging.Logger
@@ -24,6 +25,18 @@ internal class OAuthPlaygroundNavigator(
 
     override fun peek(): Screen? {
         return navigator.peek()
+    }
+
+    override fun forward(): Boolean {
+        return navigator.forward()
+    }
+
+    override fun backward(): Boolean {
+        return navigator.backward()
+    }
+
+    override fun peekNavStack(): NavStackList<Screen>? {
+        return navigator.peekNavStack()
     }
 
     override fun peekBackStack(): List<Screen> {

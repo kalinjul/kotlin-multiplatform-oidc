@@ -1,7 +1,6 @@
 package org.publicvalue.convention.config
 
 import com.android.build.api.dsl.ApplicationExtension
-import com.android.build.api.dsl.CommonExtension
 import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryTarget
 import org.gradle.accessors.dm.LibrariesForLibs
 import org.gradle.api.JavaVersion
@@ -19,18 +18,13 @@ fun Project.configureKotlinAndroid(target: KotlinMultiplatformAndroidLibraryTarg
     }
 }
 
-fun Project.configureKotlinAndroid(extension: CommonExtension<*, *, *, *, *,*>) {
+fun Project.configureKotlinAndroid(extension: ApplicationExtension) {
     val libs = the<LibrariesForLibs>()
 
-    if (extension is ApplicationExtension) {
-        extension.apply {
-            defaultConfig {
-                targetSdk = libs.versions.targetSdk.get().toInt()
-            }
-        }
-    }
-
     extension.apply {
+        defaultConfig {
+            targetSdk = libs.versions.targetSdk.get().toInt()
+        }
         compileSdk = libs.versions.compileSdk.get().toInt()
 
         defaultConfig {

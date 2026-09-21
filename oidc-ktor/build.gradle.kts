@@ -31,7 +31,7 @@ kotlin {
         }
     }
 
-    androidLibrary {
+    android {
         namespace = "org.publicvalue.multiplatform.oidc.appsupport.ktor"
     }
 }

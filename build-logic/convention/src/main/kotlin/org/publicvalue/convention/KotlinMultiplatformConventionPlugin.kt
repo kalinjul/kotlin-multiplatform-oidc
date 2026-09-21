@@ -1,10 +1,12 @@
 package org.publicvalue.convention
 
-import com.android.build.api.dsl.androidLibrary
+import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryTarget
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.internal.extensions.stdlib.capitalized
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.getByType
+import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.publicvalue.convention.config.configureKotlin
@@ -47,7 +49,7 @@ private fun Project.addKspDependencyForAllTargets(
 }
 
 fun KotlinMultiplatformExtension.addParcelizeAnnotation(annotationClass: String) {
-    androidLibrary {
+    targets.withType<KotlinMultiplatformAndroidLibraryTarget>().configureEach {
         compilerOptions {
             freeCompilerArgs.addAll(
                 "-P",
@@ -56,5 +58,3 @@ fun KotlinMultiplatformExtension.addParcelizeAnnotation(annotationClass: String)
         }
     }
 }
-
-fun String.capitalized() = replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }

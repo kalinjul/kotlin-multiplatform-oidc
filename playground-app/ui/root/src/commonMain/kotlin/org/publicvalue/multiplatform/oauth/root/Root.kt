@@ -20,13 +20,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.slack.circuit.backstack.SaveableBackStack
 import com.slack.circuit.backstack.isAtRoot
+import com.slack.circuit.backstack.rememberSaveableBackStack
 import com.slack.circuit.foundation.NavigableCircuitContent
+import com.slack.circuit.foundation.rememberCircuitNavigator
 import com.slack.circuit.overlay.ContentWithOverlays
 import com.slack.circuit.overlay.LocalOverlayHost
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.screen.Screen
 import org.publicvalue.multiplatform.oauth.logging.Logger
+import org.publicvalue.multiplatform.oauth.root.navigation.OAuthPlaygroundNavigator
 import org.publicvalue.multiplatform.oauth.screens.isRootScreen
+import org.publicvalue.multiplatform.oauth.screens.IdpListScreen
 
 
 internal enum class NavigationType {
@@ -36,10 +40,16 @@ internal enum class NavigationType {
 }
 @Composable
 fun Root(
-    backstack: SaveableBackStack,
-    navigator: Navigator,
+    onOpenUrl: (String) -> Unit,
     logger: Logger
 ) {
+    val backstack = rememberSaveableBackStack(listOf(IdpListScreen))
+    val navigator = rememberCircuitNavigator(backstack, onRootPop = {})
+
+    val DMANavigator: Navigator = remember(navigator) {
+        OAuthPlaygroundNavigator(navigator, backstack, onOpenUrl, logger)
+    }
+
     val rootScreen by remember(backstack) {
         derivedStateOf { backstack.last().screen }
     }

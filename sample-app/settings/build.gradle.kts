@@ -30,7 +30,7 @@ kotlin {
             }
         }
     }
-    androidLibrary {
+    android {
         minSdk = 23
         namespace = "org.publicvalue.multiplatform.oidc.sample.settings"
     }
