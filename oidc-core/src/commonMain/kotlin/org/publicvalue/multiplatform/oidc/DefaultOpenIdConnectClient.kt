@@ -127,14 +127,18 @@ class DefaultOpenIdConnectClient(
     }
 
     @Throws(OpenIdConnectException::class, CancellationException::class)
-    override suspend fun discover(configure: (HttpRequestBuilder.() -> Unit)?) = wrapExceptions {
-        config.discoveryUri?.let { discoveryUri ->
-            val config = OpenIdConnectDiscover(httpClient).downloadConfiguration(discoveryUri, configure)
-            this.config.updateWithDiscovery(config)
-            discoverDocument = config
-        } ?: run {
-            throw OpenIdConnectException.InvalidUrl("No discoveryUri set")
+    override suspend fun discover(configure: (HttpRequestBuilder.() -> Unit)?) {
+        val discoveryUri = config.discoveryUri ?: throw OpenIdConnectException.DiscoveryFailure("No discoveryUri set", null)
+
+        val discover = OpenIdConnectDiscover(httpClient)
+        val config = try {
+            discover.downloadConfiguration(discoveryUri, configure)
+        } catch (t: Throwable) {
+            throw OpenIdConnectException.DiscoveryFailure("Could not download discovery document", cause = t)
         }
+
+        this.config.updateWithDiscovery(config)
+        discoverDocument = config
     }
 
     @Throws(OpenIdConnectException::class, CancellationException::class)
@@ -219,7 +223,7 @@ class DefaultOpenIdConnectClient(
 
     @Throws(OpenIdConnectException::class, CancellationException::class)
     override suspend fun createRefreshTokenRequest(refreshToken: String, configure: (HttpRequestBuilder.() -> Unit)?): TokenRequest = wrapExceptions {
-        val url = URLBuilder(getOrDiscoverTokenEndpoint()).build()
+        val url = URLBuilder(getOrDiscoverTokenEndpoint()).build() // TODO discovery will throw other exception
 
         val formParameters = parameters {
             append("grant_type", "refresh_token")

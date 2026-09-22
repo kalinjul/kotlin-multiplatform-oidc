@@ -30,6 +30,8 @@ sealed class OpenIdConnectException(
     data class TokenExpired(override val message: String, override val cause: Throwable?): OpenIdConnectException(message, cause)
 
     data class InvalidConfiguration(override val message: String): OpenIdConnectException(message)
+
+    data class DiscoveryFailure(override val message: String, override val cause: Throwable?): OpenIdConnectException(message, cause)
 }
 
 internal fun Url?.getError(): OpenIdConnectException.AuthenticationFailure? {
