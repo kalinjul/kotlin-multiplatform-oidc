@@ -1,6 +1,6 @@
 # Kotlin Multiplatform OIDC
 [![Build](https://img.shields.io/github/actions/workflow/status/kalinjul/kotlin-multiplatform-oidc/main.yml)]((https://github.com/kalinjul/kotlin-multiplatform-oidc/actions/workflows/main.yml))
-[![Maven Central](https://img.shields.io/maven-central/v/io.github.kalinjul.kotlin.multiplatform/oidc-appsupport)](https://central.sonatype.com/repository/maven-snapshots/io/github/kalinjul/kotlin/multiplatform/oidc-appsupport/)
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.kalinjul.kotlin.multiplatform/oidc-appsupport)](https://central.sonatype.com/artifact/io.github.kalinjul.kotlin.multiplatform/oidc-appsupport/versions)
 ![Kotlin Version](https://kotlin-version.aws.icerock.dev/kotlin-version?group=io.github.kalinjul.kotlin.multiplatform&name=oidc-appsupport)
 
 Kotlin Multiplatform Library for OpenId Connect / OAuth 2.0.
