@@ -3,6 +3,7 @@ package org.publicvalue.multiplatform.oidc.tokenstore
 import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
 import org.publicvalue.multiplatform.oidc.OpenIdConnectException
 import org.publicvalue.multiplatform.oidc.types.remote.AccessTokenResponse
+import org.publicvalue.multiplatform.oidc.util.DefaultTokenExpirationPolicy
 import org.publicvalue.multiplatform.oidc.util.TokenExpirationPolicy
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.time.Duration.Companion.seconds
@@ -32,4 +33,4 @@ interface TokenRefresher {
     suspend fun refreshToken(refreshToken: String): AccessTokenResponse
 }
 
-fun TokenExpirationPolicy.Companion.seconds(value: Int) = TokenExpirationPolicy(value.seconds)
+fun TokenExpirationPolicy.Companion.seconds(value: Int) = DefaultTokenExpirationPolicy(value.seconds)
