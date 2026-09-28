@@ -6,6 +6,7 @@ import assertk.assertions.isTrue
 import org.publicvalue.multiplatform.oidc.types.remote.AccessTokenResponse
 import kotlin.test.Test
 import kotlin.time.Clock
+import kotlin.time.Duration.Companion.seconds
 
 class TokenExpirationTest {
 
@@ -18,7 +19,7 @@ class TokenExpirationTest {
             received_at = now
         )
 
-        assertThat(response.accessTokenExpired()).isFalse()
+        assertThat(response.accessTokenExpired(DefaultTokenExpirationPolicy())).isFalse()
     }
 
     @Test
@@ -30,7 +31,7 @@ class TokenExpirationTest {
             received_at = now
         )
 
-        assertThat(response.accessTokenExpired()).isTrue()
+        assertThat(response.accessTokenExpired(DefaultTokenExpirationPolicy())).isTrue()
     }
 
     @Test
@@ -42,7 +43,7 @@ class TokenExpirationTest {
             received_at = now
         )
 
-        assertThat(response.refreshTokenExpired()).isFalse()
+        assertThat(response.refreshTokenExpired(DefaultTokenExpirationPolicy())).isFalse()
     }
 
     @Test
@@ -54,7 +55,7 @@ class TokenExpirationTest {
             received_at = now
         )
 
-        assertThat(response.refreshTokenExpired()).isTrue()
+        assertThat(response.refreshTokenExpired(DefaultTokenExpirationPolicy())).isTrue()
     }
 
     @Test
@@ -66,7 +67,7 @@ class TokenExpirationTest {
             received_at = now
         )
 
-        assertThat(response.refreshTokenExpired()).isTrue()
+        assertThat(response.refreshTokenExpired(DefaultTokenExpirationPolicy())).isTrue()
     }
 
     @Test
@@ -77,7 +78,7 @@ class TokenExpirationTest {
             received_at = 0
         )
 
-        assertThat(response.accessTokenExpired()).isFalse()
+        assertThat(response.accessTokenExpired(DefaultTokenExpirationPolicy())).isFalse()
     }
 
     @Test
@@ -88,6 +89,39 @@ class TokenExpirationTest {
             received_at = 0
         )
 
-        assertThat(response.refreshTokenExpired()).isFalse()
+        assertThat(response.refreshTokenExpired(DefaultTokenExpirationPolicy())).isFalse()
+    }
+
+    @Test
+    fun customToleranceIsRespected() {
+        val now = Clock.System.now().epochSeconds
+        val response = AccessTokenResponse(
+            access_token = "access",
+            expires_in = 30,
+            refresh_token_expires_in = 30,
+            received_at = now
+        )
+        val policy = DefaultTokenExpirationPolicy(expiryTimeTolerance = 10.seconds)
+
+        assertThat(response.accessTokenExpired(policy)).isFalse()
+        assertThat(response.refreshTokenExpired(policy)).isFalse()
+        assertThat(policy.accessTokenExpired(response)).isFalse()
+        assertThat(policy.refreshTokenExpired(response)).isFalse()
+    }
+
+    @Test
+    fun customPolicyIsUsed() {
+        val response = AccessTokenResponse(
+            access_token = "access",
+            expires_in = null,
+            received_at = 0
+        )
+        val policy = object : TokenExpirationPolicy {
+            override fun accessTokenExpired(response: AccessTokenResponse) = true
+            override fun refreshTokenExpired(response: AccessTokenResponse) = true
+        }
+
+        assertThat(response.accessTokenExpired(policy)).isTrue()
+        assertThat(response.refreshTokenExpired(policy)).isTrue()
     }
 }
