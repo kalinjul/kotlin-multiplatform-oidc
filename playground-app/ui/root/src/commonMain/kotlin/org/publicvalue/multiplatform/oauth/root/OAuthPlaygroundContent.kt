@@ -35,22 +35,14 @@ fun OAuthPlaygroundContent(
     val coroutineScope = rememberCoroutineScope()
     val viewModel = remember { rootViewModelFactory(coroutineScope) }
 
-    val backstack = rememberSaveableBackStack(listOf(IdpListScreen))
-    val navigator = rememberCircuitNavigator(backstack, onRootPop = {})
-
-    val DMANavigator: Navigator = remember(navigator) {
-        OAuthPlaygroundNavigator(navigator, backstack, onOpenUrl, logger)
-    }
-
     CompositionLocalProvider(
         LocalDateFormatter provides dateFormatter,
     ) {
         CircuitCompositionLocals(circuit) {
             OAuthPlaygroundTheme {
                 Root(
-                    backstack = backstack,
-                    navigator = DMANavigator,
-                    logger = logger
+                    logger = logger,
+                    onOpenUrl = onOpenUrl,
                 )
             }
         }

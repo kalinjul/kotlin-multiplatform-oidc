@@ -2,7 +2,6 @@ import org.publicvalue.convention.config.configureJava
 
 plugins {
     id("org.publicvalue.convention.android.application")
-    id("org.jetbrains.kotlin.android")
     id("org.publicvalue.convention.compose.multiplatform")
 }
 

@@ -45,7 +45,7 @@ kotlin {
         }
     }
 
-    androidLibrary {
+    android {
         namespace = "org.publicvalue.multiplatform.oidc.tokenstore"
     }
 }
