@@ -1,5 +1,5 @@
 # Kotlin Multiplatform OIDC
-[![Build](https://img.shields.io/github/actions/workflow/status/kalinjul/kotlin-multiplatform-oidc/main.yml)]((https://github.com/kalinjul/kotlin-multiplatform-oidc/actions/workflows/main.yml))
+[![Build](https://img.shields.io/github/actions/workflow/status/kalinjul/kotlin-multiplatform-oidc/main.yml)](https://github.com/kalinjul/kotlin-multiplatform-oidc/actions/workflows/main.yml)
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.kalinjul.kotlin.multiplatform/oidc-appsupport)](https://central.sonatype.com/artifact/io.github.kalinjul.kotlin.multiplatform/oidc-appsupport/versions)
 ![Kotlin Version](https://kotlin-version.aws.icerock.dev/kotlin-version?group=io.github.kalinjul.kotlin.multiplatform&name=oidc-appsupport)
 
@@ -12,20 +12,21 @@ This is a lightweight implementation that does not provide any client-side valid
 
 Supported platforms:
 
-|         | State        | Implementation                               |
-|---------|--------------|----------------------------------------------|
-| Android | Stable       | Chrome Custom Tabs                           |
-| iOS     | Stable       | ASWebAuthenticationSession                   |
-| Desktop | Experimental | Embedded Webserver + Browser                 |
-| WasmJS  | Experimental | Popup Window communicating via postMessage() |
+|                   | State        | Implementation                               |
+|-------------------|--------------|----------------------------------------------|
+| Android           | Stable       | Chrome Custom Tabs (WebView as fallback)     |
+| iOS               | Stable       | ASWebAuthenticationSession                   |
+| Desktop (JVM)     | Experimental | Embedded Webserver + Browser                 |
+| Web (WasmJS / JS) | Experimental | Popup Window communicating via postMessage() |
 
 Features:
 - Only supports [Authorization Code Grant Flow](https://datatracker.ietf.org/doc/html/rfc6749#section-4.1).
 - Support for [discovery](https://openid.net/specs/openid-connect-discovery-1_0.html) via .well-known/openid-configuration.
 - Support for [PKCE](https://datatracker.ietf.org/doc/html/rfc7636)
+- Support for [Token Revocation](https://datatracker.ietf.org/doc/html/rfc7009) (```client.revokeToken()```)
 - Simple JWT parsing (```Jwt.parse()```)
 - OkHttp + Ktor integration
-- Uses Custom Uri Scheme (my-app://), no support for https redirect uris.
+- Uses Custom Uri Scheme (my-app://) by default. Https redirect uris are supported on Android (verified App Links, see [Setup Android](docs/setup-android.md)), iOS 17.4+ (see [Setup iOS](docs/setup-ios.md)) and Web.
 
 You can find the full Api documentation [here](https://kalinjul.github.io/kotlin-multiplatform-oidc/).
 
@@ -75,7 +76,10 @@ You will need some basic project setup to handle redirect urls and create an ins
 
 [Setup iOS](docs/setup-ios.md)
 
-[Setup Wasm](docs/setup-wasm.md)
+[Setup Web (Wasm/JS)](docs/setup-wasm.md)
+
+On Desktop (JVM), no setup is required: Create a [JvmCodeAuthFlowFactory](https://kalinjul.github.io/kotlin-multiplatform-oidc/kotlin-multiplatform-oidc/org.publicvalue.multiplatform.oidc.appsupport/-jvm-code-auth-flow-factory/index.html) and
+use a redirect uri pointing to the embedded webserver, which listens on localhost port 8080 by default (e.g. `http://localhost:8080/redirect`).
 
 ## OpenID Configuration
 Create an [OpenIdConnectClient](https://kalinjul.github.io/kotlin-multiplatform-oidc/kotlin-multiplatform-oidc/org.publicvalue.multiplatform.oidc/-open-id-connect-client/index.html):
@@ -122,17 +126,18 @@ if (flow.canContinueLogin()) {
 }
 ```
 
-## Refresh / End session
-Perform refresh or endSession:
+## Refresh / End session / Revocation
+Perform refresh, endSession or token revocation:
 ```kotlin
 tokens.refresh_token?.let { client.refreshToken(refreshToken = it) }
 tokens.id_token?.let { client.endSession(idToken = it) }
+tokens.refresh_token?.let { client.revokeToken(token = it) } // requires a revocationEndpoint (configured or discovered)
 ```
 
 # Token Store (experimental)
 Since persisting tokens is a common task in OpenID Connect Authentication, we provide a 
 [TokenStore](https://kalinjul.github.io/kotlin-multiplatform-oidc/kotlin-multiplatform-oidc/org.publicvalue.multiplatform.oidc.tokenstore/-token-store/index.html) that uses a [Multiplatform Settings Library](https://github.com/russhwolf/multiplatform-settings)
-to persist tokens in Keystore (iOS) / Encrypted Preferences (Android).
+to persist tokens in Keychain (iOS) / an encrypted DataStore (Android).
 If you use the TokenStore, you may also make use of [TokenRefreshHandler](https://kalinjul.github.io/kotlin-multiplatform-oidc/kotlin-multiplatform-oidc/org.publicvalue.multiplatform.oidc.tokenstore/-token-refresh-handler/index.html) for synchronized token
 refreshes.
 ```kotlin
@@ -142,7 +147,7 @@ val accessToken = tokenstore.getAccessToken()
 val refreshHandler = TokenRefreshHandler(tokenStore = tokenstore)
 refreshHandler.refreshAndSaveToken(client, oldAccessToken = token) // thread-safe refresh and save new tokens to store
 ```
-Android implementation is [AndroidEncryptedPreferencesSettingsStore](https://kalinjul.github.io/kotlin-multiplatform-oidc/kotlin-multiplatform-oidc/org.publicvalue.multiplatform.oidc.tokenstore/-android-encrypted-preferences-settings-store/index.html), for iOS use [IosKeychainTokenStore](https://kalinjul.github.io/kotlin-multiplatform-oidc/kotlin-multiplatform-oidc/org.publicvalue.multiplatform.oidc.tokenstore/-ios-keychain-token-store/index.html).
+Android implementation is [AndroidSettingsTokenStore](https://kalinjul.github.io/kotlin-multiplatform-oidc/kotlin-multiplatform-oidc/org.publicvalue.multiplatform.oidc.tokenstore/-android-settings-token-store/index.html), for iOS use [IosKeychainTokenStore](https://kalinjul.github.io/kotlin-multiplatform-oidc/kotlin-multiplatform-oidc/org.publicvalue.multiplatform.oidc.tokenstore/-ios-keychain-token-store/index.html).
 
 # Ktor support (experimental)
 You can use "oidc-ktor" dependency, which provides easy integration for ktor projects:
@@ -192,7 +197,7 @@ you can use the endSession flow:
 val flow = authFlowFactory.createEndSessionFlow(client)
 tokens.id_token?.let { flow.endSession(it) }
 ```
-That way, browser cookies should be cleared so the next time a client wants to login, it get's prompted for username and password again.
+That way, browser cookies should be cleared so the next time a client wants to login, it gets prompted for username and password again.
 
 # JWT Parsing
 We provide simple JWT parsing (without any validation):
