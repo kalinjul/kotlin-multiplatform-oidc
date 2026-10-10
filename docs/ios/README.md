@@ -1,6 +1,6 @@
 # OpenIdConnectClient for iOS
-[![Snapshot Build](https://img.shields.io/github/actions/workflow/status/kalinjul/kotlin-multiplatform-oidc/develop.yml?label=snapshot)]((https://github.com/kalinjul/kotlin-multiplatform-oidc/actions/workflows/develop.yml))
-[![Release Build](https://img.shields.io/github/actions/workflow/status/kalinjul/kotlin-multiplatform-oidc/main.yml?label=release)]((https://github.com/kalinjul/kotlin-multiplatform-oidc/actions/workflows/main.yml))
+[![Snapshot Build](https://img.shields.io/github/actions/workflow/status/kalinjul/kotlin-multiplatform-oidc/main.yml?label=snapshot)](https://github.com/kalinjul/kotlin-multiplatform-oidc/actions/workflows/main.yml)
+[![Release Build](https://img.shields.io/github/actions/workflow/status/kalinjul/kotlin-multiplatform-oidc/release-publish.yml?label=release)](https://github.com/kalinjul/kotlin-multiplatform-oidc/actions/workflows/release-publish.yml)
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.kalinjul.kotlin.multiplatform/oidc-appsupport)](https://repo1.maven.org/maven2/io/github/kalinjul/kotlin/multiplatform/oidc-appsupport/)
 
 Library for using OpenID Connect in iOS Projects. Build with kotlin multiplatform, published for iOS as Swift Package.
@@ -11,6 +11,7 @@ This iOS Framework is generated from the [kotlin-multiplatform-oidc](https://git
 - Support for [discovery](https://openid.net/specs/openid-connect-discovery-1_0.html) via .well-known/openid-configuration.
 - Support for [PKCE](https://datatracker.ietf.org/doc/html/rfc7636)
 - Uses ```ASWebAuthenticationSession```
+- Uses Custom Uri Scheme (my-app://) redirect uris. Https redirect uris are supported on iOS 17.4+ and require an [associated domain](https://developer.apple.com/documentation/xcode/supporting-associated-domains) for the redirect host.
 - Simple JWT parsing
 
 # Usage
@@ -123,8 +124,13 @@ print(jwt?.payload.additionalClaims["email"]) // get claim
 # Token Store (experimental)
 Since persisting tokens is a common task in OpenID Connect Authentication, we provide a
 ```TokenStore``` that uses a [Multiplatform Settings Library](https://github.com/russhwolf/multiplatform-settings)
-to persist tokens in Keystore.
+to persist tokens in Keychain.
 ```swift
 let tokenstore = KeychainTokenStore()
 try await tokenstore.saveTokens(tokens: tokens)
+```
+If you use the TokenStore, you may also make use of ```TokenRefreshHandler``` for synchronized token refreshes:
+```swift
+let refreshHandler = TokenRefreshHandler(tokenStore: tokenstore, expirationPolicy: TokenExpirationPolicy.companion.seconds(value: 60))
+try await refreshHandler.refreshAndSaveToken(client: client, oldAccessToken: oldAccessToken) // thread-safe refresh and save new tokens to store
 ```
